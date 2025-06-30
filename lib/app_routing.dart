@@ -6,18 +6,19 @@ import 'package:rayoflite/presentation/screens/register.dart';
 import 'package:rayoflite/presentation/screens/reset-password.dart';
 
 final GoRouter router = GoRouter(
-  initialLocation: '/login', // 👈 This sets the default page
+  initialLocation: '/', 
   routes: [
+    GoRoute(
+      path: '/',
+      name: 'register',
+      builder: (context, state) => const RegisterScreen(),
+    ),
     GoRoute(
       path: '/login',
       name: 'login',
       builder: (context, state) => const Login(),
     ),
-     GoRoute(
-      path: '/register',
-      name: 'register',
-      builder: (context, state) => const RegisterScreen(),
-    ),
+
     GoRoute(
       path: '/forgot-password',
       name: 'forgot_password',
