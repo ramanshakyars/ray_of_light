@@ -6,7 +6,7 @@ import 'package:rayoflite/presentation/screens/register.dart';
 import 'package:rayoflite/presentation/screens/reset-password.dart';
 
 final GoRouter router = GoRouter(
-  initialLocation: '/', 
+  initialLocation: '/login', 
   routes: [
     GoRoute(
       path: '/',
