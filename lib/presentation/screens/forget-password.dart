@@ -15,12 +15,8 @@ class ForgotPasswordScreen extends StatelessWidget {
           children: [
             const Text('Enter your email to receive password reset link.'),
             const SizedBox(height: 10),
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
+            TextField(controller: emailController,decoration: const InputDecoration(labelText: 'Email')),
+            const SizedBox(height: 20),ElevatedButton(
               onPressed: () {
                 // Implement forgot password logic
               },
