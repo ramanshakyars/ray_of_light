@@ -14,6 +14,7 @@ import 'package:rayoflite/core/config/routenames.dart';
 final router = GoRouter(
   initialLocation: RouteNames.landing,
   routes: [
+    // Initial routes
     GoRoute(
       path: RouteNames.landing,
       builder: (context, state) => const Login(),
@@ -41,30 +42,24 @@ final router = GoRouter(
       routes: [
         // Bottom tab routes
         GoRoute(
-          path: '${RouteNames.mainApp}/:tab(home|search|profile)',
-          builder: (context, state) {
-            final tab = state.pathParameters['tab']!;
-            switch (tab) {
-              case 'home':
-                return const TalkToLiteScreen();
-              case 'search':
-                return const BreathingScreen();
-              case 'profile':
-                return const JunerlismScreen();             
-              default:
-                return const GoalTrackerExcerises();
-            }
-          },
-        ),
-        
-        // Other pages that can be accessed from drawer/side menu
-        GoRoute(
-          path: '${RouteNames.mainApp}/${RouteNames.page1}',
-          builder: (context, state) => const GoalTrackerExcerises(),
+          path: '${RouteNames.mainApp}/${RouteNames.home}',
+          builder: (context, state) => const TalkToLiteScreen(),
         ),
         GoRoute(
-          path: '${RouteNames.mainApp}/${RouteNames.page2}',
+          path: '${RouteNames.mainApp}/${RouteNames.talkToLight}',
+          builder: (context, state) => const TalkToLiteScreen(),
+        ),
+        GoRoute(
+          path: '${RouteNames.mainApp}/${RouteNames.junerlism}',
           builder: (context, state) => const JunerlismScreen(),
+        ),
+        GoRoute(
+          path: '${RouteNames.mainApp}/${RouteNames.breathingExercise}',
+          builder: (context, state) => const BreathingScreen(),
+        ),
+        GoRoute(
+          path: '${RouteNames.mainApp}/${RouteNames.goalTracker}',
+          builder: (context, state) => const GoalTrackerExcerises(),
         ),
       ],
     ),
