@@ -69,6 +69,14 @@ class _MainScreenState extends State<MainScreen> {
               Navigator.pop(context);
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: const Text('Logout'),
+            onTap: () {
+              context.go('${RouteNames.mainApp}/${RouteNames.logout}');
+              Navigator.pop(context);
+            },
+          ),
         ],
       ),
     );

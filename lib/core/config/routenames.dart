@@ -5,6 +5,7 @@ class RouteNames {
   static const register = '/register';
   static const forgotPassword = '/forgot-password';
   static const resetPassword = '/reset-password';
+  static const logout = '/logout';
 
   // Main app structure
   static const mainApp = '/main';

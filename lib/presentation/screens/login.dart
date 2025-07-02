@@ -134,7 +134,9 @@ class _LoginPageState extends State<LoginPage> {
                   // Signup Link (Optional)
                   TextButton(
                     onPressed: () {
-                      context.goNamed('register');
+                      GoRouter.of(
+                        context,
+                      ).go('${RouteNames.register}');
                     },
                     child: Text('Don’t have an account? Sign Up'),
                   ),

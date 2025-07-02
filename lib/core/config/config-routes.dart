@@ -35,6 +35,10 @@ final router = GoRouter(
       path: RouteNames.resetPassword,
       builder: (context, state) => const ResetPasswordScreen(),
     ),
+    GoRoute(
+      path: RouteNames.logout,
+      builder: (context, state) => const Login(),
+    ),
     
     // Main app structure with nested routes
     ShellRoute(
