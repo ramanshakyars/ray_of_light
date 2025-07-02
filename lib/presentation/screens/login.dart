@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rayoflite/app_routing.dart';
 import 'package:rayoflite/routenames.dart';
 
 void main() {
