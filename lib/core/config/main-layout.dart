@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rayoflite/routenames.dart';
+import 'package:rayoflite/core/config/routenames.dart';
 
 class MainScreen extends StatefulWidget {
   final Widget child;

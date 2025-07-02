@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rayoflite/config-routes.dart';
+import 'package:rayoflite/core/config/config-routes.dart';
 
 void main() {
   runApp(const MyApp());

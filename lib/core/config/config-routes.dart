@@ -1,5 +1,5 @@
 import 'package:go_router/go_router.dart';
-import 'package:rayoflite/main-layout.dart';
+import 'package:rayoflite/core/config/main-layout.dart';
 import 'package:rayoflite/presentation/screens/features/breathing.dart';
 import 'package:rayoflite/presentation/screens/features/goal-tracker.dart';
 import 'package:rayoflite/presentation/screens/features/junerlism.dart';
@@ -8,7 +8,7 @@ import 'package:rayoflite/presentation/screens/forget-password.dart';
 import 'package:rayoflite/presentation/screens/login.dart';
 import 'package:rayoflite/presentation/screens/register.dart';
 import 'package:rayoflite/presentation/screens/reset-password.dart';
-import 'package:rayoflite/routenames.dart';
+import 'package:rayoflite/core/config/routenames.dart';
 
 
 final router = GoRouter(
