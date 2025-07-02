@@ -51,13 +51,13 @@ class _MainScreenState extends State<MainScreen> {
           });
           switch (index) {
             case 0:
-              context.go('/${RouteNames.mainApp}/home');
+              context.go('${RouteNames.mainApp}/home');
               break;
             case 1:
-              context.go('/${RouteNames.mainApp}/search');
+              context.go('${RouteNames.mainApp}/search');
               break;
             case 2:
-              context.go('/${RouteNames.mainApp}/profile');
+              context.go('${RouteNames.mainApp}/profile');
               break;
           }
         },
