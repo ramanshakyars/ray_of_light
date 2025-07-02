@@ -44,6 +44,10 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  void _forgotPassword() {    
+    MessageService.showInfo(context, 'Password reset link sent to your email');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -121,7 +125,24 @@ class _LoginPageState extends State<LoginPage> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 20),
+                  // Forgot Password Link
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed:(){
+                          GoRouter.of(
+                        context,
+                      ).go('${RouteNames.forgotPassword}');
+                      },
+                      child: Text(
+                        'Forgot Password?',
+                        style: TextStyle(
+                          color: Colors.blue, // You can use your theme color here
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10), // Reduced spacing since we have the forgot password link
                   // Login Button
                   ElevatedButton(
                     onPressed: _login,
