@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/services/messageService.dart';
 
 void main() {
   runApp(Login());
@@ -35,12 +36,10 @@ class _LoginPageState extends State<LoginPage> {
 
   void _login() async {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Login Successful!')));
-      await Future.delayed(Duration(milliseconds: 1500)); 
+      MessageService.showSuccess(context, 'Login Successfull !');
+      await Future.delayed(Duration(milliseconds: 1500));
       if (mounted) {
-        GoRouter.of(context).go('${RouteNames.mainApp}/home');
+        GoRouter.of(context).go('${RouteNames.mainApp}/${RouteNames.home}');
       }
     }
   }
