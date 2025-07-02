@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rayoflite/app_routing.dart'; // 👈 make sure this file has your GoRouter setup
+import 'package:rayoflite/config-routes.dart';
+ // 👈 make sure this file has your GoRouter setup
 
 void main() {
   runApp(const MyApp());

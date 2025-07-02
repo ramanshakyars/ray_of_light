@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rayoflite/app_routing.dart';
+import 'package:rayoflite/routenames.dart';
 
 void main() {
   runApp(Login());
@@ -9,10 +12,7 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: LoginPage(),
-    );
+    return MaterialApp(debugShowCheckedModeBanner: false, home: LoginPage());
   }
 }
 
@@ -34,13 +34,15 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _login() {
+  void _login() async {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login Successful!')),
-      );
-      print('Email: ${_emailController.text}');
-      print('Password: ${_passwordController.text}');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Login Successful!')));
+      await Future.delayed(Duration(milliseconds: 1500)); 
+      if (mounted) {
+        GoRouter.of(context).go('${RouteNames.mainApp}/home');
+      }
     }
   }
 
@@ -58,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
-                color: Colors.blueAccent,
+                color: const Color.fromARGB(255, 0, 0, 0),
               ),
             ),
             SizedBox(height: 40),
@@ -134,7 +136,7 @@ class _LoginPageState extends State<LoginPage> {
                   // Signup Link (Optional)
                   TextButton(
                     onPressed: () {
-                      // Navigate to signup page
+                      context.goNamed('register');
                     },
                     child: Text('Don’t have an account? Sign Up'),
                   ),
