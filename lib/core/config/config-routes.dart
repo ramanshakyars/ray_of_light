@@ -5,6 +5,7 @@ import 'package:rayoflite/presentation/screens/features/goal-tracker.dart';
 import 'package:rayoflite/presentation/screens/features/junerlism.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-light.dart';
 import 'package:rayoflite/presentation/screens/forget-password.dart';
+import 'package:rayoflite/presentation/screens/landing-page.dart';
 import 'package:rayoflite/presentation/screens/login.dart';
 import 'package:rayoflite/presentation/screens/register.dart';
 import 'package:rayoflite/presentation/screens/reset-password.dart';
@@ -12,12 +13,12 @@ import 'package:rayoflite/core/config/routenames.dart';
 
 
 final router = GoRouter(
-  initialLocation: RouteNames.landing,
+  initialLocation: RouteNames.lsndingPage,
   routes: [
     // Initial routes
     GoRoute(
-      path: RouteNames.landing,
-      builder: (context, state) => const Login(),
+      path: RouteNames.lsndingPage,
+      builder: (context, state) => const LandingPage(),
     ),
     GoRoute(
       path: RouteNames.login,
@@ -59,7 +60,7 @@ final router = GoRouter(
         ),
         GoRoute(
           path: '${RouteNames.mainApp}/${RouteNames.breathingExercise}',
-          builder: (context, state) => const BreathingScreen(),
+          builder: (context, state) => BreathingScreen(),
         ),
         GoRoute(
           path: '${RouteNames.mainApp}/${RouteNames.goalTracker}',

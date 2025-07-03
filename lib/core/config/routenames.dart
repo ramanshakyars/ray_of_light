@@ -1,11 +1,11 @@
 class RouteNames {
   // Initial routes
-  static const landing = '/';
   static const login = '/login';
   static const register = '/register';
   static const forgotPassword = '/forgot-password';
   static const resetPassword = '/reset-password';
   static const logout = '/logout';
+  static const lsndingPage = '/landing-page';
 
   // Main app structure
   static const mainApp = '/main';
