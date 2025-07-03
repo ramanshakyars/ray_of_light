@@ -4,6 +4,7 @@ import 'package:rayoflite/presentation/screens/features/breathing.dart';
 import 'package:rayoflite/presentation/screens/features/goal-tracker.dart';
 import 'package:rayoflite/presentation/screens/features/junerlism.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-light.dart';
+import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat_screen.dart';
 import 'package:rayoflite/presentation/screens/forget-password.dart';
 import 'package:rayoflite/presentation/screens/landing-page.dart';
 import 'package:rayoflite/presentation/screens/login.dart';
@@ -52,7 +53,7 @@ final router = GoRouter(
         ),
         GoRoute(
           path: '${RouteNames.mainApp}/${RouteNames.talkToLight}',
-          builder: (context, state) => const TalkToLiteScreen(),
+          builder: (context, state) => ChatScreen(),
         ),
         GoRoute(
           path: '${RouteNames.mainApp}/${RouteNames.junerlism}',
