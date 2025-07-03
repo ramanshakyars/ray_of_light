@@ -1,40 +1,23 @@
-// import 'package:flutter/material.dart';
-
-// class BreathingScreen extends StatelessWidget {
-//   const BreathingScreen({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Breathing Exercises'),
-//         centerTitle: true,
-//       ),
-//       body: const Center(
-//         child: Text(''),
-//       ),
-//     );
-//   }
-// }
-
-
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:math';
 
 class BreathingScreen extends StatefulWidget {
   @override
   _BreathingScreenState createState() => _BreathingScreenState();
 }
 
-class _BreathingScreenState extends State<BreathingScreen> with SingleTickerProviderStateMixin {
+class _BreathingScreenState extends State<BreathingScreen> 
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   Timer? _holdTimer;
   String _instruction = "INHALE";
-  double _dotPosition = 0;
+  double _angle = 0; // Angle for circular position
   Duration _duration = Duration(seconds: 4);
   Duration _holdDuration = Duration(seconds: 0);
   Duration _totalDuration = Duration.zero;
+  final double _circleRadius = 120; // Radius of the circular path
 
   @override
   void initState() {
@@ -49,7 +32,8 @@ class _BreathingScreenState extends State<BreathingScreen> with SingleTickerProv
 
   void _updateAnimation() {
     setState(() {
-      _dotPosition = _animation.value;
+      // Convert linear animation value (0-1) to angle (0-2π)
+      _angle = 2 * pi * _animation.value;
     });
   }
 
@@ -72,7 +56,7 @@ class _BreathingScreenState extends State<BreathingScreen> with SingleTickerProv
           _instruction = "EXHALE";
         });
         
-        // Exhale animation
+        // Exhale animation (reverse direction)
         _animation = Tween<double>(begin: 1, end: 0).animate(
           CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
         );
@@ -98,6 +82,10 @@ class _BreathingScreenState extends State<BreathingScreen> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
+    // Calculate dot position based on angle
+    final dotX = _circleRadius * cos(_angle);
+    final dotY = _circleRadius * sin(_angle);
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Center(
@@ -115,20 +103,29 @@ class _BreathingScreenState extends State<BreathingScreen> with SingleTickerProv
             ),
             SizedBox(height: 40),
             
-            // Breathing track
+            // Circular breathing track
             Container(
-              width: 40,
-              height: 300,
-              decoration: BoxDecoration(
-                color: Colors.grey[800],
-                borderRadius: BorderRadius.circular(20),
-              ),
+              width: _circleRadius * 2 + 40,
+              height: _circleRadius * 2 + 40,
               child: Stack(
+                alignment: Alignment.center,
                 children: [
+                  // Circular path
+                  Container(
+                    width: _circleRadius * 2,
+                    height: _circleRadius * 2,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.grey[800]!,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                  
                   // Breathing dot
-                  Positioned(
-                    top: _dotPosition * 260, // 300 - 40 (dot height)
-                    left: 0,
+                  Transform.translate(
+                    offset: Offset(dotX, dotY),
                     child: Container(
                       width: 40,
                       height: 40,
