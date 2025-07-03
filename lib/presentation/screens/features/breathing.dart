@@ -7,67 +7,78 @@ class BreathingScreen extends StatefulWidget {
   _BreathingScreenState createState() => _BreathingScreenState();
 }
 
-class _BreathingScreenState extends State<BreathingScreen> 
+class _BreathingScreenState extends State<BreathingScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   Timer? _holdTimer;
   String _instruction = "INHALE";
-  double _angle = 0; // Angle for circular position
+  double _angle = 0;
   Duration _duration = Duration(seconds: 4);
-  Duration _holdDuration = Duration(seconds: 0);
   Duration _totalDuration = Duration.zero;
-  final double _circleRadius = 120; // Radius of the circular path
+  final double _circleRadius = 140;
+  Color _dotColor = Colors.tealAccent;
+  double _dotSize = 40.0;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: _duration,
-    )..addListener(_updateAnimation);
+    _controller = AnimationController(vsync: this, duration: _duration)
+      ..addListener(_updateAnimation);
 
     _startBreathingCycle();
   }
 
   void _updateAnimation() {
     setState(() {
-      // Convert linear animation value (0-1) to angle (0-2π)
       _angle = 2 * pi * _animation.value;
+
+      // Add pulse effect during hold
+      if (_instruction == "HOLD") {
+        _dotSize = 40.0 + 10.0 * sin(pi * DateTime.now().millisecond / 500);
+      } else {
+        _dotSize = 40.0;
+      }
     });
   }
 
   void _startBreathingCycle() {
     // Inhale animation
-    _animation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-    
+    _animation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
+    setState(() {
+      _instruction = "INHALE";
+      _dotColor = Colors.tealAccent;
+    });
+
     _controller.reset();
     _controller.forward().then((_) {
       setState(() {
         _instruction = "HOLD";
-        _holdDuration = Duration.zero;
+        _dotColor = Colors.orangeAccent;
       });
-      
+
       // Hold for 2 seconds
       _holdTimer = Timer(Duration(seconds: 2), () {
         setState(() {
           _instruction = "EXHALE";
+          _dotColor = Colors.purpleAccent;
         });
-        
-        // Exhale animation (reverse direction)
+
+        // Exhale animation
         _animation = Tween<double>(begin: 1, end: 0).animate(
           CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
         );
-        
+
         _controller.reset();
         _controller.forward().then((_) {
           setState(() {
             _totalDuration += _duration * 2 + Duration(seconds: 2);
-            _instruction = "INHALE";
           });
-          _startBreathingCycle(); // Repeat the cycle
+          _startBreathingCycle(); // Repeat cycle
         });
       });
     });
@@ -82,62 +93,89 @@ class _BreathingScreenState extends State<BreathingScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Calculate dot position based on angle
     final dotX = _circleRadius * cos(_angle);
     final dotY = _circleRadius * sin(_angle);
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color.fromARGB(255, 51, 50, 50),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Instruction text
-            Text(
-              _instruction,
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+            // Instruction with emoji
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: _instruction,
+                    style: TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      color: _dotColor,
+                    ),
+                  ),
+                  WidgetSpan(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 10),
+                      child: Icon(
+                        _instruction == "INHALE"
+                            ? Icons.arrow_upward
+                            : _instruction == "EXHALE"
+                            ? Icons.arrow_downward
+                            : Icons.pause,
+                        color: _dotColor,
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             SizedBox(height: 40),
-            
-            // Circular breathing track
+
+            // Circular breathing track with gradient
             Container(
-              width: _circleRadius * 2 + 40,
-              height: _circleRadius * 2 + 40,
+              width: _circleRadius * 2 + 60,
+              height: _circleRadius * 2 + 60,
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  // Circular path
                   Container(
                     width: _circleRadius * 2,
                     height: _circleRadius * 2,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
+                      gradient: SweepGradient(
+                        colors: [
+                          Colors.teal.withOpacity(0.3),
+                          Colors.blue.withOpacity(0.1),
+                          Colors.purple.withOpacity(0.3),
+                        ],
+                        stops: [0.0, 0.5, 1.0],
+                      ),
                       border: Border.all(
-                        color: Colors.grey[800]!,
-                        width: 2,
+                        color: Colors.white.withOpacity(0.2),
+                        width: 1,
                       ),
                     ),
                   ),
-                  
-                  // Breathing dot
+
+                  // Breathing dot with animated size
                   Transform.translate(
                     offset: Offset(dotX, dotY),
-                    child: Container(
-                      width: 40,
-                      height: 40,
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 200),
+                      width: _dotSize,
+                      height: _dotSize,
                       decoration: BoxDecoration(
-                        color: Colors.tealAccent,
+                        color: _dotColor,
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.tealAccent.withOpacity(0.5),
-                            blurRadius: 10,
+                            color: _dotColor.withOpacity(0.5),
+                            blurRadius: 15,
                             spreadRadius: 3,
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -146,36 +184,53 @@ class _BreathingScreenState extends State<BreathingScreen>
               ),
             ),
             SizedBox(height: 40),
-            
-            // Duration display
+
+            // Duration with fancy text
             Text(
-              "Duration: ${_totalDuration.inSeconds} seconds",
+              "⏱️ ${_totalDuration.inSeconds} seconds",
               style: TextStyle(
-                fontSize: 18,
-                color: Colors.white,
+                fontSize: 20,
+                color: Colors.white70,
+                letterSpacing: 1.2,
               ),
             ),
-            
-            // Start/Stop button
+
+            // Control buttons
             SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {
-                if (_controller.isAnimating) {
-                  _controller.stop();
-                  _holdTimer?.cancel();
-                  setState(() {});
-                } else {
-                  _startBreathingCycle();
-                }
-              },
-              child: Text(
-                _controller.isAnimating ? "PAUSE" : "RESUME",
-                style: TextStyle(fontSize: 18),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FloatingActionButton(
+                  onPressed: () {
+                    if (_controller.isAnimating) {
+                      _controller.stop();
+                      _holdTimer?.cancel();
+                      setState(() {});
+                    } else {
+                      _startBreathingCycle();
+                    }
+                  },
+                  backgroundColor: _dotColor,
+                  child: Icon(
+                    _controller.isAnimating ? Icons.pause : Icons.play_arrow,
+                    size: 30,
+                  ),
+                ),
+                SizedBox(width: 20),
+                FloatingActionButton(
+                  onPressed: () {
+                    _controller.reset();
+                    _holdTimer?.cancel();
+                    setState(() {
+                      _totalDuration = Duration.zero;
+                      _instruction = "INHALE";
+                      _angle = 0;
+                    });
+                  },
+                  backgroundColor: Colors.grey[800],
+                  child: Icon(Icons.replay, size: 30),
+                ),
+              ],
             ),
           ],
         ),
