@@ -163,12 +163,19 @@ class _LandingPageState extends State<LandingPage>
                 color: Colors.orange,
                 delay: 0.6,
               ),
+              _buildFeatureCard(
+                icon: Icons.self_improvement, // Perfect for self-improvement!
+                title: "Daily Challenges",
+                description: "Boost your growth with small, achievable tasks",
+                color: Colors.purple, // or Colors.indigo
+                delay: 0.8,
+              ),
               const SizedBox(height: 40),
               // Animated CTA button
               Center(
                 child: AnimatedButton(
                   onPressed: () {
-                    GoRouter.of(context).go('/register');
+                    GoRouter.of(context).go('/login');
                   },
                   label: "Start Your Journey",
                 ),
