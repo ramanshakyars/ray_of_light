@@ -163,7 +163,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   // Login Link
                   TextButton(
                     onPressed: () {
-                      GoRouter.of(context).go(RouteNames.login);
+                      GoRouter.of(context).push(RouteNames.login);
                     },
                     child: Text('Already have an account? Login'),
                   ),
