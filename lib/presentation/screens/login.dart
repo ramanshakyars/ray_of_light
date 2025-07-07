@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void _forgotPassword() {    
+  void _forgotPassword() {
     MessageService.showInfo(context, 'Password reset link sent to your email');
   }
 
@@ -83,15 +83,15 @@ class _LoginPageState extends State<LoginPage> {
                       prefixIcon: Icon(Icons.email),
                       border: OutlineInputBorder(),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      if (!value.contains('@')) {
-                        return 'Enter a valid email';
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty) {
+                    //     return 'Please enter your email';
+                    //   }
+                    //   if (!value.contains('@')) {
+                    //     return 'Enter a valid email';
+                    //   }
+                    //   return null;
+                    // },
                   ),
                   SizedBox(height: 15),
                   // Password Field
@@ -115,34 +115,35 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       border: OutlineInputBorder(),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty) {
+                    //     return 'Please enter your password';
+                    //   }
+                    //   if (value.length < 6) {
+                    //     return 'Password must be at least 6 characters';
+                    //   }
+                    //   return null;
+                    // },
                   ),
                   // Forgot Password Link
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed:(){
-                          GoRouter.of(
-                        context,
-                      ).go('${RouteNames.forgotPassword}');
+                      onPressed: () {
+                        GoRouter.of(context).push(RouteNames.forgotPassword);
                       },
                       child: Text(
                         'Forgot Password?',
                         style: TextStyle(
-                          color: Colors.blue, // You can use your theme color here
+                          color:
+                              Colors.blue, // You can use your theme color here
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 10), // Reduced spacing since we have the forgot password link
+                  SizedBox(
+                    height: 10,
+                  ), // Reduced spacing since we have the forgot password link
                   // Login Button
                   ElevatedButton(
                     onPressed: _login,
@@ -155,9 +156,7 @@ class _LoginPageState extends State<LoginPage> {
                   // Signup Link (Optional)
                   TextButton(
                     onPressed: () {
-                      GoRouter.of(
-                        context,
-                      ).go('${RouteNames.register}');
+                      GoRouter.of(context).push(RouteNames.register);
                     },
                     child: Text('Don’t have an account? Sign Up'),
                   ),

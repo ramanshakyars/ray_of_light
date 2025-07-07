@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rayoflite/core/config/routenames.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -79,7 +80,7 @@ class _LandingPageState extends State<LandingPage>
                   scale: 1 + 0.05 * _controller.value,
                   child: FloatingActionButton(
                     onPressed: () {
-                      GoRouter.of(context).go('/login');
+                       GoRouter.of(context).push('/login');
                     },
                     backgroundColor: Colors.deepPurple,
                     child: const Icon(Icons.person, color: Colors.white),
@@ -175,7 +176,7 @@ class _LandingPageState extends State<LandingPage>
               Center(
                 child: AnimatedButton(
                   onPressed: () {
-                    GoRouter.of(context).go('/login');
+                    GoRouter.of(context).push('/login');
                   },
                   label: "Start Your Journey",
                 ),

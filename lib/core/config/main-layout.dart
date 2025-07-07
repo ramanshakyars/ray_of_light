@@ -65,7 +65,7 @@ class _MainScreenState extends State<MainScreen> {
             leading: const Icon(Icons.track_changes),
             title: const Text('Goal Tracker'),
             onTap: () {
-              context.go('${RouteNames.mainApp}/${RouteNames.goalTracker}');
+              context.push('${RouteNames.mainApp}/${RouteNames.goalTracker}');
               Navigator.pop(context);
             },
           ),
@@ -73,7 +73,7 @@ class _MainScreenState extends State<MainScreen> {
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
             onTap: () {
-              context.go('${RouteNames.mainApp}/${RouteNames.logout}');
+              context.push('${RouteNames.login}');
               Navigator.pop(context);
             },
           ),
@@ -86,7 +86,7 @@ class _MainScreenState extends State<MainScreen> {
     return BottomNavigationBar(
       currentIndex: _currentIndex,
       onTap: (index) => _navigateToTab(context, index),
-      type: BottomNavigationBarType.fixed, // For more than 3 items
+      type: BottomNavigationBarType.fixed,
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
         BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Talk'),
@@ -106,23 +106,15 @@ class _MainScreenState extends State<MainScreen> {
   void _navigateToTab(BuildContext context, int index) {
     setState(() => _currentIndex = index);
 
-    switch (index) {
-      case 0:
-        context.go('${RouteNames.mainApp}/${RouteNames.home}');
-        break;
-      case 1:
-        context.go('${RouteNames.mainApp}/${RouteNames.talkToLight}');
-        break;
-      case 2:
-        context.go('${RouteNames.mainApp}/${RouteNames.junerlism}');
-        break;
-      case 3:
-        context.go('${RouteNames.mainApp}/${RouteNames.breathingExercise}');
-        break;
-      case 4:
-        context.go('${RouteNames.mainApp}/${RouteNames.goalTracker}');
-        break;
-    }
+    final routes = [
+      RouteNames.home,
+      RouteNames.talkToLight,
+      RouteNames.junerlism,
+      RouteNames.breathingExercise,
+      RouteNames.goalTracker,
+    ];
+    
+    context.push('${RouteNames.mainApp}/${routes[index]}');
 
     if (Scaffold.of(context).isDrawerOpen) {
       Navigator.pop(context);

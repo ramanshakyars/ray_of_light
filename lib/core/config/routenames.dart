@@ -4,8 +4,8 @@ class RouteNames {
   static const register = '/register';
   static const forgotPassword = '/forgot-password';
   static const resetPassword = '/reset-password';
-  static const logout = '/logout';
-  static const lsndingPage = '/landing-page';
+  static const logout = '/login';
+  static const landingPage  = '/landing-page';
 
   // Main app structure
   static const mainApp = '/main';
