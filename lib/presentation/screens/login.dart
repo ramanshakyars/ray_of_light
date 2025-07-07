@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/services/messageService.dart';
 
 void main() {
   runApp(Login());
@@ -9,10 +12,7 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: LoginPage(),
-    );
+    return MaterialApp(debugShowCheckedModeBanner: false, home: LoginPage());
   }
 }
 
@@ -34,14 +34,18 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _login() {
+  void _login() async {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login Successful!')),
-      );
-      print('Email: ${_emailController.text}');
-      print('Password: ${_passwordController.text}');
+      MessageService.showSuccess(context, 'Login Successfull !');
+      await Future.delayed(Duration(milliseconds: 1500));
+      if (mounted) {
+        GoRouter.of(context).go('${RouteNames.mainApp}/${RouteNames.home}');
+      }
     }
+  }
+
+  void _forgotPassword() {
+    MessageService.showInfo(context, 'Password reset link sent to your email');
   }
 
   @override
@@ -58,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
-                color: Colors.blueAccent,
+                color: const Color.fromARGB(255, 0, 0, 0),
               ),
             ),
             SizedBox(height: 40),
@@ -121,7 +125,25 @@ class _LoginPageState extends State<LoginPage> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 20),
+                  // Forgot Password Link
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {
+                        GoRouter.of(context).push(RouteNames.forgotPassword);
+                      },
+                      child: Text(
+                        'Forgot Password?',
+                        style: TextStyle(
+                          color:
+                              Colors.blue, // You can use your theme color here
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ), // Reduced spacing since we have the forgot password link
                   // Login Button
                   ElevatedButton(
                     onPressed: _login,
@@ -134,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
                   // Signup Link (Optional)
                   TextButton(
                     onPressed: () {
-                      // Navigate to signup page
+                      GoRouter.of(context).push(RouteNames.register);
                     },
                     child: Text('Don’t have an account? Sign Up'),
                   ),
