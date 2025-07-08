@@ -35,33 +35,29 @@ class _ChatScreenState extends State<ChatScreen> {
 
     // Add user message
     setState(() {
-      _messages.add(ChatMessage(
-        text: message,
-        isUser: true,
-      ));
+      _messages.add(ChatMessage(text: message, isUser: true));
       _isLoading = true;
     });
 
     try {
       // Call your AI model API
       final response = await ApiService.sendMessage(message);
-      
+
       // Add AI response
       setState(() {
-        _messages.add(ChatMessage(
-          text: response,
-          isUser: false,
-        ));
+        _messages.add(ChatMessage(text: response, isUser: false));
       });
 
       // Read response aloud
       await _tts.speak(response);
     } catch (e) {
       setState(() {
-        _messages.add(ChatMessage(
-          text: "Sorry, I encountered an error. Please try again.",
-          isUser: false,
-        ));
+        _messages.add(
+          ChatMessage(
+            text: "Sorry, I encountered an error. Please try again.",
+            isUser: false,
+          ),
+        );
       });
     } finally {
       setState(() => _isLoading = false);
