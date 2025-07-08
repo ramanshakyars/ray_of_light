@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 class InputArea extends StatelessWidget {
   final TextEditingController controller;
@@ -37,26 +38,41 @@ class InputArea extends StatelessWidget {
                 ),
               ),
             ),
-            // Light Bulb Icon (with send functionality)
+            // Light Bulb Icon with rotation animation when loading
             Container(
               margin: EdgeInsets.only(right: 8),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
-                  colors: [Color.fromARGB(255, 176, 188, 190), Color(0xFF0083B0)],
+                  colors: [
+                    Color.fromARGB(255, 176, 188, 190),
+                    Color(0xFF0083B0),
+                  ],
                 ),
               ),
               child: IconButton(
-                icon: isLoading
-                    ? SizedBox(
-                        width: 15,
-                        height: 15,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : Icon(Icons.lightbulb_outline, color: Colors.white),
+                icon:
+                    isLoading
+                        ? RotationTransition(
+                          turns: AlwaysStoppedAnimation(
+                            45 / 360,
+                          ), // Initial rotation
+                          child: AnimatedRotation(
+                            duration: Duration(seconds: 1),
+                            turns: 1,
+                            child: Icon(
+                              Icons.lightbulb_outline,
+                              color: Colors.white,
+                            ),
+                            onEnd: () {
+                              // This will keep the animation looping
+                              if (isLoading) {
+                                (context as Element).markNeedsBuild();
+                              }
+                            },
+                          ),
+                        )
+                        : Icon(Icons.lightbulb_outline, color: Colors.white),
                 onPressed: isLoading ? null : onSend,
               ),
             ),

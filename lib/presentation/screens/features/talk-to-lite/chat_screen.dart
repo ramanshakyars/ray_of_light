@@ -4,6 +4,8 @@ import 'chat_message.dart';
 import 'typing_indicator.dart';
 import 'input_area.dart';
 import 'api_service.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 class ChatScreen extends StatefulWidget {
   @override
@@ -38,6 +40,9 @@ class _ChatScreenState extends State<ChatScreen> {
       _messages.add(ChatMessage(text: message, isUser: true));
       _isLoading = true;
     });
+
+    // Simulate API delay
+    await Future.delayed(Duration(seconds: 2));
 
     try {
       // Call your AI model API
