@@ -25,7 +25,7 @@ class ChatMessage extends StatelessWidget {
               ),
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isUser ? Color(0xFF0083B0) : Color(0xFF0F3460),
+                // color: isUser ? Color(0xFF0083B0) : Color(0xFF0F3460),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(isUser ? 12 : 0),
                   topRight: Radius.circular(isUser ? 0 : 12),
@@ -58,10 +58,10 @@ class ChatMessage extends StatelessWidget {
   Widget _buildUserAvatar() {
     return Container(
       margin: EdgeInsets.only(left: 8),
-      child: CircleAvatar(
-        backgroundColor: Color(0xFF00B4DB),
-        child: Icon(Icons.person, color: Colors.white),
-      ),
+      // child: CircleAvatar(
+      //   backgroundColor: Color(0xFF00B4DB),
+      //   child: Icon(Icons.person, color: Colors.white),
+      // ),
     );
   }
 }
