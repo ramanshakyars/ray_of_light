@@ -56,16 +56,35 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Page Title
-            Text(
-              'Ray of Light',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: const Color.fromARGB(255, 0, 0, 0),
-              ),
+            // Logo and Title
+            Column(
+              children: [
+                // Add your logo image here (make sure it's in your assets folder)
+                Image.asset(
+                  'assets/logo.png', // Update with your actual image path
+                  height: 80, // Adjust size as needed
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'Ray of Light',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: const Color.fromARGB(255, 0, 0, 0),
+                  ),
+                ),
+                SizedBox(height: 5),
+                Text(
+                  'We are here to help you to be better than yesterday',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 30),
             Form(
               key: _formKey,
               child: Column(
@@ -135,15 +154,12 @@ class _LoginPageState extends State<LoginPage> {
                       child: Text(
                         'Forgot Password?',
                         style: TextStyle(
-                          color:
-                              Colors.blue, // You can use your theme color here
+                          color: Colors.blue,
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 10,
-                  ), // Reduced spacing since we have the forgot password link
+                  SizedBox(height: 10),
                   // Login Button
                   ElevatedButton(
                     onPressed: _login,
@@ -158,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {
                       GoRouter.of(context).push(RouteNames.register);
                     },
-                    child: Text('Don’t have an account? Sign Up'),
+                   child: Text('Don’t have an account? Sign Up'),
                   ),
                 ],
               ),

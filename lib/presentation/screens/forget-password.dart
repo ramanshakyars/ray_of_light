@@ -57,10 +57,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       return;
     }
     if (_newPasswordController.text.length < 6) {
-      MessageService.showError(context, 'Password must be at least 6 characters');
+      MessageService.showError(
+        context,
+        'Password must be at least 6 characters',
+      );
       return;
     }
-    
+
     MessageService.showSuccess(context, 'Password reset successfully');
     Future.delayed(const Duration(milliseconds: 1500), () {
       if (mounted) {
@@ -83,14 +86,31 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  'Ray of Light',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: const Color.fromRGBO(0, 0, 0, 1),
-                  ),
+                Column(
+                  children: [
+                    // Add your logo image here (make sure it's in your assets folder)
+                    Image.asset(
+                      'assets/logo.png', // Update with your actual image path
+                      height: 80, // Adjust size as needed
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Ray of Light',
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: const Color.fromARGB(255, 0, 0, 0),
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      'We are here to help you to be better than yesterday',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    ),
+                  ],
                 ),
+
                 const SizedBox(height: 40),
                 Form(
                   key: _formKey,
@@ -98,12 +118,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        _isOtpVerified ? 'Reset Password' : 
-                        _isOtpSent ? 'Verify OTP' : 'Forgot Password',
-                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        _isOtpVerified
+                            ? 'Reset Password'
+                            : _isOtpSent
+                            ? 'Verify OTP'
+                            : 'Forgot Password',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 20),
-                      
+
                       // Email Field (shown initially and hidden after OTP verification)
                       if (!_isOtpVerified) ...[
                         TextFormField(
@@ -125,7 +151,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ),
                         const SizedBox(height: 15),
                       ],
-                      
+
                       // OTP Field (shown after OTP is sent)
                       if (_isOtpSent && !_isOtpVerified) ...[
                         TextFormField(
@@ -148,7 +174,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ),
                         const SizedBox(height: 15),
                       ],
-                      
+
                       // New Password Field (shown after OTP verification)
                       if (_isOtpVerified) ...[
                         TextFormField(
@@ -182,7 +208,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           },
                         ),
                         const SizedBox(height: 15),
-                        
+
                         // Confirm Password Field
                         TextFormField(
                           controller: _confirmPasswordController,
@@ -198,7 +224,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               ),
                               onPressed: () {
                                 setState(() {
-                                  _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                                  _isConfirmPasswordVisible =
+                                      !_isConfirmPasswordVisible;
                                 });
                               },
                             ),
@@ -216,31 +243,32 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ),
                         const SizedBox(height: 15),
                       ],
-                      
+
                       const SizedBox(height: 20),
-                      
+
                       // Action Button (changes based on state)
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: _isOtpVerified
-                              ? _resetPassword
-                              : _isOtpSent
+                          onPressed:
+                              _isOtpVerified
+                                  ? _resetPassword
+                                  : _isOtpSent
                                   ? _verifyOtp
                                   : _sendOtp,
                           child: Text(
                             _isOtpVerified
                                 ? 'Reset Password'
                                 : _isOtpSent
-                                    ? 'Verify OTP'
-                                    : 'Send OTP',
+                                ? 'Verify OTP'
+                                : 'Send OTP',
                             style: const TextStyle(fontSize: 16),
                           ),
                         ),
                       ),
-                      
+
                       const SizedBox(height: 10),
-                      
+
                       // Back to Login Link
                       TextButton(
                         onPressed: () {

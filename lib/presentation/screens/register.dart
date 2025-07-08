@@ -46,13 +46,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Page Title
-            Text(
-              'Ray of Light',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: const Color.fromARGB(255, 0, 0, 0),
-              ),
+            Column(
+              children: [
+                // Add your logo image here (make sure it's in your assets folder)
+                Image.asset(
+                  'assets/logo.png', // Update with your actual image path
+                  height: 80, // Adjust size as needed
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'Ray of Light',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: const Color.fromARGB(255, 0, 0, 0),
+                  ),
+                ),
+                SizedBox(height: 5),
+                Text(
+                  'We are here to help you to be better than yesterday',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
+              ],
             ),
             SizedBox(height: 40),
             Form(
