@@ -43,11 +43,11 @@ final router = GoRouter(
       routes: [
         GoRoute(
           path: RouteNames.mainApp,
-          builder: (context, state) => const TalkToLiteScreen(),
+          builder: (context, state) => const TalkToLiteScreen(userName: 'Rhythm'),
           routes: [
             GoRoute(
               path: RouteNames.home,
-              builder: (context, state) => const TalkToLiteScreen(),
+              builder: (context, state) => const TalkToLiteScreen(userName: 'Rhythm'),
             ),
             GoRoute(
               path: RouteNames.talkToLight,
