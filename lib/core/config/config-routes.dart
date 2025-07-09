@@ -11,6 +11,7 @@ import 'package:rayoflite/presentation/screens/login.dart';
 import 'package:rayoflite/presentation/screens/register.dart';
 import 'package:rayoflite/presentation/screens/reset-password.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/presentation/welcome-page.dart';
 
 
 final router = GoRouter(
@@ -19,7 +20,7 @@ final router = GoRouter(
     // Landing page route
     GoRoute(
       path: RouteNames.landingPage,
-      builder: (context, state) => const LandingPage(),
+      builder: (context, state) => const WelcomePage(),
     ),
 
     // Auth routes (all top-level)
