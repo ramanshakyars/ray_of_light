@@ -1,9 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'chat_message.dart';
-import 'typing_indicator.dart';
 import 'input_area.dart';
 import 'api_service.dart';
 
@@ -26,7 +27,7 @@ class _ChatScreenState extends State<ChatScreen>
     _initTTS();
     _starController = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 4),
+      duration: Duration(milliseconds: 800), // Faster spin
     )..repeat();
   }
 
@@ -41,30 +42,42 @@ class _ChatScreenState extends State<ChatScreen>
     final message = _textController.text;
     _textController.clear();
 
+    // Add user message & start loading
     setState(() {
       _messages.add(ChatMessage(text: message, isUser: true));
       _isLoading = true;
+      _starController.repeat(); // Start rotating star
     });
 
+    // Simulate API delay (1-3 seconds)
+    final randomDelay = Duration(milliseconds: 1000 + Random().nextInt(2000));
+    await Future.delayed(randomDelay);
+
     try {
-      final response = await ApiService.sendMessage(message);
+      // Simulate different AI responses
+      final responses = [
+        "Great question! Here's what I think about '$message'...",
+        "Interesting! Regarding '$message', my analysis suggests...",
+        "I'd be happy to help! For '$message', consider this...",
+        "Hmm, '$message' is a fascinating topic. My thoughts...",
+      ];
+      final response = responses[Random().nextInt(responses.length)];
 
-      setState(() {
-        _messages.add(ChatMessage(text: response, isUser: false));
-      });
-
-      await _tts.speak(response);
+      // Add AI response
+      setState(() => _messages.add(ChatMessage(text: response, isUser: false)));
+      await _tts.speak(response); // Optional: Text-to-speech
     } catch (e) {
       setState(() {
         _messages.add(
-          ChatMessage(
-            text: "Sorry, I encountered an error. Please try again.",
-            isUser: false,
-          ),
+          ChatMessage(text: "⚠️ Oops! Error: ${e.toString()}", isUser: false),
         );
       });
     } finally {
-      setState(() => _isLoading = false);
+      // Stop loading & animation
+      setState(() {
+        _isLoading = false;
+        _starController.stop();
+      });
     }
   }
 
@@ -80,10 +93,7 @@ class _ChatScreenState extends State<ChatScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          RotationTransition(
-            turns: _starController,
-            child: Icon(Icons.auto_awesome, size: 60, color: Colors.blueAccent),
-          ),
+          Icon(Icons.auto_awesome, size: 60, color: Colors.blueAccent),
           SizedBox(height: 20),
           Container(
             padding: EdgeInsets.all(16),
@@ -115,6 +125,25 @@ class _ChatScreenState extends State<ChatScreen>
                 _buildQuestionSuggestion("Tell me a fun fact"),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          RotationTransition(
+            turns: _starController,
+            child: Icon(Icons.auto_awesome, size: 60, color: Colors.blueAccent),
+          ),
+          SizedBox(height: 16),
+          Text(
+            "Thinking...",
+            style: TextStyle(color: Colors.white70, fontSize: 18),
           ),
         ],
       ),
@@ -172,20 +201,18 @@ class _ChatScreenState extends State<ChatScreen>
       body: Column(
         children: [
           Expanded(
-            child:
-                _messages.isEmpty && !_isLoading
-                    ? _buildWelcomeMessage()
-                    : ListView.builder(
-                      padding: EdgeInsets.all(8),
-                      itemCount: _messages.length + (_isLoading ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (index < _messages.length) {
-                          return _messages[index];
-                        } else {
-                          return TypingIndicator();
-                        }
-                      },
-                    ),
+            child: Stack(
+              children: [
+                if (_messages.isNotEmpty)
+                  ListView.builder(
+                    padding: EdgeInsets.all(8),
+                    itemCount: _messages.length,
+                    itemBuilder: (context, index) => _messages[index],
+                  ),
+                if (_messages.isEmpty && !_isLoading) _buildWelcomeMessage(),
+                if (_isLoading) _buildLoadingIndicator(),
+              ],
+            ),
           ),
           InputArea(
             controller: _textController,
