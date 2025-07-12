@@ -193,7 +193,9 @@ class _ChatScreenState extends State<ChatScreen>
           IconButton(
             icon: Image.asset('assets/logo.png'),
             onPressed: () {
-              GoRouter.of(context).push(RouteNames.home);
+              GoRouter.of(
+                context,
+              ).push('${RouteNames.mainApp}/${RouteNames.home}');
             },
           ),
         ],
