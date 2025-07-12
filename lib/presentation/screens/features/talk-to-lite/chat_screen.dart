@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rayoflite/core/config/routenames.dart';
+// import 'package:rayoflite/presentation/screens/features/talk-to-light.dart';
 import 'chat_message.dart';
 import 'typing_indicator.dart';
 import 'input_area.dart';
 import 'api_service.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter/scheduler.dart';
 
 class ChatScreen extends StatefulWidget {
   @override
@@ -80,9 +83,24 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       backgroundColor: Color(0xFF1A1A2E),
       appBar: AppBar(
-        title: Text('AI Assistant', style: TextStyle(color: Colors.white)),
-        backgroundColor: Color(0xFF16213E),
+        title: Text('Talk to Lite', style: TextStyle(color: Colors.white)),
+        backgroundColor: Color.fromARGB(255, 243, 246, 255),
         elevation: 10,
+        automaticallyImplyLeading: false, // This removes the default back arrow
+        leading: IconButton(
+          icon: Icon(Icons.menu, color: Colors.white),
+          onPressed: () {
+            // Add your menu functionality here
+          },
+        ),
+        actions: [
+          IconButton(
+            icon: Image.asset('assets/logo.png'), // Replace with your logo path
+            onPressed: () {
+              GoRouter.of(context).push(RouteNames.home);
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [

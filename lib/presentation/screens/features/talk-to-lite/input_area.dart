@@ -72,7 +72,7 @@ class InputArea extends StatelessWidget {
                             },
                           ),
                         )
-                        : Icon(Icons.lightbulb_outline, color: Colors.white),
+                        : Icon(Icons.sunny, color: Colors.white),
                 onPressed: isLoading ? null : onSend,
               ),
             ),
