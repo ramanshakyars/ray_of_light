@@ -19,13 +19,13 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        title: const Text('Ray of Light'),
+      // appBar: AppBar(
+        // title: const Text('Ray of Light'),
         // leading: IconButton(
         //   icon: const Icon(Icons.menu),
         //   onPressed: () => _scaffoldKey.currentState?.openDrawer(),
         // ),
-      ),
+      // ),
       // drawer: _buildDrawer(context),
       body: widget.child,
       bottomNavigationBar: _buildBottomNavigationBar(),
