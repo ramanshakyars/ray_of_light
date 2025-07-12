@@ -16,6 +16,10 @@ class JunerlismScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 4,
         automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(Icons.menu, color: const Color.fromARGB(255, 0, 0, 0)),
+          onPressed: () {},
+        ),
         actions: [
           IconButton(
             icon: Image.asset('assets/logo.png'),
