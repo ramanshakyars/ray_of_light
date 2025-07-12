@@ -64,7 +64,7 @@ final router = GoRouter(
             ),
             GoRoute(
               path: RouteNames.goalTracker,
-              builder: (context, state) => const GoalTrackerExcerises(),
+              builder: (context, state) => const GoalTrackerExercises(),
             ),
           ],
         ),
