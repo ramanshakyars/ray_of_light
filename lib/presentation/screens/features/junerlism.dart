@@ -10,7 +10,7 @@ class JunerlismScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Track Your Goals',
+          'Junerlism',
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,

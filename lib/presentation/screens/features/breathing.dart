@@ -102,7 +102,7 @@ class _BreathingScreenState extends State<BreathingScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Track Your Goals',
+          'Breathing Exercise',
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
