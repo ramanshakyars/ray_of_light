@@ -79,7 +79,7 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
     _titleController.clear();
     _descriptionController.clear();
     _targetController.clear();
-    _unitController.clear();
+    // _unitController.clear();
   }
 
   Widget _buildGoalCard(Map<String, dynamic> goal) {
