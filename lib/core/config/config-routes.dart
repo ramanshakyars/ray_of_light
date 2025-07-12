@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/main-layout.dart';
 import 'package:rayoflite/presentation/screens/features/breathing.dart';
-import 'package:rayoflite/presentation/screens/features/goal-tracker.dart';
+import 'package:rayoflite/presentation/screens/features/goal-tracker/goal-tracker.dart';
 import 'package:rayoflite/presentation/screens/features/junerlism.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-light.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat_screen.dart';
