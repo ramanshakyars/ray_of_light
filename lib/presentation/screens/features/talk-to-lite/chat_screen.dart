@@ -84,7 +84,7 @@ class _ChatScreenState extends State<ChatScreen> {
       backgroundColor: Color(0xFF1A1A2E),
       appBar: AppBar(
         title: Text('Talk to Lite', style: TextStyle(color: Colors.white)),
-        backgroundColor: Color.fromARGB(255, 243, 246, 255),
+        backgroundColor: Color.fromARGB(255, 27, 39, 74),
         elevation: 10,
         automaticallyImplyLeading: false, // This removes the default back arrow
         leading: IconButton(
@@ -95,7 +95,7 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         actions: [
           IconButton(
-            icon: Image.asset('assets/logo.png'), // Replace with your logo path
+            icon: Image.asset('assets/logo.png'), 
             onPressed: () {
               GoRouter.of(context).push(RouteNames.home);
             },
