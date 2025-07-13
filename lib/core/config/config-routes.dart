@@ -6,7 +6,7 @@ import 'package:rayoflite/presentation/screens/features/junerlism.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-light.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat_screen.dart';
 import 'package:rayoflite/presentation/screens/forget-password.dart';
-import 'package:rayoflite/presentation/screens/landing-page.dart';
+// import 'package:rayoflite/presentation/screens/landing-page.dart';
 import 'package:rayoflite/presentation/screens/login.dart';
 import 'package:rayoflite/presentation/screens/register.dart';
 import 'package:rayoflite/presentation/screens/reset-password.dart';
@@ -56,7 +56,7 @@ final router = GoRouter(
             ),
             GoRoute(
               path: RouteNames.junerlism,
-              builder: (context, state) => const JunerlismScreen(),
+              builder: (context, state) => const JournalismScreen(),
             ),
             GoRoute(
               path: RouteNames.breathingExercise,
