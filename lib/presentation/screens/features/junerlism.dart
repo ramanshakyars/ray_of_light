@@ -35,15 +35,18 @@ class _JournalismScreenState extends State<JournalismScreen> {
 
   Future<void> _postThought() async {
     if (_thoughtController.text.trim().isEmpty) return;
+    
     setState(() => _isPosting = true);
-
+    
     // Simulate API call
     await Future.delayed(const Duration(seconds: 1));
+    
     setState(() {
       _postedThoughts.insert(0, _thoughtController.text.trim());
       _thoughtController.clear();
       _isPosting = false;
     });
+    
     MessageService.showSuccess(
       context,
       "Your thought has been shared with the universe",
@@ -52,164 +55,256 @@ class _JournalismScreenState extends State<JournalismScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Journalism', style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.white,
-        elevation: 4,
+        title: Text(
+          'Journalism', 
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        backgroundColor: colorScheme.surface,
+        elevation: 1,
+        shadowColor: Colors.black.withValues(),
         automaticallyImplyLeading: false,
         leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.black),
+          icon: Icon(Icons.menu, color: colorScheme.onSurface),
           onPressed: () {},
         ),
         actions: [
           IconButton(
             icon: Image.asset('assets/logo.png'),
-            onPressed:
-                () => GoRouter.of(
-                  context,
-                ).push('${RouteNames.mainApp}/${RouteNames.home}'),
+            onPressed: () => GoRouter.of(context).push('${RouteNames.mainApp}/${RouteNames.home}'),
+            iconSize: 32,
           ),
         ],
       ),
       body: SafeArea(
         child: Column(
           children: [
-            // Inspiration section with constrained height
-            SingleChildScrollView(
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                color: Colors.grey[100],
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      '"Journalism "',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Write what\'s in your mind. Share your thoughts, affirmations, or motivations.',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      height: 120, // Fixed height for the chips
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children:
-                              _sampleAffirmations.map((affirmation) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 8),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      _thoughtController.text = affirmation;
-                                    },
-                                    child: Chip(
-                                      label: Text(affirmation),
-                                      backgroundColor: Colors.blue[50],
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                        ),
-                      ),
-                    ),
-                  ],
+            // Inspiration section
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceBright.withValues(),
+                border: Border(
+                  bottom: BorderSide(
+                    color: colorScheme.outline.withValues(),
+                    width: 1,
+                  ),
                 ),
               ),
-            ),
-
-            // Thought input section
-
-            // Divider to separate sections
-            const Divider(height: 1),
-
-            // Posted thoughts section with flexible space
-            Expanded(
-              child:
-                  _postedThoughts.isEmpty
-                      ? const Center(
-                        child: Text(
-                          'No thoughts shared yet.\nBe the first to inspire others!',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 16, color: Colors.grey),
-                        ),
-                      )
-                      : ListView.builder(
-                        padding: const EdgeInsets.only(
-                          bottom: 60,
-                        ), // Space for bottom nav
-                        itemCount: _postedThoughts.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      const CircleAvatar(
-                                        radius: 16,
-                                        child: Icon(Icons.person, size: 16),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        'Posted ${index + 1} hour${index == 0 ? '' : 's'} ago',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey[600],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    _postedThoughts[index],
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                ],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '"Journalism"',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      fontStyle: FontStyle.italic,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Write what\'s in your mind. Share your thoughts, affirmations, or motivations.',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    height: 120,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: _sampleAffirmations.map((affirmation) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: GestureDetector(
+                              onTap: () {
+                                _thoughtController.text = affirmation;
+                              },
+                              child: Chip(
+                                label: Text(
+                                  affirmation,
+                                  style: theme.textTheme.labelMedium,
+                                ),
+                                backgroundColor: colorScheme.primaryContainer,
+                                side: BorderSide.none,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                               ),
                             ),
                           );
-                        },
+                        }).toList(),
                       ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16),
+
+            // Posted thoughts section
+            Expanded(
+              child: _postedThoughts.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.lightbulb_outline,
+                            size: 48,
+                            color: colorScheme.onSurface.withValues(),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No thoughts shared yet.\nBe the first to inspire others!',
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: colorScheme.onSurface.withValues(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      itemCount: _postedThoughts.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surface,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 16,
+                                      backgroundColor: colorScheme.primaryContainer,
+                                      child: Icon(
+                                        Icons.person,
+                                        size: 16,
+                                        color: colorScheme.onPrimaryContainer,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Posted ${index + 1} hour${index == 0 ? '' : 's'} ago',
+                                      style: theme.textTheme.labelSmall?.copyWith(
+                                        color: colorScheme.onSurfaceVariant,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  _postedThoughts[index],
+                                  style: theme.textTheme.bodyLarge,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+
+            // Input section
+            Container(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              decoration: BoxDecoration(
+                color: colorScheme.surface,
+                border: Border(
+                  top: BorderSide(
+                    color: colorScheme.outline.withValues(),
+                    width: 1,
+                  ),
+                ),
+              ),
               child: Column(
                 children: [
                   TextField(
                     controller: _thoughtController,
                     maxLines: 3,
+                    minLines: 1,
                     decoration: InputDecoration(
                       hintText: 'Write your thought or affirmation here...',
-                      border: const OutlineInputBorder(),
+                      hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: colorScheme.outline.withValues(),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: colorScheme.primary,
+                          width: 1.5,
+                        ),
+                      ),
+                      contentPadding: const EdgeInsets.all(16),
                       suffixIcon: IconButton(
-                        icon: const Icon(Icons.send),
+                        icon: Icon(
+                          Icons.send,
+                          color: _isPosting 
+                              ? colorScheme.onSurface.withValues()
+                              : colorScheme.primary,
+                        ),
                         onPressed: _isPosting ? null : _postThought,
                       ),
                     ),
+                    style: theme.textTheme.bodyLarge,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
+                    child: FilledButton(
                       onPressed: _isPosting ? null : _postThought,
-                      child:
-                          _isPosting
-                              ? const CircularProgressIndicator()
-                              : const Text('Share Your Thought'),
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: _isPosting
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              'Share Your Thought',
+                              style: theme.textTheme.labelLarge?.copyWith(
+                                color: colorScheme.onPrimary,
+                              ),
+                            ),
                     ),
                   ),
                 ],

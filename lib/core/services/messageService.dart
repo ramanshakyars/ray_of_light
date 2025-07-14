@@ -54,7 +54,7 @@ class _TopSnackBarContent extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
