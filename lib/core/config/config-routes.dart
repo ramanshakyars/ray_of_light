@@ -1,15 +1,15 @@
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/main-layout.dart';
-import 'package:rayoflite/presentation/screens/features/breathing.dart';
+import 'package:rayoflite/presentation/screens/features/breathing/breathing.dart';
 import 'package:rayoflite/presentation/screens/features/goal-tracker/goal-tracker.dart';
-import 'package:rayoflite/presentation/screens/features/junerlism.dart';
-import 'package:rayoflite/presentation/screens/features/talk-to-light.dart';
+import 'package:rayoflite/presentation/screens/features/journalism/junerlism.dart';
+import 'package:rayoflite/presentation/screens/home/user-dashboard.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat_screen.dart';
-import 'package:rayoflite/presentation/screens/forget-password.dart';
+import 'package:rayoflite/presentation/screens/auth/forget-password.dart';
 // import 'package:rayoflite/presentation/screens/landing-page.dart';
-import 'package:rayoflite/presentation/screens/login.dart';
-import 'package:rayoflite/presentation/screens/register.dart';
-import 'package:rayoflite/presentation/screens/reset-password.dart';
+import 'package:rayoflite/presentation/screens/auth/login.dart';
+import 'package:rayoflite/presentation/screens/auth/register.dart';
+import 'package:rayoflite/presentation/screens/auth/reset-password.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/presentation/welcome-page.dart';
 
@@ -44,11 +44,11 @@ final router = GoRouter(
       routes: [
         GoRoute(
           path: RouteNames.mainApp,
-          builder: (context, state) => const TalkToLiteScreen(userName: 'Rhythm'),
+          builder: (context, state) => const UserDashboard(userName: 'Rhythm'),
           routes: [
             GoRoute(
               path: RouteNames.home,
-              builder: (context, state) => const TalkToLiteScreen(userName: 'Rhythm'),
+              builder: (context, state) => const UserDashboard(userName: 'Rhythm'),
             ),
             GoRoute(
               path: RouteNames.talkToLight,

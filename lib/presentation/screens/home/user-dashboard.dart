@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class TalkToLiteScreen extends StatelessWidget {
+class UserDashboard extends StatelessWidget {
   final String userName;
 
-  const TalkToLiteScreen({super.key, required this.userName});
+  const UserDashboard({super.key, required this.userName});
 
   @override
   Widget build(BuildContext context) {
