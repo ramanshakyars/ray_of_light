@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 
 class TalkToLiteScreen extends StatelessWidget {
-  final String userName; // Dynamic username
-  
-  const TalkToLiteScreen({
-    super.key,
-    required this.userName, // Required username parameter
-  });
+  final String userName;
+
+  const TalkToLiteScreen({super.key, required this.userName});
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +12,8 @@ class TalkToLiteScreen extends StatelessWidget {
         title: const Text('About us'),
         centerTitle: true,
         leading: IconButton(
-          icon: Image.asset('assets/logo.png'), // Your logo from assets
+          icon: Image.asset('assets/logo.png'),
           onPressed: () {
-            // Handle logo click
             Navigator.pop(context);
           },
         ),
@@ -29,19 +25,13 @@ class TalkToLiteScreen extends StatelessWidget {
           children: [
             Text(
               'Hi $userName,',
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             const Text(
               'How\'s your day going?',
-              style: TextStyle(
-                fontSize: 18,
-              ),
+              style: TextStyle(fontSize: 18),
             ),
-            // Add more content here as needed
           ],
         ),
       ),
