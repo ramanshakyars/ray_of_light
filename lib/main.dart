@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:rayoflite/core/config/config-routes.dart';
+import 'package:rayoflite/core/services/localStorageService.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await LocalStorageService.getInstance();
   runApp(const MyApp());
 }
 

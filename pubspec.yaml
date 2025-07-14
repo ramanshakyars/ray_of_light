@@ -39,6 +39,9 @@ dependencies:
   flutter_tts: ^3.5.0
   flutter_native_splash: ^2.4.6
   device_preview: ^1.2.0
+  http_interceptor: ^1.0.2
+  shared_preferences: ^2.2.2
+  dio: ^5.4.0
 
 dev_dependencies:
   flutter_test:

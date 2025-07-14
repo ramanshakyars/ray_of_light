@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/constants/pathConfig.dart';
+import 'package:rayoflite/core/services/authService.dart';
+import 'package:rayoflite/core/services/httpService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 
 void main() {
@@ -36,10 +39,25 @@ class _LoginPageState extends State<LoginPage> {
 
   void _login() async {
     if (_formKey.currentState!.validate()) {
-      MessageService.showSuccess(context, 'Login Successfull !');
-      await Future.delayed(Duration(milliseconds: 1500));
-      if (mounted) {
-        GoRouter.of(context).go('${RouteNames.mainApp}/${RouteNames.home}');
+      final body = {
+        'email': _emailController.text.trim(),
+        'password': _passwordController.text.trim(),
+      };
+      final response = await AuthService.login(body);
+      if (response['success']) {
+        MessageService.showSuccess(
+          context,
+          response['message'] ?? 'Login Successful!',
+        );
+        await Future.delayed(Duration(milliseconds: 1500));
+        if (mounted) {
+          GoRouter.of(context).go('${RouteNames.mainApp}/${RouteNames.home}');
+        }
+      } else {
+        MessageService.showError(
+          context,
+          response['message'] ?? 'Login failed!',
+        );
       }
     }
   }
@@ -77,10 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                 Text(
                   'We are here to help you to be better than yesterday',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
               ],
             ),
@@ -153,9 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       child: Text(
                         'Forgot Password?',
-                        style: TextStyle(
-                          color: Colors.blue,
-                        ),
+                        style: TextStyle(color: Colors.blue),
                       ),
                     ),
                   ),
@@ -174,7 +187,7 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {
                       GoRouter.of(context).push(RouteNames.register);
                     },
-                   child: Text('Don’t have an account? Sign Up'),
+                    child: Text('Don’t have an account? Sign Up'),
                   ),
                 ],
               ),

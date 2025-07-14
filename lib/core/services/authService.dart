@@ -1,0 +1,79 @@
+import 'dart:async';
+import 'dart:io';
+import 'package:rayoflite/core/constants/pathConfig.dart';
+import 'package:rayoflite/core/services/httpService.dart';
+import 'package:rayoflite/core/services/localStorageService.dart';
+
+class AuthService {
+  static Future<Map<String, dynamic>> login(Map<String, dynamic> body) async {
+    try {
+      final response = await HttpService.post(PathConfig.login, body);
+      if (response['success'] == true) {
+        await LocalStorageService.setUser(response['data']);
+        await LocalStorageService.setToken(response['token']);
+        return {'success': true, 'message': 'Login successful'};
+      }
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Login failed',
+      };
+    } catch (e) {
+      return {'success': false, 'message': _getErrorMessage(e)};
+    }
+  }
+
+  static Future<Map<String, dynamic>> register(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      final response = await HttpService.post(PathConfig.register, body);
+      return response['success'] == true
+          ? {'success': true, 'message': 'Registration successful'}
+          : {
+            'success': false,
+            'message': response['message'] ?? 'Registration failed',
+          };
+    } catch (e) {
+      return {'success': false, 'message': _getErrorMessage(e)};
+    }
+  }
+
+  static Future<Map<String, dynamic>> forgotPassword(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      final response = await HttpService.post(PathConfig.forgotPassword, body);
+      return response['success'] == true
+          ? {'success': true, 'message': 'OTP sent successfully'}
+          : {
+            'success': false,
+            'message': response['message'] ?? 'Failed to send OTP',
+          };
+    } catch (e) {
+      return {'success': false, 'message': _getErrorMessage(e)};
+    }
+  }
+
+  static Future<Map<String, dynamic>> verifyOtp(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      final response = await HttpService.post(PathConfig.verifyOtp, body);
+      return response['success'] == true
+          ? {'success': true, 'message': 'OTP Verified'}
+          : {
+            'success': false,
+            'message': response['message'] ?? 'OTP Verification Failed',
+          };
+    } catch (e) {
+      return {'success': false, 'message': _getErrorMessage(e)};
+    }
+  }
+
+  static String _getErrorMessage(dynamic error) {
+    if (error is SocketException) return 'No internet connection';
+    if (error is TimeoutException) return 'Request timed out';
+    if (error is FormatException) return 'Invalid server response';
+    return 'Something went wrong';
+  }
+}
