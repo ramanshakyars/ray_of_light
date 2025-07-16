@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/messageService.dart';
+import 'journalism_drawer.dart';
 
 class JournalismScreen extends StatefulWidget {
   const JournalismScreen({super.key});
@@ -14,6 +15,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
   final TextEditingController _thoughtController = TextEditingController();
   final List<String> _postedThoughts = [];
   bool _isPosting = false;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   // Sample affirmations to inspire users
   final List<String> _sampleAffirmations = [
@@ -59,6 +61,16 @@ class _JournalismScreenState extends State<JournalismScreen> {
     final colorScheme = theme.colorScheme;
     
     return Scaffold(
+      key: _scaffoldKey,
+      drawer: Drawer(
+        child: JournalismDrawer(
+          postedThoughts: _postedThoughts,
+          onThoughtSelected: (thought) {
+            _thoughtController.text = thought;
+          },
+          theme: theme,
+        ),
+      ),
       appBar: AppBar(
         title: Text(
           'Journalism', 
@@ -69,11 +81,10 @@ class _JournalismScreenState extends State<JournalismScreen> {
         ),
         backgroundColor: colorScheme.surface,
         elevation: 1,
-        shadowColor: Colors.black.withValues(),
-        automaticallyImplyLeading: false,
+        shadowColor: Colors.black.withOpacity(0.1),
         leading: IconButton(
           icon: Icon(Icons.menu, color: colorScheme.onSurface),
-          onPressed: () {},
+          onPressed: () => _scaffoldKey.currentState?.openDrawer(),
         ),
         actions: [
           IconButton(
@@ -90,10 +101,10 @@ class _JournalismScreenState extends State<JournalismScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: colorScheme.surfaceBright.withValues(),
+                color: colorScheme.surfaceBright.withOpacity(0.5),
                 border: Border(
                   bottom: BorderSide(
-                    color: colorScheme.outline.withValues(),
+                    color: colorScheme.outline.withOpacity(0.2),
                     width: 1,
                   ),
                 ),
@@ -160,14 +171,14 @@ class _JournalismScreenState extends State<JournalismScreen> {
                           Icon(
                             Icons.lightbulb_outline,
                             size: 48,
-                            color: colorScheme.onSurface.withValues(),
+                            color: colorScheme.onSurface.withOpacity(0.5),
                           ),
                           const SizedBox(height: 16),
                           Text(
                             'No thoughts shared yet.\nBe the first to inspire others!',
                             textAlign: TextAlign.center,
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              color: colorScheme.onSurface.withValues(),
+                              color: colorScheme.onSurface.withOpacity(0.7),
                             ),
                           ),
                         ],
@@ -187,7 +198,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(),
+                                color: Colors.black.withOpacity(0.1),
                                 blurRadius: 6,
                                 offset: const Offset(0, 2),
                               ),
@@ -238,7 +249,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
                 color: colorScheme.surface,
                 border: Border(
                   top: BorderSide(
-                    color: colorScheme.outline.withValues(),
+                    color: colorScheme.outline.withOpacity(0.2),
                     width: 1,
                   ),
                 ),
@@ -257,7 +268,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(
-                          color: colorScheme.outline.withValues(),
+                          color: colorScheme.outline.withOpacity(0.5),
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
@@ -272,7 +283,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
                         icon: Icon(
                           Icons.send,
                           color: _isPosting 
-                              ? colorScheme.onSurface.withValues()
+                              ? colorScheme.onSurface.withOpacity(0.5)
                               : colorScheme.primary,
                         ),
                         onPressed: _isPosting ? null : _postThought,
