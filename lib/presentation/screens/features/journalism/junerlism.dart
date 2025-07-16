@@ -37,18 +37,18 @@ class _JournalismScreenState extends State<JournalismScreen> {
 
   Future<void> _postThought() async {
     if (_thoughtController.text.trim().isEmpty) return;
-    
+
     setState(() => _isPosting = true);
-    
+
     // Simulate API call
     await Future.delayed(const Duration(seconds: 1));
-    
+
     setState(() {
       _postedThoughts.insert(0, _thoughtController.text.trim());
       _thoughtController.clear();
       _isPosting = false;
     });
-    
+
     MessageService.showSuccess(
       context,
       "Your thought has been shared with the universe",
@@ -59,7 +59,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return Scaffold(
       key: _scaffoldKey,
       drawer: Drawer(
@@ -73,7 +73,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
       ),
       appBar: AppBar(
         title: Text(
-          'Journalism', 
+          'Journalism',
           style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w600,
             color: colorScheme.onSurface,
@@ -81,7 +81,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
         ),
         backgroundColor: colorScheme.surface,
         elevation: 1,
-        shadowColor: Colors.black.withOpacity(0.1),
+        shadowColor: Colors.black.withValues(),
         leading: IconButton(
           icon: Icon(Icons.menu, color: colorScheme.onSurface),
           onPressed: () => _scaffoldKey.currentState?.openDrawer(),
@@ -89,7 +89,10 @@ class _JournalismScreenState extends State<JournalismScreen> {
         actions: [
           IconButton(
             icon: Image.asset('assets/logo.png'),
-            onPressed: () => GoRouter.of(context).push('${RouteNames.mainApp}/${RouteNames.home}'),
+            onPressed:
+                () => GoRouter.of(
+                  context,
+                ).push('${RouteNames.mainApp}/${RouteNames.home}'),
             iconSize: 32,
           ),
         ],
@@ -133,27 +136,29 @@ class _JournalismScreenState extends State<JournalismScreen> {
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
-                        children: _sampleAffirmations.map((affirmation) {
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: GestureDetector(
-                              onTap: () {
-                                _thoughtController.text = affirmation;
-                              },
-                              child: Chip(
-                                label: Text(
-                                  affirmation,
-                                  style: theme.textTheme.labelMedium,
+                        children:
+                            _sampleAffirmations.map((affirmation) {
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 8),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    _thoughtController.text = affirmation;
+                                  },
+                                  child: Chip(
+                                    label: Text(
+                                      affirmation,
+                                      style: theme.textTheme.labelMedium,
+                                    ),
+                                    backgroundColor:
+                                        colorScheme.primaryContainer,
+                                    side: BorderSide.none,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
                                 ),
-                                backgroundColor: colorScheme.primaryContainer,
-                                side: BorderSide.none,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
+                              );
+                            }).toList(),
                       ),
                     ),
                   ),
@@ -163,83 +168,87 @@ class _JournalismScreenState extends State<JournalismScreen> {
 
             // Posted thoughts section
             Expanded(
-              child: _postedThoughts.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.lightbulb_outline,
-                            size: 48,
-                            color: colorScheme.onSurface.withOpacity(0.5),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No thoughts shared yet.\nBe the first to inspire others!',
-                            textAlign: TextAlign.center,
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color: colorScheme.onSurface.withOpacity(0.7),
+              child:
+                  _postedThoughts.isEmpty
+                      ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.lightbulb_outline,
+                              size: 48,
+                              color: colorScheme.onSurface.withOpacity(0.5),
                             ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      itemCount: _postedThoughts.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: colorScheme.surface,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 6,
-                                offset: const Offset(0, 2),
+                            const SizedBox(height: 16),
+                            Text(
+                              'No thoughts shared yet.\nBe the first to inspire others!',
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: colorScheme.onSurface.withOpacity(0.7),
                               ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 16,
-                                      backgroundColor: colorScheme.primaryContainer,
-                                      child: Icon(
-                                        Icons.person,
-                                        size: 16,
-                                        color: colorScheme.onPrimaryContainer,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      'Posted ${index + 1} hour${index == 0 ? '' : 's'} ago',
-                                      style: theme.textTheme.labelSmall?.copyWith(
-                                        color: colorScheme.onSurfaceVariant,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  _postedThoughts[index],
-                                  style: theme.textTheme.bodyLarge,
+                            ),
+                          ],
+                        ),
+                      )
+                      : ListView.builder(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        itemCount: _postedThoughts.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colorScheme.surface,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
                                 ),
                               ],
                             ),
-                          ),
-                        );
-                      },
-                    ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 16,
+                                        backgroundColor:
+                                            colorScheme.primaryContainer,
+                                        child: Icon(
+                                          Icons.person,
+                                          size: 16,
+                                          color: colorScheme.onPrimaryContainer,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        'Posted ${index + 1} hour${index == 0 ? '' : 's'} ago',
+                                        style: theme.textTheme.labelSmall
+                                            ?.copyWith(
+                                              color:
+                                                  colorScheme.onSurfaceVariant,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    _postedThoughts[index],
+                                    style: theme.textTheme.bodyLarge,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
             ),
 
             // Input section
@@ -282,9 +291,10 @@ class _JournalismScreenState extends State<JournalismScreen> {
                       suffixIcon: IconButton(
                         icon: Icon(
                           Icons.send,
-                          color: _isPosting 
-                              ? colorScheme.onSurface.withOpacity(0.5)
-                              : colorScheme.primary,
+                          color:
+                              _isPosting
+                                  ? colorScheme.onSurface.withOpacity(0.5)
+                                  : colorScheme.primary,
                         ),
                         onPressed: _isPosting ? null : _postThought,
                       ),
@@ -302,20 +312,21 @@ class _JournalismScreenState extends State<JournalismScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: _isPosting
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
+                      child:
+                          _isPosting
+                              ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                              : Text(
+                                'Share Your Thought',
+                                style: theme.textTheme.labelLarge?.copyWith(
+                                  color: colorScheme.onPrimary,
+                                ),
                               ),
-                            )
-                          : Text(
-                              'Share Your Thought',
-                              style: theme.textTheme.labelLarge?.copyWith(
-                                color: colorScheme.onPrimary,
-                              ),
-                            ),
                     ),
                   ),
                 ],
