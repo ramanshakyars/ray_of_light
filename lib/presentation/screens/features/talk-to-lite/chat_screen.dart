@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat-history.dart';
 import 'chat_message.dart';
 import 'input_area.dart';
 import 'api_service.dart';
+
 
 class ChatScreen extends StatefulWidget {
   @override
@@ -20,6 +22,7 @@ class _ChatScreenState extends State<ChatScreen>
   final FlutterTts _tts = FlutterTts();
   bool _isLoading = false;
   late AnimationController _starController;
+  List<ChatHistory> _chatHistory = [];
 
   @override
   void initState() {
@@ -27,13 +30,85 @@ class _ChatScreenState extends State<ChatScreen>
     _initTTS();
     _starController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 800), // Faster spin
+      duration: Duration(milliseconds: 800),
     )..repeat();
+    _loadChatHistory();
   }
 
   Future<void> _initTTS() async {
     await _tts.setLanguage("en-US");
     await _tts.setSpeechRate(0.5);
+  }
+
+  Future<void> _loadChatHistory() async {
+    // Simulate API call delay
+    await Future.delayed(Duration(milliseconds: 500));
+    setState(() {
+      _chatHistory = ChatHistory.simulatedHistory;
+    });
+  }
+
+  Widget _buildDrawer() {
+    return Drawer(
+      backgroundColor: Color(0xFF16213E),
+      child: Column(
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: Color(0xFF0F3460),
+            ),
+            child: Center(
+              child: Text(
+                'Chat History',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _chatHistory.length,
+              itemBuilder: (context, index) {
+                final history = _chatHistory[index];
+                return ListTile(
+                  leading: Icon(Icons.chat_bubble_outline, color: Colors.blueAccent),
+                  title: Text(
+                    history.title,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  subtitle: Text(
+                    history.lastMessage,
+                    style: TextStyle(color: Colors.white70),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  trailing: Text(
+                    '${history.timestamp.hour}:${history.timestamp.minute}',
+                    style: TextStyle(color: Colors.white54),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showSnackbar('Loading conversation ${history.id}');
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 
   Future<void> _sendMessage() async {
@@ -42,19 +117,29 @@ class _ChatScreenState extends State<ChatScreen>
     final message = _textController.text;
     _textController.clear();
 
-    // Add user message & start loading
     setState(() {
       _messages.add(ChatMessage(text: message, isUser: true));
       _isLoading = true;
-      _starController.repeat(); // Start rotating star
+      _starController.repeat();
     });
+
+    // Update chat history if this is the first message
+    if (_messages.length == 1) {
+      setState(() {
+        _chatHistory.insert(0, ChatHistory(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          title: 'New Chat ${_chatHistory.length + 1}',
+          timestamp: DateTime.now(),
+          lastMessage: message,
+        ));
+      });
+    }
 
     // Simulate API delay (1-3 seconds)
     final randomDelay = Duration(milliseconds: 1000 + Random().nextInt(2000));
     await Future.delayed(randomDelay);
 
     try {
-      // Simulate different AI responses
       final responses = [
         "Great question! Here's what I think about '$message'...",
         "Interesting! Regarding '$message', my analysis suggests...",
@@ -63,9 +148,8 @@ class _ChatScreenState extends State<ChatScreen>
       ];
       final response = responses[Random().nextInt(responses.length)];
 
-      // Add AI response
       setState(() => _messages.add(ChatMessage(text: response, isUser: false)));
-      await _tts.speak(response); // Optional: Text-to-speech
+      // await _tts.speak(response);
     } catch (e) {
       setState(() {
         _messages.add(
@@ -73,19 +157,11 @@ class _ChatScreenState extends State<ChatScreen>
         );
       });
     } finally {
-      // Stop loading & animation
       setState(() {
         _isLoading = false;
         _starController.stop();
       });
     }
-  }
-
-  @override
-  void dispose() {
-    _tts.stop();
-    _starController.dispose();
-    super.dispose();
   }
 
   Widget _buildWelcomeMessage() {
@@ -122,7 +198,6 @@ class _ChatScreenState extends State<ChatScreen>
                 SizedBox(height: 16),
                 _buildQuestionSuggestion("Hi, I was thinking about you"),
                 _buildQuestionSuggestion("What were you doing?"),
-                // _buildQuestionSuggestion("Tell me a fun fact"),
               ],
             ),
           ),
@@ -162,7 +237,7 @@ class _ChatScreenState extends State<ChatScreen>
         decoration: BoxDecoration(
           color: Color(0xFF0F3460),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.blueAccent.withOpacity(0.3)),
+          border: Border.all(color: Colors.blueAccent.withValues()),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -177,25 +252,27 @@ class _ChatScreenState extends State<ChatScreen>
   }
 
   @override
+  void dispose() {
+    _tts.stop();
+    _starController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF1A1A2E),
+      drawer: _buildDrawer(),
       appBar: AppBar(
         title: Text('Talk to Lite', style: TextStyle(color: Colors.white)),
         backgroundColor: Color.fromARGB(255, 27, 39, 74),
         elevation: 10,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: Icon(Icons.menu, color: Colors.white),
-          onPressed: () {},
-        ),
+        automaticallyImplyLeading: true,
         actions: [
           IconButton(
             icon: Image.asset('assets/logo.png'),
             onPressed: () {
-              GoRouter.of(
-                context,
-              ).push('${RouteNames.mainApp}/${RouteNames.home}');
+              GoRouter.of(context).push('${RouteNames.mainApp}/${RouteNames.home}');
             },
           ),
         ],
