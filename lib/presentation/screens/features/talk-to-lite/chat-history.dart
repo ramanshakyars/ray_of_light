@@ -1,5 +1,6 @@
 // chat_history.dart
 class ChatHistory {
+  
   final String id;
   final String title;
   final DateTime timestamp;
