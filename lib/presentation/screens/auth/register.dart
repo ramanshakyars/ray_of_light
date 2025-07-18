@@ -15,6 +15,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _mobileController = TextEditingController();
   final _emailController = TextEditingController();
+  final _ageController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
 
@@ -23,6 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _nameController.dispose();
     _mobileController.dispose();
     _emailController.dispose();
+    _ageController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -130,6 +132,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       }
                       if (!value.contains('@')) {
                         return 'Enter a valid email';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 15),
+                  TextFormField(
+                    controller: _ageController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: 'Age',
+                      prefixIcon: Icon(Icons.person),
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter  Age';
+                      }
+                      if (value.length < 100) {
+                        return 'Please Enter a Valid Age';
                       }
                       return null;
                     },
