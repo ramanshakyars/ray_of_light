@@ -1,9 +1,9 @@
 class PathConfig {
-  static const String baseUrl = 'http://localhost:8080';
+  static const String baseUrl = 'http://localhost:9090';
 
   // Auth endpoints
-  static const String login = '$baseUrl/auth/login';
-  static const String register = '$baseUrl/auth/register';
+  static const String login = '$baseUrl/rayoflight/api/public/login';
+  static const String register = '$baseUrl/rayoflight/api/public/register';
   static const String logout = '$baseUrl/auth/logout';
 
   // User endpoints

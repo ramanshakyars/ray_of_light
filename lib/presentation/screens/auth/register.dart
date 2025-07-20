@@ -1,7 +1,10 @@
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/services/authService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
+import 'package:intl/intl.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -15,8 +18,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _mobileController = TextEditingController();
   final _emailController = TextEditingController();
-  final _ageController = TextEditingController();
+  final _dateOfBirthController = TextEditingController();
   final _passwordController = TextEditingController();
+  DateTime? _selectedDate;
+
   bool _isPasswordVisible = false;
 
   @override
@@ -24,15 +29,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _nameController.dispose();
     _mobileController.dispose();
     _emailController.dispose();
-    _ageController.dispose();
+    _dateOfBirthController.dispose();
     _passwordController.dispose();
+
     super.dispose();
   }
 
   void _register() async {
     if (_formKey.currentState!.validate()) {
+      final body = {
+        'name': _nameController.text.trim(),
+        'phoneNumber': _mobileController.text.trim(),
+        'email': _emailController.text.trim(),
+        'dob': _dateOfBirthController.text.trim(),
+        'password': _passwordController.text.trim(),
+      };
+      final response = await AuthService.register(body);
+      if (!response['success']) {
+        MessageService.showError(
+          context,
+          response['message'] ?? 'Registration Failed!',
+        );
+      }
       MessageService.showSuccess(context, 'Registration Successful!');
-      await Future.delayed(Duration(milliseconds: 1500));
+      // await Future.delayed(Duration(milliseconds: 1500));
       if (mounted) {
         GoRouter.of(context).go(RouteNames.login);
       }
@@ -137,23 +157,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                   SizedBox(height: 15),
-                  TextFormField(
-                    controller: _ageController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Age',
-                      prefixIcon: Icon(Icons.person),
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter  Age';
+                  GestureDetector(
+                    onTap: () async {
+                      final values = await showCalendarDatePicker2Dialog(
+                        context: context,
+                        config: CalendarDatePicker2WithActionButtonsConfig(
+                          calendarType: CalendarDatePicker2Type.single,
+                          selectedDayHighlightColor: Colors.blue,
+                        ),
+                        dialogSize: const Size(325, 400),
+                      );
+                      if (values != null && values.isNotEmpty) {
+                        setState(() {
+                          _selectedDate = values[0];
+                          _dateOfBirthController.text = DateFormat(
+                            'yyyy-MM-dd',
+                          ).format(_selectedDate!);
+                        });
                       }
-                      if (value.length < 100) {
-                        return 'Please Enter a Valid Age';
-                      }
-                      return null;
                     },
+                    child: AbsorbPointer(
+                      child: TextFormField(
+                        controller: _dateOfBirthController,
+                        decoration: InputDecoration(
+                          labelText: 'Date Of Birth',
+                          prefixIcon: Icon(Icons.calendar_today),
+                          border: OutlineInputBorder(),
+                          suffixIcon: Icon(Icons.arrow_drop_down),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select your date of birth';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
                   ),
                   SizedBox(height: 15),
                   // Password Field

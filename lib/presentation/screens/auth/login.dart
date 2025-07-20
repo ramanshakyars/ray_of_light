@@ -44,12 +44,11 @@ class _LoginPageState extends State<LoginPage> {
         'password': _passwordController.text.trim(),
       };
       final response = await AuthService.login(body);
-      if (response['success']) {
+      if (response['success'] == true) {
         MessageService.showSuccess(
           context,
           response['message'] ?? 'Login Successful!',
         );
-        await Future.delayed(Duration(milliseconds: 1500));
         if (mounted) {
           GoRouter.of(context).go('${RouteNames.mainApp}/${RouteNames.home}');
         }
@@ -58,7 +57,6 @@ class _LoginPageState extends State<LoginPage> {
           context,
           response['message'] ?? 'Login failed!',
         );
-        GoRouter.of(context).go('${RouteNames.mainApp}/${RouteNames.home}');
       }
     }
   }

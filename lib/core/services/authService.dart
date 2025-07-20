@@ -8,10 +8,18 @@ class AuthService {
   static Future<Map<String, dynamic>> login(Map<String, dynamic> body) async {
     try {
       final response = await HttpService.post(PathConfig.login, body);
-      if (response['success'] == true) {
-        await LocalStorageService.setUser(response['data']);
-        await LocalStorageService.setToken(response['token']);
-        return {'success': true, 'message': 'Login successful'};
+      if (response['jwtToken'] != null) {
+        await LocalStorageService.setToken(response['jwtToken']);
+        await LocalStorageService.setUser({
+          'userId': response['userId'],
+          'name': response['name'],
+          'email': response['email'],
+          'roles': response['roles'],
+        });
+        return {
+          'success': true,
+          'message': response['message'] ?? 'Login successful',
+        };
       }
       return {
         'success': false,
