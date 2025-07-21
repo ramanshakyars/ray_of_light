@@ -52,7 +52,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
       }
       MessageService.showSuccess(context, 'Registration Successful!');
-      // await Future.delayed(Duration(milliseconds: 1500));
       if (mounted) {
         GoRouter.of(context).go(RouteNames.login);
       }
@@ -70,10 +69,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             // Page Title
             Column(
               children: [
-                // Add your logo image here (make sure it's in your assets folder)
                 Image.asset(
-                  'assets/logo.png', // Update with your actual image path
-                  height: 80, // Adjust size as needed
+                  'assets/logo.png', 
+                  height: 80,
                 ),
                 SizedBox(height: 10),
                 Text(
@@ -101,8 +99,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     'Create Account',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 20),
-                  // Name Field
+                  SizedBox(height: 20),                  
                   TextFormField(
                     controller: _nameController,
                     decoration: InputDecoration(
@@ -118,7 +115,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                   SizedBox(height: 15),
-                  // Mobile Number Field
                   TextFormField(
                     controller: _mobileController,
                     keyboardType: TextInputType.phone,
@@ -138,7 +134,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                   SizedBox(height: 15),
-                  // Email Field
                   TextFormField(
                     controller: _emailController,
                     decoration: InputDecoration(
@@ -170,9 +165,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       if (values != null && values.isNotEmpty) {
                         setState(() {
                           _selectedDate = values[0];
-                          _dateOfBirthController.text = DateFormat(
-                            'yyyy-MM-dd',
-                          ).format(_selectedDate!);
+                          _dateOfBirthController.text =
+                              _selectedDate!.toIso8601String().split('T').first;
                         });
                       }
                     },
@@ -189,13 +183,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           if (value == null || value.isEmpty) {
                             return 'Please select your date of birth';
                           }
-                          return null;
+                          try {
+                            DateTime.parse(value);
+                            return null;
+                          } catch (e) {
+                            return 'Please enter a valid date';
+                          }
                         },
                       ),
                     ),
                   ),
                   SizedBox(height: 15),
-                  // Password Field
                   TextFormField(
                     controller: _passwordController,
                     obscureText: !_isPasswordVisible,
@@ -227,7 +225,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                   SizedBox(height: 20),
-                  // Register Button
                   ElevatedButton(
                     onPressed: _register,
                     child: Text('Register', style: TextStyle(fontSize: 16)),
@@ -236,7 +233,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   SizedBox(height: 10),
-                  // Login Link
                   TextButton(
                     onPressed: () {
                       GoRouter.of(context).push(RouteNames.login);
