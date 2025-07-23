@@ -76,10 +76,9 @@ class _LoginPageState extends State<LoginPage> {
             // Logo and Title
             Column(
               children: [
-                // Add your logo image here (make sure it's in your assets folder)
                 Image.asset(
-                  'assets/logo.png', // Update with your actual image path
-                  height: 80, // Adjust size as needed
+                  'assets/logo.png', 
+                  height: 80, 
                 ),
                 SizedBox(height: 10),
                 Text(
@@ -127,7 +126,6 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                   SizedBox(height: 15),
-                  // Password Field
                   TextFormField(
                     controller: _passwordController,
                     obscureText: !_isPasswordVisible,
@@ -158,7 +156,6 @@ class _LoginPageState extends State<LoginPage> {
                       return null;
                     },
                   ),
-                  // Forgot Password Link
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
@@ -172,7 +169,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(height: 10),
-                  // Login Button
                   ElevatedButton(
                     onPressed: _login,
                     child: Text('Login', style: TextStyle(fontSize: 16)),

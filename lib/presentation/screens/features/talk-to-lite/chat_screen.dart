@@ -181,7 +181,7 @@ class _ChatScreenState extends State<ChatScreen>
             child: Column(
               children: [
                 Text(
-                  "Welcome to Talk to Lite!",
+                  "Welcome to Talk to Light!",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -264,7 +264,7 @@ class _ChatScreenState extends State<ChatScreen>
       backgroundColor: Color(0xFF1A1A2E),
       drawer: _buildDrawer(),
       appBar: AppBar(
-        title: Text('Talk to Lite', style: TextStyle(color: Colors.white)),
+        title: Text('Talk to Light', style: TextStyle(color: Colors.white)),
         backgroundColor: Color.fromARGB(255, 27, 39, 74),
         elevation: 10,
         automaticallyImplyLeading: true,
