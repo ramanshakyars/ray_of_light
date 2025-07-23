@@ -57,6 +57,7 @@ class _LoginPageState extends State<LoginPage> {
           context,
           response['message'] ?? 'Login failed!',
         );
+          GoRouter.of(context).go('${RouteNames.mainApp}/${RouteNames.home}');
       }
     }
   }
@@ -115,15 +116,15 @@ class _LoginPageState extends State<LoginPage> {
                       prefixIcon: Icon(Icons.email),
                       border: OutlineInputBorder(),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      if (!value.contains('@')) {
-                        return 'Enter a valid email';
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty) {
+                    //     return 'Please enter your email';
+                    //   }
+                    //   if (!value.contains('@')) {
+                    //     return 'Enter a valid email';
+                    //   }
+                    //   return null;
+                    // },
                   ),
                   SizedBox(height: 15),
                   TextFormField(
@@ -146,15 +147,15 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       border: OutlineInputBorder(),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty) {
+                    //     return 'Please enter your password';
+                    //   }
+                    //   if (value.length < 6) {
+                    //     return 'Password must be at least 6 characters';
+                    //   }
+                    //   return null;
+                    // },
                   ),
                   Align(
                     alignment: Alignment.centerRight,
