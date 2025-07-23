@@ -16,21 +16,36 @@ class MessageService {
   }
 
   static void _showTopSnackBar(
-      BuildContext context, String message, Color color, IconData icon) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: _TopSnackBarContent(message: message, color: color, icon: icon),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        margin: EdgeInsets.only(
-          top: MediaQuery.of(context).padding.top + 16,
-          left: 16,
-          right: 16,
-        ),
-        duration: _displayDuration,
-      ),
+    BuildContext context,
+    String message,
+    Color color,
+    IconData icon,
+  ) {
+    final overlay = Overlay.of(context);
+    final overlayEntry = OverlayEntry(
+      builder:
+          (context) => Positioned(
+            top: MediaQuery.of(context).padding.top + 16,
+            left: 16,
+            right: 16,
+            child: Material(
+              color: Colors.transparent,
+              child: _TopSnackBarContent(
+                message: message,
+                color: color,
+                icon: icon,
+              ),
+            ),
+          ),
     );
+
+    // Insert the overlay
+    overlay.insert(overlayEntry);
+
+    // Remove the overlay after duration
+    Future.delayed(_displayDuration, () {
+      overlayEntry.remove();
+    });
   }
 }
 
@@ -54,7 +69,7 @@ class _TopSnackBarContent extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),

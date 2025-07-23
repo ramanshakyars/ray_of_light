@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/constants/pathConfig.dart';
+import 'package:rayoflite/core/services/authService.dart';
+import 'package:rayoflite/core/services/httpService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 
 void main() {
@@ -36,10 +39,25 @@ class _LoginPageState extends State<LoginPage> {
 
   void _login() async {
     if (_formKey.currentState!.validate()) {
-      MessageService.showSuccess(context, 'Login Successfull !');
-      await Future.delayed(Duration(milliseconds: 1500));
-      if (mounted) {
-        GoRouter.of(context).go('${RouteNames.mainApp}/${RouteNames.home}');
+      final body = {
+        'email': _emailController.text.trim(),
+        'password': _passwordController.text.trim(),
+      };
+      final response = await AuthService.login(body);
+      if (response['success'] == true) {
+        MessageService.showSuccess(
+          context,
+          response['message'] ?? 'Login Successful!',
+        );
+        if (mounted) {
+          GoRouter.of(context).go('${RouteNames.mainApp}/${RouteNames.home}');
+        }
+      } else {
+        MessageService.showError(
+          context,
+          response['message'] ?? 'Login failed!',
+        );
+          GoRouter.of(context).go('${RouteNames.mainApp}/${RouteNames.home}');
       }
     }
   }
@@ -56,16 +74,31 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Page Title
-            Text(
-              'Ray of Light',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: const Color.fromARGB(255, 0, 0, 0),
-              ),
+            // Logo and Title
+            Column(
+              children: [
+                Image.asset(
+                  'assets/logo.png', 
+                  height: 80, 
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'Ray of Light',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: const Color.fromARGB(255, 0, 0, 0),
+                  ),
+                ),
+                SizedBox(height: 5),
+                Text(
+                  'We are here to help you to be better than yesterday',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
+              ],
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 30),
             Form(
               key: _formKey,
               child: Column(
@@ -83,18 +116,17 @@ class _LoginPageState extends State<LoginPage> {
                       prefixIcon: Icon(Icons.email),
                       border: OutlineInputBorder(),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      if (!value.contains('@')) {
-                        return 'Enter a valid email';
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty) {
+                    //     return 'Please enter your email';
+                    //   }
+                    //   if (!value.contains('@')) {
+                    //     return 'Enter a valid email';
+                    //   }
+                    //   return null;
+                    // },
                   ),
                   SizedBox(height: 15),
-                  // Password Field
                   TextFormField(
                     controller: _passwordController,
                     obscureText: !_isPasswordVisible,
@@ -115,17 +147,16 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       border: OutlineInputBorder(),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty) {
+                    //     return 'Please enter your password';
+                    //   }
+                    //   if (value.length < 6) {
+                    //     return 'Password must be at least 6 characters';
+                    //   }
+                    //   return null;
+                    // },
                   ),
-                  // Forgot Password Link
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
@@ -134,17 +165,11 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       child: Text(
                         'Forgot Password?',
-                        style: TextStyle(
-                          color:
-                              Colors.blue, // You can use your theme color here
-                        ),
+                        style: TextStyle(color: Colors.blue),
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 10,
-                  ), // Reduced spacing since we have the forgot password link
-                  // Login Button
+                  SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: _login,
                     child: Text('Login', style: TextStyle(fontSize: 16)),

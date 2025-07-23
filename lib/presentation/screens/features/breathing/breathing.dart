@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'dart:async';
 import 'dart:math';
+
+import 'package:rayoflite/core/config/routenames.dart';
 
 class BreathingScreen extends StatefulWidget {
   @override
@@ -97,6 +100,24 @@ class _BreathingScreenState extends State<BreathingScreen>
     final dotY = _circleRadius * sin(_angle);
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Breathing Exercise',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 4,
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: Image.asset('assets/logo.png'),
+            onPressed:
+                () => GoRouter.of(
+                  context,
+                ).push('${RouteNames.mainApp}/${RouteNames.home}'),
+          ),
+        ],
+      ),
       backgroundColor: const Color.fromARGB(255, 51, 50, 50),
       body: Center(
         child: Column(

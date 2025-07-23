@@ -1,7 +1,10 @@
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/services/authService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
+import 'package:intl/intl.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -15,7 +18,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _mobileController = TextEditingController();
   final _emailController = TextEditingController();
+  final _dateOfBirthController = TextEditingController();
   final _passwordController = TextEditingController();
+  DateTime? _selectedDate;
+
   bool _isPasswordVisible = false;
 
   @override
@@ -23,14 +29,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _nameController.dispose();
     _mobileController.dispose();
     _emailController.dispose();
+    _dateOfBirthController.dispose();
     _passwordController.dispose();
+
     super.dispose();
   }
 
   void _register() async {
     if (_formKey.currentState!.validate()) {
+      final body = {
+        'name': _nameController.text.trim(),
+        'phoneNumber': _mobileController.text.trim(),
+        'email': _emailController.text.trim(),
+        'dob': _dateOfBirthController.text.trim(),
+        'password': _passwordController.text.trim(),
+      };
+      final response = await AuthService.register(body);
+      if (!response['success']) {
+        MessageService.showError(
+          context,
+          response['message'] ?? 'Registration Failed!',
+        );
+      }
       MessageService.showSuccess(context, 'Registration Successful!');
-      await Future.delayed(Duration(milliseconds: 1500));
       if (mounted) {
         GoRouter.of(context).go(RouteNames.login);
       }
@@ -46,13 +67,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Page Title
-            Text(
-              'Ray of Light',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: const Color.fromARGB(255, 0, 0, 0),
-              ),
+            Column(
+              children: [
+                Image.asset(
+                  'assets/logo.png', 
+                  height: 80,
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'Ray of Light',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: const Color.fromARGB(255, 0, 0, 0),
+                  ),
+                ),
+                SizedBox(height: 5),
+                Text(
+                  'We are here to help you to be better than yesterday',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
+              ],
             ),
             SizedBox(height: 40),
             Form(
@@ -63,8 +99,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     'Create Account',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 20),
-                  // Name Field
+                  SizedBox(height: 20),                  
                   TextFormField(
                     controller: _nameController,
                     decoration: InputDecoration(
@@ -80,7 +115,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                   SizedBox(height: 15),
-                  // Mobile Number Field
                   TextFormField(
                     controller: _mobileController,
                     keyboardType: TextInputType.phone,
@@ -100,7 +134,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                   SizedBox(height: 15),
-                  // Email Field
                   TextFormField(
                     controller: _emailController,
                     decoration: InputDecoration(
@@ -119,7 +152,48 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                   SizedBox(height: 15),
-                  // Password Field
+                  GestureDetector(
+                    onTap: () async {
+                      final values = await showCalendarDatePicker2Dialog(
+                        context: context,
+                        config: CalendarDatePicker2WithActionButtonsConfig(
+                          calendarType: CalendarDatePicker2Type.single,
+                          selectedDayHighlightColor: Colors.blue,
+                        ),
+                        dialogSize: const Size(325, 400),
+                      );
+                      if (values != null && values.isNotEmpty) {
+                        setState(() {
+                          _selectedDate = values[0];
+                          _dateOfBirthController.text =
+                              _selectedDate!.toIso8601String().split('T').first;
+                        });
+                      }
+                    },
+                    child: AbsorbPointer(
+                      child: TextFormField(
+                        controller: _dateOfBirthController,
+                        decoration: InputDecoration(
+                          labelText: 'Date Of Birth',
+                          prefixIcon: Icon(Icons.calendar_today),
+                          border: OutlineInputBorder(),
+                          suffixIcon: Icon(Icons.arrow_drop_down),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select your date of birth';
+                          }
+                          try {
+                            DateTime.parse(value);
+                            return null;
+                          } catch (e) {
+                            return 'Please enter a valid date';
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 15),
                   TextFormField(
                     controller: _passwordController,
                     obscureText: !_isPasswordVisible,
@@ -151,7 +225,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                   SizedBox(height: 20),
-                  // Register Button
                   ElevatedButton(
                     onPressed: _register,
                     child: Text('Register', style: TextStyle(fontSize: 16)),
@@ -160,7 +233,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   SizedBox(height: 10),
-                  // Login Link
                   TextButton(
                     onPressed: () {
                       GoRouter.of(context).push(RouteNames.login);
