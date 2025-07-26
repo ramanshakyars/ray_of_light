@@ -30,7 +30,6 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
   @override
   void initState() {
     super.initState();
-    // Rotate quotes every 5 seconds
     Future.delayed(const Duration(seconds: 5), () {
       if (mounted) {
         setState(() {

@@ -4,59 +4,67 @@ class AddGoalDialog extends StatelessWidget {
   final TextEditingController titleController;
   final TextEditingController descriptionController;
   final TextEditingController targetController;
-  // final TextEditingController unitController;
   final VoidCallback onAddGoal;
 
-  const AddGoalDialog({
+  AddGoalDialog({
     super.key,
     required this.titleController,
     required this.descriptionController,
     required this.targetController,
-    // required this.unitController,
     required this.onAddGoal,
   });
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Add New Goal'),
       content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: titleController,
-              decoration: const InputDecoration(
-                labelText: 'Title',
-                // hintText: 'e.g. Drink Water',
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: titleController,
+                decoration: const InputDecoration(labelText: 'Title'),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Title is required';
+                  }
+                  return null;
+                },
               ),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Why you want to do it ?',
-                // hintText: 'e.g. Drink 8 glasses daily',
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: descriptionController,
+                decoration: const InputDecoration(
+                  labelText: 'Why you want to do it?',
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Description is required';
+                  }
+                  return null;
+                },
               ),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: targetController,
-              decoration: const InputDecoration(
-                labelText: 'What you want to achieve ?',
-                // hintText: 'e.g. 8',
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: targetController,
+                decoration: const InputDecoration(
+                  labelText: 'What you want to achieve?',
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Target is required';
+                  }
+                  return null;
+                },
               ),
-              // keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 10),
-            // TextField(
-            //   controller: unitController,
-            //   decoration: const InputDecoration(
-            //     labelText: 'Unit',
-            //     // hintText: 'e.g. glasses',
-            //   ),
-            // ),
-          ],
+              const SizedBox(height: 10),
+            ],
+          ),
         ),
       ),
       actions: [
@@ -64,7 +72,15 @@ class AddGoalDialog extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('Cancel'),
         ),
-        ElevatedButton(onPressed: onAddGoal, child: const Text('Add Goal')),
+        ElevatedButton(
+          onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              onAddGoal();
+              Navigator.of(context).pop(); // Close dialog after success
+            }
+          },
+          child: const Text('Add Goal'),
+        ),
       ],
     );
   }
