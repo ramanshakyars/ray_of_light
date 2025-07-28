@@ -62,7 +62,6 @@ class AddGoalDialog extends StatelessWidget {
                   return null;
                 },
               ),
-              const SizedBox(height: 10),
             ],
           ),
         ),
@@ -76,7 +75,7 @@ class AddGoalDialog extends StatelessWidget {
           onPressed: () {
             if (_formKey.currentState!.validate()) {
               onAddGoal();
-              Navigator.of(context).pop(); // Close dialog after success
+              Navigator.of(context).pop();
             }
           },
           child: const Text('Add Goal'),

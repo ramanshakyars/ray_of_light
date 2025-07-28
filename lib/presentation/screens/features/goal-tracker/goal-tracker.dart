@@ -17,12 +17,11 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
   final _targetController = TextEditingController();
   final _unitController = TextEditingController();
 
-  // Sample motivational quotes - replace with your own or API data
   final List<String> motivationalQuotes = [
     "The secret of getting ahead is getting started.",
     "Don't limit your challenges. Challenge your limits.",
     "Small steps every day lead to big results.",
-    "You don't have to be great to start, but you have to start to be great.",
+    "You don't have to be great to start",
     "Success is the sum of small efforts repeated daily."
   ];
   int currentQuoteIndex = 0;
@@ -30,11 +29,16 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
   @override
   void initState() {
     super.initState();
+    _rotateQuotes();
+  }
+
+  void _rotateQuotes() {
     Future.delayed(const Duration(seconds: 5), () {
       if (mounted) {
         setState(() {
           currentQuoteIndex = (currentQuoteIndex + 1) % motivationalQuotes.length;
         });
+        _rotateQuotes();
       }
     });
   }
@@ -55,20 +59,18 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
         titleController: _titleController,
         descriptionController: _descriptionController,
         targetController: _targetController,
-        // unitController: _unitController,
         onAddGoal: () {
           setState(() {
             goals.add({
               'title': _titleController.text,
               'description': _descriptionController.text,
               'target': _targetController.text,
-              // 'unit': _unitController.text,
+              'unit': _unitController.text,
               'streak': 1,
               'startDate': DateTime.now().toString(),
             });
           });
           _clearControllers();
-          Navigator.of(context).pop();
         },
       ),
     );
@@ -78,7 +80,7 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
     _titleController.clear();
     _descriptionController.clear();
     _targetController.clear();
-    // _unitController.clear();
+    _unitController.clear();
   }
 
   Widget _buildGoalCard(Map<String, dynamic> goal) {
@@ -131,15 +133,9 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
                 ),
               ],
             ),
-            // const SizedBox(height: 12),
-            // LinearProgressIndicator(
-            //   value: 0.5,
-            //   backgroundColor: Colors.grey[200],
-            //   valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
-            // ),
             const SizedBox(height: 8),
             Text(
-              '0/${goal['target']} ${goal['unit']}',
+              '0/${goal['target']} ${goal['unit'] ?? ''}',
               style: const TextStyle(
                 fontSize: 12,
                 color: Colors.black54,
@@ -211,7 +207,6 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Motivational Quotes Section
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
@@ -244,10 +239,8 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
               ),
             ),
 
-            // Add Goal Button (always visible)
             _buildAddGoalButton(),
 
-            // Goals List
             if (goals.isEmpty)
               Container(
                 padding: const EdgeInsets.all(24),
