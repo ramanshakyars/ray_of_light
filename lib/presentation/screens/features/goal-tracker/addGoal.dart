@@ -4,6 +4,7 @@ class AddGoalDialog extends StatelessWidget {
   final TextEditingController titleController;
   final TextEditingController descriptionController;
   final TextEditingController targetController;
+  final TextEditingController categoryController;
   final VoidCallback onAddGoal;
 
   AddGoalDialog({
@@ -11,10 +12,20 @@ class AddGoalDialog extends StatelessWidget {
     required this.titleController,
     required this.descriptionController,
     required this.targetController,
+    required this.categoryController,
     required this.onAddGoal,
   });
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final List<String> categories = [
+    'DAILY_ROUTINE',
+    'CAREER',
+    'HEALTH',
+    'MINDFULNESS',
+    'RELATIONSHIPS',
+    'PERSONAL_GROWTH',
+    'OTHER',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +45,26 @@ class AddGoalDialog extends StatelessWidget {
                     return 'Title is required';
                   }
                   return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              DropdownButtonFormField<String>(
+                value:
+                    categoryController.text.isEmpty
+                        ? null
+                        : categoryController.text,
+                decoration: const InputDecoration(labelText: 'Goal Category'),
+                items:
+                    categories.map((String category) {
+                      return DropdownMenuItem<String>(
+                        value: category,
+                        child: Text(category),
+                      );
+                    }).toList(),
+                onChanged: (value) {
+                  if (value != null) {
+                    categoryController.text = value;
+                  }
                 },
               ),
               const SizedBox(height: 10),
