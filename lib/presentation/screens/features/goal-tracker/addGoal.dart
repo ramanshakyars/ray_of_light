@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 
-class AddGoalDialog extends StatelessWidget {
-  final TextEditingController titleController;
-  final TextEditingController descriptionController;
-  final TextEditingController targetController;
-  final TextEditingController categoryController;
-  final VoidCallback onAddGoal;
+class AddGoalDialog extends StatefulWidget {
+  final Function(Map<String, dynamic>) onSubmit;
 
-  AddGoalDialog({
-    super.key,
-    required this.titleController,
-    required this.descriptionController,
-    required this.targetController,
-    required this.categoryController,
-    required this.onAddGoal,
-  });
+  const AddGoalDialog({super.key, required this.onSubmit});
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final List<String> categories = [
+  @override
+  State<AddGoalDialog> createState() => _AddGoalDialogState();
+}
+
+class _AddGoalDialogState extends State<AddGoalDialog> {
+  final _formKey = GlobalKey<FormState>();
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _reasonController = TextEditingController();
+  final _objectiveController = TextEditingController();
+  String? _selectedCategory;
+
+  final List<String> _categories = [
     'DAILY_ROUTINE',
     'CAREER',
     'HEALTH',
@@ -28,70 +28,60 @@ class AddGoalDialog extends StatelessWidget {
   ];
 
   @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _reasonController.dispose();
+    _objectiveController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add New Goal'),
+      title: const Text("Add New Goal"),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
               TextFormField(
-                controller: titleController,
-                decoration: const InputDecoration(labelText: 'Title'),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Title is required';
-                  }
-                  return null;
-                },
+                controller: _titleController,
+                decoration: const InputDecoration(labelText: "Title"),
+                validator:
+                    (val) =>
+                        val == null || val.isEmpty ? "Title is required" : null,
               ),
-              const SizedBox(height: 10),
+              TextFormField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(labelText: "Description"),
+              ),
+              TextFormField(
+                controller: _reasonController,
+                decoration: const InputDecoration(labelText: "Reason"),
+              ),
+              TextFormField(
+                controller: _objectiveController,
+                decoration: const InputDecoration(labelText: "Objective"),
+              ),
               DropdownButtonFormField<String>(
-                value:
-                    categoryController.text.isEmpty
-                        ? null
-                        : categoryController.text,
-                decoration: const InputDecoration(labelText: 'Goal Category'),
+                value: _selectedCategory,
                 items:
-                    categories.map((String category) {
-                      return DropdownMenuItem<String>(
-                        value: category,
-                        child: Text(category),
-                      );
-                    }).toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    categoryController.text = value;
-                  }
-                },
-              ),
-              const SizedBox(height: 10),
-              TextFormField(
-                controller: descriptionController,
+                    _categories
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e.toString()),
+                          ),
+                        )
+                        .toList(),
+                onChanged: (val) => setState(() => _selectedCategory = val),
                 decoration: const InputDecoration(
-                  labelText: 'Why you want to do it?',
+                  labelText: "Select Goal Category",
                 ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Description is required';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 10),
-              TextFormField(
-                controller: targetController,
-                decoration: const InputDecoration(
-                  labelText: 'What you want to achieve?',
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Target is required';
-                  }
-                  return null;
-                },
+                validator:
+                    (val) =>
+                        val == null || val.isEmpty ? "Select category" : null,
               ),
             ],
           ),
@@ -100,16 +90,21 @@ class AddGoalDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: const Text("Cancel"),
         ),
         ElevatedButton(
           onPressed: () {
             if (_formKey.currentState!.validate()) {
-              onAddGoal();
-              Navigator.of(context).pop();
+              widget.onSubmit({
+                'title': _titleController.text,
+                'description': _descriptionController.text,
+                'reason': _reasonController.text,
+                'objective': _objectiveController.text,
+                'category': _selectedCategory,
+              });
             }
           },
-          child: const Text('Add Goal'),
+          child: const Text("Add Goal"),
         ),
       ],
     );

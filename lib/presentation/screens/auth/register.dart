@@ -46,10 +46,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       };
       final response = await AuthService.register(body);
       if (!response['success']) {
-        MessageService.showError(
-          context,
-          response['message'] ?? 'Registration Failed!',
-        );
+        MessageService.showError(context,response['message'] ?? 'Registration Failed!');
       }
       MessageService.showSuccess(context, 'Registration Successful!');
       if (mounted) {

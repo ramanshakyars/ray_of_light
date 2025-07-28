@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
-import 'package:rayoflite/core/constants/pathConfig.dart';
+// import 'package:rayoflite/core/constants/pathConfig.dart';
 import 'package:rayoflite/core/services/authService.dart';
-import 'package:rayoflite/core/services/httpService.dart';
+// import 'package:rayoflite/core/services/httpService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 
 void main() {
@@ -116,15 +116,15 @@ class _LoginPageState extends State<LoginPage> {
                       prefixIcon: Icon(Icons.email),
                       border: OutlineInputBorder(),
                     ),
-                    // validator: (value) {
-                    //   if (value == null || value.isEmpty) {
-                    //     return 'Please enter your email';
-                    //   }
-                    //   if (!value.contains('@')) {
-                    //     return 'Enter a valid email';
-                    //   }
-                    //   return null;
-                    // },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your email';
+                      }
+                      if (!value.contains('@')) {
+                        return 'Enter a valid email';
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(height: 15),
                   TextFormField(
@@ -147,15 +147,15 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       border: OutlineInputBorder(),
                     ),
-                    // validator: (value) {
-                    //   if (value == null || value.isEmpty) {
-                    //     return 'Please enter your password';
-                    //   }
-                    //   if (value.length < 6) {
-                    //     return 'Password must be at least 6 characters';
-                    //   }
-                    //   return null;
-                    // },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your password';
+                      }
+                      if (value.length < 6) {
+                        return 'Password must be at least 6 characters';
+                      }
+                      return null;
+                    },
                   ),
                   Align(
                     alignment: Alignment.centerRight,
@@ -178,7 +178,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(height: 10),
-                  // Signup Link (Optional)
                   TextButton(
                     onPressed: () {
                       GoRouter.of(context).push(RouteNames.register);

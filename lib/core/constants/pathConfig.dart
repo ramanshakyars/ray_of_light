@@ -13,6 +13,6 @@ class PathConfig {
   static const String verifyOtp = '$baseUrl/auth/verify-otp';
 
   //Goal Tracker endpoints
-  static const String getGoals = '$baseUrl/goal';
-  static const String createGoal = '$baseUrl/goal';
+  static const String getGoals = '$baseUrl/rayoflight/api/goal';
+  static const String createGoal = '$baseUrl/rayoflight/api/goal';
 }
