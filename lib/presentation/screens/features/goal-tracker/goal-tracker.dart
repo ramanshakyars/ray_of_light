@@ -41,7 +41,6 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
         setState(() {
           goals = List<Map<String, dynamic>>.from(response['data']);
         });
-        // MessageService.showSuccess(context, 'Goals loaded successfully');
       }
     } else {
       if (mounted) {
@@ -50,26 +49,30 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
     }
   }
 
-  Future<void> _showAddGoalDialog() async {
-    showDialog(
-      context: context,
-      builder:
-          (_) => AddGoalDialog(
-            onSubmit: (goalData) async {
-              try {
-                await GoalService.addGoal(goalData);
-                Navigator.of(context).pop();
-                await _loadGoals();
-              } catch (e) {
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Failed to add goal: $e')),
-                );
-              }
-            },
-          ),
-    );
-  }
+Future<void> _showAddGoalDialog() async {
+  showDialog(
+    context: context,
+    builder: (_) => AddGoalDialog(
+      onSubmit: (goalData) async {
+        Navigator.of(context).pop(); // CLOSES the dialog immediately
+        try {
+          final response = await GoalService.addGoal(goalData);
+          if (!mounted) return;
+          if (response['success']) {
+           MessageService.showSuccess(context, 'Goal added successfully');
+            await _loadGoals();
+          } else {  
+             MessageService.showError(context, 'Failed to add goal: ${response['message']}');        
+          }
+        } catch (e) {
+          if (mounted) {            
+            MessageService.showError(context, 'Failed to add goal: $e');   
+          }
+        }
+      },
+    ),
+  );
+}
 
   void _rotateQuotes() {
     Future.delayed(const Duration(seconds: 5), () {
