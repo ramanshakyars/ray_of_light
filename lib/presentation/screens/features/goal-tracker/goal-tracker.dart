@@ -101,25 +101,61 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            goal['title'] ?? '',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                goal['title'] ?? '',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.blue[50],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  "${goal['streak'] ?? '0'} day streak",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.blue[700],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 6),
-          Text(goal['description'] ?? '', style: const TextStyle(fontSize: 14)),
-          const SizedBox(height: 6),
+          const SizedBox(height: 8),
           Text(
-            "Reason: ${goal['reason'] ?? '-'}",
-            style: const TextStyle(fontSize: 12, color: Colors.black54),
+            goal['description'] ?? '',
+            style: const TextStyle(fontSize: 14, color: Colors.black54),
           ),
-          Text(
-            "Objective: ${goal['objective'] ?? '-'}",
-            style: const TextStyle(fontSize: 12, color: Colors.black54),
-          ),
-          Text(
-            "Category: ${goal['category'] ?? '-'}",
-            style: const TextStyle(fontSize: 12, color: Colors.black54),
-          ),
+          const SizedBox(height: 12),
+          if (goal['reason'] != null && goal['reason'].isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text(
+                "Reason: ${goal['reason']}",
+                style: const TextStyle(fontSize: 12, color: Colors.black45),
+              ),
+            ),
+          if (goal['objective'] != null && goal['objective'].isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text(
+                "Objective: ${goal['objective']}",
+                style: const TextStyle(fontSize: 12, color: Colors.black45),
+              ),
+            ),
+          if (goal['category'] != null && goal['category'].isNotEmpty)
+            Text(
+              "Category: ${goal['category']}",
+              style: const TextStyle(fontSize: 12, color: Colors.black45),
+            ),
         ],
       ),
     );
