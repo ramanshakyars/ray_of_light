@@ -33,15 +33,20 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
   Future<void> _loadGoals() async {
     setState(() => isLoading = true);
     final response = await GoalService.getGoals();
+    if (!mounted) return;
     setState(() => isLoading = false);
-    print(response);
+
     if (response['success']) {
-      setState(() {
-        goals = response['data'];
-      });
-      MessageService.showSuccess(context, 'Goals loaded successfully');
+      if (mounted) {
+        setState(() {
+          goals = List<Map<String, dynamic>>.from(response['data']);
+        });
+        // MessageService.showSuccess(context, 'Goals loaded successfully');
+      }
     } else {
-      MessageService.showError(context, 'Error: ${response['message']}');
+      if (mounted) {
+        MessageService.showError(context, 'Error: ${response['message']}');
+      }
     }
   }
 

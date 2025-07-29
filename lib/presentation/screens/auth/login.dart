@@ -57,7 +57,6 @@ class _LoginPageState extends State<LoginPage> {
           context,
           response['message'] ?? 'Login failed!',
         );
-          GoRouter.of(context).go('${RouteNames.mainApp}/${RouteNames.home}');
       }
     }
   }
