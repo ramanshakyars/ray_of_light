@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:rayoflite/core/constants/pathConfig.dart';
 import 'package:rayoflite/core/services/httpService.dart';
 
@@ -8,14 +7,9 @@ class GoalService {
     Map<String, dynamic> goalData,
   ) async {
     try {
-      final uri = Uri.parse(PathConfig.createGoal);
-      final response = await http.post(
-        uri,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(goalData),
-      );
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      final data = await HttpService.post(PathConfig.createGoal, goalData);
+      // Assuming that a successful POST returns the created goal object (your provided response).
+      if (data != null && data['id'] != null) {
         return {
           'success': true,
           'message': 'Goal added successfully',
