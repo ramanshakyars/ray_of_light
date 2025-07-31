@@ -106,7 +106,6 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
           createdAtList[1], // month
           createdAtList[2], // day
         );
-
         final today = DateTime.now();
         final difference = today.difference(createdDate).inDays;
         goal['streak'] = difference + 1; // Streak starts from 1

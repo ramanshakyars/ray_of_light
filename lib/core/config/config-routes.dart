@@ -4,6 +4,7 @@ import 'package:rayoflite/presentation/screens/auth/forget-password.dart';
 import 'package:rayoflite/presentation/screens/auth/login.dart';
 import 'package:rayoflite/presentation/screens/auth/register.dart';
 import 'package:rayoflite/presentation/screens/auth/reset-password.dart';
+import 'package:rayoflite/presentation/screens/features/profile.dart';
 import 'package:rayoflite/presentation/screens/home/user-dashboard.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat_screen.dart';
 import 'package:rayoflite/presentation/screens/features/journalism/junerlism.dart';
@@ -65,6 +66,10 @@ GoRouter createRouter(bool isLoggedIn) {
               GoRoute(
                 path: RouteNames.goalTracker,
                 builder: (context, state) => const GoalTrackerExercises(),
+              ),
+              GoRoute(
+                path: RouteNames.profile,
+                builder: (context, state) => const ProfileScreen(),
               ),
             ],
           ),
