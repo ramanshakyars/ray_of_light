@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -14,7 +12,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   Map<String, dynamic>? userData;
-  String? token;
   bool isLoading = true;
 
   @override
@@ -25,11 +22,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _loadUserData() async {
     final user = await LocalStorageService.getUser();
-    final jwtToken = await LocalStorageService.getToken();
-
     setState(() {
       userData = user;
-      token = jwtToken;
       isLoading = false;
     });
   }
@@ -37,124 +31,146 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _logout() async {
     await LocalStorageService.clearAll();
     if (mounted) {
-      // Navigate to login screen after logout
       GoRouter.of(context).go(RouteNames.login);
     }
   }
 
-  Widget _buildUserInfoCard() {
-    if (userData == null) {
-      return const Center(child: Text('No user data available'));
-    }
+  String _formatDob(List<dynamic>? dobList) {
+    if (dobList == null || dobList.length < 3) return 'Not specified';
+    final year = dobList[0];
+    final month = dobList[1];
+    final day = dobList[2];
+    return '${day.toString().padLeft(2, '0')}/${month.toString().padLeft(2, '0')}/$year';
+  }
 
-    return Card(
-      margin: const EdgeInsets.all(16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Center(
-              child: CircleAvatar(
-                radius: 50,
-                child: Icon(Icons.person, size: 50),
+  Widget _buildProfileCard() {
+    return Center(
+      child: Card(
+        elevation: 8,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        margin: const EdgeInsets.all(24),
+        child: Container(
+          width: double.infinity,
+          constraints: const BoxConstraints(maxWidth: 500),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircleAvatar(
+                radius: 60,
+                backgroundColor: Colors.blueAccent,
+                child: Icon(Icons.person, size: 60, color: Colors.white),
               ),
-            ),
-            const SizedBox(height: 20),
-            _buildInfoRow('Name', userData!['name'] ?? 'N/A'),
-            _buildInfoRow('Email', userData!['email'] ?? 'N/A'),
-          ],
+              const SizedBox(height: 24),
+              if (userData?['email'] != null)
+                Text(
+                  userData?['name'],
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blueGrey,
+                  ),
+                ),
+              const SizedBox(height: 16),
+              if (userData?['email'] != null)
+                _buildDetailItem(Icons.email, userData?['email']),
+              const SizedBox(height: 12),
+              if (userData?['phoneNumber'] != null)
+                _buildDetailItem(Icons.phone, userData?['phoneNumber']),
+              const SizedBox(height: 12),
+              if (userData?['dob'] != null)
+                _buildDetailItem(Icons.cake, userData?['dob']),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.logout, size: 20),
+                  label: const Text(
+                    'LOGOUT',
+                    style: TextStyle(letterSpacing: 1),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red[50],
+                    foregroundColor: Colors.red,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder:
+                          (context) => AlertDialog(
+                            title: const Text('Logout'),
+                            content: const Text(
+                              'Are you sure you want to logout?',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  _logout();
+                                },
+                                child: const Text(
+                                  'Logout',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ),
+                            ],
+                          ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(
-              '$label:',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
+  Widget _buildDetailItem(IconData icon, String text) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, size: 24, color: Colors.blueGrey[300]),
+        const SizedBox(width: 12),
+        Flexible(
+          child: Text(
+            text,
+            style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+            textAlign: TextAlign.center,
           ),
-          Expanded(child: Text(value, softWrap: true)),
-        ],
-      ),
+        ),
+      ],
     );
-  }
-
-  String _formatTimestamp(int timestamp) {
-    final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    return '${date.toLocal()}';
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder:
-                    (context) => AlertDialog(
-                      title: const Text('Logout'),
-                      content: const Text('Are you sure you want to logout?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            _logout();
-                          },
-                          child: const Text('Logout'),
-                        ),
-                      ],
-                    ),
-              );
-            },
-          ),
-        ],
+        title: const Text('My Profile'),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.blueGrey,
       ),
       body:
           isLoading
               ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(
                 child: Column(
-                  children: [
-                    _buildUserInfoCard(),
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                            _logout();
-                          },
-                          child: const Text('Logout'),
-                        ),
-                      ),
-                    ),
-                  ],
+                  children: [const SizedBox(height: 20), _buildProfileCard()],
                 ),
               ),
+      backgroundColor: Colors.grey[50],
     );
   }
 }
