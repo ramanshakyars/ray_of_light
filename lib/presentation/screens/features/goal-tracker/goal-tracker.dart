@@ -49,36 +49,41 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
     }
   }
 
- Future<void> _showAddGoalDialog() async {
-  await showDialog(
-    context: context,
-    barrierDismissible: false, // Prevent dismissing by tapping outside
-    builder: (dialogContext) => AddGoalDialog(
-      onSubmit: (goalData) async {
-        try {
-          final response = await GoalService.addGoal(goalData);
-          if (!mounted) return;
-
-          if (response['success']) {
-            MessageService.showSuccess(dialogContext, 'Goal added successfully');
-
-            // ✅ Close dialog from rootNavigator to ensure it closes properly
-            Navigator.of(dialogContext, rootNavigator: true).pop();
-
-            await _loadGoals();
-          } else {
-            MessageService.showError(dialogContext, 'Failed to add goal: ${response['message']}');
-          }
-        } catch (e) {
-          if (mounted) {
-            MessageService.showError(dialogContext, 'Failed to add goal: $e');
-          }
-        }
-      },
-    ),
-  );
-}
-
+  Future<void> _showAddGoalDialog() async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent dismissing by tapping outside
+      builder:
+          (dialogContext) => AddGoalDialog(
+            onSubmit: (goalData) async {
+              try {
+                final response = await GoalService.addGoal(goalData);
+                if (!mounted) return;
+                if (response['success']) {
+                  MessageService.showSuccess(
+                    dialogContext,
+                    'Goal added successfully',
+                  );
+                  Navigator.of(dialogContext, rootNavigator: true).pop();
+                  await _loadGoals();
+                } else {
+                  MessageService.showError(
+                    dialogContext,
+                    'Failed to add goal: ${response['message']}',
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  MessageService.showError(
+                    dialogContext,
+                    'Failed to add goal: $e',
+                  );
+                }
+              }
+            },
+          ),
+    );
+  }
 
   void _rotateQuotes() {
     Future.delayed(const Duration(seconds: 5), () {
@@ -97,11 +102,11 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color.fromARGB(255, 236, 234, 234),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Colors.grey.withValues(),
             blurRadius: 5,
             offset: const Offset(0, 3),
           ),
