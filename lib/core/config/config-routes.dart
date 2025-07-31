@@ -44,11 +44,11 @@ final router = GoRouter(
       routes: [
         GoRoute(
           path: RouteNames.mainApp,
-          builder: (context, state) => const UserDashboard(userName: 'Rhythm'),
+          builder: (context, state) =>  UserDashboard(),
           routes: [
             GoRoute(
               path: RouteNames.home,
-              builder: (context, state) => const UserDashboard(userName: 'Rhythm'),
+              builder: (context, state) =>  UserDashboard(),
             ),
             GoRoute(
               path: RouteNames.talkToLight,

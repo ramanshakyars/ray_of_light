@@ -1,9 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:rayoflite/core/services/localStorageService.dart';
 
-class UserDashboard extends StatelessWidget {
-  final String userName;
+class UserDashboard extends StatefulWidget {
+  const UserDashboard({super.key});
 
-  const UserDashboard({super.key, required this.userName});
+  @override
+  State<UserDashboard> createState() => _UserDashboardState();
+}
+
+class _UserDashboardState extends State<UserDashboard> {
+  String userName = 'User';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final user = await LocalStorageService.getUser();
+    if (user != null && user['name'] != null) {
+      setState(() {
+        userName = user['name'];
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +45,7 @@ class UserDashboard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Hi $userName,',
+              'Hi $userName',
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
