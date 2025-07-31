@@ -49,30 +49,36 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
     }
   }
 
-Future<void> _showAddGoalDialog() async {
-  showDialog(
+ Future<void> _showAddGoalDialog() async {
+  await showDialog(
     context: context,
-    builder: (_) => AddGoalDialog(
+    barrierDismissible: false, // Prevent dismissing by tapping outside
+    builder: (dialogContext) => AddGoalDialog(
       onSubmit: (goalData) async {
-        Navigator.of(context).pop(); // CLOSES the dialog immediately
         try {
           final response = await GoalService.addGoal(goalData);
           if (!mounted) return;
+
           if (response['success']) {
-           MessageService.showSuccess(context, 'Goal added successfully');
+            MessageService.showSuccess(dialogContext, 'Goal added successfully');
+
+            // ✅ Close dialog from rootNavigator to ensure it closes properly
+            Navigator.of(dialogContext, rootNavigator: true).pop();
+
             await _loadGoals();
-          } else {  
-             MessageService.showError(context, 'Failed to add goal: ${response['message']}');        
+          } else {
+            MessageService.showError(dialogContext, 'Failed to add goal: ${response['message']}');
           }
         } catch (e) {
-          if (mounted) {            
-            MessageService.showError(context, 'Failed to add goal: $e');   
+          if (mounted) {
+            MessageService.showError(dialogContext, 'Failed to add goal: $e');
           }
         }
       },
     ),
   );
 }
+
 
   void _rotateQuotes() {
     Future.delayed(const Duration(seconds: 5), () {
