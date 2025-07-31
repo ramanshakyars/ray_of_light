@@ -40,6 +40,7 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
       if (mounted) {
         setState(() {
           goals = List<Map<String, dynamic>>.from(response['data']);
+          _calculateStreaks();
         });
       }
     } else {
@@ -89,12 +90,30 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
     Future.delayed(const Duration(seconds: 5), () {
       if (mounted) {
         setState(() {
-          currentQuoteIndex =
-              (currentQuoteIndex + 1) % motivationalQuotes.length;
+          currentQuoteIndex =(currentQuoteIndex + 1) % motivationalQuotes.length;
         });
         _rotateQuotes();
       }
     });
+  }
+
+  void _calculateStreaks() {
+    for (var goal in goals) {
+      final createdAtList = goal['createdAt'];
+      if (createdAtList != null && createdAtList.length >= 3) {
+        final createdDate = DateTime(
+          createdAtList[0], // year
+          createdAtList[1], // month
+          createdAtList[2], // day
+        );
+
+        final today = DateTime.now();
+        final difference = today.difference(createdDate).inDays;
+        goal['streak'] = difference + 1; // Streak starts from 1
+      } else {
+        goal['streak'] = 1; // default to 1 if createdAt is not valid
+      }
+    }
   }
 
   Widget _buildGoalCard(Map<String, dynamic> goal) {
