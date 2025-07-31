@@ -54,11 +54,11 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
               ),
               TextFormField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(labelText: "Description"),
+                decoration: const InputDecoration(labelText: "Why you want to do it ?"),
               ),
               TextFormField(
                 controller: _reasonController,
-                decoration: const InputDecoration(labelText: "Reason"),
+                decoration: const InputDecoration(labelText: "why you want to achieve ?"),
               ),
               TextFormField(
                 controller: _objectiveController,
@@ -71,7 +71,7 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
                         .map(
                           (e) => DropdownMenuItem(
                             value: e,
-                            child: Text(e.toString()),
+                            child: Text(e.toString().toLowerCase()),
                           ),
                         )
                         .toList(),
@@ -89,7 +89,8 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => 
+          Navigator.of(context).pop(),
           child: const Text("Cancel"),
         ),
         ElevatedButton(

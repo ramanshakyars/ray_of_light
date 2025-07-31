@@ -29,6 +29,7 @@ class AuthInterceptor  {
           return handler.next(options);
         },
         onError: (DioException e, handler) {
+          print(e);
           return handler.next(e);
         },
       ),

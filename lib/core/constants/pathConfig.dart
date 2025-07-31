@@ -1,5 +1,5 @@
 class PathConfig {
-  static const String baseUrl = 'http://localhost:9090';
+  static const String baseUrl = 'http://192.168.1.17:9090';
 
   // Auth endpoints
   static const String login = '$baseUrl/rayoflight/api/public/login';

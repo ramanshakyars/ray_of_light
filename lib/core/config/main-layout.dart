@@ -224,8 +224,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       RouteNames.goalTracker,
     ];
     context.push('${RouteNames.mainApp}/${routes[index]}');
-    if (Scaffold.of(context).isDrawerOpen) {
-      Navigator.pop(context);
-    }
+    // if (Scaffold.of(context).isDrawerOpen) {
+    //   Navigator.pop(context);
+    // }
   }
 }
