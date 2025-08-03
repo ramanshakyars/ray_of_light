@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/services/moodService.dart';
-
 import 'MoodRequest.dart';
 import 'UserMood.dart';
 import 'UserMoodsEnum.dart';
 
+/// The dialog that lets the user pick a mood, intensity, and optional description.
 class MoodDialog extends StatefulWidget {
   const MoodDialog({super.key});
 
@@ -17,6 +17,10 @@ class _MoodDialogState extends State<MoodDialog> {
   late UserMoodsEnum _selectedMood;
   late int _intensity;
   final TextEditingController _descriptionController = TextEditingController();
+
+  /// Controller for the mood-name field with icon.
+  late TextEditingController _moodController;
+
   bool _isLoading = false;
   String? _errorMessage;
 
@@ -25,7 +29,27 @@ class _MoodDialogState extends State<MoodDialog> {
     super.initState();
     _selectedMood = UserMoodsEnum.neutral;
     _intensity = 5;
+    _moodController = TextEditingController(text: _capitalize(_selectedMood));
+
     _loadInitialMood();
+  }
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    _moodController.dispose();
+    super.dispose();
+  }
+
+  /// Helper to get a capitalized human-friendly mood name.
+  String _capitalize(UserMoodsEnum mood) {
+    final name = mood.name;
+    return '${name[0].toUpperCase()}${name.substring(1)}';
+  }
+
+  /// Updates the mood text field when a new mood is selected.
+  void _updateMoodController(UserMoodsEnum mood) {
+    _moodController.text = _capitalize(mood);
   }
 
   Future<void> _loadInitialMood() async {
@@ -35,10 +59,11 @@ class _MoodDialogState extends State<MoodDialog> {
         setState(() {
           _selectedMood = mood.type;
           _intensity = mood.intensity;
+          _updateMoodController(_selectedMood);
           _descriptionController.text = mood.description ?? '';
         });
       }
-    } catch (e) {
+    } catch (_) {
       // Ignore errors in loading initial mood
     }
   }
@@ -67,7 +92,6 @@ class _MoodDialogState extends State<MoodDialog> {
         final userMood = response['data'] as UserMood;
         await LocalStorageService.setCurrentMood(userMood);
 
-        // Get the updated mood immediately
         final currentMoodResponse = await MoodService.getCurrentMood();
         if (currentMoodResponse['success'] == true) {
           final currentMood = currentMoodResponse['data'] as UserMood;
@@ -79,7 +103,7 @@ class _MoodDialogState extends State<MoodDialog> {
       } else {
         if (!mounted) return;
         setState(() {
-          _errorMessage = response['message'];
+          _errorMessage = response['message'] ?? 'Unknown error';
           _isLoading = false;
         });
       }
@@ -94,6 +118,9 @@ class _MoodDialogState extends State<MoodDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final moodColor = _MoodIcon.moodColor(_selectedMood);
+    final moodIcon = _MoodIcon.moodIcon(_selectedMood);
+
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: ConstrainedBox(
@@ -103,13 +130,32 @@ class _MoodDialogState extends State<MoodDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              /// Title
               const Text(
                 'How are you feeling?',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
 
-              // Mood selection grid
+              /// Selected mood field with name + icon
+              TextField(
+                readOnly: true,
+                controller: _moodController,
+                decoration: InputDecoration(
+                  labelText: 'Selected Mood',
+                  suffixIcon: Icon(moodIcon, color: moodColor),
+                  border: const OutlineInputBorder(),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 14.0,
+                    horizontal: 12.0,
+                  ),
+                ),
+                style: TextStyle(color: moodColor, fontWeight: FontWeight.w600),
+              ),
+
+              const SizedBox(height: 16),
+
+              /// Mood icons grid
               SizedBox(
                 height: 200,
                 child: GridView.builder(
@@ -127,7 +173,12 @@ class _MoodDialogState extends State<MoodDialog> {
                     return _MoodIcon(
                       mood: mood,
                       isSelected: _selectedMood == mood,
-                      onTap: () => setState(() => _selectedMood = mood),
+                      onTap: () {
+                        setState(() {
+                          _selectedMood = mood;
+                          _updateMoodController(mood);
+                        });
+                      },
                     );
                   },
                 ),
@@ -135,7 +186,7 @@ class _MoodDialogState extends State<MoodDialog> {
 
               const SizedBox(height: 16),
 
-              // Intensity slider
+              /// Intensity slider
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -160,7 +211,7 @@ class _MoodDialogState extends State<MoodDialog> {
 
               const SizedBox(height: 16),
 
-              // Description field
+              /// Description field
               TextField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(
@@ -180,7 +231,7 @@ class _MoodDialogState extends State<MoodDialog> {
 
               const SizedBox(height: 16),
 
-              // Buttons
+              /// Cancel & Save buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -210,6 +261,7 @@ class _MoodDialogState extends State<MoodDialog> {
   }
 }
 
+/// Icon widget for each mood in the grid, with static icon/color mappings.
 class _MoodIcon extends StatelessWidget {
   final UserMoodsEnum mood;
   final bool isSelected;
@@ -223,7 +275,7 @@ class _MoodIcon extends StatelessWidget {
     this.size = 40.0,
   });
 
-  IconData _getMoodIcon() {
+  static IconData moodIcon(UserMoodsEnum mood) {
     switch (mood) {
       case UserMoodsEnum.happy:
         return Icons.sentiment_very_satisfied;
@@ -250,7 +302,7 @@ class _MoodIcon extends StatelessWidget {
     }
   }
 
-  Color _getMoodColor() {
+  static Color moodColor(UserMoodsEnum mood) {
     switch (mood) {
       case UserMoodsEnum.happy:
         return Colors.yellow[700]!;
@@ -279,22 +331,19 @@ class _MoodIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final icon = moodIcon(mood);
+    final color = moodColor(mood);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
-          color:
-              isSelected
-                  ? _getMoodColor().withOpacity(0.2)
-                  : Colors.transparent,
-          borderRadius: BorderRadius.circular(20.0),
-          border:
-              isSelected
-                  ? Border.all(color: _getMoodColor(), width: 2.0)
-                  : null,
+          color: isSelected ? color.withOpacity(0.2) : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+          border: isSelected ? Border.all(color: color, width: 2.0) : null,
         ),
-        child: Icon(_getMoodIcon(), color: _getMoodColor(), size: size),
+        child: Icon(icon, color: color, size: size),
       ),
     );
   }
