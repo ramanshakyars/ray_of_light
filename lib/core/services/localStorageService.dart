@@ -1,3 +1,4 @@
+import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/UserMood.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -33,11 +34,24 @@ class LocalStorageService {
     await prefs.clear();
   }
 
-   static Future<bool> isLoggedIn() async {
+  static Future<bool> isLoggedIn() async {
     final token = await getToken();
     return token != null && token.isNotEmpty;
   }
 
+  static Future<void> setCurrentMood(UserMood mood) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('current_mood', json.encode(mood.toJson()));
+  }
+
+  static Future<UserMood?> getCurrentMood() async {
+    final prefs = await SharedPreferences.getInstance();
+    final moodStr = prefs.getString('current_mood');
+    return moodStr != null ? UserMood.fromJson(json.decode(moodStr)) : null;
+  }
+
+  static Future<void> clearCurrentMood() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('current_mood');
+  }
 }
-
-

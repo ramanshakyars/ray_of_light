@@ -8,7 +8,6 @@ class GoalService {
   ) async {
     try {
       final data = await HttpService.post(PathConfig.createGoal, goalData);
-      // Assuming that a successful POST returns the created goal object (your provided response).
       if (data != null && data['id'] != null) {
         return {
           'success': true,

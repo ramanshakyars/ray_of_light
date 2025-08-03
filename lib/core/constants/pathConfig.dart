@@ -15,4 +15,12 @@ class PathConfig {
   //Goal Tracker endpoints
   static const String getGoals = '$baseUrl/rayoflight/api/goal';
   static const String createGoal = '$baseUrl/rayoflight/api/goal';
+
+  // Journal endpoints
+  static const String getJournals = '$baseUrl/rayoflight/api/journal/entries';
+  static const String postJournals = '$baseUrl/rayoflight/api/journal/entries';
+
+  // Mood endpoints
+  static const String getCurrentMood = '$baseUrl/rayoflight/api/mood/current';
+  static const String setMood = '$baseUrl/rayoflight/api/mood/set';
 }
