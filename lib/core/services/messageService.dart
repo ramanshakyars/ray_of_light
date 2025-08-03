@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MessageService {
-  static const Duration _displayDuration = Duration(seconds: 3);
+  static const Duration _displayDuration = Duration(seconds: 8);
 
   static void showSuccess(BuildContext context, String message) {
     _showTopSnackBar(context, message, Colors.green, Icons.check_circle);

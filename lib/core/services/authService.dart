@@ -42,6 +42,7 @@ class AuthService {
             'message': response['message'] ?? 'Registration failed',
           };
     } catch (e) {
+      print(e);
       return {'success': false, 'message': _getErrorMessage(e)};
     }
   }
@@ -82,6 +83,6 @@ class AuthService {
     if (error is SocketException) return 'No internet connection';
     if (error is TimeoutException) return 'Request timed out';
     if (error is FormatException) return 'Invalid server response';
-    return 'Something went wrong';
+    return 'Something went wrongg';
   }
 }

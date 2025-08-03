@@ -210,6 +210,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
           label: 'Breath',
         ),
         BottomNavigationBarItem(icon: Icon(Icons.track_changes), label: 'Goal'),
+        BottomNavigationBarItem(icon: Icon(Icons.person_2_outlined), label: 'Profile'),
       ],
     );
   }
@@ -222,10 +223,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       RouteNames.junerlism,
       RouteNames.breathingExercise,
       RouteNames.goalTracker,
+      RouteNames.profile,
     ];
     context.push('${RouteNames.mainApp}/${routes[index]}');
-    if (Scaffold.of(context).isDrawerOpen) {
-      Navigator.pop(context);
-    }
+    // if (Scaffold.of(context).isDrawerOpen) {
+    //   Navigator.pop(context);
+    // }
   }
 }

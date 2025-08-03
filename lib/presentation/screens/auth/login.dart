@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
-import 'package:rayoflite/core/constants/pathConfig.dart';
 import 'package:rayoflite/core/services/authService.dart';
-import 'package:rayoflite/core/services/httpService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 
 void main() {
@@ -57,7 +55,6 @@ class _LoginPageState extends State<LoginPage> {
           context,
           response['message'] ?? 'Login failed!',
         );
-          GoRouter.of(context).go('${RouteNames.mainApp}/${RouteNames.home}');
       }
     }
   }
@@ -68,127 +65,188 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isSmallScreen = screenHeight < 600;
+
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Logo and Title
-            Column(
-              children: [
-                Image.asset(
-                  'assets/logo.png', 
-                  height: 80, 
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(isSmallScreen ? 16.0 : 24.0),
+          child: Center(
+            child: SingleChildScrollView(
+              // Only for emergency - shouldn't normally scroll
+              physics: NeverScrollableScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: 400,
+                  minHeight:
+                      screenHeight - MediaQuery.of(context).padding.vertical,
                 ),
-                SizedBox(height: 10),
-                Text(
-                  'Ray of Light',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: const Color.fromARGB(255, 0, 0, 0),
-                  ),
-                ),
-                SizedBox(height: 5),
-                Text(
-                  'We are here to help you to be better than yesterday',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                ),
-              ],
-            ),
-            SizedBox(height: 30),
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  Text(
-                    'Login Here',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 20),
-                  // Email Field
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: Icon(Icons.email),
-                      border: OutlineInputBorder(),
-                    ),
-                    // validator: (value) {
-                    //   if (value == null || value.isEmpty) {
-                    //     return 'Please enter your email';
-                    //   }
-                    //   if (!value.contains('@')) {
-                    //     return 'Enter a valid email';
-                    //   }
-                    //   return null;
-                    // },
-                  ),
-                  SizedBox(height: 15),
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: !_isPasswordVisible,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      prefixIcon: Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _isPasswordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Logo Section - Only show if there's enough space
+                    if (!isSmallScreen) ...[
+                      Image.asset(
+                        'assets/logo.png',
+                        height: 80,
+                        fit: BoxFit.contain,
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Ray of Light',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _isPasswordVisible = !_isPasswordVisible;
-                          });
-                        },
                       ),
-                      border: OutlineInputBorder(),
-                    ),
-                    // validator: (value) {
-                    //   if (value == null || value.isEmpty) {
-                    //     return 'Please enter your password';
-                    //   }
-                    //   if (value.length < 6) {
-                    //     return 'Password must be at least 6 characters';
-                    //   }
-                    //   return null;
-                    // },
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        GoRouter.of(context).push(RouteNames.forgotPassword);
-                      },
-                      child: Text(
-                        'Forgot Password?',
-                        style: TextStyle(color: Colors.blue),
+                      SizedBox(height: 8),
+                      Text(
+                        'We are here to help you to be better than yesterday',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                      ),
+                      SizedBox(height: 32),
+                    ],
+                    // Login Form
+                    Card(
+                      elevation: 2,
+                      child: Padding(
+                        padding: EdgeInsets.all(isSmallScreen ? 16.0 : 24.0),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Login Here',
+                                style: TextStyle(
+                                  fontSize: isSmallScreen ? 20 : 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 20),
+                              // Email Field
+                              TextFormField(
+                                controller: _emailController,
+                                decoration: InputDecoration(
+                                  labelText: 'Email',
+                                  prefixIcon: Icon(Icons.email, size: 20),
+                                  border: OutlineInputBorder(),
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: isSmallScreen ? 12 : 14,
+                                    horizontal: 12,
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your email';
+                                  }
+                                  if (!value.contains('@')) {
+                                    return 'Enter a valid email';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              SizedBox(height: 12),
+                              // Password Field
+                              TextFormField(
+                                controller: _passwordController,
+                                obscureText: !_isPasswordVisible,
+                                decoration: InputDecoration(
+                                  labelText: 'Password',
+                                  prefixIcon: Icon(Icons.lock, size: 20),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _isPasswordVisible
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                      size: 20,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _isPasswordVisible =
+                                            !_isPasswordVisible;
+                                      });
+                                    },
+                                  ),
+                                  border: OutlineInputBorder(),
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: isSmallScreen ? 12 : 14,
+                                    horizontal: 12,
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your password';
+                                  }
+                                  if (value.length < 6) {
+                                    return 'Password must be at least 6 characters';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              SizedBox(height: 8),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: TextButton(
+                                  onPressed: () {
+                                    GoRouter.of(
+                                      context,
+                                    ).push(RouteNames.forgotPassword);
+                                  },
+                                  child: Text(
+                                    'Forgot Password?',
+                                    style: TextStyle(
+                                      fontSize: isSmallScreen ? 12 : 14,
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 16),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: _login,
+                                  child: Text(
+                                    'Login',
+                                    style: TextStyle(
+                                      fontSize: isSmallScreen ? 14 : 16,
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: isSmallScreen ? 12 : 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 12),
+                              TextButton(
+                                onPressed: () {
+                                  GoRouter.of(
+                                    context,
+                                  ).push(RouteNames.register);
+                                },
+                                child: Text(
+                                  'Don\'t have an account? Sign Up',
+                                  style: TextStyle(
+                                    fontSize: isSmallScreen ? 12 : 14,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: _login,
-                    child: Text('Login', style: TextStyle(fontSize: 16)),
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(double.infinity, 50),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  // Signup Link (Optional)
-                  TextButton(
-                    onPressed: () {
-                      GoRouter.of(context).push(RouteNames.register);
-                    },
-                    child: Text('Don’t have an account? Sign Up'),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ],
+          ),
         ),
       ),
     );

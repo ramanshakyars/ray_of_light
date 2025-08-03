@@ -1,66 +1,87 @@
 import 'package:flutter/material.dart';
 
-class AddGoalDialog extends StatelessWidget {
-  final TextEditingController titleController;
-  final TextEditingController descriptionController;
-  final TextEditingController targetController;
-  final VoidCallback onAddGoal;
+class AddGoalDialog extends StatefulWidget {
+  final Function(Map<String, dynamic>) onSubmit;
 
-  AddGoalDialog({
-    super.key,
-    required this.titleController,
-    required this.descriptionController,
-    required this.targetController,
-    required this.onAddGoal,
-  });
+  const AddGoalDialog({super.key, required this.onSubmit});
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  @override
+  State<AddGoalDialog> createState() => _AddGoalDialogState();
+}
+
+class _AddGoalDialogState extends State<AddGoalDialog> {
+  final _formKey = GlobalKey<FormState>();
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _reasonController = TextEditingController();
+  final _objectiveController = TextEditingController();
+  String? _selectedCategory;
+
+  final List<String> _categories = [
+    'DAILY_ROUTINE',
+    'CAREER',
+    'HEALTH',
+    'MINDFULNESS',
+    'RELATIONSHIPS',
+    'PERSONAL_GROWTH',
+    'OTHER',
+  ];
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _reasonController.dispose();
+    _objectiveController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add New Goal'),
+      title: const Text("Add New Goal"),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
               TextFormField(
-                controller: titleController,
-                decoration: const InputDecoration(labelText: 'Title'),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Title is required';
-                  }
-                  return null;
-                },
+                controller: _titleController,
+                decoration: const InputDecoration(labelText: "Title"),
+                validator:
+                    (val) =>
+                        val == null || val.isEmpty ? "Title is required" : null,
               ),
-              const SizedBox(height: 10),
               TextFormField(
-                controller: descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Why you want to do it?',
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Description is required';
-                  }
-                  return null;
-                },
+                controller: _descriptionController,
+                decoration: const InputDecoration(labelText: "Why you want to do it ?"),
               ),
-              const SizedBox(height: 10),
               TextFormField(
-                controller: targetController,
+                controller: _reasonController,
+                decoration: const InputDecoration(labelText: "why you want to achieve ?"),
+              ),
+              TextFormField(
+                controller: _objectiveController,
+                decoration: const InputDecoration(labelText: "Objective"),
+              ),
+              DropdownButtonFormField<String>(
+                value: _selectedCategory,
+                items:
+                    _categories
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e.toString().toLowerCase()),
+                          ),
+                        )
+                        .toList(),
+                onChanged: (val) => setState(() => _selectedCategory = val),
                 decoration: const InputDecoration(
-                  labelText: 'What you want to achieve?',
+                  labelText: "Select Goal Category",
                 ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Target is required';
-                  }
-                  return null;
-                },
+                validator:
+                    (val) =>
+                        val == null || val.isEmpty ? "Select category" : null,
               ),
             ],
           ),
@@ -68,17 +89,23 @@ class AddGoalDialog extends StatelessWidget {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          onPressed: () => 
+          Navigator.of(context).pop(),
+          child: const Text("Cancel"),
         ),
         ElevatedButton(
           onPressed: () {
             if (_formKey.currentState!.validate()) {
-              onAddGoal();
-              Navigator.of(context).pop();
+              widget.onSubmit({
+                'title': _titleController.text,
+                'description': _descriptionController.text,
+                'reason': _reasonController.text,
+                'objective': _objectiveController.text,
+                'category': _selectedCategory,
+              });
             }
           },
-          child: const Text('Add Goal'),
+          child: const Text("Add Goal"),
         ),
       ],
     );

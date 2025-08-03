@@ -12,6 +12,7 @@ class PathConfig {
   static const String forgotPassword = '$baseUrl/auth/forgot-password';
   static const String verifyOtp = '$baseUrl/auth/verify-otp';
 
-  // Add other endpoints as needed
-  // static const String someEndpoint = '$baseUrl/some/path';
+  //Goal Tracker endpoints
+  static const String getGoals = '$baseUrl/rayoflight/api/goal';
+  static const String createGoal = '$baseUrl/rayoflight/api/goal';
 }
