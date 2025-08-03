@@ -1,4 +1,4 @@
-package com.example.rayoflite
+package com.wrappedweb.rayoflight
 
 import io.flutter.embedding.android.FlutterActivity
 
