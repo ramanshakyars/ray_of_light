@@ -1,4 +1,4 @@
-import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/UserMoodsEnum.dart';
+import 'UserMoodsEnum.dart';
 
 class MoodRequest {
   final UserMoodsEnum type;
@@ -11,9 +11,23 @@ class MoodRequest {
     this.description,
   });
 
-  Map<String, dynamic> toJson() => {
-        'type': type.name.toUpperCase(),
-        'intensity': intensity,
-        if (description != null) 'description': description,
-      };
+  /// ✅ This is the missing method causing the error
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type.name.toUpperCase(),
+      'intensity': intensity,
+      if (description != null) 'description': description,
+    };
+  }
+
+  factory MoodRequest.fromJson(Map<String, dynamic> json) {
+    return MoodRequest(
+      type: UserMoodsEnum.values.firstWhere(
+        (e) => e.name.toUpperCase() == json['type'],
+        orElse: () => UserMoodsEnum.neutral,
+      ),
+      intensity: json['intensity'] ?? 5,
+      description: json['description'],
+    );
+  }
 }

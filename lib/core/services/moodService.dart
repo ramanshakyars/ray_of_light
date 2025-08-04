@@ -7,13 +7,13 @@ import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/Use
 class MoodService {
   static Future<Map<String, dynamic>> setMood(MoodRequest request) async {
     try {
-      final data = await HttpService.post(PathConfig.setMood,request.toJson());
-      
+      final data = await HttpService.post(PathConfig.setMood, request.toJson());
+
       if (data != null && data['type'] != null) {
         return {
           'success': true,
           'message': 'Mood updated successfully',
-          'data': UserMood.fromJson(data),
+          'data': data, 
         };
       } else {
         return {
@@ -28,17 +28,13 @@ class MoodService {
 
   static Future<Map<String, dynamic>> getCurrentMood() async {
     try {
-      final raw = await HttpService.get(PathConfig.getCurrentMood); // Define this
+      final raw = await HttpService.get(
+        PathConfig.getCurrentMood,
+      ); // Define this
       if (raw != null && raw['type'] != null) {
-        return {
-          'success': true,
-          'data': UserMood.fromJson(raw),
-        };
+        return {'success': true, 'data': UserMood.fromJson(raw)};
       } else {
-        return {
-          'success': false,
-          'message': 'No mood data available',
-        };
+        return {'success': false, 'message': 'No mood data available'};
       }
     } catch (e) {
       return {'success': false, 'message': 'Exception in getCurrentMood(): $e'};

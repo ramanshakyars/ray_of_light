@@ -39,10 +39,10 @@ class LocalStorageService {
     return token != null && token.isNotEmpty;
   }
 
-  static Future<void> setCurrentMood(UserMood mood) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('current_mood', json.encode(mood.toJson()));
-  }
+  // static Future<void> setCurrentMood(UserMood mood) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   await prefs.setString('current_mood', json.encode(mood.toJson()));
+  // }
 
   static Future<UserMood?> getCurrentMood() async {
     final prefs = await SharedPreferences.getInstance();

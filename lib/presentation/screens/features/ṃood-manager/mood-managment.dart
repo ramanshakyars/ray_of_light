@@ -52,25 +52,37 @@ class _MoodDropdownDialogState extends State<MoodDropdownDialog> {
       _isLoading = true;
       _errorMessage = null;
     });
+
     try {
       final req = MoodRequest(
-        type: _selectedMood,intensity: _intensity,
-        description:_descriptionController.text.isEmpty? null: _descriptionController.text,
+        type: _selectedMood,
+        intensity: _intensity,
+        description:
+            _descriptionController.text.trim().isEmpty
+                ? null
+                : _descriptionController.text.trim(),
       );
-      
+
       final resp = await MoodService.setMood(req);
+
       if (resp['success'] == true) {
-        final userMood = resp['data'] as UserMood;
-        await LocalStorageService.setCurrentMood(userMood);
-        final cur =
-            (await MoodService.getCurrentMood())['success'] == true
-                ? (await MoodService.getCurrentMood())['data'] as UserMood
+        final userMood = UserMood.fromJson(resp['data']);
+      //  await LocalStorageService.setCurrentMood(userMood);
+
+        final currentMoodResp = await MoodService.getCurrentMood();
+        final curMood =
+            (currentMoodResp['success'] == true &&
+                    currentMoodResp['data'] is UserMood)
+                ? currentMoodResp['data'] as UserMood
                 : userMood;
-        if (mounted) Navigator.pop(context, cur);
+
+        if (mounted) {
+          Navigator.of(context, rootNavigator: true).pop(curMood);
+        }
       } else {
         if (mounted) {
           setState(() {
-            _errorMessage = resp['message'] ?? 'Failed';
+            _errorMessage = resp['message'] ?? 'Failed to update mood';
             _isLoading = false;
           });
         }
@@ -185,16 +197,15 @@ class _MoodDropdownDialogState extends State<MoodDropdownDialog> {
                 maxLines: 2,
               ),
 
-              if (_errorMessage != null) ...[
-                const SizedBox(height: 16),
-                Text(
-                  _errorMessage!,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                ),
-              ],
+              // if (_errorMessage != null) ...[
+              //   const SizedBox(height: 16),
+              //   Text(
+              //     _errorMessage!,
+              //     style: TextStyle(color: Theme.of(context).colorScheme.error),
+              //   ),
+              // ],
               const SizedBox(height: 20),
 
-              /// Buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -224,7 +235,6 @@ class _MoodDropdownDialogState extends State<MoodDropdownDialog> {
   }
 }
 
-/// Utility to map enum -> icon & color
 class MoodIcon {
   static IconData getIcon(UserMoodsEnum mood) {
     switch (mood) {

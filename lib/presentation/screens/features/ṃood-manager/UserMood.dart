@@ -1,31 +1,35 @@
-import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/UserMoodsEnum.dart';
+import 'UserMoodsEnum.dart';
 
 class UserMood {
   final UserMoodsEnum type;
   final int intensity;
   final String? description;
-  final DateTime timestamp;
+  final DateTime setAt;
 
   UserMood({
     required this.type,
     required this.intensity,
     this.description,
-    required this.timestamp,
+    required this.setAt,
   });
 
-  factory UserMood.fromJson(Map<String, dynamic> json) => UserMood(
-        type: UserMoodsEnum.values.firstWhere(
-          (e) => e.name == (json['type'] as String).toLowerCase(),
-        ),
-        intensity: json['intensity'] as int,
-        description: json['description'] as String?,
-        timestamp: DateTime.parse(json['timestamp'] as String),
-      );
-
-  Map<String, dynamic> toJson() => {
-        'type': type.name.toUpperCase(),
-        'intensity': intensity,
-        if (description != null) 'description': description,
-        'timestamp': timestamp.toIso8601String(),
-      };
+  factory UserMood.fromJson(Map<String, dynamic> json) {
+    return UserMood(
+      type: UserMoodsEnum.values.firstWhere(
+        (e) => e.name.toUpperCase() == json['type'],
+        orElse: () => UserMoodsEnum.neutral,
+      ),
+      intensity: json['intensity'] ?? 5,
+      description: json['description'],
+      setAt: DateTime.utc(
+        json['setAt'][0],
+        json['setAt'][1],
+        json['setAt'][2],
+        json['setAt'][3],
+        json['setAt'][4],
+        json['setAt'][5],
+        json['setAt'][6] ~/ 1000, // microseconds to milliseconds if needed
+      ),
+    );
+  }
 }
