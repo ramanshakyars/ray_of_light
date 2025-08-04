@@ -55,9 +55,9 @@ class _UserDashboardState extends State<UserDashboard> {
             Navigator.pop(context);
           },
         ),
-        // actions: [
-        //   IconButton(icon: const Icon(Icons.mood), onPressed: _openMoodDialog),
-        // ],
+        actions: [
+          IconButton(icon: const Icon(Icons.mood), onPressed: _openMoodDialog),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),

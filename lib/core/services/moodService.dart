@@ -7,10 +7,7 @@ import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/Use
 class MoodService {
   static Future<Map<String, dynamic>> setMood(MoodRequest request) async {
     try {
-      final data = await HttpService.post(
-        PathConfig.setMood, 
-        request.toJson(),
-      );
+      final data = await HttpService.post(PathConfig.setMood,request.toJson());
       
       if (data != null && data['type'] != null) {
         return {

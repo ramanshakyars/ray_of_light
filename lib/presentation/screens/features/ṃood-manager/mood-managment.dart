@@ -54,13 +54,10 @@ class _MoodDropdownDialogState extends State<MoodDropdownDialog> {
     });
     try {
       final req = MoodRequest(
-        type: _selectedMood,
-        intensity: _intensity,
-        description:
-            _descriptionController.text.isEmpty
-                ? null
-                : _descriptionController.text,
+        type: _selectedMood,intensity: _intensity,
+        description:_descriptionController.text.isEmpty? null: _descriptionController.text,
       );
+      
       final resp = await MoodService.setMood(req);
       if (resp['success'] == true) {
         final userMood = resp['data'] as UserMood;
