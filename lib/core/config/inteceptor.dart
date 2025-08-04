@@ -9,7 +9,7 @@ import 'package:rayoflite/core/services/localStorageService.dart';
 class AuthInterceptor  {
   static final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: 'http://localhost:9090',
+      baseUrl: 'http://ec2-3-111-209-210.ap-south-1.compute.amazonaws.com',
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 15),
       contentType: 'application/json',

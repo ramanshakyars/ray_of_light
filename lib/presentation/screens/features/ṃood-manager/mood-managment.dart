@@ -5,22 +5,17 @@ import 'MoodRequest.dart';
 import 'UserMood.dart';
 import 'UserMoodsEnum.dart';
 
-/// The dialog that lets the user pick a mood, intensity, and optional description.
-class MoodDialog extends StatefulWidget {
-  const MoodDialog({super.key});
+class MoodDropdownDialog extends StatefulWidget {
+  const MoodDropdownDialog({super.key});
 
   @override
-  State<MoodDialog> createState() => _MoodDialogState();
+  State<MoodDropdownDialog> createState() => _MoodDropdownDialogState();
 }
 
-class _MoodDialogState extends State<MoodDialog> {
+class _MoodDropdownDialogState extends State<MoodDropdownDialog> {
   late UserMoodsEnum _selectedMood;
   late int _intensity;
   final TextEditingController _descriptionController = TextEditingController();
-
-  /// Controller for the mood-name field with icon.
-  late TextEditingController _moodController;
-
   bool _isLoading = false;
   String? _errorMessage;
 
@@ -29,55 +24,36 @@ class _MoodDialogState extends State<MoodDialog> {
     super.initState();
     _selectedMood = UserMoodsEnum.neutral;
     _intensity = 5;
-    _moodController = TextEditingController(text: _capitalize(_selectedMood));
-
     _loadInitialMood();
   }
 
   @override
   void dispose() {
     _descriptionController.dispose();
-    _moodController.dispose();
     super.dispose();
-  }
-
-  /// Helper to get a capitalized human-friendly mood name.
-  String _capitalize(UserMoodsEnum mood) {
-    final name = mood.name;
-    return '${name[0].toUpperCase()}${name.substring(1)}';
-  }
-
-  /// Updates the mood text field when a new mood is selected.
-  void _updateMoodController(UserMoodsEnum mood) {
-    _moodController.text = _capitalize(mood);
   }
 
   Future<void> _loadInitialMood() async {
     try {
-      final mood = await LocalStorageService.getCurrentMood();
-      if (mood != null) {
+      final stored = await LocalStorageService.getCurrentMood();
+      if (stored != null) {
         setState(() {
-          _selectedMood = mood.type;
-          _intensity = mood.intensity;
-          _updateMoodController(_selectedMood);
-          _descriptionController.text = mood.description ?? '';
+          _selectedMood = stored.type;
+          _intensity = stored.intensity;
+          _descriptionController.text = stored.description ?? '';
         });
       }
-    } catch (_) {
-      // Ignore errors in loading initial mood
-    }
+    } catch (_) {}
   }
 
   Future<void> _submitMood() async {
     if (!mounted) return;
-
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
-
     try {
-      final request = MoodRequest(
+      final req = MoodRequest(
         type: _selectedMood,
         intensity: _intensity,
         description:
@@ -85,106 +61,97 @@ class _MoodDialogState extends State<MoodDialog> {
                 ? null
                 : _descriptionController.text,
       );
-
-      final response = await MoodService.setMood(request);
-
-      if (response['success'] == true) {
-        final userMood = response['data'] as UserMood;
+      final resp = await MoodService.setMood(req);
+      if (resp['success'] == true) {
+        final userMood = resp['data'] as UserMood;
         await LocalStorageService.setCurrentMood(userMood);
-
-        final currentMoodResponse = await MoodService.getCurrentMood();
-        if (currentMoodResponse['success'] == true) {
-          final currentMood = currentMoodResponse['data'] as UserMood;
-          await LocalStorageService.setCurrentMood(currentMood);
-          if (mounted) Navigator.pop(context, currentMood);
-        } else {
-          if (mounted) Navigator.pop(context, userMood);
-        }
+        final cur =
+            (await MoodService.getCurrentMood())['success'] == true
+                ? (await MoodService.getCurrentMood())['data'] as UserMood
+                : userMood;
+        if (mounted) Navigator.pop(context, cur);
       } else {
-        if (!mounted) return;
+        if (mounted) {
+          setState(() {
+            _errorMessage = resp['message'] ?? 'Failed';
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
         setState(() {
-          _errorMessage = response['message'] ?? 'Unknown error';
+          _errorMessage = 'Error updating mood: $e';
           _isLoading = false;
         });
       }
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _errorMessage = 'Failed to update mood: $e';
-        _isLoading = false;
-      });
     }
+  }
+
+  /// Helper to get human-readable mood name
+  String _humanMood(UserMoodsEnum m) {
+    final name = m.name;
+    return '${name[0].toUpperCase()}${name.substring(1)}';
   }
 
   @override
   Widget build(BuildContext context) {
-    final moodColor = _MoodIcon.moodColor(_selectedMood);
-    final moodIcon = _MoodIcon.moodIcon(_selectedMood);
+    final moodIcon = MoodIcon.getIcon(_selectedMood);
+    final moodColor = MoodIcon.getColor(_selectedMood);
 
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 500, maxHeight: 600),
+        constraints: const BoxConstraints(maxWidth: 400, maxHeight: 560),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              /// Title
               const Text(
                 'How are you feeling?',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
-              /// Selected mood field with name + icon
-              TextField(
-                readOnly: true,
-                controller: _moodController,
-                decoration: InputDecoration(
-                  labelText: 'Selected Mood',
-                  suffixIcon: Icon(moodIcon, color: moodColor),
-                  border: const OutlineInputBorder(),
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 14.0,
-                    horizontal: 12.0,
+              /// Dropdown for mood selection
+              InputDecorator(
+                decoration: const InputDecoration(
+                  labelText: 'Select Mood',
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 12,
                   ),
                 ),
-                style: TextStyle(color: moodColor, fontWeight: FontWeight.w600),
-              ),
-
-              const SizedBox(height: 16),
-
-              /// Mood icons grid
-              SizedBox(
-                height: 200,
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    childAspectRatio: 1.0,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<UserMoodsEnum>(
+                    isExpanded: true,
+                    value: _selectedMood,
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    items:
+                        UserMoodsEnum.values.map((m) {
+                          final icon = MoodIcon.getIcon(m);
+                          return DropdownMenuItem(
+                            value: m,
+                            child: Row(
+                              children: [
+                                Icon(icon, color: MoodIcon.getColor(m)),
+                                const SizedBox(width: 8),
+                                Text(_humanMood(m)),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                    onChanged:
+                        (v) => setState(() {
+                          _selectedMood = v!;
+                        }),
                   ),
-                  itemCount: UserMoodsEnum.values.length,
-                  itemBuilder: (context, index) {
-                    final mood = UserMoodsEnum.values[index];
-                    return _MoodIcon(
-                      mood: mood,
-                      isSelected: _selectedMood == mood,
-                      onTap: () {
-                        setState(() {
-                          _selectedMood = mood;
-                          _updateMoodController(mood);
-                        });
-                      },
-                    );
-                  },
                 ),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
               /// Intensity slider
               Column(
@@ -199,39 +166,38 @@ class _MoodDialogState extends State<MoodDialog> {
                     min: 1,
                     max: 10,
                     divisions: 9,
-                    label: _intensity.toString(),
-                    onChanged: (value) {
+                    label: '$_intensity',
+                    onChanged: (v) {
                       setState(() {
-                        _intensity = value.round();
+                        _intensity = v.round();
                       });
                     },
                   ),
                 ],
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
-              /// Description field
+              /// Description
               TextField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(
                   labelText: 'Description (optional)',
                   border: OutlineInputBorder(),
                 ),
-                maxLines: 3,
+                maxLines: 2,
               ),
 
               if (_errorMessage != null) ...[
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
                 Text(
                   _errorMessage!,
                   style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
               ],
+              const SizedBox(height: 20),
 
-              const SizedBox(height: 16),
-
-              /// Cancel & Save buttons
+              /// Buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -239,7 +205,7 @@ class _MoodDialogState extends State<MoodDialog> {
                     onPressed: _isLoading ? null : () => Navigator.pop(context),
                     child: const Text('Cancel'),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 12),
                   ElevatedButton(
                     onPressed: _isLoading ? null : _submitMood,
                     child:
@@ -261,21 +227,9 @@ class _MoodDialogState extends State<MoodDialog> {
   }
 }
 
-/// Icon widget for each mood in the grid, with static icon/color mappings.
-class _MoodIcon extends StatelessWidget {
-  final UserMoodsEnum mood;
-  final bool isSelected;
-  final VoidCallback onTap;
-  final double size;
-
-  const _MoodIcon({
-    required this.mood,
-    required this.isSelected,
-    required this.onTap,
-    this.size = 40.0,
-  });
-
-  static IconData moodIcon(UserMoodsEnum mood) {
+/// Utility to map enum -> icon & color
+class MoodIcon {
+  static IconData getIcon(UserMoodsEnum mood) {
     switch (mood) {
       case UserMoodsEnum.happy:
         return Icons.sentiment_very_satisfied;
@@ -302,7 +256,7 @@ class _MoodIcon extends StatelessWidget {
     }
   }
 
-  static Color moodColor(UserMoodsEnum mood) {
+  static Color getColor(UserMoodsEnum mood) {
     switch (mood) {
       case UserMoodsEnum.happy:
         return Colors.yellow[700]!;
@@ -327,24 +281,5 @@ class _MoodIcon extends StatelessWidget {
       case UserMoodsEnum.neutral:
         return Colors.grey[700]!;
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final icon = moodIcon(mood);
-    final color = moodColor(mood);
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(8.0),
-        decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.2) : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-          border: isSelected ? Border.all(color: color, width: 2.0) : null,
-        ),
-        child: Icon(icon, color: color, size: size),
-      ),
-    );
   }
 }
