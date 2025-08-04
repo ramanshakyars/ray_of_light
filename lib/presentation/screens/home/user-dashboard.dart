@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
+import 'package:rayoflite/core/services/messageService.dart';
 
 import '../features/ṃood-manager/UserMood.dart';
 import '../features/ṃood-manager/mood-managment.dart';
@@ -37,8 +38,9 @@ class _UserDashboardState extends State<UserDashboard> {
     );
 
     if (updatedMood != null && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Mood updated to ${updatedMood.type.name}')),
+      MessageService.showSuccess(
+        context,
+        'Mood updated to ${updatedMood.type.name}',
       );
     }
   }

@@ -39,15 +39,17 @@ class LocalStorageService {
     return token != null && token.isNotEmpty;
   }
 
-  // static Future<void> setCurrentMood(UserMood mood) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.setString('current_mood', json.encode(mood.toJson()));
-  // }
+  static Future<void> setCurrentMood(UserMood mood) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('current_mood', json.encode(mood.toJson()));
+  }
 
   static Future<UserMood?> getCurrentMood() async {
     final prefs = await SharedPreferences.getInstance();
-    final moodStr = prefs.getString('current_mood');
-    return moodStr != null ? UserMood.fromJson(json.decode(moodStr)) : null;
+    final jsonStr = prefs.getString('current_mood');
+    if (jsonStr == null) return null;
+    final jsonMap = json.decode(jsonStr);
+    return UserMood.fromJson(jsonMap);
   }
 
   static Future<void> clearCurrentMood() async {

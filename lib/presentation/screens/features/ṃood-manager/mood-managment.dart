@@ -67,7 +67,7 @@ class _MoodDropdownDialogState extends State<MoodDropdownDialog> {
 
       if (resp['success'] == true) {
         final userMood = UserMood.fromJson(resp['data']);
-      //  await LocalStorageService.setCurrentMood(userMood);
+        await LocalStorageService.setCurrentMood(userMood);
 
         final currentMoodResp = await MoodService.getCurrentMood();
         final curMood =
