@@ -197,13 +197,13 @@ class _MoodDropdownDialogState extends State<MoodDropdownDialog> {
                 maxLines: 2,
               ),
 
-              // if (_errorMessage != null) ...[
-              //   const SizedBox(height: 16),
-              //   Text(
-              //     _errorMessage!,
-              //     style: TextStyle(color: Theme.of(context).colorScheme.error),
-              //   ),
-              // ],
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 16),
+                Text(
+                  _errorMessage!,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+              ],
               const SizedBox(height: 20),
 
               Row(

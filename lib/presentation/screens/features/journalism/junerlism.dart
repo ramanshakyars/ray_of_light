@@ -41,9 +41,9 @@ class _JournalismScreenState extends State<JournalismScreen> {
     final thoughtText = _thoughtController.text.trim();
     if (thoughtText.isEmpty) return;
     setState(() => _isPosting = true);
-    final curruntUserMood = await LocalStorageService.getCurrentMood();
+    final curruntUserMood = await LocalStorageService.getCurrentMoodType();
     print(curruntUserMood);
-    if(curruntUserMood == null) return;
+   // if(curruntUserMood?.type == null) return;
     final journalData = {
       "content": thoughtText,
       "type": "TEXT",
