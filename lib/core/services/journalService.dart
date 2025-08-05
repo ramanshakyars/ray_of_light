@@ -17,4 +17,26 @@ class JournalService {
       return {'success': false, 'message': 'Exception in getGoals(): $e'};
     }
   }
+
+  static Future<Map<String, dynamic>> postJournalThaought(
+    Map<String, dynamic> journalsData,
+  ) async {
+    try {
+      final data = await HttpService.post(PathConfig.postJournals, journalsData);
+      if (data != null && data['id'] != null) {
+        return {
+          'success': true,
+          'message': 'Your thaughts posted successfully',
+          'data': data,
+        };
+      } else {
+        return {
+          'success': false,
+          'message': data['message'] ?? 'Failed to thaughts posted ',
+        };
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Something went wrong: $e'};
+    }
+  }
 }

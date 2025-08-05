@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/services/journalService.dart';
+import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 import 'journalism_drawer.dart';
 
@@ -36,23 +38,34 @@ class _JournalismScreenState extends State<JournalismScreen> {
   }
 
   Future<void> _postThought() async {
-    if (_thoughtController.text.trim().isEmpty) return;
-
+    final thoughtText = _thoughtController.text.trim();
+    if (thoughtText.isEmpty) return;
     setState(() => _isPosting = true);
-
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 1));
-
-    setState(() {
-      _postedThoughts.insert(0, _thoughtController.text.trim());
-      _thoughtController.clear();
-      _isPosting = false;
-    });
-
-    MessageService.showSuccess(
-      context,
-      "Your thought has been shared with the universe",
-    );
+    final curruntUserMood = await LocalStorageService.getCurrentMood();
+    print(curruntUserMood);
+    if(curruntUserMood == null) return;
+    final journalData = {
+      "content": thoughtText,
+      "type": "TEXT",
+      "associatedMood": curruntUserMood,
+    };
+    final response = await JournalService.postJournalThaought(journalData);
+    setState(() => _isPosting = false);
+    if (response['success'] == true) {
+      setState(() {
+        _postedThoughts.insert(0, thoughtText);
+        _thoughtController.clear();
+      });
+      MessageService.showSuccess(
+        context,
+        response['message'] ?? "Your thought has been posted!",
+      );
+    } else {
+      MessageService.showError(
+        context,
+        response['message'] ?? "Failed to post your thought.",
+      );
+    }
   }
 
   @override
