@@ -151,7 +151,10 @@ class _JournalismDrawerState extends State<JournalismDrawer> {
               Divider(height: 1, color: widget.theme.colorScheme.outline),
       itemBuilder: (context, index) {
         final item = journalHistory[index];
-        final content = item['content'] ?? '';
+        final fullContent = item['content'] ?? '';
+        final words = fullContent.split(' ');
+        final content =
+            words.length <= 4 ? fullContent : '${words.take(4).join(' ')}...';
 
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -168,7 +171,7 @@ class _JournalismDrawerState extends State<JournalismDrawer> {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              // Only journal content
+              // Truncated journal content
               Expanded(
                 child: Text(
                   content,
