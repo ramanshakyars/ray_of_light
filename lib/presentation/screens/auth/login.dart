@@ -18,6 +18,8 @@ class Login extends StatelessWidget {
 }
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -210,15 +212,15 @@ class _LoginPageState extends State<LoginPage> {
                                 width: double.infinity,
                                 child: ElevatedButton(
                                   onPressed: _login,
+                                  style: ElevatedButton.styleFrom(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: isSmallScreen ? 12 : 16,
+                                    ),
+                                  ),
                                   child: Text(
                                     'Login',
                                     style: TextStyle(
                                       fontSize: isSmallScreen ? 14 : 16,
-                                    ),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: isSmallScreen ? 12 : 16,
                                     ),
                                   ),
                                 ),

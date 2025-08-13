@@ -293,12 +293,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         width: double.infinity,
                                         child: ElevatedButton(
                                           onPressed: _register,
+                                          style: ElevatedButton.styleFrom(
+                                            padding: EdgeInsets.symmetric(vertical: 14),
+                                          ),
                                           child: Text(
                                             'Register',
                                             style: TextStyle(fontSize: 16),
-                                          ),
-                                          style: ElevatedButton.styleFrom(
-                                            padding: EdgeInsets.symmetric(vertical: 14),
                                           ),
                                         ),
                                       ),

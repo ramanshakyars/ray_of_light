@@ -10,7 +10,7 @@ class MoodService {
     try {
       final data = await HttpService.post(PathConfig.setMood, request.toJson());
 
-      if (data != null && data['type'] != null) {
+      if (data['type'] != null) {
         return {
           'success': true,
           'message': 'Mood updated successfully',

@@ -23,7 +23,7 @@ class JournalService {
   ) async {
     try {
       final data = await HttpService.post(PathConfig.postJournals, journalsData);
-      if (data != null && data['id'] != null) {
+      if (data['id'] != null) {
         return {
           'success': true,
           'message': 'Your thaughts posted successfully',

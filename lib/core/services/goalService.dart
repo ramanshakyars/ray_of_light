@@ -8,7 +8,7 @@ class GoalService {
   ) async {
     try {
       final data = await HttpService.post(PathConfig.createGoal, goalData);
-      if (data != null && data['id'] != null) {
+      if (data['id'] != null) {
         return {
           'success': true,
           'message': 'Goal added successfully',
