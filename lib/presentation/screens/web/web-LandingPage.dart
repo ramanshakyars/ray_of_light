@@ -320,7 +320,7 @@ class WebLandingPage extends StatelessWidget {
                   const SizedBox(height: 40),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/login');
+                      GoRouter.of(context).go(RouteNames.login);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.deepPurple,
