@@ -6,6 +6,7 @@ class RouteNames {
   static const resetPassword = '/reset-password';
   static const logout = '/login';
   static const landingPage  = '/landing-page';
+  static const weblandingPage  = '/ray-of-light';
 
   // Main app structure
   static const mainApp = '/main';

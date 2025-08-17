@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MessageService {
-  static const Duration _displayDuration = Duration(seconds: 8);
+  static const Duration _displayDuration = Duration(seconds: 5);
 
   static void showSuccess(BuildContext context, String message) {
     _showTopSnackBar(context, message, Colors.green, Icons.check_circle);
@@ -39,10 +39,7 @@ class MessageService {
           ),
     );
 
-    // Insert the overlay
     overlay.insert(overlayEntry);
-
-    // Remove the overlay after duration
     Future.delayed(_displayDuration, () {
       overlayEntry.remove();
     });

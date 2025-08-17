@@ -83,8 +83,8 @@ class _LandingPageState extends State<LandingPage>
                        GoRouter.of(context).push('/login');
                     },
                     backgroundColor: Colors.deepPurple,
-                    child: const Icon(Icons.person, color: Colors.white),
                     elevation: 4,
+                    child: const Icon(Icons.person, color: Colors.white),
                   ),
                 );
               },

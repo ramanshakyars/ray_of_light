@@ -6,7 +6,7 @@ class InputArea extends StatelessWidget {
   final VoidCallback onSend;
   final bool isLoading;
 
-  const InputArea({
+  const InputArea({super.key, 
     required this.controller,
     required this.onSend,
     required this.isLoading,

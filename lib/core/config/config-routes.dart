@@ -10,17 +10,23 @@ import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat_screen
 import 'package:rayoflite/presentation/screens/features/journalism/junerlism.dart';
 import 'package:rayoflite/presentation/screens/features/breathing/breathing.dart';
 import 'package:rayoflite/presentation/screens/features/goal-tracker/goal-tracker.dart';
+import 'package:rayoflite/presentation/screens/web/web-LandingPage.dart';
 import 'package:rayoflite/presentation/welcome-page.dart';
 import 'package:rayoflite/core/config/main-layout.dart';
 
-/// Function to create GoRouter based on login status
-GoRouter createRouter(bool isLoggedIn) {
+GoRouter createRouter(String initialLocation) {
   return GoRouter(
-    initialLocation: isLoggedIn ? '${RouteNames.mainApp}/${RouteNames.home}': RouteNames.landingPage,
+    initialLocation: initialLocation,
     routes: [
+      // Mobile landing page
       GoRoute(
         path: RouteNames.landingPage,
         builder: (context, state) => const WelcomePage(),
+      ),
+      // Web landing page
+      GoRoute(
+        path: RouteNames.weblandingPage,
+        builder: (context, state) => const WebLandingPage(),
       ),
       GoRoute(
         path: RouteNames.login,
@@ -39,13 +45,13 @@ GoRouter createRouter(bool isLoggedIn) {
         builder: (context, state) => const ResetPasswordScreen(),
       ),
 
-      // Main App Routes inside a Shell (with Bottom Nav Layout)
+      // Main App Routes
       ShellRoute(
         builder: (context, state, child) => MainScreen(child: child),
         routes: [
           GoRoute(
             path: RouteNames.mainApp,
-            builder: (context, state) => UserDashboard(), // Default main route
+            builder: (context, state) => UserDashboard(),
             routes: [
               GoRoute(
                 path: RouteNames.home,
