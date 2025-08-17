@@ -12,69 +12,109 @@ class WebLandingPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            const Icon(Icons.lightbulb_outline, color: Colors.amber, size: 30),
-            const SizedBox(width: 10),
-            const Text(
-              "Ray of Light",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            if (!isMobile) const Spacer(),
-            if (!isMobile) ...[
-              TextButton(
-                onPressed: () {},
-                child: const Text(
-                  "Features",
-                  style: TextStyle(color: Colors.white),
+        title:
+            isMobile
+                ? Row(
+                  children: [
+                    const Icon(
+                      Icons.lightbulb_outline,
+                      color: Colors.amber,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 8),
+                    const Text(
+                      "Ray of Light",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.menu, color: Colors.white),
+                      onPressed: () {
+                        // Open a drawer or show menu options
+                        Scaffold.of(context).openEndDrawer();
+                      },
+                    ),
+                  ],
+                )
+                : Row(
+                  children: [
+                    const Icon(
+                      Icons.lightbulb_outline,
+                      color: Colors.amber,
+                      size: 30,
+                    ),
+                    const SizedBox(width: 10),
+                    const Text(
+                      "Ray of Light",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const Spacer(),
+                    TextButton(
+                      onPressed: () {
+                        // Scroll to features section
+                        Scrollable.ensureVisible(
+                          context,
+                          duration: const Duration(seconds: 1),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                      child: const Text(
+                        "Features",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    const SizedBox(width: 15),
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        "About",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    const SizedBox(width: 15),
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        "Testimonials",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        GoRouter.of(context).go(RouteNames.login);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.amber,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
+                      ),
+                      child: const Text(
+                        "Login",
+                        style: TextStyle(
+                          color: Colors.deepPurple,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: const Text(
-                  "About",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: const Text(
-                  "Testimonials",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
-            ElevatedButton(
-              onPressed: () {
-                GoRouter.of(context).go(RouteNames.login);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.amber,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding: EdgeInsets.symmetric(
-                  horizontal: isMobile ? 15 : 20,
-                  vertical: isMobile ? 10 : 15,
-                ),
-              ),
-              child: Text(
-                "Login",
-                style: TextStyle(
-                  color: Colors.deepPurple,
-                  fontSize: isMobile ? 14 : 16,
-                ),
-              ),
-            ),
-            SizedBox(width: isMobile ? 10 : 20),
-          ],
-        ),
         backgroundColor: Colors.deepPurple,
         elevation: 10,
+        toolbarHeight: isMobile ? 60 : 80, // Adjust height based on device
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -403,7 +443,7 @@ class WebLandingPage extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
           onTap: () {},
-          hoverColor: Colors.white.withOpacity(0.1),
+          hoverColor: Colors.white.withValues(),
           child: Padding(
             padding: EdgeInsets.all(isMobile ? 15.0 : 20.0),
             child: Row(
