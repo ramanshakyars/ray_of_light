@@ -1,6 +1,6 @@
 class PathConfig {
-  // static const String baseUrl = 'http://localhost:9090/rayoflight/api';
-  static const String baseUrl = 'http://ec2-3-111-209-210.ap-south-1.compute.amazonaws.com/rayoflight/api';
+  static const String baseUrl = 'http://localhost:9090/rayoflight/api';
+  // static const String baseUrl = 'http://ec2-3-111-209-210.ap-south-1.compute.amazonaws.com/rayoflight/api';
 
   // Auth endpoints
   static const String login = '$baseUrl/public/login';
@@ -24,4 +24,12 @@ class PathConfig {
   // Mood endpoints
   static const String getCurrentMood = '$baseUrl/mood/current';
   static const String setMood = '$baseUrl/mood/set';
+
+  // Talk to light endpoints
+  static const String sendChat = '$baseUrl/chat/message';
+  static const String getChatHistory = '$baseUrl/chat/conversations/list-title';
+  static const String getChatHistoryById = '$baseUrl/chat/conversations/{conversationId}';
+  static const String renameChat = '$baseUrl/chat/conversations/rename/{conversationId}';
+  static const String deletechat = '$baseUrl/chat/conversations/{conversationId}';
+  static const String clearChatsMemory = '$baseUrl/chat/conversations/{conversationId}';
 }

@@ -1,37 +1,50 @@
-// chat_history.dart
-class ChatHistory {
-  
-  final String id;
-  final String title;
-  final DateTime timestamp;
-  final String lastMessage;
+import 'package:flutter/material.dart';
+import 'package:rayoflite/core/services/talkToLightService.dart';
 
-  ChatHistory({
-    required this.id,
-    required this.title,
-    required this.timestamp,
-    required this.lastMessage,
-  });
+class ChatHistory extends StatefulWidget {
+  const ChatHistory({super.key});
 
-  // Simulated history data
-  static List<ChatHistory> get simulatedHistory => [
-    ChatHistory(
-      id: '1',
-      title: 'Introduction',
-      timestamp: DateTime.now().subtract(Duration(minutes: 30)),
-      lastMessage: 'Hi, I was thinking about you',
-    ),
-    ChatHistory(
-      id: '2',
-      title: 'Curious question',
-      timestamp: DateTime.now().subtract(Duration(hours: 2)),
-      lastMessage: 'What were you doing?',
-    ),
-    ChatHistory(
-      id: '3',
-      title: 'General chat',
-      timestamp: DateTime.now().subtract(Duration(days: 1)),
-      lastMessage: 'Tell me something interesting',
-    ),
-  ];
+  @override
+  State<ChatHistory> createState() => _ChatDrawerState();
 }
+
+class _ChatDrawerState extends State<ChatHistory> {
+  List<dynamic> chatHistory = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadHistory();
+  }
+
+  Future<void> loadHistory() async {
+    final data = await Talktolightservice.getChatHistory();
+    setState(() {
+      chatHistory = data as List;
+      isLoading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: chatHistory.length,
+              itemBuilder: (context, index) {
+                final item = chatHistory[index];
+                final title = item['title'] ?? 'Untitled'; // sirf title show
+                return ListTile(
+                  title: Text(title),
+                  onTap: () {
+                    Navigator.pop(context);                    
+                  },
+                );
+              },
+            ),
+    );
+  }
+}
+

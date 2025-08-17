@@ -7,8 +7,6 @@ import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat-history.dart';
 import 'chat_message.dart';
 import 'input_area.dart';
-import 'api_service.dart';
-
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -24,7 +22,7 @@ class _ChatScreenState extends State<ChatScreen>
   final FlutterTts _tts = FlutterTts();
   bool _isLoading = false;
   late AnimationController _starController;
-  List<ChatHistory> _chatHistory = [];
+
 
   @override
   void initState() {
@@ -44,9 +42,9 @@ class _ChatScreenState extends State<ChatScreen>
 
   Future<void> _loadChatHistory() async {
     // Simulate API call delay
-    await Future.delayed(Duration(milliseconds: 500));
+    //  await Future.delayed(Duration(milliseconds: 500));
     setState(() {
-      _chatHistory = ChatHistory.simulatedHistory;
+      // _chatHistory = ChatHistory.simulatedHistory;
     });
   }
 
@@ -56,9 +54,7 @@ class _ChatScreenState extends State<ChatScreen>
       child: Column(
         children: [
           DrawerHeader(
-            decoration: BoxDecoration(
-              color: Color(0xFF0F3460),
-            ),
+            decoration: BoxDecoration(color: Color(0xFF0F3460)),
             child: Center(
               child: Text(
                 'Chat History',
@@ -69,49 +65,13 @@ class _ChatScreenState extends State<ChatScreen>
                 ),
               ),
             ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _chatHistory.length,
-              itemBuilder: (context, index) {
-                final history = _chatHistory[index];
-                return ListTile(
-                  leading: Icon(Icons.chat_bubble_outline, color: Colors.blueAccent),
-                  title: Text(
-                    history.title,
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  subtitle: Text(
-                    history.lastMessage,
-                    style: TextStyle(color: Colors.white70),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  trailing: Text(
-                    '${history.timestamp.hour}:${history.timestamp.minute}',
-                    style: TextStyle(color: Colors.white54),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _showSnackbar('Loading conversation ${history.id}');
-                  },
-                );
-              },
-            ),
-          ),
+          ),         
         ],
       ),
     );
   }
 
-  void _showSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: Duration(seconds: 2),
-      ),
-    );
-  }
+ 
 
   Future<void> _sendMessage() async {
     if (_textController.text.trim().isEmpty) return;
@@ -123,19 +83,7 @@ class _ChatScreenState extends State<ChatScreen>
       _messages.add(ChatMessage(text: message, isUser: true));
       _isLoading = true;
       _starController.repeat();
-    });
-
-    // Update chat history if this is the first message
-    if (_messages.length == 1) {
-      setState(() {
-        _chatHistory.insert(0, ChatHistory(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          title: 'New Chat ${_chatHistory.length + 1}',
-          timestamp: DateTime.now(),
-          lastMessage: message,
-        ));
-      });
-    }
+    }); 
 
     // Simulate API delay (1-3 seconds)
     final randomDelay = Duration(milliseconds: 1000 + Random().nextInt(2000));
@@ -264,17 +212,22 @@ class _ChatScreenState extends State<ChatScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF1A1A2E),
-      drawer: _buildDrawer(),
+      drawer: const ChatHistory(), // ✅ use your component
       appBar: AppBar(
-        title: Text('Talk to Light', style: TextStyle(color: Colors.white)),
-        backgroundColor: Color.fromARGB(255, 27, 39, 74),
+        title: const Text(
+          'Talk to Light',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: const Color.fromARGB(255, 27, 39, 74),
         elevation: 10,
         automaticallyImplyLeading: true,
         actions: [
           IconButton(
             icon: Image.asset('assets/logo.png'),
             onPressed: () {
-              GoRouter.of(context).push('${RouteNames.mainApp}/${RouteNames.home}');
+              GoRouter.of(
+                context,
+              ).push('${RouteNames.mainApp}/${RouteNames.home}');
             },
           ),
         ],
@@ -286,7 +239,7 @@ class _ChatScreenState extends State<ChatScreen>
               children: [
                 if (_messages.isNotEmpty)
                   ListView.builder(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     itemCount: _messages.length,
                     itemBuilder: (context, index) => _messages[index],
                   ),
