@@ -210,7 +210,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
           label: 'Breath',
         ),
         BottomNavigationBarItem(icon: Icon(Icons.track_changes), label: 'Goal'),
-        BottomNavigationBarItem(icon: Icon(Icons.person_2_outlined), label: 'Profile'),
+        BottomNavigationBarItem(icon: Icon(Icons.person_pin), label: 'Profile'),
       ],
     );
   }

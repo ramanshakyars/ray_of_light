@@ -60,7 +60,7 @@ class WelcomePage extends StatelessWidget {
                     fontSize: 24,
                     fontWeight: FontWeight.w600,
                     color: Colors.blue[700],
-                    fontStyle: FontStyle.italic, // Added italic
+                    fontStyle: FontStyle.italic, 
                   ),
                 ),
               ],

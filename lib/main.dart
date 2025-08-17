@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rayoflite/core/config/config-routes.dart';
+import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
 
 void main() async {
@@ -16,13 +18,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Initial landing page selection
+    String initialRoute;
+    if (isLoggedIn) {
+      // Logged-in users: follow normal flow
+      initialRoute = '${RouteNames.mainApp}/${RouteNames.home}';
+    } else {
+      // Not logged in: show web landing or mobile landing
+      if (kIsWeb) {
+        initialRoute = RouteNames.weblandingPage;
+      } else {
+        initialRoute = RouteNames.landingPage;
+      }
+    }
+
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      routerConfig: createRouter(isLoggedIn), 
+      routerConfig: createRouter(initialRoute),
     );
   }
 }

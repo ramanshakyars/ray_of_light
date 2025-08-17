@@ -6,6 +6,8 @@ import 'dart:math';
 import 'package:rayoflite/core/config/routenames.dart';
 
 class BreathingScreen extends StatefulWidget {
+  const BreathingScreen({super.key});
+
   @override
   _BreathingScreenState createState() => _BreathingScreenState();
 }
@@ -17,7 +19,7 @@ class _BreathingScreenState extends State<BreathingScreen>
   Timer? _holdTimer;
   String _instruction = "INHALE";
   double _angle = 0;
-  Duration _duration = Duration(seconds: 4);
+  final Duration _duration = Duration(seconds: 4);
   Duration _totalDuration = Duration.zero;
   final double _circleRadius = 140;
   Color _dotColor = Colors.tealAccent;
@@ -155,7 +157,7 @@ class _BreathingScreenState extends State<BreathingScreen>
             SizedBox(height: 40),
 
             // Circular breathing track with gradient
-            Container(
+            SizedBox(
               width: _circleRadius * 2 + 60,
               height: _circleRadius * 2 + 60,
               child: Stack(

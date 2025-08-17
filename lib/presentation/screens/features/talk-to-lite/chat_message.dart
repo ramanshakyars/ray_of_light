@@ -4,7 +4,7 @@ class ChatMessage extends StatelessWidget {
   final String text;
   final bool isUser;
 
-  const ChatMessage({
+  const ChatMessage({super.key, 
     required this.text,
     required this.isUser,
   });
