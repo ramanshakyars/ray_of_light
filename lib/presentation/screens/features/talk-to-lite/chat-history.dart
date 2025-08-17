@@ -29,22 +29,22 @@ class _ChatDrawerState extends State<ChatHistory> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: chatHistory.length,
-              itemBuilder: (context, index) {
-                final item = chatHistory[index];
-                final title = item['title'] ?? 'Untitled'; // sirf title show
-                return ListTile(
-                  title: Text(title),
-                  onTap: () {
-                    Navigator.pop(context);                    
-                  },
-                );
-              },
-            ),
+      child:
+          isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : ListView.builder(
+                itemCount: chatHistory.length,
+                itemBuilder: (context, index) {
+                  final item = chatHistory[index];
+                  final title = item['title'] ?? 'Untitled'; 
+                  return ListTile(
+                    title: Text(title),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              ),
     );
   }
 }
-
