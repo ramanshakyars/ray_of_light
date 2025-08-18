@@ -39,29 +39,8 @@ class _ChatScreenState extends State<ChatScreen>
     await _tts.setSpeechRate(0.5);
   }
 
-
-
-  Widget _buildDrawer() {
-    return Drawer(
-      backgroundColor: Color(0xFF16213E),
-      child: Column(
-        children: [
-          DrawerHeader(
-            decoration: BoxDecoration(color: Color(0xFF0F3460)),
-            child: Center(
-              child: Text(
-                'Chat History',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+  clearMemory() {
+    Talktolightservice.clearMemory({"chatId": "1"});
   }
 
   Future<void> _sendMessage() async {
@@ -79,8 +58,6 @@ class _ChatScreenState extends State<ChatScreen>
     try {
       final chatResponse = await Talktolightservice.postChatHistory(message);
       if (chatResponse != null) {
-       // print(chatResponse.response);
-        print(chatResponse);
         setState(() {
           _messages.add(
             ChatMessage(text: chatResponse.response, isUser: false),
@@ -96,7 +73,7 @@ class _ChatScreenState extends State<ChatScreen>
     } catch (e) {
       setState(() {
         _messages.add(
-          ChatMessage(text: "⚠️ Oops! Error: ${e.toString()}", isUser: false),
+          ChatMessage(text: "Oops! Error: ${e.toString()}", isUser: false),
         );
       });
     } finally {
@@ -223,8 +200,16 @@ class _ChatScreenState extends State<ChatScreen>
               ).push('${RouteNames.mainApp}/${RouteNames.home}');
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            tooltip: "Clear Memory",
+            onPressed: () {
+              clearMemory(); 
+            },
+          ),
         ],
       ),
+
       body: Column(
         children: [
           Expanded(
