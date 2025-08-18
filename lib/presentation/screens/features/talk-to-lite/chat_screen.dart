@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:go_router/go_router.dart';
@@ -70,7 +68,24 @@ class _ChatScreenState extends State<ChatScreen>
           );
           if (chatResponse.suggestion != null &&
               chatResponse.suggestion!.type == "BREATHING") {
-            GoRouter.of(context).push(RouteNames.breathingExercise);
+            _messages.add(
+              ChatMessage(
+                text: "Would you like to try a short breathing exercise?",
+                isUser: false,
+                extraWidget: ElevatedButton(
+                  onPressed: () {
+                    GoRouter.of(context).push(RouteNames.breathingExercise);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Start Breathing Exercise"),
+                ),
+              ),
+            );
           }
         });
       } else {
