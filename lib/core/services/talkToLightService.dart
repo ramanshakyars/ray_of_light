@@ -1,5 +1,6 @@
 import 'package:rayoflite/core/constants/pathConfig.dart';
 import 'package:rayoflite/core/services/httpService.dart';
+import 'package:rayoflite/presentation/screens/features/talk-to-lite/chatResponse.dart';
 
 class Talktolightservice {
   static Future<Map<String, dynamic>> getChatHistory() async {
@@ -15,18 +16,18 @@ class Talktolightservice {
     }
   }
 
-  static Future<Map<String, dynamic>> postChatHistory(Map<String, dynamic> data) async {
+  static Future<ChatResponse?> postChatHistory(String message) async {
     try {
-      final respose = await HttpService.post(PathConfig.sendChat, data);
-      if (respose != null && respose['type'] != null) {
-        return {'success': true, 'data': respose};
-      } else {
-        return {'success': false, 'message': 'Chat history Loaded'};
+      final payload = {"message": message};
+      final response = await HttpService.post(PathConfig.sendChat, payload);
+   //   print(response);
+      if (response != null) {
+        return ChatResponse.fromJson(response);
       }
+      return null;
     } catch (e) {
-      return {'success': false, 'message': 'Something went wrong'};
+      print("Error posting chat: $e");
+      return null;
     }
   }
-
-  
 }

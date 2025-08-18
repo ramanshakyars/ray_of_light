@@ -4,10 +4,7 @@ class ChatMessage extends StatelessWidget {
   final String text;
   final bool isUser;
 
-  const ChatMessage({super.key, 
-    required this.text,
-    required this.isUser,
-  });
+  const ChatMessage({super.key, required this.text, required this.isUser});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +12,8 @@ class ChatMessage extends StatelessWidget {
       margin: EdgeInsets.symmetric(vertical: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment:
+            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           if (!isUser) _buildBotAvatar(),
           Flexible(
@@ -33,10 +31,7 @@ class ChatMessage extends StatelessWidget {
                   bottomRight: Radius.circular(12),
                 ),
               ),
-              child: Text(
-                text,
-                style: TextStyle(color: Colors.white),
-              ),
+              child: Text(text, style: TextStyle(color: Colors.white)),
             ),
           ),
           if (isUser) _buildUserAvatar(),

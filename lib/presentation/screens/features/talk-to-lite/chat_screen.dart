@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/services/talkToLightService.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat-history.dart';
 import 'chat_message.dart';
 import 'input_area.dart';
@@ -22,7 +23,6 @@ class _ChatScreenState extends State<ChatScreen>
   final FlutterTts _tts = FlutterTts();
   bool _isLoading = false;
   late AnimationController _starController;
-
 
   @override
   void initState() {
@@ -65,13 +65,11 @@ class _ChatScreenState extends State<ChatScreen>
                 ),
               ),
             ),
-          ),         
+          ),
         ],
       ),
     );
   }
-
- 
 
   Future<void> _sendMessage() async {
     if (_textController.text.trim().isEmpty) return;
@@ -83,23 +81,26 @@ class _ChatScreenState extends State<ChatScreen>
       _messages.add(ChatMessage(text: message, isUser: true));
       _isLoading = true;
       _starController.repeat();
-    }); 
-
-    // Simulate API delay (1-3 seconds)
-    final randomDelay = Duration(milliseconds: 1000 + Random().nextInt(2000));
-    await Future.delayed(randomDelay);
+    });
 
     try {
-      final responses = [
-        "Great question! Here's what I think about '$message'...",
-        "Interesting! Regarding '$message', my analysis suggests...",
-        "I'd be happy to help! For '$message', consider this...",
-        "Hmm, '$message' is a fascinating topic. My thoughts...",
-      ];
-      final response = responses[Random().nextInt(responses.length)];
+      final chatResponse = await Talktolightservice.postChatHistory(message);
 
-      setState(() => _messages.add(ChatMessage(text: response, isUser: false)));
-      // await _tts.speak(response);
+      if (chatResponse != null) {
+        print(chatResponse.response);
+      //  print(chatResponse);
+        setState(() {
+          _messages.add(
+            ChatMessage(text: chatResponse.response, isUser: false),
+          );
+        });
+      } else {
+        setState(() {
+          _messages.add(
+            ChatMessage(text: "No response from server", isUser: false),
+          );
+        });
+      }
     } catch (e) {
       setState(() {
         _messages.add(

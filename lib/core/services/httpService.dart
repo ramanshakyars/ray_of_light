@@ -14,6 +14,7 @@ class HttpService {
     Map<String, dynamic> body,
   ) async {
     final response = await _dio.post(url, data: body);
+  //  print(response.data);
     return response.data;
   }
 
