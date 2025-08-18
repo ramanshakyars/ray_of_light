@@ -59,34 +59,36 @@ class _ChatScreenState extends State<ChatScreen>
 
     try {
       final chatResponse = await Talktolightservice.postChatHistory(message);
-
       if (chatResponse != null) {
         setState(() {
           // Add bot response
           _messages.add(
-            ChatMessage(text: chatResponse.response, isUser: false),
+            ChatMessage(
+              text:
+                  chatResponse.response +
+                  (chatResponse.suggestion?.type == "BREATHING"
+                      ? "\n\nWould you like to try a short breathing exercise?"
+                      : ""),
+              isUser: false,
+              extraWidget:
+                  chatResponse.suggestion?.type == "BREATHING"
+                      ? TextButton(
+                        onPressed: () {
+                          GoRouter.of(
+                            context,
+                          ).push(RouteNames.breathingExercise);
+                        },
+                        child: const Text(
+                          "👉 Start Breathing Exercise",
+                          style: TextStyle(
+                            color: Colors.lightBlueAccent,
+                            decoration: TextDecoration.underline, 
+                          ),
+                        ),
+                      )
+                      : null,
+            ),
           );
-          if (chatResponse.suggestion != null &&
-              chatResponse.suggestion!.type == "BREATHING") {
-            _messages.add(
-              ChatMessage(
-                text: "Would you like to try a short breathing exercise?",
-                isUser: false,
-                extraWidget: ElevatedButton(
-                  onPressed: () {
-                    GoRouter.of(context).push(RouteNames.breathingExercise);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text("Start Breathing Exercise"),
-                ),
-              ),
-            );
-          }
         });
       } else {
         setState(() {

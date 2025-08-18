@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 class ChatMessage extends StatelessWidget {
   final String text;
   final bool isUser;
-  final Widget? extraWidget; // ✅ optional extra widget
+  final Widget? extraWidget;
 
   const ChatMessage({
     super.key,
     required this.text,
     required this.isUser,
-    this.extraWidget, // ✅ now optional
+    this.extraWidget,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment:
@@ -23,36 +23,26 @@ class ChatMessage extends StatelessWidget {
         children: [
           if (!isUser) _buildBotAvatar(),
           Flexible(
-            child: Column(
-              crossAxisAlignment:
-                  isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-              children: [
-                Container(
-                  constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.7,
-                  ),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: isUser
-                        ? const Color(0xFF0083B0)
-                        : const Color(0xFF0F3460),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(isUser ? 12 : 0),
-                      topRight: Radius.circular(isUser ? 0 : 12),
-                      bottomLeft: const Radius.circular(12),
-                      bottomRight: const Radius.circular(12),
-                    ),
-                  ),
-                  child: Text(
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color:
+                    isUser ? const Color(0xFF0083B0) : const Color(0xFF0F3460),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
                     text,
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white, fontSize: 15),
                   ),
-                ),
-                if (extraWidget != null) ...[
-                  const SizedBox(height: 8),
-                  extraWidget!, // ✅ show only if passed
+                  if (extraWidget != null) ...[
+                    const SizedBox(height: 10),
+                    extraWidget!, // ✅ shown inline inside the same bubble
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
           if (isUser) _buildUserAvatar(),
@@ -66,7 +56,7 @@ class ChatMessage extends StatelessWidget {
       margin: const EdgeInsets.only(right: 8),
       child: const CircleAvatar(
         backgroundColor: Colors.blueAccent,
-        child: Icon(Icons.auto_awesome, color: Colors.white),
+        child: Icon(Icons.auto_awesome, color: Colors.white, size: 20),
       ),
     );
   }
@@ -74,8 +64,8 @@ class ChatMessage extends StatelessWidget {
   Widget _buildUserAvatar() {
     return Container(
       margin: const EdgeInsets.only(left: 8),
-      // Uncomment if you want user avatar
-      // child: CircleAvatar(
+      // Uncomment if you want a user avatar
+      // child: const CircleAvatar(
       //   backgroundColor: Color(0xFF00B4DB),
       //   child: Icon(Icons.person, color: Colors.white),
       // ),
