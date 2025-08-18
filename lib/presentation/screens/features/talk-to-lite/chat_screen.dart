@@ -85,10 +85,9 @@ class _ChatScreenState extends State<ChatScreen>
 
     try {
       final chatResponse = await Talktolightservice.postChatHistory(message);
-
       if (chatResponse != null) {
-        print(chatResponse.response);
-      //  print(chatResponse);
+       // print(chatResponse.response);
+        print(chatResponse);
         setState(() {
           _messages.add(
             ChatMessage(text: chatResponse.response, isUser: false),

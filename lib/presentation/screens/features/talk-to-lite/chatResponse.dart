@@ -16,14 +16,35 @@ class ChatResponse {
   });
 
   factory ChatResponse.fromJson(Map<String, dynamic> json) {
+    DateTime parsedTimestamp;
+
+    if (json['timestamp'] is List) {
+      final ts = json['timestamp'] as List;
+      // Handle [year, month, day, hour, minute, second, microsecond]
+      parsedTimestamp = DateTime(
+        ts[0],
+        ts[1],
+        ts[2],
+        ts.length > 3 ? ts[3] : 0,
+        ts.length > 4 ? ts[4] : 0,
+        ts.length > 5 ? ts[5] : 0,
+        ts.length > 6 ? (ts[6] ~/ 1000) : 0, // microseconds → milliseconds
+      );
+    } else if (json['timestamp'] is String) {
+      parsedTimestamp = DateTime.tryParse(json['timestamp']) ?? DateTime.now();
+    } else {
+      parsedTimestamp = DateTime.now();
+    }
+
     return ChatResponse(
       conversationId: json['conversationId'] ?? '',
       response: json['response'] ?? '',
       emotionalTone: json['emotionalTone'] ?? '',
-      timestamp: DateTime.tryParse(json['timestamp'] ?? '') ?? DateTime.now(),
-      suggestion: json['suggestion'] != null
-          ? ChatSuggestion.fromJson(json['suggestion'])
-          : null,
+      timestamp: parsedTimestamp,
+      suggestion:
+          json['suggestion'] != null
+              ? ChatSuggestion.fromJson(json['suggestion'])
+              : null,
       moderationFlagged: json['moderationFlagged'] ?? false,
     );
   }
