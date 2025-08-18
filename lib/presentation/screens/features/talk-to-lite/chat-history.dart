@@ -11,7 +11,20 @@ class ChatHistory extends StatefulWidget {
 }
 
 class _ChatDrawerState extends State<ChatHistory> {
-  List<dynamic> chatHistory = [];
+  List<dynamic> chatHistory = [
+    {
+      "id": 1,
+      "title": 'Chat 1',
+    },
+    {
+      "id": 2,
+      "title": 'Chat 2',
+    },
+    {
+      "id": 3,
+      "title": 'Chat 3',
+    }
+  ];
   bool isLoading = true;
 
   @override
@@ -22,13 +35,10 @@ class _ChatDrawerState extends State<ChatHistory> {
 
   Future<void> loadHistory() async {
     final result = await Talktolightservice.getChatHistory();
-
     setState(() {
       if (result['success'] == true && result['data'] != null) {
-        // API se data mil raha hai
         chatHistory = result['data']['data'] ?? [];
       } else {
-        // Koi history nahi mili
         chatHistory = [];
       }
       isLoading = false;
