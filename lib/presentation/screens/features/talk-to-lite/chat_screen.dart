@@ -32,7 +32,6 @@ class _ChatScreenState extends State<ChatScreen>
       vsync: this,
       duration: Duration(milliseconds: 800),
     )..repeat();
-    _loadChatHistory();
   }
 
   Future<void> _initTTS() async {
@@ -40,13 +39,7 @@ class _ChatScreenState extends State<ChatScreen>
     await _tts.setSpeechRate(0.5);
   }
 
-  Future<void> _loadChatHistory() async {
-    // Simulate API call delay
-    //  await Future.delayed(Duration(milliseconds: 500));
-    setState(() {
-      // _chatHistory = ChatHistory.simulatedHistory;
-    });
-  }
+
 
   Widget _buildDrawer() {
     return Drawer(
