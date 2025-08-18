@@ -50,7 +50,7 @@ class _ChatScreenState extends State<ChatScreen>
   Future<void> _sendMessage() async {
     if (_textController.text.trim().isEmpty) return;
 
-    final message = _textController.text;
+    final message = _textController.text.trim();
     _textController.clear();
 
     setState(() {
@@ -61,16 +61,22 @@ class _ChatScreenState extends State<ChatScreen>
 
     try {
       final chatResponse = await Talktolightservice.postChatHistory(message);
+
       if (chatResponse != null) {
         setState(() {
+          // Add bot response
           _messages.add(
             ChatMessage(text: chatResponse.response, isUser: false),
           );
+          if (chatResponse.suggestion != null &&
+              chatResponse.suggestion!.type == "BREATHING") {
+            GoRouter.of(context).push(RouteNames.breathingExercise);
+          }
         });
       } else {
         setState(() {
           _messages.add(
-            ChatMessage(text: "No response from server", isUser: false),
+            const ChatMessage(text: "No response from server", isUser: false),
           );
         });
       }
