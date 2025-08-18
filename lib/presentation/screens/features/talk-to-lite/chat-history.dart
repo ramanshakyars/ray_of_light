@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rayoflite/core/services/talkToLightService.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rayoflite/core/config/routenames.dart';
 
 class ChatHistory extends StatefulWidget {
   const ChatHistory({super.key});
@@ -19,9 +21,16 @@ class _ChatDrawerState extends State<ChatHistory> {
   }
 
   Future<void> loadHistory() async {
-    final data = await Talktolightservice.getChatHistory();
+    final result = await Talktolightservice.getChatHistory();
+
     setState(() {
-      chatHistory = data as List;
+      if (result['success'] == true && result['data'] != null) {
+        // API se data mil raha hai
+        chatHistory = result['data']['data'] ?? [];
+      } else {
+        // Koi history nahi mili
+        chatHistory = [];
+      }
       isLoading = false;
     });
   }
@@ -32,15 +41,42 @@ class _ChatDrawerState extends State<ChatHistory> {
       child:
           isLoading
               ? const Center(child: CircularProgressIndicator())
+              : chatHistory.isEmpty
+              ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.history, size: 60, color: Colors.grey),
+                  const SizedBox(height: 12),
+                  const Text(
+                    "No history found",
+                    style: TextStyle(fontSize: 18, color: Colors.black54),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context); // drawer band
+                      GoRouter.of(context).push(
+                        "${RouteNames.mainApp}/${RouteNames.talkToLight}", // ✅ apna chat screen route
+                      );
+                    },
+                    icon: const Icon(Icons.add_comment),
+                    label: const Text("Start New Chat"),
+                  ),
+                ],
+              )
               : ListView.builder(
                 itemCount: chatHistory.length,
                 itemBuilder: (context, index) {
                   final item = chatHistory[index];
-                  final title = item['title'] ?? 'Untitled'; 
+                  final title = item['title'] ?? 'Untitled';
                   return ListTile(
                     title: Text(title),
                     onTap: () {
                       Navigator.pop(context);
+                      // agar chat detail id ke sath load karni ho toh yaha route add karke pass karo
+                      GoRouter.of(
+                        context,
+                      ).push("${RouteNames.mainApp}/${RouteNames.talkToLight}");
                     },
                   );
                 },
