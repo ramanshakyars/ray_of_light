@@ -6,19 +6,12 @@ class Talktolightservice {
   static Future<Map<String, dynamic>> getChatHistory() async {
     try {
       final response = await HttpService.get(PathConfig.getChatHistory);
-
-      print("🔎 API Raw Response: $response"); // सिर्फ debug के लिए
-
       if (response != null && response is List) {
-        return {
-          'success': true,
-          'data': response, // ✅ direct list return
-        };
+        return {'success': true, 'data': response};
       } else {
         return {'success': false, 'message': 'No chat history found'};
       }
     } catch (e) {
-      print("❌ Error in getChatHistory: $e");
       return {'success': false, 'message': 'Something went wrong'};
     }
   }
@@ -27,7 +20,6 @@ class Talktolightservice {
     try {
       final payload = {"message": message};
       final response = await HttpService.post(PathConfig.sendChat, payload);
-      //   print(response);
       if (response != null) {
         return ChatResponse.fromJson(response);
       }
