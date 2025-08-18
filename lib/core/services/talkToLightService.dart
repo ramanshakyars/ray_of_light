@@ -5,13 +5,20 @@ import 'package:rayoflite/presentation/screens/features/talk-to-lite/chatRespons
 class Talktolightservice {
   static Future<Map<String, dynamic>> getChatHistory() async {
     try {
-      final respose = await HttpService.get(PathConfig.getChatHistory);
-      if (respose != null && respose['type'] != null) {
-        return {'success': true, 'data': respose};
+      final response = await HttpService.get(PathConfig.getChatHistory);
+
+      print("🔎 API Raw Response: $response"); // सिर्फ debug के लिए
+
+      if (response != null && response is List) {
+        return {
+          'success': true,
+          'data': response, // ✅ direct list return
+        };
       } else {
-        return {'success': false, 'message': 'Chat history Loaded'};
+        return {'success': false, 'message': 'No chat history found'};
       }
     } catch (e) {
+      print("❌ Error in getChatHistory: $e");
       return {'success': false, 'message': 'Something went wrong'};
     }
   }
@@ -31,9 +38,12 @@ class Talktolightservice {
     }
   }
 
-  static Future<Map<String, dynamic>> renameChatHistory(body, String chatId) async {
+  static Future<Map<String, dynamic>> renameChatHistory(
+    body,
+    String chatId,
+  ) async {
     try {
-       final url = "${PathConfig.renameChat}/$chatId";
+      final url = "${PathConfig.renameChat}/$chatId";
       final respose = await HttpService.put(url, body);
       if (respose != null && respose['type'] != null) {
         return {'success': true, 'data': respose};

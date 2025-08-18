@@ -12,26 +12,20 @@ class ChatHistory extends StatefulWidget {
 }
 
 class _ChatDrawerState extends State<ChatHistory> {
-  List<dynamic> chatHistory = [
-    {"id": 1, "title": "Chat 1"},
-    {"id": 2, "title": "Chat 2"},
-    {"id": 3, "title": "Chat 3"},
-  ];
-
-  bool isLoading = false;
+  List<dynamic> chatHistory = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    // 👇 future me jab API connect ho jaye to ye call uncomment kar dena
-    // loadHistory();
+    loadHistory();
   }
 
   Future<void> loadHistory() async {
     final result = await Talktolightservice.getChatHistory();
     setState(() {
       if (result['success'] == true && result['data'] != null) {
-        chatHistory = result['data']['data'] ?? [];
+        chatHistory = result['data']; 
       } else {
         chatHistory = [];
       }
@@ -39,9 +33,8 @@ class _ChatDrawerState extends State<ChatHistory> {
     });
   }
 
-  /// ✅ Delete (dummy implementation abhi ke liye)
   Future<void> deleteChat(String chatId) async {
-      final result = await Talktolightservice.deleteChatHistory(chatId);
+    await Talktolightservice.deleteChatHistory(chatId);
     setState(() {
       chatHistory.removeWhere((item) => item['id'].toString() == chatId);
     });
@@ -49,7 +42,7 @@ class _ChatDrawerState extends State<ChatHistory> {
   }
 
   Future<void> renameChat(String chatId, String newTitle) async {
-      final result = await Talktolightservice.renameChatHistory(newTitle,chatId);
+    await Talktolightservice.renameChatHistory(newTitle, chatId);
     setState(() {
       final index = chatHistory.indexWhere(
         (item) => item['id'].toString() == chatId,
@@ -126,15 +119,31 @@ class _ChatDrawerState extends State<ChatHistory> {
                 itemBuilder: (context, index) {
                   final item = chatHistory[index];
                   final chatId = item['id'].toString();
-                  final title = item['title'] ?? 'Untitled';
+                  final rawTitle = item['title'];
+                  final title =
+                      (rawTitle == null || rawTitle.trim().isEmpty)
+                          ? "Untitled Chat"
+                          : rawTitle.trim();
 
                   return ListTile(
-                    title: Text(title),
+                    leading: const Icon(
+                      Icons.chat_bubble_outline,
+                      color: Colors.blueGrey,
+                    ),
+                    title: Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                     onTap: () {
                       Navigator.pop(context);
-                      GoRouter.of(
-                        context,
-                      ).push("${RouteNames.mainApp}/${RouteNames.talkToLight}");
+                      GoRouter.of(context).push(
+                        "${RouteNames.mainApp}/${RouteNames.talkToLight}?chatId=$chatId",
+                      );
                     },
                     trailing: PopupMenuButton<String>(
                       onSelected: (value) {

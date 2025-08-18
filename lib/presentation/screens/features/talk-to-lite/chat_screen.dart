@@ -38,8 +38,11 @@ class _ChatScreenState extends State<ChatScreen>
     await _tts.setSpeechRate(0.5);
   }
 
-  clearMemory() async {
-    final result = await Talktolightservice.clearMemory({"chatId": "1"});
+  // inside clearMemory()
+  clearMemory({String? chatId}) async {
+    final result = await Talktolightservice.clearMemory({
+      "chatId": chatId ?? "default", // pass actual chatId if available
+    });
     if (result['success'] == true && result['data'] != null) {
       MessageService.showSuccess(context, 'Memory cleared successfully');
     }
@@ -82,7 +85,7 @@ class _ChatScreenState extends State<ChatScreen>
                           "👉 Start Breathing Exercise",
                           style: TextStyle(
                             color: Colors.lightBlueAccent,
-                            decoration: TextDecoration.underline, 
+                            decoration: TextDecoration.underline,
                           ),
                         ),
                       )
