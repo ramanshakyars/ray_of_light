@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/services/talkToLightService.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat-history.dart';
 import 'chat_message.dart';
@@ -39,8 +40,11 @@ class _ChatScreenState extends State<ChatScreen>
     await _tts.setSpeechRate(0.5);
   }
 
-  clearMemory() {
-    Talktolightservice.clearMemory({"chatId": "1"});
+  clearMemory() async {
+    final result = await Talktolightservice.clearMemory({"chatId": "1"});
+    if (result['success'] == true && result['data'] != null) {
+      MessageService.showSuccess(context, 'Memory cleared successfully');
+    }
   }
 
   Future<void> _sendMessage() async {
@@ -204,7 +208,7 @@ class _ChatScreenState extends State<ChatScreen>
             icon: const Icon(Icons.refresh, color: Colors.white),
             tooltip: "Clear Memory",
             onPressed: () {
-              clearMemory(); 
+              clearMemory();
             },
           ),
         ],

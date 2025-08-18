@@ -12,13 +12,19 @@ class ChatHistory extends StatefulWidget {
 }
 
 class _ChatDrawerState extends State<ChatHistory> {
-  List<dynamic> chatHistory = [];
-  bool isLoading = true;
+  List<dynamic> chatHistory = [
+    {"id": 1, "title": "Chat 1"},
+    {"id": 2, "title": "Chat 2"},
+    {"id": 3, "title": "Chat 3"},
+  ];
+
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    loadHistory();
+    // 👇 future me jab API connect ho jaye to ye call uncomment kar dena
+    // loadHistory();
   }
 
   Future<void> loadHistory() async {
@@ -33,44 +39,28 @@ class _ChatDrawerState extends State<ChatHistory> {
     });
   }
 
-  /// ✅ Delete API Call
+  /// ✅ Delete (dummy implementation abhi ke liye)
   Future<void> deleteChat(String chatId) async {
-    final result = await Talktolightservice.deleteChatHistory(chatId);
-    if (result['success'] == true) {
-      setState(() {
-        chatHistory.removeWhere((item) => item['id'].toString() == chatId);
-      });
-      MessageService.showSuccess(context, 'Chat deleted successfully');
-    } else {
-      MessageService.showError(
-        context,
-        result['message'] ?? "Failed to delete chat",
-      );
-    }
+      final result = await Talktolightservice.deleteChatHistory(chatId);
+    setState(() {
+      chatHistory.removeWhere((item) => item['id'].toString() == chatId);
+    });
+    MessageService.showSuccess(context, 'Chat deleted successfully');
   }
 
   Future<void> renameChat(String chatId, String newTitle) async {
-    final result = await Talktolightservice.renameChatHistory(chatId, newTitle);
-    if (result['success'] == true) {
-      setState(() {
-        final index = chatHistory.indexWhere(
-          (item) => item['id'].toString() == chatId,
-        );
-        if (index != -1) {
-          chatHistory[index]['title'] = newTitle;
-        }
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Chat renamed successfully")),
+      final result = await Talktolightservice.renameChatHistory(newTitle,chatId);
+    setState(() {
+      final index = chatHistory.indexWhere(
+        (item) => item['id'].toString() == chatId,
       );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result['message'] ?? "Failed to rename chat")),
-      );
-    }
+      if (index != -1) {
+        chatHistory[index]['title'] = newTitle;
+      }
+    });
+    MessageService.showSuccess(context, 'Chat renamed successfully');
   }
 
-  
   void showRenameDialog(String chatId, String oldTitle) {
     final TextEditingController controller = TextEditingController(
       text: oldTitle,
