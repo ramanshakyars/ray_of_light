@@ -59,8 +59,12 @@ GoRouter createRouter(String initialLocation) {
               ),
               GoRoute(
                 path: RouteNames.talkToLight,
-                builder: (context, state) => ChatScreen(),
+                builder: (context, state) {
+                  final chatId = state.uri.queryParameters['chatId'];
+                  return ChatScreen(chatId: chatId); // pass it here
+                },
               ),
+
               GoRoute(
                 path: RouteNames.junerlism,
                 builder: (context, state) => const JournalismScreen(),

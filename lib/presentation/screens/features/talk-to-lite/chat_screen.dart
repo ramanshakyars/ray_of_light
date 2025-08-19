@@ -1,17 +1,17 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/services/messageService.dart';
+import 'package:rayoflite/core/services/talkToLightService.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat-history.dart';
 import 'chat_message.dart';
 import 'input_area.dart';
-import 'api_service.dart';
-
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  final String? chatId;
+
+  const ChatScreen({super.key, this.chatId});
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -23,8 +23,8 @@ class _ChatScreenState extends State<ChatScreen>
   final List<ChatMessage> _messages = [];
   final FlutterTts _tts = FlutterTts();
   bool _isLoading = false;
+  bool isNewChat = false;
   late AnimationController _starController;
-  List<ChatHistory> _chatHistory = [];
 
   @override
   void initState() {
@@ -32,9 +32,12 @@ class _ChatScreenState extends State<ChatScreen>
     _initTTS();
     _starController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 800),
-    )..repeat();
-    _loadChatHistory();
+      duration: const Duration(milliseconds: 800),
+    );
+
+    if (widget.chatId != null && widget.chatId!.isNotEmpty) {
+      getChatById(widget.chatId!);
+    }
   }
 
   Future<void> _initTTS() async {
@@ -42,120 +45,128 @@ class _ChatScreenState extends State<ChatScreen>
     await _tts.setSpeechRate(0.5);
   }
 
-  Future<void> _loadChatHistory() async {
-    // Simulate API call delay
-    await Future.delayed(Duration(milliseconds: 500));
-    setState(() {
-      _chatHistory = ChatHistory.simulatedHistory;
+  clearMemory({String? chatId}) async {
+    final result = await Talktolightservice.clearMemory({
+      "chatId": chatId ?? "default",
     });
+    if (result['success'] == true && result['data'] != null) {
+      MessageService.showSuccess(context, 'Memory cleared successfully');
+    }
   }
 
-  Widget _buildDrawer() {
-    return Drawer(
-      backgroundColor: Color(0xFF16213E),
-      child: Column(
-        children: [
-          DrawerHeader(
-            decoration: BoxDecoration(
-              color: Color(0xFF0F3460),
-            ),
-            child: Center(
-              child: Text(
-                'Chat History',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _chatHistory.length,
-              itemBuilder: (context, index) {
-                final history = _chatHistory[index];
-                return ListTile(
-                  leading: Icon(Icons.chat_bubble_outline, color: Colors.blueAccent),
-                  title: Text(
-                    history.title,
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  subtitle: Text(
-                    history.lastMessage,
-                    style: TextStyle(color: Colors.white70),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  trailing: Text(
-                    '${history.timestamp.hour}:${history.timestamp.minute}',
-                    style: TextStyle(color: Colors.white54),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _showSnackbar('Loading conversation ${history.id}');
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  getChatById(String chatId) async {
+    final result = await Talktolightservice.getChatHistoryById(chatId);
 
-  void _showSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: Duration(seconds: 2),
-      ),
-    );
+    if (result['success'] == true && result['data'] != null) {
+      final messages = result['data']['messages'] as List<dynamic>;
+
+      setState(() {
+        _messages.clear();
+        _messages.addAll(
+          messages.map(
+            (msg) => ChatMessage(text: msg['content'], isUser: false),
+          ),
+        );
+      });
+    }
   }
 
   Future<void> _sendMessage() async {
     if (_textController.text.trim().isEmpty) return;
 
-    final message = _textController.text;
+    final message = _textController.text.trim();
     _textController.clear();
 
     setState(() {
       _messages.add(ChatMessage(text: message, isUser: true));
       _isLoading = true;
-      _starController.repeat();
+      if (_messages.length == 1) {
+        _starController.repeat();
+      }
     });
 
-    // Update chat history if this is the first message
-    if (_messages.length == 1) {
-      setState(() {
-        _chatHistory.insert(0, ChatHistory(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          title: 'New Chat ${_chatHistory.length + 1}',
-          timestamp: DateTime.now(),
-          lastMessage: message,
-        ));
-      });
-    }
-
-    // Simulate API delay (1-3 seconds)
-    final randomDelay = Duration(milliseconds: 1000 + Random().nextInt(2000));
-    await Future.delayed(randomDelay);
-
     try {
-      final responses = [
-        "Great question! Here's what I think about '$message'...",
-        "Interesting! Regarding '$message', my analysis suggests...",
-        "I'd be happy to help! For '$message', consider this...",
-        "Hmm, '$message' is a fascinating topic. My thoughts...",
-      ];
-      final response = responses[Random().nextInt(responses.length)];
-
-      setState(() => _messages.add(ChatMessage(text: response, isUser: false)));
-      // await _tts.speak(response);
+      final chatResponse = await Talktolightservice.postChatHistory(message);
+      if (chatResponse != null) {
+        setState(() {
+          _messages.add(
+            ChatMessage(
+              text:
+                  chatResponse.response +
+                  (chatResponse.suggestion?.type == "BREATHING"
+                      ? "\n\nWould you like to try a short breathing exercise?"
+                      : chatResponse.suggestion?.type == "WALK"
+                      ? "\n\nWould you like to go for a walk and set a goal?"
+                      : chatResponse.suggestion?.type == "JOURNAL"
+                      ? "\n\nWould you like to write in your journal?"
+                      : ""),
+              isUser: false,
+              extraWidget: () {
+                switch (chatResponse.suggestion?.type) {
+                  case "BREATHING":
+                    return TextButton(
+                      onPressed: () {
+                        GoRouter.of(context).push(
+                          '${RouteNames.mainApp}/${RouteNames.breathingExercise}',
+                        );
+                      },
+                      child: const Text(
+                        "👉 Start Breathing Exercise",
+                        style: TextStyle(
+                          color: Colors.lightBlueAccent,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    );
+                  case "WALK":
+                    return TextButton(
+                      onPressed: () {
+                        GoRouter.of(context).push(
+                          '${RouteNames.mainApp}/${RouteNames.goalTracker}',
+                        );
+                      },
+                      child: const Text(
+                        "👉 Set Walk Goal",
+                        style: TextStyle(
+                          color: Colors.lightBlueAccent,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    );
+                  case "JOURNAL":
+                    return TextButton(
+                      onPressed: () {
+                        GoRouter.of(
+                          context,
+                        ).push('${RouteNames.mainApp}/${RouteNames.junerlism}');
+                      },
+                      child: const Text(
+                        "👉 Open Journal",
+                        style: TextStyle(
+                          color: Colors.lightBlueAccent,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    );
+                  case "NONE":
+                  default:
+                    return null;
+                }
+              }(),
+            ),
+          );
+        });
+      } else {
+        setState(() {
+          _messages.add(
+            const ChatMessage(text: "No response from server", isUser: false),
+          );
+        });
+      }
     } catch (e) {
       setState(() {
         _messages.add(
-          ChatMessage(text: "⚠️ Oops! Error: ${e.toString()}", isUser: false),
+          ChatMessage(text: "Oops! Error: ${e.toString()}", isUser: false),
         );
       });
     } finally {
@@ -171,18 +182,18 @@ class _ChatScreenState extends State<ChatScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.auto_awesome, size: 60, color: Colors.blueAccent),
-          SizedBox(height: 20),
+          const Icon(Icons.auto_awesome, size: 60, color: Colors.blueAccent),
+          const SizedBox(height: 20),
           Container(
-            padding: EdgeInsets.all(16),
-            margin: EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.all(16),
+            margin: const EdgeInsets.symmetric(horizontal: 24),
             decoration: BoxDecoration(
-              color: Color(0xFF16213E),
+              color: const Color(0xFF16213E),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
               children: [
-                Text(
+                const Text(
                   "Welcome to Talk to Light!",
                   style: TextStyle(
                     color: Colors.white,
@@ -190,14 +201,14 @@ class _ChatScreenState extends State<ChatScreen>
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 12),
-                Text(
+                const SizedBox(height: 12),
+                const Text(
                   "Ask me anything and I'll do my best to help you. "
                   "Here are some things you can ask:",
                   style: TextStyle(color: Colors.white70, fontSize: 16),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 _buildQuestionSuggestion("Hi, I was thinking about you"),
                 _buildQuestionSuggestion("What were you doing?"),
               ],
@@ -215,10 +226,14 @@ class _ChatScreenState extends State<ChatScreen>
         children: [
           RotationTransition(
             turns: _starController,
-            child: Icon(Icons.auto_awesome, size: 60, color: Colors.blueAccent),
+            child: const Icon(
+              Icons.auto_awesome,
+              size: 60,
+              color: Colors.blueAccent,
+            ),
           ),
-          SizedBox(height: 16),
-          Text(
+          const SizedBox(height: 16),
+          const Text(
             "Thinking...",
             style: TextStyle(color: Colors.white70, fontSize: 18),
           ),
@@ -234,19 +249,19 @@ class _ChatScreenState extends State<ChatScreen>
         _sendMessage();
       },
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 6),
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        margin: const EdgeInsets.symmetric(vertical: 6),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         decoration: BoxDecoration(
-          color: Color(0xFF0F3460),
+          color: const Color(0xFF0F3460),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.blueAccent.withValues()),
+          border: Border.all(color: Colors.blueAccent.withOpacity(0.3)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.arrow_forward, color: Colors.blueAccent, size: 16),
-            SizedBox(width: 8),
-            Text(question, style: TextStyle(color: Colors.white70)),
+            const Icon(Icons.arrow_forward, color: Colors.blueAccent, size: 16),
+            const SizedBox(width: 8),
+            Text(question, style: const TextStyle(color: Colors.white70)),
           ],
         ),
       ),
@@ -263,20 +278,32 @@ class _ChatScreenState extends State<ChatScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF1A1A2E),
-      drawer: _buildDrawer(),
+      backgroundColor: const Color(0xFF1A1A2E),
+      drawer: const ChatHistory(),
       appBar: AppBar(
-        title: Text('Talk to Light', style: TextStyle(color: Colors.white)),
-        backgroundColor: Color.fromARGB(255, 27, 39, 74),
+        title: const Text(
+          'Talk to Light',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: const Color.fromARGB(255, 27, 39, 74),
         elevation: 10,
         automaticallyImplyLeading: true,
         actions: [
           IconButton(
             icon: Image.asset('assets/logo.png'),
             onPressed: () {
-              GoRouter.of(context).push('${RouteNames.mainApp}/${RouteNames.home}');
+              GoRouter.of(
+                context,
+              ).push('${RouteNames.mainApp}/${RouteNames.home}');
             },
           ),
+          // IconButton(
+          //   icon: const Icon(Icons.refresh, color: Colors.white),
+          //   tooltip: "Clear Memory",
+          //   onPressed: () {
+          //     clearMemory();
+          //   },
+          // ),
         ],
       ),
       body: Column(
@@ -284,22 +311,93 @@ class _ChatScreenState extends State<ChatScreen>
           Expanded(
             child: Stack(
               children: [
-                if (_messages.isNotEmpty)
-                  ListView.builder(
-                    padding: EdgeInsets.all(8),
-                    itemCount: _messages.length,
-                    itemBuilder: (context, index) => _messages[index],
-                  ),
+                ListView.builder(
+                  padding: const EdgeInsets.all(8),
+                  itemCount:
+                      _messages.length +
+                      ((_isLoading && _messages.isNotEmpty) ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (_isLoading &&
+                        _messages.isNotEmpty &&
+                        index == _messages.length) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: const [
+                            CircularProgressIndicator(strokeWidth: 2),
+                            SizedBox(width: 10),
+                            Text(
+                              "Light is typing...",
+                              style: TextStyle(color: Colors.white70),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    return _messages[index];
+                  },
+                ),
                 if (_messages.isEmpty && !_isLoading) _buildWelcomeMessage(),
-                if (_isLoading) _buildLoadingIndicator(),
+                if (_messages.isEmpty && _isLoading) _buildLoadingIndicator(),
               ],
             ),
           ),
+
+          SafeArea(
+            child:
+                _messages.isNotEmpty
+                    ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              29,
+                              165,
+                              255,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 16,
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _messages.clear();
+                              _isLoading = false;
+                              _textController.clear();
+                              isNewChat = false; // reset flag
+                            });
+                          },
+                          icon: const Icon(
+                            Icons.add_comment,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          label: const Text(
+                            "New Chat",
+                            style: TextStyle(color: Colors.white, fontSize: 14),
+                          ),
+                        ),
+                      ),
+                    )
+                    : const SizedBox.shrink(),
+          ),
+
+          /// Input area
           InputArea(
             controller: _textController,
             onSend: _sendMessage,
             isLoading: _isLoading,
           ),
+
+          /// Bottom New Chat button
         ],
       ),
     );
