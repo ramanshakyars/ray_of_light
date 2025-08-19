@@ -234,13 +234,13 @@ class _ChatScreenState extends State<ChatScreen>
               ).push('${RouteNames.mainApp}/${RouteNames.home}');
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.white),
-            tooltip: "Clear Memory",
-            onPressed: () {
-              clearMemory();
-            },
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.refresh, color: Colors.white),
+          //   tooltip: "Clear Memory",
+          //   onPressed: () {
+          //     clearMemory();
+          //   },
+          // ),
         ],
       ),
       body: Column(
