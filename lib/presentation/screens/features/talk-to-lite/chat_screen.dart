@@ -23,6 +23,7 @@ class _ChatScreenState extends State<ChatScreen>
   final List<ChatMessage> _messages = [];
   final FlutterTts _tts = FlutterTts();
   bool _isLoading = false;
+  bool isNewChat = false;
   late AnimationController _starController;
 
   @override
@@ -91,7 +92,6 @@ class _ChatScreenState extends State<ChatScreen>
           _messages.add(
             ChatMessage(
               text:
-                  chatResponse.response +
                   (chatResponse.suggestion?.type == "BREATHING"
                       ? "\n\nWould you like to try a short breathing exercise?"
                       : ""),
@@ -303,31 +303,51 @@ class _ChatScreenState extends State<ChatScreen>
               ],
             ),
           ),
+
           SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 32, 73, 255),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  minimumSize: const Size.fromHeight(48),
-                ),
-                onPressed: () {
-                  setState(() {
-                    _messages.clear();
-                    _isLoading = false;
-                    _textController.clear();
-                  });
-                },
-                icon: const Icon(Icons.add_comment, color: Colors.white),
-                label: const Text(
-                  "Start New Chat",
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ),
-            ),
+            child:
+                _messages.isNotEmpty
+                    ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              29,
+                              165,
+                              255,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 16,
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _messages.clear();
+                              _isLoading = false;
+                              _textController.clear();
+                              isNewChat = false; // reset flag
+                            });
+                          },
+                          icon: const Icon(
+                            Icons.add_comment,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          label: const Text(
+                            "New Chat",
+                            style: TextStyle(color: Colors.white, fontSize: 14),
+                          ),
+                        ),
+                      ),
+                    )
+                    : const SizedBox.shrink(),
           ),
 
           /// Input area
