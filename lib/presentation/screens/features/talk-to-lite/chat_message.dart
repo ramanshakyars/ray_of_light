@@ -1,6 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
-class ChatMessage extends StatelessWidget {
+class ChatMessage extends StatefulWidget {
   final String text;
   final bool isUser;
   final Widget? extraWidget;
@@ -13,39 +14,81 @@ class ChatMessage extends StatelessWidget {
   });
 
   @override
+  State<ChatMessage> createState() => _ChatMessageState();
+}
+
+class _ChatMessageState extends State<ChatMessage> {
+  String _displayedText = "";
+  int _currentIndex = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isUser) {
+      // show user text instantly
+      _displayedText = widget.text;
+    } else {
+      // animate bot text
+      _startTypingEffect();
+    }
+  }
+
+  void _startTypingEffect() {
+    _timer = Timer.periodic(const Duration(milliseconds: 40), (timer) {
+      if (_currentIndex < widget.text.length) {
+        setState(() {
+          _displayedText += widget.text[_currentIndex];
+          _currentIndex++;
+        });
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment:
-            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+            widget.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          if (!isUser) _buildBotAvatar(),
+          if (!widget.isUser) _buildBotAvatar(),
           Flexible(
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color:
-                    isUser ? const Color(0xFF0083B0) : const Color(0xFF0F3460),
+                    widget.isUser
+                        ? const Color(0xFF0083B0)
+                        : const Color(0xFF0F3460),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    text,
+                    _displayedText,
                     style: const TextStyle(color: Colors.white, fontSize: 15),
                   ),
-                  if (extraWidget != null) ...[
+                  if (widget.extraWidget != null) ...[
                     const SizedBox(height: 10),
-                    extraWidget!, // ✅ shown inline inside the same bubble
+                    widget.extraWidget!,
                   ],
                 ],
               ),
             ),
           ),
-          if (isUser) _buildUserAvatar(),
+          if (widget.isUser) _buildUserAvatar(),
         ],
       ),
     );
