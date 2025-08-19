@@ -91,7 +91,7 @@ class _ChatScreenState extends State<ChatScreen>
         setState(() {
           _messages.add(
             ChatMessage(
-              text:
+              text: chatResponse.response +
                   (chatResponse.suggestion?.type == "BREATHING"
                       ? "\n\nWould you like to try a short breathing exercise?"
                       : ""),
