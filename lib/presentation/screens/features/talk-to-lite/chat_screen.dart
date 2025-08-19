@@ -29,8 +29,8 @@ class _ChatScreenState extends State<ChatScreen>
     _initTTS();
     _starController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 800),
-    )..repeat();
+      duration: const Duration(milliseconds: 800),
+    );
   }
 
   Future<void> _initTTS() async {
@@ -38,10 +38,9 @@ class _ChatScreenState extends State<ChatScreen>
     await _tts.setSpeechRate(0.5);
   }
 
-  // inside clearMemory()
   clearMemory({String? chatId}) async {
     final result = await Talktolightservice.clearMemory({
-      "chatId": chatId ?? "default", // pass actual chatId if available
+      "chatId": chatId ?? "default",
     });
     if (result['success'] == true && result['data'] != null) {
       MessageService.showSuccess(context, 'Memory cleared successfully');
@@ -57,14 +56,17 @@ class _ChatScreenState extends State<ChatScreen>
     setState(() {
       _messages.add(ChatMessage(text: message, isUser: true));
       _isLoading = true;
-      _starController.repeat();
+
+      // ✅ Agar pehla hi message hai to star loader chalu karna
+      if (_messages.length == 1) {
+        _starController.repeat();
+      }
     });
 
     try {
       final chatResponse = await Talktolightservice.postChatHistory(message);
       if (chatResponse != null) {
         setState(() {
-          // Add bot response
           _messages.add(
             ChatMessage(
               text:
@@ -119,18 +121,18 @@ class _ChatScreenState extends State<ChatScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.auto_awesome, size: 60, color: Colors.blueAccent),
-          SizedBox(height: 20),
+          const Icon(Icons.auto_awesome, size: 60, color: Colors.blueAccent),
+          const SizedBox(height: 20),
           Container(
-            padding: EdgeInsets.all(16),
-            margin: EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.all(16),
+            margin: const EdgeInsets.symmetric(horizontal: 24),
             decoration: BoxDecoration(
-              color: Color(0xFF16213E),
+              color: const Color(0xFF16213E),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
               children: [
-                Text(
+                const Text(
                   "Welcome to Talk to Light!",
                   style: TextStyle(
                     color: Colors.white,
@@ -138,14 +140,14 @@ class _ChatScreenState extends State<ChatScreen>
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 12),
-                Text(
+                const SizedBox(height: 12),
+                const Text(
                   "Ask me anything and I'll do my best to help you. "
                   "Here are some things you can ask:",
                   style: TextStyle(color: Colors.white70, fontSize: 16),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 _buildQuestionSuggestion("Hi, I was thinking about you"),
                 _buildQuestionSuggestion("What were you doing?"),
               ],
@@ -163,10 +165,14 @@ class _ChatScreenState extends State<ChatScreen>
         children: [
           RotationTransition(
             turns: _starController,
-            child: Icon(Icons.auto_awesome, size: 60, color: Colors.blueAccent),
+            child: const Icon(
+              Icons.auto_awesome,
+              size: 60,
+              color: Colors.blueAccent,
+            ),
           ),
-          SizedBox(height: 16),
-          Text(
+          const SizedBox(height: 16),
+          const Text(
             "Thinking...",
             style: TextStyle(color: Colors.white70, fontSize: 18),
           ),
@@ -182,19 +188,19 @@ class _ChatScreenState extends State<ChatScreen>
         _sendMessage();
       },
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 6),
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        margin: const EdgeInsets.symmetric(vertical: 6),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         decoration: BoxDecoration(
-          color: Color(0xFF0F3460),
+          color: const Color(0xFF0F3460),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.blueAccent.withValues()),
+          border: Border.all(color: Colors.blueAccent.withOpacity(0.3)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.arrow_forward, color: Colors.blueAccent, size: 16),
-            SizedBox(width: 8),
-            Text(question, style: TextStyle(color: Colors.white70)),
+            const Icon(Icons.arrow_forward, color: Colors.blueAccent, size: 16),
+            const SizedBox(width: 8),
+            Text(question, style: const TextStyle(color: Colors.white70)),
           ],
         ),
       ),
@@ -211,8 +217,8 @@ class _ChatScreenState extends State<ChatScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF1A1A2E),
-      drawer: const ChatHistory(), // ✅ use your component
+      backgroundColor: const Color(0xFF1A1A2E),
+      drawer: const ChatHistory(),
       appBar: AppBar(
         title: const Text(
           'Talk to Light',
@@ -239,23 +245,49 @@ class _ChatScreenState extends State<ChatScreen>
           ),
         ],
       ),
-
       body: Column(
         children: [
           Expanded(
             child: Stack(
               children: [
-                if (_messages.isNotEmpty)
-                  ListView.builder(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: _messages.length,
-                    itemBuilder: (context, index) => _messages[index],
-                  ),
+                ListView.builder(
+                  padding: const EdgeInsets.all(8),
+                  itemCount:
+                      _messages.length +
+                      ((_isLoading && _messages.isNotEmpty) ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    // 👇 Small loader only after first message
+                    if (_isLoading &&
+                        _messages.isNotEmpty &&
+                        index == _messages.length) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: const [
+                            CircularProgressIndicator(strokeWidth: 2),
+                            SizedBox(width: 10),
+                            Text(
+                              "Light is typing...",
+                              style: TextStyle(color: Colors.white70),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    return _messages[index];
+                  },
+                ),
+
+                // 👇 Welcome screen only if nothing asked yet
                 if (_messages.isEmpty && !_isLoading) _buildWelcomeMessage(),
-                if (_isLoading) _buildLoadingIndicator(),
+
+                // 👇 Big loader only on very first question
+                if (_messages.isEmpty && _isLoading) _buildLoadingIndicator(),
               ],
             ),
           ),
+
           InputArea(
             controller: _textController,
             onSend: _sendMessage,
