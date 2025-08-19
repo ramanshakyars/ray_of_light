@@ -31,19 +31,20 @@ class Talktolightservice {
   }
 
   static Future<Map<String, dynamic>> renameChatHistory(
-    body,
+    String newTitle,
     String chatId,
   ) async {
     try {
       final url = "${PathConfig.renameChat}/$chatId";
-      final respose = await HttpService.put(url, body);
-      if (respose != null && respose['type'] != null) {
-        return {'success': true, 'data': respose};
+      final response = await HttpService.put(url, {"title": newTitle});
+
+      if (response != null && response['id'] != null) {
+        return {'success': true, 'data': response};
       } else {
-        return {'success': false, 'message': 'Chat history Loaded'};
+        return {'success': false, 'message': 'Rename failed'};
       }
     } catch (e) {
-      return {'success': false, 'message': 'Something went wrong'};
+      return {'success': false, 'message': 'Something went wrong: $e'};
     }
   }
 
