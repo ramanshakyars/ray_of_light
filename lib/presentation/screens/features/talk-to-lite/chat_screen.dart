@@ -91,7 +91,8 @@ class _ChatScreenState extends State<ChatScreen>
         setState(() {
           _messages.add(
             ChatMessage(
-              text: chatResponse.response +
+              text:
+                  chatResponse.response +
                   (chatResponse.suggestion?.type == "BREATHING"
                       ? "\n\nWould you like to try a short breathing exercise?"
                       : ""),
@@ -100,9 +101,9 @@ class _ChatScreenState extends State<ChatScreen>
                   chatResponse.suggestion?.type == "BREATHING"
                       ? TextButton(
                         onPressed: () {
-                          GoRouter.of(
-                            context,
-                          ).push(RouteNames.breathingExercise);
+                          GoRouter.of(context).push(
+                            '${RouteNames.mainApp}/${RouteNames.breathingExercise}',
+                          );
                         },
                         child: const Text(
                           "👉 Start Breathing Exercise",
