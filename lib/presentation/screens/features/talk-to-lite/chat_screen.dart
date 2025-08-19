@@ -56,8 +56,6 @@ class _ChatScreenState extends State<ChatScreen>
     setState(() {
       _messages.add(ChatMessage(text: message, isUser: true));
       _isLoading = true;
-
-      // ✅ Agar pehla hi message hai to star loader chalu karna
       if (_messages.length == 1) {
         _starController.repeat();
       }
@@ -256,7 +254,6 @@ class _ChatScreenState extends State<ChatScreen>
                       _messages.length +
                       ((_isLoading && _messages.isNotEmpty) ? 1 : 0),
                   itemBuilder: (context, index) {
-                    // 👇 Small loader only after first message
                     if (_isLoading &&
                         _messages.isNotEmpty &&
                         index == _messages.length) {
@@ -278,11 +275,7 @@ class _ChatScreenState extends State<ChatScreen>
                     return _messages[index];
                   },
                 ),
-
-                // 👇 Welcome screen only if nothing asked yet
                 if (_messages.isEmpty && !_isLoading) _buildWelcomeMessage(),
-
-                // 👇 Big loader only on very first question
                 if (_messages.isEmpty && _isLoading) _buildLoadingIndicator(),
               ],
             ),
