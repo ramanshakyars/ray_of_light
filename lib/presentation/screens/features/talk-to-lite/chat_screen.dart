@@ -9,7 +9,9 @@ import 'chat_message.dart';
 import 'input_area.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  final String? chatId;
+
+  const ChatScreen({super.key, this.chatId});
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -31,6 +33,10 @@ class _ChatScreenState extends State<ChatScreen>
       vsync: this,
       duration: const Duration(milliseconds: 800),
     );
+
+    if (widget.chatId != null && widget.chatId!.isNotEmpty) {
+      getChatById(widget.chatId!);
+    }
   }
 
   Future<void> _initTTS() async {
@@ -44,6 +50,26 @@ class _ChatScreenState extends State<ChatScreen>
     });
     if (result['success'] == true && result['data'] != null) {
       MessageService.showSuccess(context, 'Memory cleared successfully');
+    }
+  }
+
+  getChatById(String chatId) async {
+    final result = await Talktolightservice.getChatHistoryById(chatId);
+
+    if (result['success'] == true && result['data'] != null) {
+      final messages = result['data']['messages'] as List<dynamic>;
+
+      setState(() {
+        _messages.clear();
+        _messages.addAll(
+          messages.map(
+            (msg) => ChatMessage(
+              text: msg['content'],
+              isUser: false, 
+            ),
+          ),
+        );
+      });
     }
   }
 
