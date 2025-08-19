@@ -95,25 +95,64 @@ class _ChatScreenState extends State<ChatScreen>
                   chatResponse.response +
                   (chatResponse.suggestion?.type == "BREATHING"
                       ? "\n\nWould you like to try a short breathing exercise?"
+                      : chatResponse.suggestion?.type == "WALK"
+                      ? "\n\nWould you like to go for a walk and set a goal?"
+                      : chatResponse.suggestion?.type == "JOURNAL"
+                      ? "\n\nWould you like to write in your journal?"
                       : ""),
               isUser: false,
-              extraWidget:
-                  chatResponse.suggestion?.type == "BREATHING"
-                      ? TextButton(
-                        onPressed: () {
-                          GoRouter.of(context).push(
-                            '${RouteNames.mainApp}/${RouteNames.breathingExercise}',
-                          );
-                        },
-                        child: const Text(
-                          "👉 Start Breathing Exercise",
-                          style: TextStyle(
-                            color: Colors.lightBlueAccent,
-                            decoration: TextDecoration.underline,
-                          ),
+              extraWidget: () {
+                switch (chatResponse.suggestion?.type) {
+                  case "BREATHING":
+                    return TextButton(
+                      onPressed: () {
+                        GoRouter.of(context).push(
+                          '${RouteNames.mainApp}/${RouteNames.breathingExercise}',
+                        );
+                      },
+                      child: const Text(
+                        "👉 Start Breathing Exercise",
+                        style: TextStyle(
+                          color: Colors.lightBlueAccent,
+                          decoration: TextDecoration.underline,
                         ),
-                      )
-                      : null,
+                      ),
+                    );
+                  case "WALK":
+                    return TextButton(
+                      onPressed: () {
+                        GoRouter.of(context).push(
+                          '${RouteNames.mainApp}/${RouteNames.goalTracker}',
+                        );
+                      },
+                      child: const Text(
+                        "👉 Set Walk Goal",
+                        style: TextStyle(
+                          color: Colors.lightBlueAccent,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    );
+                  case "JOURNAL":
+                    return TextButton(
+                      onPressed: () {
+                        GoRouter.of(
+                          context,
+                        ).push('${RouteNames.mainApp}/${RouteNames.junerlism}');
+                      },
+                      child: const Text(
+                        "👉 Open Journal",
+                        style: TextStyle(
+                          color: Colors.lightBlueAccent,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    );
+                  case "NONE":
+                  default:
+                    return null;
+                }
+              }(),
             ),
           );
         });
