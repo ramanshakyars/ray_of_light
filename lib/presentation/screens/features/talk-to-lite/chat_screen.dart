@@ -63,10 +63,7 @@ class _ChatScreenState extends State<ChatScreen>
         _messages.clear();
         _messages.addAll(
           messages.map(
-            (msg) => ChatMessage(
-              text: msg['content'],
-              isUser: false, 
-            ),
+            (msg) => ChatMessage(text: msg['content'], isUser: false),
           ),
         );
       });
@@ -260,13 +257,13 @@ class _ChatScreenState extends State<ChatScreen>
               ).push('${RouteNames.mainApp}/${RouteNames.home}');
             },
           ),
-          // IconButton(
-          //   icon: const Icon(Icons.refresh, color: Colors.white),
-          //   tooltip: "Clear Memory",
-          //   onPressed: () {
-          //     clearMemory();
-          //   },
-          // ),
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            tooltip: "Clear Memory",
+            onPressed: () {
+              clearMemory();
+            },
+          ),
         ],
       ),
       body: Column(
@@ -306,12 +303,41 @@ class _ChatScreenState extends State<ChatScreen>
               ],
             ),
           ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 32, 73, 255),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  minimumSize: const Size.fromHeight(48),
+                ),
+                onPressed: () {
+                  setState(() {
+                    _messages.clear();
+                    _isLoading = false;
+                    _textController.clear();
+                  });
+                },
+                icon: const Icon(Icons.add_comment, color: Colors.white),
+                label: const Text(
+                  "Start New Chat",
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
+              ),
+            ),
+          ),
 
+          /// Input area
           InputArea(
             controller: _textController,
             onSend: _sendMessage,
             isLoading: _isLoading,
           ),
+
+          /// Bottom New Chat button
         ],
       ),
     );
