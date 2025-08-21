@@ -10,15 +10,13 @@ class WebLandingPage extends StatefulWidget {
 }
 
 class _WebLandingPageState extends State<WebLandingPage> {
-  // Define the new color scheme
-  final Color primaryColor = const Color(0xFFFDDEBD); // Light peach
-  final Color secondaryColor = const Color(0xFFE3DBCD); // Beige
-  final Color darkColor = const Color(0xFF5D4037); // Dark brown for text
+  final Color primaryColor = const Color(0xFFFDDEBD);
+  final Color secondaryColor = const Color(0xFFE3DBCD);
+  final Color darkColor = const Color(0xFF5D4037);
 
   // Keys for scrolling to sections
   final GlobalKey _aboutKey = GlobalKey();
   final GlobalKey _featuresKey = GlobalKey();
-  final GlobalKey _testimonialsKey = GlobalKey();
 
   // Function to scroll to a section
   void _scrollToSection(GlobalKey key) {
@@ -43,7 +41,13 @@ class _WebLandingPageState extends State<WebLandingPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.lightbulb_outline, color: primaryColor, size: 40),
+                Image.asset(
+                  'assets/logo.png',
+                  height: 40,
+                  width: 40,
+                  color: Colors.black,
+                  fit: BoxFit.contain,
+                ),
                 const SizedBox(height: 10),
                 Text(
                   'Ray of Light',
@@ -192,68 +196,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
     );
   }
 
-  Widget _buildStatItem(String value, String label) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 36,
-            fontWeight: FontWeight.bold,
-            color: darkColor,
-          ),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          label,
-          style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTestimonialCard(String text, String author, bool isMobile) {
-    return Card(
-      elevation: 5,
-      margin: EdgeInsets.all(isMobile ? 10 : 15),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      color: Colors.white,
-      child: Padding(
-        padding: EdgeInsets.all(isMobile ? 20.0 : 30.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(
-              Icons.format_quote,
-              color: primaryColor.withOpacity(0.5),
-              size: 40,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              text,
-              style: TextStyle(
-                fontSize: isMobile ? 14 : 16,
-                height: 1.6,
-                color: Colors.grey.shade800,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              "- $author",
-              style: TextStyle(
-                fontSize: isMobile ? 14 : 16,
-                fontWeight: FontWeight.bold,
-                color: darkColor,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
@@ -265,46 +207,40 @@ class _WebLandingPageState extends State<WebLandingPage> {
             isMobile
                 ? Row(
                   children: [
-                    Icon(
-                      Icons.lightbulb_outline,
-                      color: primaryColor,
-                      size: 24,
+                    Image.asset(
+                      'assets/logo.png',
+                      height: 40,
+                      width: 40,
+                      color: Colors.black,
+                      fit: BoxFit.contain,
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(height: 10),
                     Text(
-                      "Ray of Light",
+                      'Ray of Light',
                       style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
                         color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    const Spacer(),
-                    Builder(
-                      builder:
-                          (context) => IconButton(
-                            icon: Icon(Icons.menu, color: Colors.white),
-                            onPressed: () {
-                              Scaffold.of(context).openDrawer();
-                            },
-                          ),
                     ),
                   ],
                 )
                 : Row(
                   children: [
-                    Icon(
-                      Icons.lightbulb_outline,
-                      color: primaryColor,
-                      size: 30,
+                    Image.asset(
+                      'assets/logo.png',
+                      height: 40,
+                      width: 40,
+                      color: Colors.black,
+                      fit: BoxFit.contain,
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(height: 10),
                     Text(
-                      "Ray of Light",
+                      'Ray of Light',
                       style: TextStyle(
+                        color: Colors.white,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
                       ),
                     ),
                     const Spacer(),
@@ -324,16 +260,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
                       },
                       child: Text(
                         "About",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    const SizedBox(width: 15),
-                    TextButton(
-                      onPressed: () {
-                        _scrollToSection(_testimonialsKey);
-                      },
-                      child: Text(
-                        "Testimonials",
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -575,122 +501,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
                 ],
               ),
             ),
-
-            // Stats Section
-            Container(
-              color: secondaryColor,
-              padding: EdgeInsets.symmetric(
-                vertical: 40,
-                horizontal: isMobile ? 20 : 40,
-              ),
-              child:
-                  isMobile
-                      ? Column(
-                        children: [
-                          _buildStatItem("10,000+", "Happy Users"),
-                          const SizedBox(height: 30),
-                          _buildStatItem("24/7", "Support Available"),
-                          const SizedBox(height: 30),
-                          _buildStatItem("4.9", "App Rating"),
-                          const SizedBox(height: 30),
-                          _buildStatItem("50+", "Exercises"),
-                        ],
-                      )
-                      : Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          _buildStatItem("10,000+", "Happy Users"),
-                          _buildStatItem("24/7", "Support Available"),
-                          _buildStatItem("4.9", "App Rating"),
-                          _buildStatItem("50+", "Exercises"),
-                        ],
-                      ),
-            ),
-
-            // Testimonials Section
-            Container(
-              key: _testimonialsKey,
-              padding: EdgeInsets.symmetric(
-                vertical: 60,
-                horizontal: isMobile ? 20 : 40,
-              ),
-              color: Colors.white,
-              child: Column(
-                children: [
-                  Text(
-                    "What Our Users Say",
-                    style: TextStyle(
-                      fontSize: isMobile ? 28 : 36,
-                      fontWeight: FontWeight.bold,
-                      color: darkColor,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Real stories from people who found their light",
-                    style: TextStyle(
-                      fontSize: isMobile ? 16 : 18,
-                      color: Colors.grey.shade700,
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-
-                  if (isMobile)
-                    Column(
-                      children: [
-                        _buildTestimonialCard(
-                          "Ray of Light has been a game-changer for my mental health. The breathing exercises help me manage my anxiety attacks, and the journal feature lets me process my thoughts in a safe space.",
-                          "Sarah M.",
-                          isMobile,
-                        ),
-                        const SizedBox(height: 20),
-                        _buildTestimonialCard(
-                          "I was skeptical about an AI companion at first, but 'Lite' has become my go-to when I need someone to talk to at 3 AM. It's non-judgmental and always available.",
-                          "James K.",
-                          isMobile,
-                        ),
-                        const SizedBox(height: 20),
-                        _buildTestimonialCard(
-                          "The goal tracking feature helped me build a morning routine that actually sticks. I've meditated for 45 days straight thanks to the gentle reminders and progress tracking.",
-                          "Priya T.",
-                          isMobile,
-                        ),
-                      ],
-                    )
-                  else
-                    Column(
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildTestimonialCard(
-                                "Ray of Light has been a game-changer for my mental health. The breathing exercises help me manage my anxiety attacks, and the journal feature lets me process my thoughts in a safe space.",
-                                "Sarah M.",
-                                isMobile,
-                              ),
-                            ),
-                            const SizedBox(width: 20),
-                            Expanded(
-                              child: _buildTestimonialCard(
-                                "I was skeptical about an AI companion at first, but 'Lite' has become my go-to when I need someone to talk to at 3 AM. It's non-judgmental and always available.",
-                                "James K.",
-                                isMobile,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        _buildTestimonialCard(
-                          "The goal tracking feature helped me build a morning routine that actually sticks. I've meditated for 45 days straight thanks to the gentle reminders and progress tracking.",
-                          "Priya T.",
-                          isMobile,
-                        ),
-                      ],
-                    ),
-                ],
-              ),
-            ),
-
             // Footer Section
             Container(
               padding: EdgeInsets.symmetric(
@@ -703,20 +513,23 @@ class _WebLandingPageState extends State<WebLandingPage> {
                   if (isMobile)
                     Column(
                       children: [
-                        Icon(
-                          Icons.lightbulb_outline,
-                          size: 50,
-                          color: primaryColor,
+                        Image.asset(
+                          'assets/logo.png',
+                          height: 40,
+                          width: 40,
+                          color: Colors.black,
+                          fit: BoxFit.contain,
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 10),
                         Text(
-                          "Ray of Light",
+                          'Ray of Light',
                           style: TextStyle(
+                            color: Colors.white,
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
                           ),
                         ),
+
                         const SizedBox(height: 20),
                         Text(
                           "Your mental wellness companion",
@@ -745,15 +558,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
                             ),
                             TextButton(
                               onPressed: () {
-                                _scrollToSection(_testimonialsKey);
-                              },
-                              child: Text(
-                                "Testimonials",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () {
                                 GoRouter.of(context).go(RouteNames.login);
                               },
                               child: Text(
@@ -762,6 +566,93 @@ class _WebLandingPageState extends State<WebLandingPage> {
                               ),
                             ),
                           ],
+                        ),
+                        const SizedBox(height: 20),
+                        // Social Media Icons for Mobile
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Icons.email,
+                                color: Colors.white70,
+                                size: 24,
+                              ),
+                              onPressed: () {
+                                // Open email client
+                                final Uri emailLaunchUri = Uri(
+                                  scheme: 'mailto',
+                                  path: 'info@rayoflight.life',
+                                );
+                                // You would typically use url_launcher package here
+                                // For now, we'll just print to console
+                                print('Email: info@rayoflight.life');
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.camera_alt,
+                                color: Colors.white70,
+                                size: 24,
+                              ),
+                              onPressed: () {
+                                // Open Instagram
+                                print('Open Instagram');
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.facebook,
+                                color: Colors.white70,
+                                size: 24,
+                              ),
+                              onPressed: () {
+                                // Open Facebook
+                                print('Open Facebook');
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.link,
+                                color: Colors.white70,
+                                size: 24,
+                              ),
+                              onPressed: () {
+                                // Open LinkedIn
+                                print('Open LinkedIn');
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.chat,
+                                color: Colors.white70,
+                                size: 24,
+                              ),
+                              onPressed: () {
+                                // Open X (Twitter)
+                                print('Open X (Twitter)');
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        // Email contact for mobile
+                        GestureDetector(
+                          onTap: () {
+                            final Uri emailLaunchUri = Uri(
+                              scheme: 'mailto',
+                              path: 'info@rayoflight.life',
+                            );
+                            print('Email: info@rayoflight.life');
+                          },
+                          child: Text(
+                            'info@rayoflight.life',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 14,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
                         ),
                       ],
                     )
@@ -776,18 +667,20 @@ class _WebLandingPageState extends State<WebLandingPage> {
                             children: [
                               Row(
                                 children: [
-                                  Icon(
-                                    Icons.lightbulb_outline,
-                                    color: primaryColor,
-                                    size: 30,
+                                  Image.asset(
+                                    'assets/logo.png',
+                                    height: 40,
+                                    width: 40,
+                                    color: Colors.black,
+                                    fit: BoxFit.contain,
                                   ),
-                                  const SizedBox(width: 10),
+                                  const SizedBox(height: 10),
                                   Text(
-                                    "Ray of Light",
+                                    'Ray of Light',
                                     style: TextStyle(
+                                      color: Colors.white,
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white,
                                     ),
                                   ),
                                 ],
@@ -799,6 +692,85 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                   fontSize: 16,
                                   color: Colors.white70,
                                 ),
+                              ),
+                              const SizedBox(height: 20),
+                              // Email contact for desktop
+                              GestureDetector(
+                                onTap: () {
+                                  final Uri emailLaunchUri = Uri(
+                                    scheme: 'mailto',
+                                    path: 'info@rayoflight.life',
+                                  );
+                                  print('Email: info@rayoflight.life');
+                                },
+                                child: Text(
+                                  'info@rayoflight.life',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 14,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              // Social Media Icons for Desktop
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.email,
+                                      color: Colors.white70,
+                                      size: 24,
+                                    ),
+                                    onPressed: () {
+                                      final Uri emailLaunchUri = Uri(
+                                        scheme: 'mailto',
+                                        path: 'info@rayoflight.life',
+                                      );
+                                      print('Email: info@rayoflight.life');
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.camera_alt,
+                                      color: Colors.white70,
+                                      size: 24,
+                                    ),
+                                    onPressed: () {
+                                      print('Open Instagram');
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.facebook,
+                                      color: Colors.white70,
+                                      size: 24,
+                                    ),
+                                    onPressed: () {
+                                      print('Open Facebook');
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.link,
+                                      color: Colors.white70,
+                                      size: 24,
+                                    ),
+                                    onPressed: () {
+                                      print('Open LinkedIn');
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.chat,
+                                      color: Colors.white70,
+                                      size: 24,
+                                    ),
+                                    onPressed: () {
+                                      print('Open X (Twitter)');
+                                    },
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -860,15 +832,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                       style: TextStyle(color: Colors.white70),
                                     ),
                                   ),
-                                  TextButton(
-                                    onPressed: () {
-                                      _scrollToSection(_testimonialsKey);
-                                    },
-                                    child: Text(
-                                      "Testimonials",
-                                      style: TextStyle(color: Colors.white70),
-                                    ),
-                                  ),
                                 ],
                               ),
                             ],
@@ -880,7 +843,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                   const Divider(color: Colors.white30),
                   const SizedBox(height: 20),
                   Text(
-                    "© 2023 Ray of Light. All rights reserved.",
+                    "© 2025 Ray of Light. All rights reserved.",
                     style: TextStyle(fontSize: 14, color: Colors.white70),
                   ),
                 ],
