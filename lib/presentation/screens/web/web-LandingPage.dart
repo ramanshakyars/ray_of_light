@@ -10,6 +10,11 @@ class WebLandingPage extends StatefulWidget {
 }
 
 class _WebLandingPageState extends State<WebLandingPage> {
+  // Define the new color scheme
+  final Color primaryColor = const Color(0xFFFDDEBD); // Light peach
+  final Color secondaryColor = const Color(0xFFE3DBCD); // Beige
+  final Color darkColor = const Color(0xFF5D4037); // Dark brown for text
+
   // Keys for scrolling to sections
   final GlobalKey _aboutKey = GlobalKey();
   final GlobalKey _featuresKey = GlobalKey();
@@ -34,12 +39,12 @@ class _WebLandingPageState extends State<WebLandingPage> {
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            decoration: BoxDecoration(color: Colors.deepPurple),
-            child: const Column(
+            decoration: BoxDecoration(color: darkColor),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.lightbulb_outline, color: Colors.amber, size: 40),
-                SizedBox(height: 10),
+                Icon(Icons.lightbulb_outline, color: primaryColor, size: 40),
+                const SizedBox(height: 10),
                 Text(
                   'Ray of Light',
                   style: TextStyle(
@@ -52,24 +57,24 @@ class _WebLandingPageState extends State<WebLandingPage> {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.stars),
-            title: const Text('Features'),
+            leading: Icon(Icons.stars, color: darkColor),
+            title: Text('Features', style: TextStyle(color: darkColor)),
             onTap: () {
               Navigator.pop(context);
               _scrollToSection(_featuresKey);
             },
           ),
           ListTile(
-            leading: const Icon(Icons.info),
-            title: const Text('About Us'),
+            leading: Icon(Icons.info, color: darkColor),
+            title: Text('About Us', style: TextStyle(color: darkColor)),
             onTap: () {
               Navigator.pop(context);
               _scrollToSection(_aboutKey);
             },
           ),
           ListTile(
-            leading: const Icon(Icons.login),
-            title: const Text('Login'),
+            leading: Icon(Icons.login, color: darkColor),
+            title: Text('Login', style: TextStyle(color: darkColor)),
             onTap: () {
               Navigator.pop(context);
               GoRouter.of(context).go(RouteNames.login);
@@ -87,7 +92,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
         title: "Talk to Lite",
         description:
             "Our AI companion provides 24/7 support for stress, anxiety, and self-doubt. Get personalized advice and coping strategies anytime.",
-        color: Colors.blue.shade100,
+        color: secondaryColor.withOpacity(0.7),
         isMobile: isMobile,
       ),
       _buildHoverFeatureCard(
@@ -95,7 +100,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
         title: "Journal",
         description:
             "Private journal for daily reflections or share with our supportive community. Track your mood patterns over time.",
-        color: Colors.green.shade100,
+        color: secondaryColor.withOpacity(0.7),
         isMobile: isMobile,
       ),
       _buildHoverFeatureCard(
@@ -103,7 +108,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
         title: "Breathing Exercises",
         description:
             "20+ guided breathing techniques with customizable timers. Reduce stress in just 5 minutes with our science-backed methods.",
-        color: Colors.orange.shade100,
+        color: secondaryColor.withOpacity(0.7),
         isMobile: isMobile,
       ),
       _buildHoverFeatureCard(
@@ -111,7 +116,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
         title: "Goal Tracking",
         description:
             "Set and track personal goals with reminders. Build healthy habits with our routine management system.",
-        color: Colors.purple.shade100,
+        color: secondaryColor.withOpacity(0.7),
         isMobile: isMobile,
       ),
     ];
@@ -133,7 +138,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
           onTap: () {},
-          hoverColor: Colors.white.withOpacity(0.1),
+          hoverColor: primaryColor.withOpacity(0.1),
           child: Padding(
             padding: EdgeInsets.all(isMobile ? 15.0 : 20.0),
             child: Row(
@@ -145,7 +150,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                     color: color,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(icon, size: 30, color: Colors.deepPurple),
+                  child: Icon(icon, size: 30, color: darkColor),
                 ),
                 SizedBox(width: isMobile ? 15 : 20),
                 Expanded(
@@ -157,7 +162,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                         style: TextStyle(
                           fontSize: isMobile ? 20 : 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.deepPurple,
+                          color: darkColor,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -165,14 +170,14 @@ class _WebLandingPageState extends State<WebLandingPage> {
                         description,
                         style: TextStyle(
                           fontSize: isMobile ? 14 : 16,
-                          color: Colors.grey,
+                          color: Colors.grey.shade700,
                         ),
                       ),
                       const SizedBox(height: 15),
-                      const Text(
+                      Text(
                         "Learn more →",
                         style: TextStyle(
-                          color: Colors.deepPurple,
+                          color: darkColor,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -193,15 +198,59 @@ class _WebLandingPageState extends State<WebLandingPage> {
       children: [
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 36,
             fontWeight: FontWeight.bold,
-            color: Colors.deepPurple,
+            color: darkColor,
           ),
         ),
         const SizedBox(height: 5),
-        Text(label, style: const TextStyle(fontSize: 16, color: Colors.grey)),
+        Text(
+          label,
+          style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
+        ),
       ],
+    );
+  }
+
+  Widget _buildTestimonialCard(String text, String author, bool isMobile) {
+    return Card(
+      elevation: 5,
+      margin: EdgeInsets.all(isMobile ? 10 : 15),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      color: Colors.white,
+      child: Padding(
+        padding: EdgeInsets.all(isMobile ? 20.0 : 30.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(
+              Icons.format_quote,
+              color: primaryColor.withOpacity(0.5),
+              size: 40,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              text,
+              style: TextStyle(
+                fontSize: isMobile ? 14 : 16,
+                height: 1.6,
+                color: Colors.grey.shade800,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              "- $author",
+              style: TextStyle(
+                fontSize: isMobile ? 14 : 16,
+                fontWeight: FontWeight.bold,
+                color: darkColor,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -216,13 +265,13 @@ class _WebLandingPageState extends State<WebLandingPage> {
             isMobile
                 ? Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.lightbulb_outline,
-                      color: Colors.amber,
+                      color: primaryColor,
                       size: 24,
                     ),
                     const SizedBox(width: 8),
-                    const Text(
+                    Text(
                       "Ray of Light",
                       style: TextStyle(
                         fontSize: 18,
@@ -234,7 +283,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                     Builder(
                       builder:
                           (context) => IconButton(
-                            icon: const Icon(Icons.menu, color: Colors.white),
+                            icon: Icon(Icons.menu, color: Colors.white),
                             onPressed: () {
                               Scaffold.of(context).openDrawer();
                             },
@@ -244,13 +293,13 @@ class _WebLandingPageState extends State<WebLandingPage> {
                 )
                 : Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.lightbulb_outline,
-                      color: Colors.amber,
+                      color: primaryColor,
                       size: 30,
                     ),
                     const SizedBox(width: 10),
-                    const Text(
+                    Text(
                       "Ray of Light",
                       style: TextStyle(
                         fontSize: 24,
@@ -263,7 +312,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                       onPressed: () {
                         _scrollToSection(_featuresKey);
                       },
-                      child: const Text(
+                      child: Text(
                         "Features",
                         style: TextStyle(color: Colors.white),
                       ),
@@ -273,7 +322,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                       onPressed: () {
                         _scrollToSection(_aboutKey);
                       },
-                      child: const Text(
+                      child: Text(
                         "About",
                         style: TextStyle(color: Colors.white),
                       ),
@@ -283,7 +332,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                       onPressed: () {
                         _scrollToSection(_testimonialsKey);
                       },
-                      child: const Text(
+                      child: Text(
                         "Testimonials",
                         style: TextStyle(color: Colors.white),
                       ),
@@ -294,7 +343,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                         GoRouter.of(context).go(RouteNames.login);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.amber,
+                        backgroundColor: primaryColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -303,17 +352,14 @@ class _WebLandingPageState extends State<WebLandingPage> {
                           vertical: 12,
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         "Login",
-                        style: TextStyle(
-                          color: Colors.deepPurple,
-                          fontSize: 16,
-                        ),
+                        style: TextStyle(color: darkColor, fontSize: 16),
                       ),
                     ),
                   ],
                 ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: darkColor,
         elevation: 10,
         toolbarHeight: isMobile ? 60 : 80,
       ),
@@ -329,10 +375,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.deepPurple.shade300,
-                    Colors.deepPurple.shade800,
-                  ],
+                  colors: [darkColor.withOpacity(0.8), darkColor],
                 ),
               ),
               child: Center(
@@ -341,10 +384,10 @@ class _WebLandingPageState extends State<WebLandingPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.lightbulb_outline,
                         size: 100,
-                        color: Colors.amber,
+                        color: primaryColor,
                       ),
                       const SizedBox(height: 20),
                       Text(
@@ -381,7 +424,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                               _scrollToSection(_featuresKey);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.amber,
+                              backgroundColor: primaryColor,
                               padding: EdgeInsets.symmetric(
                                 horizontal: isMobile ? 20 : 30,
                                 vertical: isMobile ? 12 : 15,
@@ -394,7 +437,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                               "Explore Features",
                               style: TextStyle(
                                 fontSize: isMobile ? 16 : 18,
-                                color: Colors.deepPurple,
+                                color: darkColor,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -437,7 +480,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                 vertical: 60,
                 horizontal: isMobile ? 20 : 40,
               ),
-              color: Colors.white,
+              color: secondaryColor,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -446,7 +489,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                     style: TextStyle(
                       fontSize: isMobile ? 28 : 36,
                       fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,
+                      color: darkColor,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -486,6 +529,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                 vertical: 50,
                 horizontal: isMobile ? 20 : 40,
               ),
+              color: Colors.white,
               child: Column(
                 children: [
                   Text(
@@ -493,7 +537,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                     style: TextStyle(
                       fontSize: isMobile ? 28 : 36,
                       fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,
+                      color: darkColor,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -501,7 +545,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                     "Comprehensive tools for mental wellness and personal growth",
                     style: TextStyle(
                       fontSize: isMobile ? 16 : 18,
-                      color: Colors.grey,
+                      color: Colors.grey.shade700,
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -534,7 +578,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
 
             // Stats Section
             Container(
-              color: Colors.white,
+              color: secondaryColor,
               padding: EdgeInsets.symmetric(
                 vertical: 40,
                 horizontal: isMobile ? 20 : 40,
@@ -561,6 +605,286 @@ class _WebLandingPageState extends State<WebLandingPage> {
                           _buildStatItem("50+", "Exercises"),
                         ],
                       ),
+            ),
+
+            // Testimonials Section
+            Container(
+              key: _testimonialsKey,
+              padding: EdgeInsets.symmetric(
+                vertical: 60,
+                horizontal: isMobile ? 20 : 40,
+              ),
+              color: Colors.white,
+              child: Column(
+                children: [
+                  Text(
+                    "What Our Users Say",
+                    style: TextStyle(
+                      fontSize: isMobile ? 28 : 36,
+                      fontWeight: FontWeight.bold,
+                      color: darkColor,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Real stories from people who found their light",
+                    style: TextStyle(
+                      fontSize: isMobile ? 16 : 18,
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+
+                  if (isMobile)
+                    Column(
+                      children: [
+                        _buildTestimonialCard(
+                          "Ray of Light has been a game-changer for my mental health. The breathing exercises help me manage my anxiety attacks, and the journal feature lets me process my thoughts in a safe space.",
+                          "Sarah M.",
+                          isMobile,
+                        ),
+                        const SizedBox(height: 20),
+                        _buildTestimonialCard(
+                          "I was skeptical about an AI companion at first, but 'Lite' has become my go-to when I need someone to talk to at 3 AM. It's non-judgmental and always available.",
+                          "James K.",
+                          isMobile,
+                        ),
+                        const SizedBox(height: 20),
+                        _buildTestimonialCard(
+                          "The goal tracking feature helped me build a morning routine that actually sticks. I've meditated for 45 days straight thanks to the gentle reminders and progress tracking.",
+                          "Priya T.",
+                          isMobile,
+                        ),
+                      ],
+                    )
+                  else
+                    Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildTestimonialCard(
+                                "Ray of Light has been a game-changer for my mental health. The breathing exercises help me manage my anxiety attacks, and the journal feature lets me process my thoughts in a safe space.",
+                                "Sarah M.",
+                                isMobile,
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: _buildTestimonialCard(
+                                "I was skeptical about an AI companion at first, but 'Lite' has become my go-to when I need someone to talk to at 3 AM. It's non-judgmental and always available.",
+                                "James K.",
+                                isMobile,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        _buildTestimonialCard(
+                          "The goal tracking feature helped me build a morning routine that actually sticks. I've meditated for 45 days straight thanks to the gentle reminders and progress tracking.",
+                          "Priya T.",
+                          isMobile,
+                        ),
+                      ],
+                    ),
+                ],
+              ),
+            ),
+
+            // Footer Section
+            Container(
+              padding: EdgeInsets.symmetric(
+                vertical: 40,
+                horizontal: isMobile ? 20 : 40,
+              ),
+              color: darkColor,
+              child: Column(
+                children: [
+                  if (isMobile)
+                    Column(
+                      children: [
+                        Icon(
+                          Icons.lightbulb_outline,
+                          size: 50,
+                          color: primaryColor,
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          "Ray of Light",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          "Your mental wellness companion",
+                          style: TextStyle(fontSize: 16, color: Colors.white70),
+                        ),
+                        const SizedBox(height: 30),
+                        Column(
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                _scrollToSection(_featuresKey);
+                              },
+                              child: Text(
+                                "Features",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                _scrollToSection(_aboutKey);
+                              },
+                              child: Text(
+                                "About Us",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                _scrollToSection(_testimonialsKey);
+                              },
+                              child: Text(
+                                "Testimonials",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                GoRouter.of(context).go(RouteNames.login);
+                              },
+                              child: Text(
+                                "Login",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                  else
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.lightbulb_outline,
+                                    color: primaryColor,
+                                    size: 30,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    "Ray of Light",
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+                              Text(
+                                "Your mental wellness companion",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Product",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextButton(
+                                    onPressed: () {
+                                      _scrollToSection(_featuresKey);
+                                    },
+                                    child: Text(
+                                      "Features",
+                                      style: TextStyle(color: Colors.white70),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      GoRouter.of(context).go(RouteNames.login);
+                                    },
+                                    child: Text(
+                                      "Login",
+                                      style: TextStyle(color: Colors.white70),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Company",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextButton(
+                                    onPressed: () {
+                                      _scrollToSection(_aboutKey);
+                                    },
+                                    child: Text(
+                                      "About Us",
+                                      style: TextStyle(color: Colors.white70),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      _scrollToSection(_testimonialsKey);
+                                    },
+                                    child: Text(
+                                      "Testimonials",
+                                      style: TextStyle(color: Colors.white70),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  const SizedBox(height: 30),
+                  const Divider(color: Colors.white30),
+                  const SizedBox(height: 20),
+                  Text(
+                    "© 2023 Ray of Light. All rights reserved.",
+                    style: TextStyle(fontSize: 14, color: Colors.white70),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

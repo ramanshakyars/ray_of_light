@@ -39,7 +39,7 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Add New Goal"),
+      title: const Text("Add Wish"),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -77,7 +77,7 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
                         .toList(),
                 onChanged: (val) => setState(() => _selectedCategory = val),
                 decoration: const InputDecoration(
-                  labelText: "Select Goal Category",
+                  labelText: "Select wish Category",
                 ),
                 validator:
                     (val) =>
@@ -105,7 +105,7 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
               });
             }
           },
-          child: const Text("Add Goal"),
+          child: const Text("Add wish"),
         ),
       ],
     );
