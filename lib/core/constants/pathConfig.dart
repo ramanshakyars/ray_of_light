@@ -24,4 +24,13 @@ class PathConfig {
   // Mood endpoints
   static const String getCurrentMood = '$baseUrl/mood/current';
   static const String setMood = '$baseUrl/mood/set';
+
+  // Talk to light endpoints
+  static const String sendChat = '$baseUrl/chat/message';
+  static const String getChatHistory = '$baseUrl/chat/conversations/list-title';
+  static const String getChatHistoryById = '$baseUrl/chat/conversations';
+  static const String renameChat = '$baseUrl/chat/conversations/rename';
+  static const String deletechat = '$baseUrl/chat/conversations';
+  static const String clearChatsMemory = '$baseUrl/chat/conversations';
+  static const String getConversationsList = '$baseUrl/chat/conversations/list';
 }

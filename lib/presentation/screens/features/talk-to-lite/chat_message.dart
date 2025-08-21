@@ -1,45 +1,94 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
-class ChatMessage extends StatelessWidget {
+class ChatMessage extends StatefulWidget {
   final String text;
   final bool isUser;
+  final Widget? extraWidget;
 
-  const ChatMessage({super.key, 
+  const ChatMessage({
+    super.key,
     required this.text,
     required this.isUser,
+    this.extraWidget,
   });
+
+  @override
+  State<ChatMessage> createState() => _ChatMessageState();
+}
+
+class _ChatMessageState extends State<ChatMessage> {
+  String _displayedText = "";
+  int _currentIndex = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isUser) {
+      // show user text instantly
+      _displayedText = widget.text;
+    } else {
+      // animate bot text
+      _startTypingEffect();
+    }
+  }
+
+  void _startTypingEffect() {
+    _timer = Timer.periodic(const Duration(milliseconds: 40), (timer) {
+      if (_currentIndex < widget.text.length) {
+        setState(() {
+          _displayedText += widget.text[_currentIndex];
+          _currentIndex++;
+        });
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment:
+            widget.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          if (!isUser) _buildBotAvatar(),
+          if (!widget.isUser) _buildBotAvatar(),
           Flexible(
             child: Container(
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.7,
-              ),
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                // color: isUser ? Color(0xFF0083B0) : Color(0xFF0F3460),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(isUser ? 12 : 0),
-                  topRight: Radius.circular(isUser ? 0 : 12),
-                  bottomLeft: Radius.circular(12),
-                  bottomRight: Radius.circular(12),
-                ),
+                color:
+                    widget.isUser
+                        ? const Color(0xFF0083B0)
+                        : const Color(0xFF0F3460),
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: Text(
-                text,
-                style: TextStyle(color: Colors.white),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _displayedText,
+                    style: const TextStyle(color: Colors.white, fontSize: 15),
+                  ),
+                  if (widget.extraWidget != null) ...[
+                    const SizedBox(height: 10),
+                    widget.extraWidget!,
+                  ],
+                ],
               ),
             ),
           ),
-          if (isUser) _buildUserAvatar(),
+          if (widget.isUser) _buildUserAvatar(),
         ],
       ),
     );
@@ -47,18 +96,19 @@ class ChatMessage extends StatelessWidget {
 
   Widget _buildBotAvatar() {
     return Container(
-      margin: EdgeInsets.only(right: 8),
-      child: CircleAvatar(
+      margin: const EdgeInsets.only(right: 8),
+      child: const CircleAvatar(
         backgroundColor: Colors.blueAccent,
-        child: Icon(Icons.auto_awesome, color: Colors.white),
+        child: Icon(Icons.auto_awesome, color: Colors.white, size: 20),
       ),
     );
   }
 
   Widget _buildUserAvatar() {
     return Container(
-      margin: EdgeInsets.only(left: 8),
-      // child: CircleAvatar(
+      margin: const EdgeInsets.only(left: 8),
+      // Uncomment if you want a user avatar
+      // child: const CircleAvatar(
       //   backgroundColor: Color(0xFF00B4DB),
       //   child: Icon(Icons.person, color: Colors.white),
       // ),

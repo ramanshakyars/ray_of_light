@@ -48,8 +48,9 @@ class _UserDashboardState extends State<UserDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About us'),
+       // title: const Text('About us'),
         centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 224, 215, 239),
         leading: IconButton(
           icon: Image.asset('assets/logo.png'),
           onPressed: () {

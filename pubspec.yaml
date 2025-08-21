@@ -20,7 +20,9 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # 2 is not fully published it has a mistake beacuse i changed some code after uploading it so instead of 2 i upload 3 on August 3 
 ## version: 1.0.0+2
 ## version: 1.0.0+3
-version: 1.0.0+4
+## version: 1.0.0+4
+# version: 1.0.0+5
+version: 1.0.0+6
 
 environment:
   sdk: ^3.7.2
