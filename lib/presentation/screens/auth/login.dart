@@ -122,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'Login Here',
+                                'Login/Signup',
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 20 : 24,
                                   fontWeight: FontWeight.bold,
