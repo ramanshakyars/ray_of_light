@@ -10,15 +10,10 @@ class WebLandingPage extends StatefulWidget {
 }
 
 class _WebLandingPageState extends State<WebLandingPage> {
-  final Color primaryColor = const Color(0xFFFDDEBD);
-  final Color secondaryColor = const Color(0xFFE3DBCD);
-  final Color darkColor = const Color(0xFF5D4037);
-
-  // Keys for scrolling to sections
+  final Color darkColor = const Color(0xFFE3DBCD);
   final GlobalKey _aboutKey = GlobalKey();
   final GlobalKey _featuresKey = GlobalKey();
 
-  // Function to scroll to a section
   void _scrollToSection(GlobalKey key) {
     final context = key.currentContext;
     if (context != null) {
@@ -30,7 +25,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
     }
   }
 
-  // Mobile drawer
   Widget _buildMobileDrawer(BuildContext context) {
     return Drawer(
       child: ListView(
@@ -39,7 +33,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
           DrawerHeader(
             decoration: BoxDecoration(color: darkColor),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Image.asset(
                   'assets/logo.png',
@@ -52,7 +46,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                 Text(
                   'Ray of Light',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: const Color.fromARGB(255, 0, 0, 0),
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -61,24 +55,42 @@ class _WebLandingPageState extends State<WebLandingPage> {
             ),
           ),
           ListTile(
-            leading: Icon(Icons.stars, color: darkColor),
-            title: Text('Features', style: TextStyle(color: darkColor)),
+            leading: Icon(
+              Icons.stars,
+              color: const Color.fromARGB(255, 0, 0, 0),
+            ),
+            title: Text(
+              'Features',
+              style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
+            ),
             onTap: () {
               Navigator.pop(context);
               _scrollToSection(_featuresKey);
             },
           ),
           ListTile(
-            leading: Icon(Icons.info, color: darkColor),
-            title: Text('About Us', style: TextStyle(color: darkColor)),
+            leading: Icon(
+              Icons.info,
+              color: const Color.fromARGB(255, 0, 0, 0),
+            ),
+            title: Text(
+              'About Us',
+              style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
+            ),
             onTap: () {
               Navigator.pop(context);
               _scrollToSection(_aboutKey);
             },
           ),
           ListTile(
-            leading: Icon(Icons.login, color: darkColor),
-            title: Text('Login', style: TextStyle(color: darkColor)),
+            leading: Icon(
+              Icons.login,
+              color: const Color.fromARGB(255, 0, 0, 0),
+            ),
+            title: Text(
+              'Login',
+              style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
+            ),
             onTap: () {
               Navigator.pop(context);
               GoRouter.of(context).go(RouteNames.login);
@@ -96,7 +108,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
         title: "Talk to Lite",
         description:
             "Our AI companion provides 24/7 support for stress, anxiety, and self-doubt. Get personalized advice and coping strategies anytime.",
-        color: secondaryColor.withOpacity(0.7),
+        color: darkColor.withOpacity(0.7),
         isMobile: isMobile,
       ),
       _buildHoverFeatureCard(
@@ -104,7 +116,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
         title: "Journal",
         description:
             "Private journal for daily reflections or share with our supportive community. Track your mood patterns over time.",
-        color: secondaryColor.withOpacity(0.7),
+        color: darkColor.withOpacity(0.7),
         isMobile: isMobile,
       ),
       _buildHoverFeatureCard(
@@ -112,7 +124,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
         title: "Breathing Exercises",
         description:
             "20+ guided breathing techniques with customizable timers. Reduce stress in just 5 minutes with our science-backed methods.",
-        color: secondaryColor.withOpacity(0.7),
+        color: darkColor.withOpacity(0.7),
         isMobile: isMobile,
       ),
       _buildHoverFeatureCard(
@@ -120,7 +132,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
         title: "Goal Tracking",
         description:
             "Set and track personal goals with reminders. Build healthy habits with our routine management system.",
-        color: secondaryColor.withOpacity(0.7),
+        color: darkColor.withOpacity(0.7),
         isMobile: isMobile,
       ),
     ];
@@ -142,7 +154,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
           onTap: () {},
-          hoverColor: primaryColor.withOpacity(0.1),
+          hoverColor: darkColor.withOpacity(0.1),
           child: Padding(
             padding: EdgeInsets.all(isMobile ? 15.0 : 20.0),
             child: Row(
@@ -218,7 +230,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                     Text(
                       'Ray of Light',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: const Color.fromARGB(255, 0, 0, 0),
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -238,7 +250,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                     Text(
                       'Ray of Light',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: const Color.fromARGB(255, 0, 0, 0),
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -250,7 +262,9 @@ class _WebLandingPageState extends State<WebLandingPage> {
                       },
                       child: Text(
                         "Features",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(
+                          color: const Color.fromARGB(255, 0, 0, 0),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 15),
@@ -260,7 +274,9 @@ class _WebLandingPageState extends State<WebLandingPage> {
                       },
                       child: Text(
                         "About",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(
+                          color: const Color.fromARGB(255, 0, 0, 0),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 20),
@@ -269,7 +285,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                         GoRouter.of(context).go(RouteNames.login);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryColor,
+                        backgroundColor: darkColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -280,7 +296,10 @@ class _WebLandingPageState extends State<WebLandingPage> {
                       ),
                       child: Text(
                         "Login",
-                        style: TextStyle(color: darkColor, fontSize: 16),
+                        style: TextStyle(
+                          color: const Color.fromARGB(255, 0, 0, 0),
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ],
@@ -313,16 +332,16 @@ class _WebLandingPageState extends State<WebLandingPage> {
                       Icon(
                         Icons.lightbulb_outline,
                         size: 100,
-                        color: primaryColor,
+                        color: darkColor,
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        "Your Mental Wellness Companion",
+                        " Your Friend Ray of light",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: isMobile ? 28 : 36,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: const Color.fromARGB(255, 0, 0, 0),
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -335,7 +354,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: isMobile ? 16 : 20,
-                            color: Colors.white70,
+                            color: const Color.fromARGB(255, 0, 0, 0),
                           ),
                         ),
                       ),
@@ -350,7 +369,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                               _scrollToSection(_featuresKey);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryColor,
+                              backgroundColor: darkColor,
                               padding: EdgeInsets.symmetric(
                                 horizontal: isMobile ? 20 : 30,
                                 vertical: isMobile ? 12 : 15,
@@ -363,7 +382,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                               "Explore Features",
                               style: TextStyle(
                                 fontSize: isMobile ? 16 : 18,
-                                color: darkColor,
+                                color: const Color.fromARGB(255, 0, 0, 0),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -386,7 +405,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                               "Learn More",
                               style: TextStyle(
                                 fontSize: isMobile ? 16 : 18,
-                                color: Colors.white,
+                                color: const Color.fromARGB(255, 0, 0, 0),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -399,14 +418,13 @@ class _WebLandingPageState extends State<WebLandingPage> {
               ),
             ),
 
-            // About Us Section
             Container(
               key: _aboutKey,
               padding: EdgeInsets.symmetric(
                 vertical: 60,
                 horizontal: isMobile ? 20 : 40,
               ),
-              color: secondaryColor,
+              color: darkColor,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -415,7 +433,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                     style: TextStyle(
                       fontSize: isMobile ? 28 : 36,
                       fontWeight: FontWeight.bold,
-                      color: darkColor,
+                      color: const Color.fromARGB(255, 0, 0, 0),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -448,7 +466,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
               ),
             ),
 
-            // Features Section
             Container(
               key: _featuresKey,
               padding: EdgeInsets.symmetric(
@@ -532,7 +549,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
 
                         const SizedBox(height: 20),
                         Text(
-                          "Your mental wellness companion",
+                          " Your Friend Ray of light",
                           style: TextStyle(fontSize: 16, color: Colors.white70),
                         ),
                         const SizedBox(height: 30),
@@ -687,7 +704,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                               ),
                               const SizedBox(height: 20),
                               Text(
-                                "Your mental wellness companion",
+                                " Your Friend Ray of light",
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.white70,

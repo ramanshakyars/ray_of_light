@@ -129,13 +129,16 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                               SizedBox(height: 20),
-                              // Email Field
                               TextFormField(
                                 controller: _emailController,
                                 decoration: InputDecoration(
                                   labelText: 'Email',
                                   prefixIcon: Icon(Icons.email, size: 20),
-                                  border: OutlineInputBorder(),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      30,
+                                    ), // 👈 border radius here
+                                  ),
                                   contentPadding: EdgeInsets.symmetric(
                                     vertical: isSmallScreen ? 12 : 14,
                                     horizontal: 12,
@@ -173,7 +176,11 @@ class _LoginPageState extends State<LoginPage> {
                                       });
                                     },
                                   ),
-                                  border: OutlineInputBorder(),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      30,
+                                    ), // 👈 border radius here
+                                  ),
                                   contentPadding: EdgeInsets.symmetric(
                                     vertical: isSmallScreen ? 12 : 14,
                                     horizontal: 12,

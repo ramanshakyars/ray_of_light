@@ -57,7 +57,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    final isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
@@ -78,10 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               children: [
                 // Header Section - Only shown in portrait or on larger screens
                 if (isPortrait || screenHeight > 400) ...[
-                  Image.asset(
-                    'assets/logo.png',
-                    height: isPortrait ? 80 : 60,
-                  ),
+                  Image.asset('assets/logo.png', height: isPortrait ? 80 : 60),
                   SizedBox(height: isPortrait ? 10 : 5),
                   Text(
                     'Ray of Light',
@@ -94,7 +92,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: isPortrait ? 5 : 4),
                   Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: isPortrait ? 0 : 20),
+                      horizontal: isPortrait ? 0 : 20,
+                    ),
                     child: Text(
                       'We are here to help you to be better than yesterday',
                       textAlign: TextAlign.center,
@@ -120,7 +119,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             child: Card(
                               elevation: 2,
                               child: Padding(
-                                padding: EdgeInsets.all(isPortrait ? 20.0 : 16.0),
+                                padding: EdgeInsets.all(
+                                  isPortrait ? 20.0 : 16.0,
+                                ),
                                 child: Form(
                                   key: _formKey,
                                   child: Column(
@@ -139,12 +140,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         controller: _nameController,
                                         decoration: InputDecoration(
                                           labelText: 'Full Name',
-                                          prefixIcon: Icon(Icons.person, size: 20),
+                                          prefixIcon: Icon(
+                                            Icons.person,
+                                            size: 20,
+                                          ),
                                           contentPadding: EdgeInsets.symmetric(
                                             vertical: 12,
                                             horizontal: 12,
                                           ),
-                                          border: OutlineInputBorder(),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              30,
+                                            ), // 👈 border radius here
+                                          ),
                                         ),
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
@@ -160,12 +168,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         keyboardType: TextInputType.phone,
                                         decoration: InputDecoration(
                                           labelText: 'Mobile Number',
-                                          prefixIcon: Icon(Icons.phone, size: 20),
+                                          prefixIcon: Icon(
+                                            Icons.phone,
+                                            size: 20,
+                                          ),
                                           contentPadding: EdgeInsets.symmetric(
                                             vertical: 12,
                                             horizontal: 12,
                                           ),
-                                          border: OutlineInputBorder(),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              30,
+                                            ), // 👈 border radius here
+                                          ),
                                         ),
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
@@ -183,12 +198,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         controller: _emailController,
                                         decoration: InputDecoration(
                                           labelText: 'Email',
-                                          prefixIcon: Icon(Icons.email, size: 20),
+                                          prefixIcon: Icon(
+                                            Icons.email,
+                                            size: 20,
+                                          ),
                                           contentPadding: EdgeInsets.symmetric(
                                             vertical: 12,
                                             horizontal: 12,
                                           ),
-                                          border: OutlineInputBorder(),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              30,
+                                            ), // 👈 border radius here
+                                          ),
                                         ),
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
@@ -204,22 +226,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       // Date of Birth Field
                                       GestureDetector(
                                         onTap: () async {
-                                          final values = await showCalendarDatePicker2Dialog(
-                                            context: context,
-                                            config: CalendarDatePicker2WithActionButtonsConfig(
-                                              calendarType: CalendarDatePicker2Type.single,
-                                              selectedDayHighlightColor: Colors.blue,
-                                            ),
-                                            dialogSize: Size(
-                                              screenWidth * 0.9,
-                                              screenHeight * 0.5,
-                                            ),
-                                          );
-                                          if (values != null && values.isNotEmpty) {
+                                          final values =
+                                              await showCalendarDatePicker2Dialog(
+                                                context: context,
+                                                config:
+                                                    CalendarDatePicker2WithActionButtonsConfig(
+                                                      calendarType:
+                                                          CalendarDatePicker2Type
+                                                              .single,
+                                                      selectedDayHighlightColor:
+                                                          Colors.blue,
+                                                    ),
+                                                dialogSize: Size(
+                                                  screenWidth * 0.9,
+                                                  screenHeight * 0.5,
+                                                ),
+                                              );
+                                          if (values != null &&
+                                              values.isNotEmpty) {
                                             setState(() {
                                               _selectedDate = values[0];
                                               _dateOfBirthController.text =
-                                                  _selectedDate!.toIso8601String().split('T').first;
+                                                  _selectedDate!
+                                                      .toIso8601String()
+                                                      .split('T')
+                                                      .first;
                                             });
                                           }
                                         },
@@ -228,16 +259,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             controller: _dateOfBirthController,
                                             decoration: InputDecoration(
                                               labelText: 'Date Of Birth',
-                                              prefixIcon: Icon(Icons.calendar_today, size: 20),
-                                              suffixIcon: Icon(Icons.arrow_drop_down, size: 20),
-                                              contentPadding: EdgeInsets.symmetric(
-                                                vertical: 12,
-                                                horizontal: 12,
+                                              prefixIcon: Icon(
+                                                Icons.calendar_today,
+                                                size: 20,
                                               ),
-                                              border: OutlineInputBorder(),
+                                              suffixIcon: Icon(
+                                                Icons.arrow_drop_down,
+                                                size: 20,
+                                              ),
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                    vertical: 12,
+                                                    horizontal: 12,
+                                                  ),
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                      30,
+                                                    ), // 👈 border radius here
+                                              ),
                                             ),
                                             validator: (value) {
-                                              if (value == null || value.isEmpty) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
                                                 return 'Please select your date of birth';
                                               }
                                               try {
@@ -257,7 +301,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         obscureText: !_isPasswordVisible,
                                         decoration: InputDecoration(
                                           labelText: 'Password',
-                                          prefixIcon: Icon(Icons.lock, size: 20),
+                                          prefixIcon: Icon(
+                                            Icons.lock,
+                                            size: 20,
+                                          ),
                                           suffixIcon: IconButton(
                                             icon: Icon(
                                               _isPasswordVisible
@@ -267,7 +314,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             ),
                                             onPressed: () {
                                               setState(() {
-                                                _isPasswordVisible = !_isPasswordVisible;
+                                                _isPasswordVisible =
+                                                    !_isPasswordVisible;
                                               });
                                             },
                                           ),
@@ -275,7 +323,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             vertical: 12,
                                             horizontal: 12,
                                           ),
-                                          border: OutlineInputBorder(),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              30,
+                                            ), // 👈 border radius here
+                                          ),
                                         ),
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
@@ -294,7 +346,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         child: ElevatedButton(
                                           onPressed: _register,
                                           style: ElevatedButton.styleFrom(
-                                            padding: EdgeInsets.symmetric(vertical: 14),
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: 14,
+                                            ),
                                           ),
                                           child: Text(
                                             'Register',
@@ -306,9 +360,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       // Login Link
                                       TextButton(
                                         onPressed: () {
-                                          GoRouter.of(context).push(RouteNames.login);
+                                          GoRouter.of(
+                                            context,
+                                          ).push(RouteNames.login);
                                         },
-                                        child: Text('Already have an account? Login'),
+                                        child: Text(
+                                          'Already have an account? Login',
+                                        ),
                                       ),
                                     ],
                                   ),
