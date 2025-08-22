@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/theme/appcolors.dart';
 
 class WebLandingPage extends StatefulWidget {
   const WebLandingPage({super.key});
@@ -10,7 +11,7 @@ class WebLandingPage extends StatefulWidget {
 }
 
 class _WebLandingPageState extends State<WebLandingPage> {
-  final Color darkColor = const Color(0xFFE3DBCD);
+final Color darkColor = AppColors.appBackgroundColor;
   final GlobalKey _aboutKey = GlobalKey();
   final GlobalKey _featuresKey = GlobalKey();
 
@@ -35,14 +36,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Image.asset(
-                  'assets/logo.png',
-                  height: 40,
-                  width: 40,
-                  color: Colors.black,
-                  fit: BoxFit.contain,
-                ),
-                const SizedBox(height: 10),
                 Text(
                   'Ray of Light',
                   style: TextStyle(
@@ -50,6 +43,14 @@ class _WebLandingPageState extends State<WebLandingPage> {
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
+                ),
+                const SizedBox(height: 10),
+                Image.asset(
+                  'assets/logo.png',
+                  height: 40,
+                  width: 40,
+                  color: Colors.black,
+                  fit: BoxFit.contain,
                 ),
               ],
             ),
@@ -108,7 +109,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
         title: "Talk to Lite",
         description:
             "Our AI companion provides 24/7 support for stress, anxiety, and self-doubt. Get personalized advice and coping strategies anytime.",
-        color: darkColor.withOpacity(0.7),
+        color: const Color.fromARGB(255, 0, 0, 0),
         isMobile: isMobile,
       ),
       _buildHoverFeatureCard(
@@ -116,7 +117,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
         title: "Journal",
         description:
             "Private journal for daily reflections or share with our supportive community. Track your mood patterns over time.",
-        color: darkColor.withOpacity(0.7),
+        color: const Color.fromARGB(255, 0, 0, 0),
         isMobile: isMobile,
       ),
       _buildHoverFeatureCard(
@@ -124,7 +125,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
         title: "Breathing Exercises",
         description:
             "20+ guided breathing techniques with customizable timers. Reduce stress in just 5 minutes with our science-backed methods.",
-        color: darkColor.withOpacity(0.7),
+        color: const Color.fromARGB(255, 0, 0, 0),
         isMobile: isMobile,
       ),
       _buildHoverFeatureCard(
@@ -132,7 +133,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
         title: "Goal Tracking",
         description:
             "Set and track personal goals with reminders. Build healthy habits with our routine management system.",
-        color: darkColor.withOpacity(0.7),
+        color: const Color.fromARGB(255, 0, 0, 0),
         isMobile: isMobile,
       ),
     ];
@@ -178,7 +179,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                         style: TextStyle(
                           fontSize: isMobile ? 20 : 24,
                           fontWeight: FontWeight.bold,
-                          color: darkColor,
+                          color: const Color.fromARGB(255, 0, 0, 0),
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -186,14 +187,14 @@ class _WebLandingPageState extends State<WebLandingPage> {
                         description,
                         style: TextStyle(
                           fontSize: isMobile ? 14 : 16,
-                          color: Colors.grey.shade700,
+                          color: const Color.fromARGB(255, 0, 0, 0),
                         ),
                       ),
                       const SizedBox(height: 15),
                       Text(
                         "Learn more →",
                         style: TextStyle(
-                          color: darkColor,
+                          color: const Color.fromARGB(255, 0, 0, 0),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -218,22 +219,23 @@ class _WebLandingPageState extends State<WebLandingPage> {
         title:
             isMobile
                 ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    Text(
+                      'Ray of Light',
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 0, 0, 0),
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     Image.asset(
                       'assets/logo.png',
                       height: 40,
                       width: 40,
                       color: Colors.black,
                       fit: BoxFit.contain,
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'Ray of Light',
-                      style: TextStyle(
-                        color: const Color.fromARGB(255, 0, 0, 0),
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
                     ),
                   ],
                 )
@@ -332,7 +334,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                       Icon(
                         Icons.lightbulb_outline,
                         size: 100,
-                        color: darkColor,
+                        color: const Color.fromARGB(255, 0, 0, 0),
                       ),
                       const SizedBox(height: 20),
                       Text(
@@ -379,7 +381,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                               ),
                             ),
                             child: Text(
-                              "Explore Features",
+                              "Just outline",
                               style: TextStyle(
                                 fontSize: isMobile ? 16 : 18,
                                 color: const Color.fromARGB(255, 0, 0, 0),
@@ -392,7 +394,9 @@ class _WebLandingPageState extends State<WebLandingPage> {
                               _scrollToSection(_aboutKey);
                             },
                             style: OutlinedButton.styleFrom(
-                              side: const BorderSide(color: Colors.white),
+                              side: const BorderSide(
+                                color: Color.fromARGB(255, 0, 0, 0),
+                              ),
                               padding: EdgeInsets.symmetric(
                                 horizontal: isMobile ? 20 : 30,
                                 vertical: isMobile ? 12 : 15,
@@ -472,7 +476,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                 vertical: 50,
                 horizontal: isMobile ? 20 : 40,
               ),
-              color: Colors.white,
+              color: darkColor,
               child: Column(
                 children: [
                   Text(
@@ -480,7 +484,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                     style: TextStyle(
                       fontSize: isMobile ? 28 : 36,
                       fontWeight: FontWeight.bold,
-                      color: darkColor,
+                      color: const Color.fromARGB(255, 0, 0, 0),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -488,7 +492,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                     "Comprehensive tools for mental wellness and personal growth",
                     style: TextStyle(
                       fontSize: isMobile ? 16 : 18,
-                      color: Colors.grey.shade700,
+                      color: const Color.fromARGB(255, 0, 0, 0),
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -541,7 +545,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                         Text(
                           'Ray of Light',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: const Color.fromARGB(255, 0, 0, 0),
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
@@ -550,7 +554,10 @@ class _WebLandingPageState extends State<WebLandingPage> {
                         const SizedBox(height: 20),
                         Text(
                           " Your Friend Ray of light",
-                          style: TextStyle(fontSize: 16, color: Colors.white70),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: const Color.fromARGB(179, 0, 0, 0),
+                          ),
                         ),
                         const SizedBox(height: 30),
                         Column(
@@ -561,7 +568,9 @@ class _WebLandingPageState extends State<WebLandingPage> {
                               },
                               child: Text(
                                 "Features",
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(
+                                  color: const Color.fromARGB(255, 0, 0, 0),
+                                ),
                               ),
                             ),
                             TextButton(
@@ -570,7 +579,9 @@ class _WebLandingPageState extends State<WebLandingPage> {
                               },
                               child: Text(
                                 "About Us",
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(
+                                  color: const Color.fromARGB(255, 0, 0, 0),
+                                ),
                               ),
                             ),
                             TextButton(
@@ -579,7 +590,9 @@ class _WebLandingPageState extends State<WebLandingPage> {
                               },
                               child: Text(
                                 "Login",
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(
+                                  color: const Color.fromARGB(255, 0, 0, 0),
+                                ),
                               ),
                             ),
                           ],
@@ -592,7 +605,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                             IconButton(
                               icon: Icon(
                                 Icons.email,
-                                color: Colors.white70,
+                                color: const Color.fromARGB(255, 0, 0, 0),
                                 size: 24,
                               ),
                               onPressed: () {
@@ -601,15 +614,13 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                   scheme: 'mailto',
                                   path: 'info@rayoflight.life',
                                 );
-                                // You would typically use url_launcher package here
-                                // For now, we'll just print to console
                                 print('Email: info@rayoflight.life');
                               },
                             ),
                             IconButton(
                               icon: Icon(
                                 Icons.camera_alt,
-                                color: Colors.white70,
+                                color: const Color.fromARGB(255, 0, 0, 0),
                                 size: 24,
                               ),
                               onPressed: () {
@@ -620,7 +631,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                             IconButton(
                               icon: Icon(
                                 Icons.facebook,
-                                color: Colors.white70,
+                                color: const Color.fromARGB(255, 0, 0, 0),
                                 size: 24,
                               ),
                               onPressed: () {
@@ -631,7 +642,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                             IconButton(
                               icon: Icon(
                                 Icons.link,
-                                color: Colors.white70,
+                                color: const Color.fromARGB(255, 0, 0, 0),
                                 size: 24,
                               ),
                               onPressed: () {
@@ -642,7 +653,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                             IconButton(
                               icon: Icon(
                                 Icons.chat,
-                                color: Colors.white70,
+                                color: const Color.fromARGB(255, 0, 0, 0),
                                 size: 24,
                               ),
                               onPressed: () {
@@ -665,7 +676,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                           child: Text(
                             'info@rayoflight.life',
                             style: TextStyle(
-                              color: Colors.white70,
+                              color: const Color.fromARGB(255, 0, 0, 0),
                               fontSize: 14,
                               decoration: TextDecoration.underline,
                             ),
@@ -695,7 +706,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                   Text(
                                     'Ray of Light',
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: const Color.fromARGB(255, 0, 0, 0),
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -707,7 +718,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                 " Your Friend Ray of light",
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: Colors.white70,
+                                  color: const Color.fromARGB(255, 0, 0, 0),
                                 ),
                               ),
                               const SizedBox(height: 20),
@@ -723,7 +734,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                 child: Text(
                                   'info@rayoflight.life',
                                   style: TextStyle(
-                                    color: Colors.white70,
+                                    color: const Color.fromARGB(255, 0, 0, 0),
                                     fontSize: 14,
                                     decoration: TextDecoration.underline,
                                   ),
@@ -736,7 +747,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                   IconButton(
                                     icon: Icon(
                                       Icons.email,
-                                      color: Colors.white70,
+                                      color: const Color.fromARGB(255, 0, 0, 0),
                                       size: 24,
                                     ),
                                     onPressed: () {
@@ -750,7 +761,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                   IconButton(
                                     icon: Icon(
                                       Icons.camera_alt,
-                                      color: Colors.white70,
+                                      color: const Color.fromARGB(255, 0, 0, 0),
                                       size: 24,
                                     ),
                                     onPressed: () {
@@ -760,7 +771,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                   IconButton(
                                     icon: Icon(
                                       Icons.facebook,
-                                      color: Colors.white70,
+                                      color: const Color.fromARGB(255, 0, 0, 0),
                                       size: 24,
                                     ),
                                     onPressed: () {
@@ -770,7 +781,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                   IconButton(
                                     icon: Icon(
                                       Icons.link,
-                                      color: Colors.white70,
+                                      color: const Color.fromARGB(255, 0, 0, 0),
                                       size: 24,
                                     ),
                                     onPressed: () {
@@ -780,7 +791,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                   IconButton(
                                     icon: Icon(
                                       Icons.chat,
-                                      color: Colors.white70,
+                                      color: const Color.fromARGB(255, 0, 0, 0),
                                       size: 24,
                                     ),
                                     onPressed: () {
@@ -804,7 +815,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                                      color: const Color.fromARGB(255, 0, 0, 0),
                                     ),
                                   ),
                                   const SizedBox(height: 10),
@@ -814,7 +825,14 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                     },
                                     child: Text(
                                       "Features",
-                                      style: TextStyle(color: Colors.white70),
+                                      style: TextStyle(
+                                        color: const Color.fromARGB(
+                                          255,
+                                          0,
+                                          0,
+                                          0,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   TextButton(
@@ -823,7 +841,14 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                     },
                                     child: Text(
                                       "Login",
-                                      style: TextStyle(color: Colors.white70),
+                                      style: TextStyle(
+                                        color: const Color.fromARGB(
+                                          255,
+                                          0,
+                                          0,
+                                          0,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -836,7 +861,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                                      color: const Color.fromARGB(255, 0, 0, 0),
                                     ),
                                   ),
                                   const SizedBox(height: 10),
@@ -846,7 +871,14 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                     },
                                     child: Text(
                                       "About Us",
-                                      style: TextStyle(color: Colors.white70),
+                                      style: TextStyle(
+                                        color: const Color.fromARGB(
+                                          255,
+                                          0,
+                                          0,
+                                          0,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -857,11 +889,14 @@ class _WebLandingPageState extends State<WebLandingPage> {
                       ],
                     ),
                   const SizedBox(height: 30),
-                  const Divider(color: Colors.white30),
+                  const Divider(color: Color.fromARGB(77, 0, 0, 0)),
                   const SizedBox(height: 20),
                   Text(
                     "© 2025 Ray of Light. All rights reserved.",
-                    style: TextStyle(fontSize: 14, color: Colors.white70),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: const Color.fromARGB(255, 0, 0, 0),
+                    ),
                   ),
                 ],
               ),

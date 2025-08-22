@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rayoflite/core/config/config-routes.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
+import 'package:rayoflite/core/theme/appcolors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.appBackgroundColor),       
         useMaterial3: true,
       ),
       routerConfig: createRouter(initialRoute),

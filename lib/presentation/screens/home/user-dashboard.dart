@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
+import 'package:rayoflite/core/theme/appcolors.dart';
 import '../features/ṃood-manager/UserMood.dart';
 import '../features/ṃood-manager/mood-managment.dart';
 
@@ -50,7 +51,7 @@ class _UserDashboardState extends State<UserDashboard> {
       appBar: AppBar(
         // title: const Text('About us'),
         centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 224, 215, 239),
+        backgroundColor: AppColors.appBackgroundColor,
         leading: IconButton(
           icon: Image.asset('assets/logo.png'),
           onPressed: () {
@@ -76,13 +77,13 @@ class _UserDashboardState extends State<UserDashboard> {
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,
+                      color: Color.fromARGB(255, 0, 0, 0),
                     ),
                   ),
                   const SizedBox(height: 8),
                   const Text(
                     'Here\'s your daily dose of inspiration',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                    style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 0, 0, 0)),
                   ),
                   const SizedBox(height: 24),
                 ],
@@ -118,8 +119,8 @@ class _UserDashboardState extends State<UserDashboard> {
                 'Each break becomes a sacred start,',
                 'A stronger you, a work of art.',
               ],
-              color: Colors.deepPurple[50]!,
-              borderColor: Colors.deepPurple,
+              color: AppColors.appBackgroundColor,
+              borderColor: const Color.fromARGB(255, 131, 130, 134),
               icon: Icons.auto_awesome,
             ),
 
@@ -128,7 +129,7 @@ class _UserDashboardState extends State<UserDashboard> {
            
           ],
         ),
-      ),
+      )
     );
   }
 

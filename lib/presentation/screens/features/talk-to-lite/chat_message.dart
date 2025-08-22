@@ -78,7 +78,7 @@ class _ChatMessageState extends State<ChatMessage> {
                 children: [
                   Text(
                     _displayedText,
-                    style: const TextStyle(color: Colors.white, fontSize: 15),
+                    style: const TextStyle(color: Colors.black, fontSize: 15),
                   ),
                   if (widget.extraWidget != null) ...[
                     const SizedBox(height: 10),

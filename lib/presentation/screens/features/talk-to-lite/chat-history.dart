@@ -3,6 +3,7 @@ import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/services/talkToLightService.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/theme/appcolors.dart';
 
 class ChatHistory extends StatefulWidget {
   const ChatHistory({super.key});
@@ -106,7 +107,7 @@ class _ChatDrawerState extends State<ChatHistory> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
             decoration: BoxDecoration(
-              color: Colors.blue[700], // Dark blue header
+              color: AppColors.appBackgroundColor, // Dark blue header
               border: Border(
                 bottom: BorderSide(color: Colors.blue.shade900, width: 1),
               ),
@@ -119,7 +120,7 @@ class _ChatDrawerState extends State<ChatHistory> {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Color.fromARGB(255, 0, 0, 0),
                   ),
                 ),
                 IconButton(
@@ -134,7 +135,7 @@ class _ChatDrawerState extends State<ChatHistory> {
           // Main content
           Expanded(
             child: Container(
-              color: Colors.blue.shade50, // Light blue background
+              color: AppColors.appBackgroundColor, // Light blue background
               child:
                   isLoading
                       ? const Center(child: CircularProgressIndicator())
@@ -146,14 +147,14 @@ class _ChatDrawerState extends State<ChatHistory> {
                             Icon(
                               Icons.history,
                               size: 60,
-                              color: Colors.blue.shade400,
+                              color: const Color.fromARGB(255, 0, 0, 0),
                             ),
                             const SizedBox(height: 16),
                             Text(
                               "No chat history found",
                               style: TextStyle(
                                 fontSize: 18,
-                                color: Colors.blue.shade700,
+                                color: const Color.fromARGB(255, 0, 0, 0),
                               ),
                             ),
                             const SizedBox(height: 24),
@@ -197,10 +198,10 @@ class _ChatDrawerState extends State<ChatHistory> {
                             ),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
-                              color: Colors.white,
+                              color: AppColors.appBackgroundColor,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.blue.shade100,
+                                  color: AppColors.appBackgroundColor,
                                   blurRadius: 2,
                                   offset: const Offset(0, 1),
                                 ),
@@ -218,7 +219,7 @@ class _ChatDrawerState extends State<ChatHistory> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  color: Colors.blue.shade900,
+                                  color: const Color.fromARGB(255, 0, 0, 0),
                                 ),
                               ),
                               onTap: () {
