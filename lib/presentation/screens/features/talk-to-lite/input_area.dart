@@ -21,7 +21,7 @@ class InputArea extends StatelessWidget {
       color: AppColors.appBackgroundColor,
       child: Container(
         decoration: BoxDecoration(
-          color: Color.fromARGB(255, 162, 163, 164),
+          color: const Color.fromARGB(255, 255, 236, 204),
           borderRadius: BorderRadius.circular(25),
         ),
         child: Row(
@@ -34,7 +34,9 @@ class InputArea extends StatelessWidget {
                   style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
                   decoration: InputDecoration(
                     hintText: 'Type your message...',
-                    hintStyle: TextStyle(color: const Color.fromARGB(137, 0, 0, 0)),
+                    hintStyle: TextStyle(
+                      color: const Color.fromARGB(137, 0, 0, 0),
+                    ),
                     border: InputBorder.none,
                   ),
                 ),
@@ -45,12 +47,7 @@ class InputArea extends StatelessWidget {
               margin: EdgeInsets.only(right: 8),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 0, 0, 0),
-                    Color.fromARGB(255, 229, 231, 232),
-                  ],
-                ),
+                color: AppColors.talkToLiteButtonBackgroundColor,
               ),
               child: IconButton(
                 icon:

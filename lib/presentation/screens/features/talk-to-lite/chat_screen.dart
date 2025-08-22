@@ -127,7 +127,7 @@ class _ChatScreenState extends State<ChatScreen>
                         );
                       },
                       child: const Text(
-                        "👉 Set Walk Goal",
+                        "👉 Set Walk wish",
                         style: TextStyle(
                           color: Color.fromARGB(255, 0, 0, 0),
                           decoration: TextDecoration.underline,
@@ -142,7 +142,7 @@ class _ChatScreenState extends State<ChatScreen>
                         ).push('${RouteNames.mainApp}/${RouteNames.junerlism}');
                       },
                       child: const Text(
-                        "👉 Open Journal",
+                        "Try Nest",
                         style: TextStyle(
                           color: Color.fromARGB(255, 0, 0, 0),
                           decoration: TextDecoration.underline,

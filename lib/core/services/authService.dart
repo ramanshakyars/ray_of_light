@@ -79,6 +79,22 @@ class AuthService {
     }
   }
 
+  static Future<Map<String, dynamic>> resetPassword(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      final response = await HttpService.post(PathConfig.passwordResetComplete, body);
+      return response['success'] == true
+          ? {'success': true, 'message': 'Password reset successful'}
+          : {
+            'success': false,
+            'message': response['message'] ?? 'Password reset failed',
+          };
+    } catch (e) {
+      return {'success': false, 'message': _getErrorMessage(e)};
+    }
+  }
+
   static String _getErrorMessage(dynamic error) {
     if (error is SocketException) return 'No internet connection';
     if (error is TimeoutException) return 'Request timed out';

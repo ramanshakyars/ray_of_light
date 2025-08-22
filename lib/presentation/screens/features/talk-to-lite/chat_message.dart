@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:rayoflite/core/theme/appcolors.dart';
 
 class ChatMessage extends StatefulWidget {
   final String text;
@@ -62,15 +63,13 @@ class _ChatMessageState extends State<ChatMessage> {
         mainAxisAlignment:
             widget.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          if (!widget.isUser) _buildBotAvatar(),
+        //  if (!widget.isUser) _buildBotAvatar(),
           Flexible(
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color:
-                    widget.isUser
-                        ? const Color(0xFF0083B0)
-                        : const Color(0xFF0F3460),
+                    widget.isUser ? AppColors.appBackgroundColor: AppColors.appBackgroundColor,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -98,8 +97,8 @@ class _ChatMessageState extends State<ChatMessage> {
     return Container(
       margin: const EdgeInsets.only(right: 8),
       child: const CircleAvatar(
-        backgroundColor: Colors.blueAccent,
-        child: Icon(Icons.auto_awesome, color: Colors.white, size: 20),
+       // backgroundColor: Colors.blueAccent,
+      //  child: Icon(Icons.auto_awesome, color: Colors.white, size: 20),
       ),
     );
   }

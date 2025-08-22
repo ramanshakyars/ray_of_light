@@ -114,9 +114,9 @@ final Color darkColor = AppColors.appBackgroundColor;
       ),
       _buildHoverFeatureCard(
         icon: Icons.book_outlined,
-        title: "Journal",
+        title: "Nest",
         description:
-            "Private journal for daily reflections or share with our supportive community. Track your mood patterns over time.",
+            "Private Nest for daily reflections or share with our supportive community. Track your mood patterns over time.",
         color: const Color.fromARGB(255, 0, 0, 0),
         isMobile: isMobile,
       ),
@@ -130,7 +130,7 @@ final Color darkColor = AppColors.appBackgroundColor;
       ),
       _buildHoverFeatureCard(
         icon: Icons.flag_outlined,
-        title: "Goal Tracking",
+        title: "Wish",
         description:
             "Set and track personal goals with reminders. Build healthy habits with our routine management system.",
         color: const Color.fromARGB(255, 0, 0, 0),
@@ -148,7 +148,7 @@ final Color darkColor = AppColors.appBackgroundColor;
   }) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      child: Card(
+      child: Card(        
         elevation: 5,
         margin: EdgeInsets.all(isMobile ? 10 : 0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -198,6 +198,7 @@ final Color darkColor = AppColors.appBackgroundColor;
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      
                     ],
                   ),
                 ),
@@ -406,12 +407,12 @@ final Color darkColor = AppColors.appBackgroundColor;
                               ),
                             ),
                             child: Text(
-                              "Learn More",
-                              style: TextStyle(
-                                fontSize: isMobile ? 16 : 18,
-                                color: const Color.fromARGB(255, 0, 0, 0),
-                                fontWeight: FontWeight.bold,
-                              ),
+                              "",
+                              // style: TextStyle(
+                              //   fontSize: isMobile ? 16 : 18,
+                              //   color: const Color.fromARGB(255, 0, 0, 0),
+                              //   fontWeight: FontWeight.bold,
+                              // ),
                             ),
                           ),
                         ],
