@@ -43,6 +43,19 @@ class AuthService {
       return {'success': false, 'message': _getErrorMessage(e)};
     }
   }
+  static Future<Map<String, dynamic>> sendOtpForgetPassword(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      final response = await HttpService.post(PathConfig.passwordReset, body);
+      return {
+        'success': true,
+        'message': response['message'] ?? 'OTP sent successfully',
+      };
+    } catch (e) {
+      return {'success': false, 'message': _getErrorMessage(e)};
+    }
+  }
 
   static Future<Map<String, dynamic>> register(
     Map<String, dynamic> body,
@@ -82,12 +95,10 @@ class AuthService {
         PathConfig.passwordResetComplete,
         body,
       );
-      return response['success'] == true
-          ? {'success': true, 'message': 'Password reset successful'}
-          : {
-            'success': false,
-            'message': response['message'] ?? 'Password reset failed',
-          };
+      return {
+        'success': true,
+        'message': response['message'] ?? 'Password reset successful',
+      };
     } catch (e) {
       return {'success': false, 'message': _getErrorMessage(e)};
     }

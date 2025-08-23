@@ -149,7 +149,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                        'Create Account',
+                                        'Sign Up',
                                         style: TextStyle(
                                           fontSize: isPortrait ? 24 : 20,
                                           fontWeight: FontWeight.bold,
