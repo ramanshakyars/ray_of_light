@@ -11,7 +11,7 @@ class WebLandingPage extends StatefulWidget {
 }
 
 class _WebLandingPageState extends State<WebLandingPage> {
-final Color darkColor = AppColors.appBackgroundColor;
+  final Color darkColor = AppColors.appBackgroundColor;
   final GlobalKey _aboutKey = GlobalKey();
   final GlobalKey _featuresKey = GlobalKey();
 
@@ -89,7 +89,7 @@ final Color darkColor = AppColors.appBackgroundColor;
               color: const Color.fromARGB(255, 0, 0, 0),
             ),
             title: Text(
-              'Login',
+              'Login/signup',
               style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
             ),
             onTap: () {
@@ -148,13 +148,15 @@ final Color darkColor = AppColors.appBackgroundColor;
   }) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      child: Card(        
+      child: Card(
         elevation: 5,
         margin: EdgeInsets.all(isMobile ? 10 : 0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
-          onTap: () {},
+          onTap: () {
+            GoRouter.of(context).go(RouteNames.login);
+          },
           hoverColor: darkColor.withOpacity(0.1),
           child: Padding(
             padding: EdgeInsets.all(isMobile ? 15.0 : 20.0),
@@ -198,7 +200,6 @@ final Color darkColor = AppColors.appBackgroundColor;
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      
                     ],
                   ),
                 ),
@@ -298,7 +299,7 @@ final Color darkColor = AppColors.appBackgroundColor;
                         ),
                       ),
                       child: Text(
-                        "Login",
+                        "Login/Signup",
                         style: TextStyle(
                           color: const Color.fromARGB(255, 0, 0, 0),
                           fontSize: 16,
@@ -390,31 +391,31 @@ final Color darkColor = AppColors.appBackgroundColor;
                               ),
                             ),
                           ),
-                          OutlinedButton(
-                            onPressed: () {
-                              _scrollToSection(_aboutKey);
-                            },
-                            style: OutlinedButton.styleFrom(
-                              side: const BorderSide(
-                                color: Color.fromARGB(255, 0, 0, 0),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: isMobile ? 20 : 30,
-                                vertical: isMobile ? 12 : 15,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                            child: Text(
-                              "",
-                              // style: TextStyle(
-                              //   fontSize: isMobile ? 16 : 18,
-                              //   color: const Color.fromARGB(255, 0, 0, 0),
-                              //   fontWeight: FontWeight.bold,
-                              // ),
-                            ),
-                          ),
+                          // OutlinedButton(
+                          //   onPressed: () {
+                          //     _scrollToSection(_aboutKey);
+                          //   },
+                          //   style: OutlinedButton.styleFrom(
+                          //     side: const BorderSide(
+                          //       color: Color.fromARGB(255, 0, 0, 0),
+                          //     ),
+                          //     padding: EdgeInsets.symmetric(
+                          //       horizontal: isMobile ? 20 : 30,
+                          //       vertical: isMobile ? 12 : 15,
+                          //     ),
+                          //     shape: RoundedRectangleBorder(
+                          //       borderRadius: BorderRadius.circular(30),
+                          //     ),
+                          //   ),
+                          //   child: Text(
+                          //     "Explore button",
+                          //     style: TextStyle(
+                          //       fontSize: isMobile ? 16 : 18,
+                          //       color: const Color.fromARGB(255, 0, 0, 0),
+                          //       fontWeight: FontWeight.bold,
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ],
@@ -841,7 +842,7 @@ final Color darkColor = AppColors.appBackgroundColor;
                                       GoRouter.of(context).go(RouteNames.login);
                                     },
                                     child: Text(
-                                      "Login",
+                                      "Login/Signup",
                                       style: TextStyle(
                                         color: const Color.fromARGB(
                                           255,
