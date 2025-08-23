@@ -23,7 +23,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   DateTime? _selectedDate;
   bool _isPasswordVisible = false;
   bool _isOtpSent = false;
-  bool _isOtpVerified = false;
 
   @override
   void dispose() {
@@ -42,41 +41,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
       MessageService.showError(context, 'Please enter a valid email!');
       return;
     }
-    // Call your API to send OTP here, example:
+
     final response = await AuthService.verifyOtp({'email': email});
+
     if (response['success'] == true) {
       setState(() {
         _isOtpSent = true;
       });
-      MessageService.showSuccess(context, 'OTP sent to your email!');
+      MessageService.showSuccess(context, response['message']);
     } else {
-      MessageService.showError(
-        context,
-        response['message'] ?? 'OTP send failed!',
-      );
-    }
-  }
-
-  Future<void> _verifyOtp() async {
-    final otp = _otpController.text.trim();
-    if (otp.isEmpty) {
-      MessageService.showError(context, 'Please enter OTP!');
-      return;
-    }
-    final response = await AuthService.verifyOtp({
-      'otp': otp,
-      'email': _emailController.text.trim(),
-    });
-    if (response['success'] == true) {
-      setState(() {
-        _isOtpVerified = true;
-      });
-      MessageService.showSuccess(context, 'OTP verified!');
-    } else {
-      MessageService.showError(
-        context,
-        response['message'] ?? 'OTP verification failed!',
-      );
+      MessageService.showError(context, response['message']);
     }
   }
 
@@ -88,16 +62,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'email': _emailController.text.trim(),
         'dob': _dateOfBirthController.text.trim(),
         'password': _passwordController.text.trim(),
+        'otp': _otpController.text.trim(),
       };
+
       final response = await AuthService.register(body);
+
       if (!response['success']) {
-        MessageService.showError(
-          context,
-          response['message'] ?? 'Registration Failed!',
-        );
+        MessageService.showError(context, response['message']);
         return;
       }
-      MessageService.showSuccess(context, 'Registration Successful!');
+
+      MessageService.showSuccess(context, response['message']);
       if (mounted) {
         GoRouter.of(context).go(RouteNames.login);
       }
@@ -239,23 +214,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                   BorderRadius.circular(30),
                                             ),
                                           ),
-                                          validator: (value) {
-                                            if (!_isOtpVerified)
-                                              return 'Please verify OTP';
-                                            return null;
-                                          },
                                         ),
-                                        SizedBox(height: 8),
-                                        if (!_isOtpVerified)
-                                          SizedBox(
-                                            width: double.infinity,
-                                            child: ElevatedButton(
-                                              onPressed: _verifyOtp,
-                                              child: Text('Verify OTP'),
-                                            ),
-                                          ),
                                       ],
-                                      if (_isOtpVerified) ...[
+                                      if (_isOtpSent) ...[
                                         SizedBox(height: 12),
                                         TextFormField(
                                           controller: _nameController,
