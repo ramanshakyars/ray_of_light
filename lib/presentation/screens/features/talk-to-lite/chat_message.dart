@@ -68,8 +68,7 @@ class _ChatMessageState extends State<ChatMessage> {
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color:
-                    widget.isUser ? AppColors.appBackgroundColor: AppColors.appBackgroundColor,
+                color: widget.isUser ? AppColors.formsCardColor: AppColors.appBackgroundColor,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(

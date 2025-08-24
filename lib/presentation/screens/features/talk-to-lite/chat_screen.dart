@@ -347,46 +347,48 @@ class _ChatScreenState extends State<ChatScreen>
             ),
           ),
 
-          SafeArea(
-            child:
-                _messages.isNotEmpty
-                    ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 255, 236, 204),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 10,
-                              horizontal: 16,
-                            ),
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _messages.clear();
-                              _isLoading = false;
-                              _textController.clear();
-                              isNewChat = false; // reset flag
-                            });
-                          },
-                          icon: const Icon(
-                            Icons.add_comment,
-                            color: Color.fromARGB(255, 0, 0, 0),
-                            size: 20,
-                          ),
-                          label: const Text(
-                            "New Chat",
-                            style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 14),
-                          ),
-                        ),
-                      ),
-                    )
-                    : const SizedBox.shrink(),
-          ),
+          // new chat is working but hide here 
+
+          // SafeArea(
+          //   child:
+          //       _messages.isNotEmpty
+          //           ? Padding(
+          //             padding: const EdgeInsets.all(8.0),
+          //             child: Align(
+          //               alignment: Alignment.center,
+          //               child: ElevatedButton.icon(
+          //                 style: ElevatedButton.styleFrom(
+          //                   backgroundColor: const Color.fromARGB(255, 255, 236, 204),
+          //                   shape: RoundedRectangleBorder(
+          //                     borderRadius: BorderRadius.circular(12),
+          //                   ),
+          //                   padding: const EdgeInsets.symmetric(
+          //                     vertical: 10,
+          //                     horizontal: 16,
+          //                   ),
+          //                 ),
+          //                 onPressed: () {
+          //                   setState(() {
+          //                     _messages.clear();
+          //                     _isLoading = false;
+          //                     _textController.clear();
+          //                     isNewChat = false; // reset flag
+          //                   });
+          //                 },
+          //                 icon: const Icon(
+          //                   Icons.add_comment,
+          //                   color: Color.fromARGB(255, 0, 0, 0),
+          //                   size: 20,
+          //                 ),
+          //                 label: const Text(
+          //                   "New Chat",
+          //                   style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 14),
+          //                 ),
+          //               ),
+          //             ),
+          //           )
+          //           : const SizedBox.shrink(),
+          // ),
 
           /// Input area
           InputArea(
