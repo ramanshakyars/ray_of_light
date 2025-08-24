@@ -64,7 +64,6 @@ class InputArea extends StatelessWidget {
                               color: Colors.white,
                             ),
                             onEnd: () {
-                              // This will keep the animation looping
                               if (isLoading) {
                                 (context as Element).markNeedsBuild();
                               }

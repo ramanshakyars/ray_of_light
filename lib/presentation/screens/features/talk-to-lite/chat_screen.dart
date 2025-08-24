@@ -93,67 +93,69 @@ class _ChatScreenState extends State<ChatScreen>
           _messages.add(
             ChatMessage(
               text:
-                  chatResponse.response +
-                  (chatResponse.suggestion?.type == "BREATHING"
-                      ? "\n\nWould you like to try a short breathing exercise?"
-                      : chatResponse.suggestion?.type == "WALK"
-                      ? "\n\nWould you like to go for a walk and set a goal?"
-                      : chatResponse.suggestion?.type == "JOURNAL"
-                      ? "\n\nWould you like to write in your journal?"
-                      : ""),
-              isUser: false,
-              extraWidget: () {
-                switch (chatResponse.suggestion?.type) {
-                  case "BREATHING":
-                    return TextButton(
-                      onPressed: () {
-                        GoRouter.of(context).push(
-                          '${RouteNames.mainApp}/${RouteNames.breathingExercise}',
-                        );
-                      },
-                      child: const Text(
-                        "👉 Start Breathing Exercise",
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    );
-                  case "WALK":
-                    return TextButton(
-                      onPressed: () {
-                        GoRouter.of(context).push(
-                          '${RouteNames.mainApp}/${RouteNames.goalTracker}',
-                        );
-                      },
-                      child: const Text(
-                        "👉 Set Walk wish",
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    );
-                  case "JOURNAL":
-                    return TextButton(
-                      onPressed: () {
-                        GoRouter.of(
-                          context,
-                        ).push('${RouteNames.mainApp}/${RouteNames.junerlism}');
-                      },
-                      child: const Text(
-                        "Try Nest",
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    );
-                  case "NONE":
-                  default:
-                    return null;
-                }
-              }(),
+                  chatResponse.response ,isUser: false,
+                  // this code for suggestion for feature which we developed 
+              //      +
+              //     (chatResponse.suggestion?.type == "BREATHING"
+              //         ? "\n\nWould you like to try a short breathing exercise?"
+              //         : chatResponse.suggestion?.type == "WALK"
+              //         ? "\n\nWould you like to go for a walk and set a goal?"
+              //         : chatResponse.suggestion?.type == "JOURNAL"
+              //         ? "\n\nWould you like to write in your journal?"
+              //         : ""),
+              // isUser: false,
+              // extraWidget: () {
+              //   switch (chatResponse.suggestion?.type) {
+              //     case "BREATHING":
+              //       return TextButton(
+              //         onPressed: () {
+              //           GoRouter.of(context).push(
+              //             '${RouteNames.mainApp}/${RouteNames.breathingExercise}',
+              //           );
+              //         },
+              //         child: const Text(
+              //           "👉 Start Breathing Exercise",
+              //           style: TextStyle(
+              //             color: Color.fromARGB(255, 0, 0, 0),
+              //             decoration: TextDecoration.underline,
+              //           ),
+              //         ),
+              //       );
+              //     case "WALK":
+              //       return TextButton(
+              //         onPressed: () {
+              //           GoRouter.of(context).push(
+              //             '${RouteNames.mainApp}/${RouteNames.goalTracker}',
+              //           );
+              //         },
+              //         child: const Text(
+              //           "👉 Set Walk wish",
+              //           style: TextStyle(
+              //             color: Color.fromARGB(255, 0, 0, 0),
+              //             decoration: TextDecoration.underline,
+              //           ),
+              //         ),
+              //       );
+              //     case "JOURNAL":
+              //       return TextButton(
+              //         onPressed: () {
+              //           GoRouter.of(
+              //             context,
+              //           ).push('${RouteNames.mainApp}/${RouteNames.junerlism}');
+              //         },
+              //         child: const Text(
+              //           "Try Nest",
+              //           style: TextStyle(
+              //             color: Color.fromARGB(255, 0, 0, 0),
+              //             decoration: TextDecoration.underline,
+              //           ),
+              //         ),
+              //       );
+              //     case "NONE":
+              //     default:
+              //       return null;
+              //   }
+              // }(),
             ),
           );
         });
@@ -204,14 +206,14 @@ class _ChatScreenState extends State<ChatScreen>
                 ),
                 const SizedBox(height: 12),
                 const Text(
-                  "Ask me anything and I'll do my best to help you. "
-                  "Here are some things you can ask:",
+                  "Ask me anything and I'll do my best to help you. ",
                   style: TextStyle(color: Color.fromARGB(179, 0, 0, 0), fontSize: 16),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 16),
-                _buildQuestionSuggestion("Hi, I was thinking about you"),
-                _buildQuestionSuggestion("What were you doing?"),
+
+                // const SizedBox(height: 16),
+                // _buildQuestionSuggestion("Hi, I was thinking about you"),
+                // _buildQuestionSuggestion("What were you doing?"),
               ],
             ),
           ),
