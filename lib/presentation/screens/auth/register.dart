@@ -131,40 +131,175 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: isPortrait ? 30 : 20),
                 ],
                 Expanded(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return SingleChildScrollView(
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            minHeight: constraints.maxHeight,
-                          ),
-                          child: IntrinsicHeight(
-                            child: Card(
-                              elevation: 2,
-                              child: Padding(
-                                padding: EdgeInsets.all(
-                                  isPortrait ? 20.0 : 16.0,
+                  child: SingleChildScrollView(
+                    child: Center(
+                      child: Card(
+                        elevation: 2,
+                        margin: EdgeInsets.symmetric(vertical: 20),
+                        child: Padding(
+                          padding: EdgeInsets.all(isPortrait ? 20.0 : 16.0),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              mainAxisSize:
+                                  MainAxisSize.min, // 👈 height wraps content
+                              children: [
+                                Text(
+                                  'Sign Up',
+                                  style: TextStyle(
+                                    fontSize: isPortrait ? 24 : 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                                child: Form(
-                                  key: _formKey,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        'Sign Up',
-                                        style: TextStyle(
-                                          fontSize: isPortrait ? 24 : 20,
-                                          fontWeight: FontWeight.bold,
+                                SizedBox(height: isPortrait ? 20 : 15),
+                                // Email Field
+                                TextFormField(
+                                  controller: _emailController,
+                                  decoration: InputDecoration(
+                                    labelText: 'Email',
+                                    prefixIcon: Icon(Icons.email, size: 20),
+                                    contentPadding: EdgeInsets.symmetric(
+                                      vertical: 12,
+                                      horizontal: 12,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter your email';
+                                    }
+                                    if (!value.contains('@')) {
+                                      return 'Enter a valid email';
+                                    }
+                                    return null;
+                                  },
+                                  readOnly: _isOtpSent,
+                                ),
+                                SizedBox(height: 12),
+                                if (!_isOtpSent)
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: _sendOtp,
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            AppColors.formSubmitButtonColor,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            30,
+                                          ),
                                         ),
                                       ),
-                                      SizedBox(height: isPortrait ? 20 : 15),
-                                      // Email Field
-                                      TextFormField(
-                                        controller: _emailController,
+                                      child: Text('Send OTP'),
+                                    ),
+                                  ),
+                                if (_isOtpSent) ...[
+                                  TextFormField(
+                                    controller: _otpController,
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                      labelText: 'Enter OTP',
+                                      prefixIcon: Icon(Icons.code, size: 20),
+                                      contentPadding: EdgeInsets.symmetric(
+                                        vertical: 12,
+                                        horizontal: 12,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                if (_isOtpSent) ...[
+                                  SizedBox(height: 12),
+                                  TextFormField(
+                                    controller: _nameController,
+                                    decoration: InputDecoration(
+                                      labelText: 'Full Name',
+                                      prefixIcon: Icon(Icons.person, size: 20),
+                                      contentPadding: EdgeInsets.symmetric(
+                                        vertical: 12,
+                                        horizontal: 12,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter your name';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(height: 12),
+                                  TextFormField(
+                                    controller: _mobileController,
+                                    keyboardType: TextInputType.phone,
+                                    decoration: InputDecoration(
+                                      labelText: 'Mobile Number',
+                                      prefixIcon: Icon(Icons.phone, size: 20),
+                                      contentPadding: EdgeInsets.symmetric(
+                                        vertical: 12,
+                                        horizontal: 12,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter your mobile number';
+                                      }
+                                      if (value.length < 10) {
+                                        return 'Enter a valid mobile number';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(height: 12),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      final values =
+                                          await showCalendarDatePicker2Dialog(
+                                            context: context,
+                                            config:
+                                                CalendarDatePicker2WithActionButtonsConfig(
+                                                  calendarType:
+                                                      CalendarDatePicker2Type
+                                                          .single,
+                                                  selectedDayHighlightColor:
+                                                      Colors.blue,
+                                                ),
+                                            dialogSize: Size(
+                                              screenWidth * 0.9,
+                                              screenHeight * 0.5,
+                                            ),
+                                          );
+                                      if (values != null && values.isNotEmpty) {
+                                        setState(() {
+                                          _selectedDate = values[0];
+                                          _dateOfBirthController.text =
+                                              _selectedDate!
+                                                  .toIso8601String()
+                                                  .split('T')
+                                                  .first;
+                                        });
+                                      }
+                                    },
+                                    child: AbsorbPointer(
+                                      child: TextFormField(
+                                        controller: _dateOfBirthController,
                                         decoration: InputDecoration(
-                                          labelText: 'Email',
+                                          labelText: 'Date Of Birth',
                                           prefixIcon: Icon(
-                                            Icons.email,
+                                            Icons.calendar_today,
+                                            size: 20,
+                                          ),
+                                          suffixIcon: Icon(
+                                            Icons.arrow_drop_down,
                                             size: 20,
                                           ),
                                           contentPadding: EdgeInsets.symmetric(
@@ -178,256 +313,92 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           ),
                                         ),
                                         validator: (value) {
-                                          if (value == null || value.isEmpty)
-                                            return 'Please enter your email';
-                                          if (!value.contains('@'))
-                                            return 'Enter a valid email';
-                                          return null;
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please select your date of birth';
+                                          }
+                                          try {
+                                            DateTime.parse(value);
+                                            return null;
+                                          } catch (e) {
+                                            return 'Please enter a valid date';
+                                          }
                                         },
-                                        readOnly:
-                                            _isOtpSent, // Lock after sending OTP
                                       ),
-                                      SizedBox(height: 12),
-                                      if (!_isOtpSent)
-                                        SizedBox(
-                                          width: double.infinity,
-                                          child: ElevatedButton(
-                                            onPressed: _sendOtp,
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:AppColors.formSubmitButtonColor, 
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                      30,
-                                                    ), // optional rounded corners
-                                              ),
-                                            ),
-                                            child: Text('Send OTP'),
-                                          ),
-                                        ),
-                                      if (_isOtpSent) ...[
-                                        TextFormField(
-                                          controller: _otpController,
-                                          keyboardType: TextInputType.number,
-                                          decoration: InputDecoration(
-                                            labelText: 'Enter OTP',
-                                            prefixIcon: Icon(
-                                              Icons.code,
-                                              size: 20,
-                                            ),
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                  vertical: 12,
-                                                  horizontal: 12,
-                                                ),
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                      if (_isOtpSent) ...[
-                                        SizedBox(height: 12),
-                                        TextFormField(
-                                          controller: _nameController,
-                                          decoration: InputDecoration(
-                                            labelText: 'Full Name',
-                                            prefixIcon: Icon(
-                                              Icons.person,
-                                              size: 20,
-                                            ),
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                  vertical: 12,
-                                                  horizontal: 12,
-                                                ),
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
-                                            ),
-                                          ),
-                                          validator: (value) {
-                                            if (value == null || value.isEmpty)
-                                              return 'Please enter your name';
-                                            return null;
-                                          },
-                                        ),
-                                        SizedBox(height: 12),
-                                        TextFormField(
-                                          controller: _mobileController,
-                                          keyboardType: TextInputType.phone,
-                                          decoration: InputDecoration(
-                                            labelText: 'Mobile Number',
-                                            prefixIcon: Icon(
-                                              Icons.phone,
-                                              size: 20,
-                                            ),
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                  vertical: 12,
-                                                  horizontal: 12,
-                                                ),
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
-                                            ),
-                                          ),
-                                          validator: (value) {
-                                            if (value == null || value.isEmpty)
-                                              return 'Please enter your mobile number';
-                                            if (value.length < 10)
-                                              return 'Enter a valid mobile number';
-                                            return null;
-                                          },
-                                        ),
-                                        SizedBox(height: 12),
-                                        GestureDetector(
-                                          onTap: () async {
-                                            final values =
-                                                await showCalendarDatePicker2Dialog(
-                                                  context: context,
-                                                  config: CalendarDatePicker2WithActionButtonsConfig(
-                                                    calendarType:
-                                                        CalendarDatePicker2Type
-                                                            .single,
-                                                    selectedDayHighlightColor:
-                                                        Colors.blue,
-                                                  ),
-                                                  dialogSize: Size(
-                                                    screenWidth * 0.9,
-                                                    screenHeight * 0.5,
-                                                  ),
-                                                );
-                                            if (values != null &&
-                                                values.isNotEmpty) {
-                                              setState(() {
-                                                _selectedDate = values[0];
-                                                _dateOfBirthController.text =
-                                                    _selectedDate!
-                                                        .toIso8601String()
-                                                        .split('T')
-                                                        .first;
-                                              });
-                                            }
-                                          },
-                                          child: AbsorbPointer(
-                                            child: TextFormField(
-                                              controller:
-                                                  _dateOfBirthController,
-                                              decoration: InputDecoration(
-                                                labelText: 'Date Of Birth',
-                                                prefixIcon: Icon(
-                                                  Icons.calendar_today,
-                                                  size: 20,
-                                                ),
-                                                suffixIcon: Icon(
-                                                  Icons.arrow_drop_down,
-                                                  size: 20,
-                                                ),
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                      vertical: 12,
-                                                      horizontal: 12,
-                                                    ),
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(30),
-                                                ),
-                                              ),
-                                              validator: (value) {
-                                                if (value == null ||
-                                                    value.isEmpty)
-                                                  return 'Please select your date of birth';
-                                                try {
-                                                  DateTime.parse(value);
-                                                  return null;
-                                                } catch (e) {
-                                                  return 'Please enter a valid date';
-                                                }
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(height: 12),
-                                        TextFormField(
-                                          controller: _passwordController,
-                                          obscureText: !_isPasswordVisible,
-                                          decoration: InputDecoration(
-                                            labelText: 'Password',
-                                            prefixIcon: Icon(
-                                              Icons.lock,
-                                              size: 20,
-                                            ),
-                                            suffixIcon: IconButton(
-                                              icon: Icon(
-                                                _isPasswordVisible
-                                                    ? Icons.visibility
-                                                    : Icons.visibility_off,
-                                                size: 20,
-                                              ),
-                                              onPressed: () {
-                                                setState(() {
-                                                  _isPasswordVisible =
-                                                      !_isPasswordVisible;
-                                                });
-                                              },
-                                            ),
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                  vertical: 12,
-                                                  horizontal: 12,
-                                                ),
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
-                                            ),
-                                          ),
-                                          validator: (value) {
-                                            if (value == null || value.isEmpty)
-                                              return 'Please enter your password';
-                                            if (value.length < 6)
-                                              return 'Password must be at least 6 characters';
-                                            return null;
-                                          },
-                                        ),
-                                        SizedBox(height: 20),
-                                        SizedBox(
-                                          width: double.infinity,
-                                          child: ElevatedButton(
-                                            onPressed: _register,
-                                            style: ElevatedButton.styleFrom(
-                                              padding: EdgeInsets.symmetric(
-                                                vertical: 14,
-                                              ),
-                                            ),
-                                            child: Text(
-                                              'Register',
-                                              style: TextStyle(fontSize: 16),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(height: 12),
-                                        TextButton(
-                                          onPressed: () {
-                                            GoRouter.of(
-                                              context,
-                                            ).push(RouteNames.login);
-                                          },
-                                          child: Text(
-                                            'Already have an account? Login',
-                                          ),
-                                        ),
-                                      ],
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              ),
+                                  SizedBox(height: 12),
+                                  TextFormField(
+                                    controller: _passwordController,
+                                    obscureText: !_isPasswordVisible,
+                                    decoration: InputDecoration(
+                                      labelText: 'Password',
+                                      prefixIcon: Icon(Icons.lock, size: 20),
+                                      suffixIcon: IconButton(
+                                        icon: Icon(
+                                          _isPasswordVisible
+                                              ? Icons.visibility
+                                              : Icons.visibility_off,
+                                          size: 20,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _isPasswordVisible =
+                                                !_isPasswordVisible;
+                                          });
+                                        },
+                                      ),
+                                      contentPadding: EdgeInsets.symmetric(
+                                        vertical: 12,
+                                        horizontal: 12,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter your password';
+                                      }
+                                      if (value.length < 6) {
+                                        return 'Password must be at least 6 characters';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(height: 20),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: _register,
+                                      style: ElevatedButton.styleFrom(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 14,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'Register',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 12),
+                                  TextButton(
+                                    onPressed: () {
+                                      GoRouter.of(
+                                        context,
+                                      ).push(RouteNames.login);
+                                    },
+                                    child: Text(
+                                      'Already have an account? Login',
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
                         ),
-                      );
-                    },
+                      ),
+                    ),
                   ),
                 ),
               ],
