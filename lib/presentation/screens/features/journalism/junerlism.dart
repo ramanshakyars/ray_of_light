@@ -31,6 +31,18 @@ class _JournalismScreenState extends State<JournalismScreen> {
     "My potential is limitless.",
   ];
 
+  late final String _todaysAffirmation;
+
+  @override
+  void initState() {
+    super.initState();
+    // Pick affirmation for today using day-of-year
+    final dayOfYear =
+        DateTime.now().difference(DateTime(DateTime.now().year)).inDays;
+    _todaysAffirmation =
+        _sampleAffirmations[dayOfYear % _sampleAffirmations.length];
+  }
+
   @override
   void dispose() {
     _thoughtController.dispose();
@@ -42,8 +54,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
     if (thoughtText.isEmpty) return;
     setState(() => _isPosting = true);
     final curruntUserMood = await LocalStorageService.getCurrentMoodType();
-    print(curruntUserMood);
-   // if(curruntUserMood?.type == null) return;
+    // if(curruntUserMood?.type == null) return;
     final journalData = {
       "content": thoughtText,
       "type": "TEXT",
@@ -116,63 +127,46 @@ class _JournalismScreenState extends State<JournalismScreen> {
             // Inspiration section
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: colorScheme.surfaceBright.withOpacity(0.5),
-                border: Border(
-                  bottom: BorderSide(
-                    color: colorScheme.outline.withOpacity(0.2),
-                    width: 1,
-                  ),
-                ),
-              ),
+              // decoration: BoxDecoration(
+              //   color: colorScheme.surfaceBright.withOpacity(0.5),
+              //   border: Border(
+              //     bottom: BorderSide(
+              //       color: colorScheme.outline.withOpacity(0.2),
+              //       width: 1,
+              //     ),
+              //   ),
+              // ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '"Nest"',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                      fontStyle: FontStyle.italic,
-                      color: colorScheme.onSurfaceVariant,
+                  // Text(
+                  //   '"Nest"',
+                  //   style: theme.textTheme.titleMedium?.copyWith(
+                  //     fontWeight: FontWeight.w500,
+                  //     fontStyle: FontStyle.italic,
+                  //     color: colorScheme.onSurfaceVariant,
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 8),
+
+                  // Daily affirmation (only 1 per day)
+                  Chip(
+                    label: Text(
+                      _todaysAffirmation,
+                      style: theme.textTheme.labelMedium,
+                    ),
+                    backgroundColor: colorScheme.primaryContainer,
+                    side: BorderSide.none,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
+
                   Text(
                     'Write what\'s in your mind. Share your thoughts, affirmations, or motivations.',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    height: 120,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children:
-                            _sampleAffirmations.map((affirmation) {
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    _thoughtController.text = affirmation;
-                                  },
-                                  child: Chip(
-                                    label: Text(
-                                      affirmation,
-                                      style: theme.textTheme.labelMedium,
-                                    ),
-                                    backgroundColor:
-                                        colorScheme.primaryContainer,
-                                    side: BorderSide.none,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                      ),
                     ),
                   ),
                 ],
@@ -190,14 +184,14 @@ class _JournalismScreenState extends State<JournalismScreen> {
                             Icon(
                               Icons.lightbulb_outline,
                               size: 48,
-                              color: colorScheme.onSurface.withOpacity(0.5),
+                              color: colorScheme.onSurface.withValues(),
                             ),
                             const SizedBox(height: 16),
                             Text(
                               'No thoughts shared yet.\nBe the first to inspire others!',
                               textAlign: TextAlign.center,
                               style: theme.textTheme.bodyLarge?.copyWith(
-                                color: colorScheme.onSurface.withOpacity(0.7),
+                                color: colorScheme.onSurface.withValues(),
                               ),
                             ),
                           ],
@@ -217,7 +211,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: Colors.black.withValues(),
                                   blurRadius: 6,
                                   offset: const Offset(0, 2),
                                 ),
@@ -271,7 +265,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
                 color: colorScheme.surface,
                 border: Border(
                   top: BorderSide(
-                    color: colorScheme.outline.withOpacity(0.2),
+                    color: colorScheme.outline.withValues(),
                     width: 1,
                   ),
                 ),
@@ -290,7 +284,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(
-                          color: colorScheme.outline.withOpacity(0.5),
+                          color: colorScheme.outline.withValues(),
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
@@ -306,7 +300,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
                           Icons.send,
                           color:
                               _isPosting
-                                  ? colorScheme.onSurface.withOpacity(0.5)
+                                  ? colorScheme.onSurface.withValues()
                                   : colorScheme.primary,
                         ),
                         onPressed: _isPosting ? null : _postThought,
