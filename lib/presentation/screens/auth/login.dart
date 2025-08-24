@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/authService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
+import 'package:rayoflite/core/theme/appcolors.dart';
 
 void main() {
   runApp(Login());
@@ -71,6 +72,7 @@ class _LoginPageState extends State<LoginPage> {
     final isSmallScreen = screenHeight < 600;
 
     return Scaffold(
+      backgroundColor: AppColors.appBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(isSmallScreen ? 16.0 : 24.0),
@@ -113,6 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                     // Login Form
                     Card(
+                      color:AppColors.formsCardColor,
                       elevation: 2,
                       child: Padding(
                         padding: EdgeInsets.all(isSmallScreen ? 16.0 : 24.0),
@@ -223,6 +226,7 @@ class _LoginPageState extends State<LoginPage> {
                                     padding: EdgeInsets.symmetric(
                                       vertical: isSmallScreen ? 12 : 16,
                                     ),
+                                    backgroundColor: AppColors.formSubmitButtonColor,
                                   ),
                                   child: Text(
                                     'Login',
@@ -247,7 +251,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                             ],
-                          ),
+                          ),  
                         ),
                       ),
                     ),

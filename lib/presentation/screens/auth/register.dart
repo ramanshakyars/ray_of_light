@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/authService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
+import 'package:rayoflite/core/theme/appcolors.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -87,6 +88,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      backgroundColor: AppColors.appBackgroundColor,
       body: SafeArea(
         child: Center(
           child: Container(
@@ -191,6 +193,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           width: double.infinity,
                                           child: ElevatedButton(
                                             onPressed: _sendOtp,
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:AppColors.formSubmitButtonColor, 
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                      30,
+                                                    ), // optional rounded corners
+                                              ),
+                                            ),
                                             child: Text('Send OTP'),
                                           ),
                                         ),
