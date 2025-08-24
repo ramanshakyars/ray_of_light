@@ -6,7 +6,7 @@ class AppTextStyles {
   static const TextStyle regular16 = TextStyle(
     fontFamily: "Specimen",
     fontSize: 16,
-    fontWeight: FontWeight.w400,
+   // fontWeight: FontWeight.w100,
     color: AppColors.textPrimaryColor,
   );
 

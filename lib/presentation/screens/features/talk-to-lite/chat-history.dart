@@ -3,6 +3,7 @@ import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/services/talkToLightService.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 
 class ChatHistory extends StatefulWidget {
@@ -46,18 +47,15 @@ class _ChatDrawerState extends State<ChatHistory> {
     final result = await Talktolightservice.renameChatHistory(newTitle, chatId);
 
     if (result['success'] == true) {
-      final updatedData = result['data']; // backend ka fresh object
-
+      final updatedData = result['data'];
       setState(() {
         final index = chatHistory.indexWhere(
           (item) => item['id'].toString() == chatId,
         );
         if (index != -1) {
-          // backend ke response se replace karo
           chatHistory[index]['title'] = updatedData['title'];
         }
       });
-
       MessageService.showSuccess(context, 'Chat renamed successfully');
     } else {
       MessageService.showError(context, result['message']);
@@ -71,30 +69,35 @@ class _ChatDrawerState extends State<ChatHistory> {
 
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text("Rename Chat"),
-            content: TextField(
-              controller: controller,
-              decoration: const InputDecoration(
-                hintText: "Enter new name",
-                border: OutlineInputBorder(),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("Cancel"),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  renameChat(chatId, controller.text.trim());
-                },
-                child: const Text("Save"),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.formsCardColor,
+        title: Text("Rename Chat", style: AppTextStyles.medium18),
+        content: TextField(
+          controller: controller,
+          style: AppTextStyles.regular16,
+          decoration: const InputDecoration(
+            hintText: "Enter new name",
+            border: OutlineInputBorder(),
           ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("Cancel", style: AppTextStyles.regular16),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.formSubmitButtonColor,
+              foregroundColor: AppColors.textPrimaryColor,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+              renameChat(chatId, controller.text.trim());
+            },
+            child: Text("Save", style: AppTextStyles.medium18),
+          ),
+        ],
+      ),
     );
   }
 
@@ -103,30 +106,20 @@ class _ChatDrawerState extends State<ChatHistory> {
     return Drawer(
       child: Column(
         children: [
-          // Header with title and close button
+          // Header
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-            decoration: BoxDecoration(
-              color: AppColors.appBackgroundColor, // Dark blue header
-              border: Border(
-                bottom: BorderSide(color: Colors.blue.shade900, width: 1),
-              ),
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            color: AppColors.formsCardColor,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Chat History',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
-                ),
+                Text("Chat History", style: AppTextStyles.medium22),
                 IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white),
+                  icon: const Icon(
+                    Icons.close,
+                    color: AppColors.textPrimaryColor,
+                  ),
                   onPressed: () => Navigator.pop(context),
-                  tooltip: 'Close',
                 ),
               ],
             ),
@@ -135,92 +128,78 @@ class _ChatDrawerState extends State<ChatHistory> {
           // Main content
           Expanded(
             child: Container(
-              color: AppColors.appBackgroundColor, // Light blue background
-              child:
-                  isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : chatHistory.isEmpty
+              color: AppColors.appBackgroundColor,
+              child: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : chatHistory.isEmpty
                       ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.history,
-                              size: 60,
-                              color: const Color.fromARGB(255, 0, 0, 0),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              "No chat history found",
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: const Color.fromARGB(255, 0, 0, 0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.history,
+                                size: 50,
+                                color: AppColors.textPrimaryColor,
                               ),
-                            ),
-                            const SizedBox(height: 24),
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                GoRouter.of(context).push(
-                                  "${RouteNames.mainApp}/${RouteNames.talkToLight}",
-                                );
-                              },
-                              icon: const Icon(Icons.add_comment),
-                              label: const Text("Start New Chat"),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue[700],
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 12,
+                              const SizedBox(height: 12),
+                              Text(
+                                "No chat history found",
+                                style: AppTextStyles.medium18,
+                              ),
+                              const SizedBox(height: 20),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      AppColors.formSubmitButtonColor,
+                                  foregroundColor: AppColors.textPrimaryColor,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 12,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  GoRouter.of(context).push(
+                                    "${RouteNames.mainApp}/${RouteNames.talkToLight}",
+                                  );
+                                },
+                                child: Text(
+                                  "Start New Chat",
+                                  style: AppTextStyles.medium18,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                      : ListView.builder(
-                        padding: const EdgeInsets.only(top: 8),
-                        itemCount: chatHistory.length,
-                        itemBuilder: (context, index) {
-                          final item = chatHistory[index];
-                          final chatId = item['id'].toString();
-                          final rawTitle = item['title'];
-                          final title =
-                              (rawTitle == null || rawTitle.trim().isEmpty)
-                                  ? "Untitled Chat"
-                                  : rawTitle.trim();
+                            ],
+                          ),
+                        )
+                      : ListView.separated(
+                          itemCount: chatHistory.length,
+                          separatorBuilder: (_, __) => const Divider(
+                            height: 1,
+                            color: AppColors.textPrimaryColor,
+                          ),
+                          itemBuilder: (context, index) {
+                            final item = chatHistory[index];
+                            final chatId = item['id'].toString();
+                            final rawTitle = item['title'];
+                            final title =
+                                (rawTitle == null || rawTitle.trim().isEmpty)
+                                    ? "Untitled Chat"
+                                    : rawTitle.trim();
 
-                          return Container(
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: AppColors.appBackgroundColor,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.appBackgroundColor,
-                                  blurRadius: 2,
-                                  offset: const Offset(0, 1),
-                                ),
-                              ],
-                            ),
-                            child: ListTile(
-                              leading: Icon(
+                            return ListTile(
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              leading: const Icon(
                                 Icons.chat_bubble_outline,
-                                color: Colors.blue[700],
+                                color: AppColors.textPrimaryColor,
                               ),
                               title: Text(
                                 title,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: const Color.fromARGB(255, 0, 0, 0),
-                                ),
+                                style: AppTextStyles.regular16,
                               ),
                               onTap: () {
                                 Navigator.pop(context);
@@ -229,9 +208,9 @@ class _ChatDrawerState extends State<ChatHistory> {
                                 );
                               },
                               trailing: PopupMenuButton<String>(
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.more_vert,
-                                  color: Colors.blue[700],
+                                  color: AppColors.textPrimaryColor,
                                 ),
                                 onSelected: (value) {
                                   if (value == 'delete') {
@@ -240,40 +219,35 @@ class _ChatDrawerState extends State<ChatHistory> {
                                     showRenameDialog(chatId, title);
                                   }
                                 },
-                                itemBuilder:
-                                    (context) => [
-                                      PopupMenuItem(
-                                        value: 'delete',
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.delete,
-                                              color: Colors.red[700],
-                                            ),
-                                            const SizedBox(width: 8),
-                                            const Text("Delete"),
-                                          ],
-                                        ),
-                                      ),
-                                      PopupMenuItem(
-                                        value: 'rename',
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.edit,
-                                              color: Colors.blue[700],
-                                            ),
-                                            const SizedBox(width: 8),
-                                            const Text("Rename"),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
+                                itemBuilder: (context) => [
+                                  const PopupMenuItem(
+                                    value: 'delete',
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.delete,
+                                            color: Colors.red, size: 20),
+                                        SizedBox(width: 8),
+                                        Text("Delete"),
+                                      ],
+                                    ),
+                                  ),
+                                  const PopupMenuItem(
+                                    value: 'rename',
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.edit,
+                                            color: AppColors.textPrimaryColor,
+                                            size: 20),
+                                        SizedBox(width: 8),
+                                        Text("Rename"),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          );
-                        },
-                      ),
+                            );
+                          },
+                        ),
             ),
           ),
         ],
