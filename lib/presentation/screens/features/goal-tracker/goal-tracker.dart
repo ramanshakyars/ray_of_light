@@ -198,7 +198,7 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Track Your Goals',
+          'Wishes',
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
@@ -247,7 +247,7 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
                       ElevatedButton.icon(
                         onPressed: _showAddGoalDialog,
                         icon: const Icon(Icons.add),
-                        label: const Text("Add New Goal"),
+                        label: const Text("Add Wish"),
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size.fromHeight(50),
                           shape: RoundedRectangleBorder(

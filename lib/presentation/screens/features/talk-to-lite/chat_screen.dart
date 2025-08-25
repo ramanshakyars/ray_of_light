@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/services/talkToLightService.dart';
+import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat-history.dart';
 import 'chat_message.dart';
 import 'input_area.dart';
@@ -113,7 +114,7 @@ class _ChatScreenState extends State<ChatScreen>
                       child: const Text(
                         "👉 Start Breathing Exercise",
                         style: TextStyle(
-                          color: Colors.lightBlueAccent,
+                          color: Color.fromARGB(255, 0, 0, 0),
                           decoration: TextDecoration.underline,
                         ),
                       ),
@@ -128,7 +129,7 @@ class _ChatScreenState extends State<ChatScreen>
                       child: const Text(
                         "👉 Set Walk Goal",
                         style: TextStyle(
-                          color: Colors.lightBlueAccent,
+                          color: Color.fromARGB(255, 0, 0, 0),
                           decoration: TextDecoration.underline,
                         ),
                       ),
@@ -143,7 +144,7 @@ class _ChatScreenState extends State<ChatScreen>
                       child: const Text(
                         "👉 Open Journal",
                         style: TextStyle(
-                          color: Colors.lightBlueAccent,
+                          color: Color.fromARGB(255, 0, 0, 0),
                           decoration: TextDecoration.underline,
                         ),
                       ),
@@ -188,7 +189,7 @@ class _ChatScreenState extends State<ChatScreen>
             padding: const EdgeInsets.all(16),
             margin: const EdgeInsets.symmetric(horizontal: 24),
             decoration: BoxDecoration(
-              color: const Color(0xFF16213E),
+              color: AppColors.appBackgroundColor,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
@@ -196,7 +197,7 @@ class _ChatScreenState extends State<ChatScreen>
                 const Text(
                   "Welcome to Talk to Light!",
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Color.fromARGB(255, 0, 0, 0),
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -205,7 +206,7 @@ class _ChatScreenState extends State<ChatScreen>
                 const Text(
                   "Ask me anything and I'll do my best to help you. "
                   "Here are some things you can ask:",
-                  style: TextStyle(color: Colors.white70, fontSize: 16),
+                  style: TextStyle(color: Color.fromARGB(179, 0, 0, 0), fontSize: 16),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
@@ -229,13 +230,13 @@ class _ChatScreenState extends State<ChatScreen>
             child: const Icon(
               Icons.auto_awesome,
               size: 60,
-              color: Colors.blueAccent,
+              color: Color.fromARGB(255, 0, 0, 0),
             ),
           ),
           const SizedBox(height: 16),
           const Text(
             "Thinking...",
-            style: TextStyle(color: Colors.white70, fontSize: 18),
+            style: TextStyle(color: Color.fromARGB(179, 0, 0, 0), fontSize: 18),
           ),
         ],
       ),
@@ -252,16 +253,16 @@ class _ChatScreenState extends State<ChatScreen>
         margin: const EdgeInsets.symmetric(vertical: 6),
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         decoration: BoxDecoration(
-          color: const Color(0xFF0F3460),
+          color: AppColors.appBackgroundColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.blueAccent.withOpacity(0.3)),
+          border: Border.all(color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.3)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.arrow_forward, color: Colors.blueAccent, size: 16),
+            const Icon(Icons.arrow_forward, color: Color.fromARGB(255, 0, 0, 0), size: 16),
             const SizedBox(width: 8),
-            Text(question, style: const TextStyle(color: Colors.white70)),
+            Text(question, style: const TextStyle(color: Color.fromARGB(179, 0, 0, 0))),
           ],
         ),
       ),
@@ -278,14 +279,14 @@ class _ChatScreenState extends State<ChatScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A2E),
+      backgroundColor: AppColors.appBackgroundColor,
       drawer: const ChatHistory(),
       appBar: AppBar(
         title: const Text(
           'Talk to Light',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
         ),
-        backgroundColor: const Color.fromARGB(255, 27, 39, 74),
+        backgroundColor: AppColors.appBackgroundColor,
         elevation: 10,
         automaticallyImplyLeading: true,
         actions: [
@@ -328,7 +329,7 @@ class _ChatScreenState extends State<ChatScreen>
                             SizedBox(width: 10),
                             Text(
                               "Light is typing...",
-                              style: TextStyle(color: Colors.white70),
+                              style: TextStyle(color: Color.fromARGB(179, 0, 0, 0)),
                             ),
                           ],
                         ),
@@ -353,12 +354,7 @@ class _ChatScreenState extends State<ChatScreen>
                         alignment: Alignment.center,
                         child: ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(
-                              255,
-                              29,
-                              165,
-                              255,
-                            ),
+                            backgroundColor: const Color.fromARGB(255, 255, 236, 204),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -377,12 +373,12 @@ class _ChatScreenState extends State<ChatScreen>
                           },
                           icon: const Icon(
                             Icons.add_comment,
-                            color: Colors.white,
+                            color: Color.fromARGB(255, 0, 0, 0),
                             size: 20,
                           ),
                           label: const Text(
                             "New Chat",
-                            style: TextStyle(color: Colors.white, fontSize: 14),
+                            style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 14),
                           ),
                         ),
                       ),

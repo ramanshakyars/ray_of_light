@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
+import 'package:rayoflite/core/theme/appcolors.dart';
 import '../features/ṃood-manager/UserMood.dart';
 import '../features/ṃood-manager/mood-managment.dart';
 
@@ -48,9 +49,9 @@ class _UserDashboardState extends State<UserDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-       // title: const Text('About us'),
+        // title: const Text('About us'),
         centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 224, 215, 239),
+        backgroundColor: AppColors.appBackgroundColor,
         leading: IconButton(
           icon: Image.asset('assets/logo.png'),
           onPressed: () {
@@ -76,116 +77,59 @@ class _UserDashboardState extends State<UserDashboard> {
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,
+                      color: Color.fromARGB(255, 0, 0, 0),
                     ),
                   ),
                   const SizedBox(height: 8),
                   const Text(
                     'Here\'s your daily dose of inspiration',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                    style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 0, 0, 0)),
                   ),
                   const SizedBox(height: 24),
                 ],
               ),
             ),
 
-            // Poem Cards
+            // Single Poem Card
             _buildStanzaCard(
               context,
-              title: 'The Break',
+              title: 'Ray of Light',
               lines: [
+                // The Break
                 'In life, we must face the break,',
                 'The cracks that cause the soul to ache.',
-                'But through the pain, a truth will rise.',
+                'But through the pain, a truth will rise,',
                 'Strength is hiding in disguise.',
-              ],
-              color: Colors.blue[50]!,
-              borderColor: Colors.blue,
-            ),
-
-            const SizedBox(height: 20),
-
-            _buildStanzaCard(
-              context,
-              title: 'The Storm',
-              lines: [
+                '',
+                // The Storm
                 'If no storm had ever blown,',
                 'You\'d never see how much you\'ve grown.',
                 'A heart untested might seem whole,',
                 'But trials awaken soul.',
-              ],
-              color: Colors.green[50]!,
-              borderColor: Colors.green,
-              icon: Icons.cloud,
-            ),
-
-            const SizedBox(height: 20),
-
-            _buildStanzaCard(
-              context,
-              title: 'The Light Within',
-              lines: [
-                'In the dark, when hope feels ends,',
+                '',
+                // The Light Within
+                'In the dark, when hope feels thin,',
                 'You\'ll find your Ray of Light within.',
                 'A glow that guides you through the night,',
                 'Makes the broken edges bright.',
-              ],
-              color: Colors.orange[50]!,
-              borderColor: Colors.orange,
-              icon: Icons.lightbulb_outline,
-            ),
-
-            const SizedBox(height: 20),
-
-            _buildStanzaCard(
-              context,
-              title: 'The Art of You',
-              lines: [
+                '',
+                // The Art of You
                 'Don\'t fear the times you fall apart,',
                 'They carve the courage in your heart.',
-                'Each break becomes a sacred start',
+                'Each break becomes a sacred start,',
                 'A stronger you, a work of art.',
               ],
-              color: Colors.purple[50]!,
-              borderColor: Colors.purple,
-              icon: Icons.brush,
+              color: AppColors.appBackgroundColor,
+              borderColor: const Color.fromARGB(255, 131, 130, 134),
+              icon: Icons.auto_awesome,
             ),
 
             const SizedBox(height: 24),
 
-            // Footer
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.deepPurple.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Colors.deepPurple.withOpacity(0.3),
-                  width: 1,
-                ),
-              ),
-              child: const Column(
-                children: [
-                  Text(
-                    '✨ Ray of Light ✨',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Remember: Every challenge is an opportunity to grow',
-                    style: TextStyle(fontSize: 14, color: Colors.deepPurple),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
+           
           ],
         ),
-      ),
+      )
     );
   }
 
