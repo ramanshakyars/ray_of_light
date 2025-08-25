@@ -16,9 +16,8 @@ class Talktolightservice {
     }
   }
 
-  static Future<ChatResponse?> postChatHistory(String message) async {
-    try {
-      final payload = {"message": message};
+  static Future<ChatResponse?> postChatHistory(Map<String, dynamic> payload) async {
+    try {     
       final response = await HttpService.post(PathConfig.sendChat, payload);
       if (response != null) {
         return ChatResponse.fromJson(response);
@@ -74,7 +73,7 @@ class Talktolightservice {
     try {
       final url = "${PathConfig.getChatHistoryById}/$chatId";
       final response = await HttpService.get(url);
-      if (response != null && response['type'] != null) {
+      if (response != null) {
         return {'success': true, 'data': response};
       } else {
         return {'success': false, 'message': 'Chat history Loaded'};

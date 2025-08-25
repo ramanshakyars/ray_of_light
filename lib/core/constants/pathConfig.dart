@@ -1,18 +1,21 @@
 class PathConfig {
-  // static const String baseUrl = 'http://localhost:9090/rayoflight/api';
+  //  static const String baseUrl = 'http://localhost:9090/rayoflight/api';
   // static const String baseUrl = 'http://ec2-3-111-209-210.ap-south-1.compute.amazonaws.com/rayoflight/api';
-  static const String baseUrl = 'https://api.rayoflight.life/rayoflight/api';
+ static const String baseUrl = 'https://api.rayoflight.life/rayoflight/api';
 
   // Auth endpoints
   static const String login = '$baseUrl/public/login';
-  static const String register = '$baseUrl/public/register';
+  static const String verifyOtp = '$baseUrl/public/register/initiate';
+  static const String register = '$baseUrl/public/register/complete';
+  static const String passwordReset = '$baseUrl/public/password/reset/initiate';
+  static const String passwordResetComplete = '$baseUrl/public/password/reset/complete';
   static const String logout = '$baseUrl/auth/logout';
+
 
   // User endpoints
   static const String userProfile = '$baseUrl/user/profile';
   static const String updateProfile = '$baseUrl/user/update';
   static const String forgotPassword = '$baseUrl/auth/forgot-password';
-  static const String verifyOtp = '$baseUrl/auth/verify-otp';
 
   //Goal Tracker endpoints
   static const String getGoals = '$baseUrl/goal';

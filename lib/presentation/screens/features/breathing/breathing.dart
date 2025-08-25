@@ -4,6 +4,8 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/theme/AppFont.dart';
+import 'package:rayoflite/core/theme/appcolors.dart';
 
 class BreathingScreen extends StatefulWidget {
   const BreathingScreen({super.key});
@@ -22,7 +24,7 @@ class _BreathingScreenState extends State<BreathingScreen>
   final Duration _duration = Duration(seconds: 4);
   Duration _totalDuration = Duration.zero;
   final double _circleRadius = 140;
-  Color _dotColor = Colors.tealAccent;
+  Color _dotColor = AppColors.inhaleDark;
   double _dotSize = 40.0;
 
   @override
@@ -38,7 +40,6 @@ class _BreathingScreenState extends State<BreathingScreen>
     setState(() {
       _angle = 2 * pi * _animation.value;
 
-      // Add pulse effect during hold
       if (_instruction == "HOLD") {
         _dotSize = 40.0 + 10.0 * sin(pi * DateTime.now().millisecond / 500);
       } else {
@@ -48,7 +49,6 @@ class _BreathingScreenState extends State<BreathingScreen>
   }
 
   void _startBreathingCycle() {
-    // Inhale animation
     _animation = Tween<double>(
       begin: 0,
       end: 1,
@@ -56,24 +56,22 @@ class _BreathingScreenState extends State<BreathingScreen>
 
     setState(() {
       _instruction = "INHALE";
-      _dotColor = Colors.tealAccent;
+      _dotColor = AppColors.inhaleDark;
     });
 
     _controller.reset();
     _controller.forward().then((_) {
       setState(() {
         _instruction = "HOLD";
-        _dotColor = Colors.orangeAccent;
+        _dotColor = AppColors.holdDark;
       });
 
-      // Hold for 2 seconds
-      _holdTimer = Timer(Duration(seconds: 2), () {
+      _holdTimer = Timer(const Duration(seconds: 2), () {
         setState(() {
           _instruction = "EXHALE";
-          _dotColor = Colors.purpleAccent;
+          _dotColor = AppColors.exhaleDark;
         });
 
-        // Exhale animation
         _animation = Tween<double>(begin: 1, end: 0).animate(
           CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
         );
@@ -81,9 +79,9 @@ class _BreathingScreenState extends State<BreathingScreen>
         _controller.reset();
         _controller.forward().then((_) {
           setState(() {
-            _totalDuration += _duration * 2 + Duration(seconds: 2);
+            _totalDuration += _duration * 2 + const Duration(seconds: 2);
           });
-          _startBreathingCycle(); // Repeat cycle
+          _startBreathingCycle();
         });
       });
     });
@@ -103,11 +101,8 @@ class _BreathingScreenState extends State<BreathingScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Breathing Exercise',
-          style: TextStyle(color: Colors.black),
-        ),
-        backgroundColor: Colors.white,
+        title: const Text('Breathing Exercise', style: AppTextStyles.medium22),
+        backgroundColor: AppColors.textSecondryCOlor,
         elevation: 4,
         automaticallyImplyLeading: false,
         actions: [
@@ -120,7 +115,7 @@ class _BreathingScreenState extends State<BreathingScreen>
           ),
         ],
       ),
-      backgroundColor: const Color.fromARGB(255, 51, 50, 50),
+      backgroundColor: AppColors.appBackgroundColor,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -131,7 +126,7 @@ class _BreathingScreenState extends State<BreathingScreen>
                 children: [
                   TextSpan(
                     text: _instruction,
-                    style: TextStyle(
+                    style: AppTextStyles.medium22.copyWith(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
                       color: _dotColor,
@@ -139,7 +134,7 @@ class _BreathingScreenState extends State<BreathingScreen>
                   ),
                   WidgetSpan(
                     child: Padding(
-                      padding: EdgeInsets.only(left: 10),
+                      padding: const EdgeInsets.only(left: 10),
                       child: Icon(
                         _instruction == "INHALE"
                             ? Icons.arrow_upward
@@ -154,9 +149,9 @@ class _BreathingScreenState extends State<BreathingScreen>
                 ],
               ),
             ),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
 
-            // Circular breathing track with gradient
+            // Breathing circle
             SizedBox(
               width: _circleRadius * 2 + 60,
               height: _circleRadius * 2 + 60,
@@ -168,26 +163,19 @@ class _BreathingScreenState extends State<BreathingScreen>
                     height: _circleRadius * 2,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: SweepGradient(
-                        colors: [
-                          Colors.teal.withOpacity(0.3),
-                          Colors.blue.withOpacity(0.1),
-                          Colors.purple.withOpacity(0.3),
-                        ],
-                        stops: [0.0, 0.5, 1.0],
-                      ),
+                      color: AppColors.breathingCircleColor.withOpacity(0.4),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.2),
-                        width: 1,
+                        color: AppColors.holdDark.withOpacity(0.8),
+                        width: 3,
                       ),
                     ),
                   ),
 
-                  // Breathing dot with animated size
+                  // Moving dot
                   Transform.translate(
                     offset: Offset(dotX, dotY),
                     child: AnimatedContainer(
-                      duration: Duration(milliseconds: 200),
+                      duration: const Duration(milliseconds: 200),
                       width: _dotSize,
                       height: _dotSize,
                       decoration: BoxDecoration(
@@ -206,20 +194,18 @@ class _BreathingScreenState extends State<BreathingScreen>
                 ],
               ),
             ),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
 
-            // Duration with fancy text
+            // Duration text
             Text(
               "⏱️ ${_totalDuration.inSeconds} seconds",
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.white70,
-                letterSpacing: 1.2,
+              style: AppTextStyles.medium18.copyWith(
+                color: AppColors.textPrimaryColor.withOpacity(0.8),
               ),
             ),
 
             // Control buttons
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -237,9 +223,10 @@ class _BreathingScreenState extends State<BreathingScreen>
                   child: Icon(
                     _controller.isAnimating ? Icons.pause : Icons.play_arrow,
                     size: 30,
+                    color: AppColors.textPrimaryColor,
                   ),
                 ),
-                SizedBox(width: 20),
+                const SizedBox(width: 20),
                 FloatingActionButton(
                   onPressed: () {
                     _controller.reset();
@@ -248,10 +235,15 @@ class _BreathingScreenState extends State<BreathingScreen>
                       _totalDuration = Duration.zero;
                       _instruction = "INHALE";
                       _angle = 0;
+                      _dotColor = AppColors.inhaleDark;
                     });
                   },
-                  backgroundColor: Colors.grey[800],
-                  child: Icon(Icons.replay, size: 30),
+                  backgroundColor: AppColors.holdDark,
+                  child: const Icon(
+                    Icons.replay,
+                    size: 30,
+                    color: AppColors.textSecondryCOlor,
+                  ),
                 ),
               ],
             ),
