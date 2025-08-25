@@ -26,7 +26,7 @@ class _ChatScreenState extends State<ChatScreen>
   bool _isLoading = false;
   bool isNewChat = false;
   late AnimationController _starController;
-   String? conversationId;
+  String? conversationId;
 
   @override
   void initState() {
@@ -58,17 +58,21 @@ class _ChatScreenState extends State<ChatScreen>
 
   getChatById(String chatId) async {
     final result = await Talktolightservice.getChatHistoryById(chatId);
-
+      print(result);
     if (result['success'] == true && result['data'] != null) {
-      final messages = result['data']['messages'] as List<dynamic>;
-
+      final chatData = result['data'];
+      final response = chatData['messages'] as List<dynamic>;     
       setState(() {
         _messages.clear();
         _messages.addAll(
-          messages.map(
-            (msg) => ChatMessage(text: msg['content'], isUser: false),
+          response.map(
+            (msg) => ChatMessage(
+              text: msg['content'],
+              isUser: msg['role'].toString().toUpperCase() == 'USER',
+            ),
           ),
         );
+        conversationId = chatData['id']; 
       });
     }
   }
@@ -91,15 +95,17 @@ class _ChatScreenState extends State<ChatScreen>
       final chatRequest = {
         "message": message,
         "conversationId": conversationId ?? "",
-      };      
-      final chatResponse = await Talktolightservice.postChatHistory(chatRequest);
+      };
+      final chatResponse = await Talktolightservice.postChatHistory(
+        chatRequest,
+      );
       if (chatResponse != null) {
         setState(() {
-          _messages.add(           
+          _messages.add(
             ChatMessage(
-              text:
-                  chatResponse.response ,isUser: false,
-                  // this code for suggestion for feature which we developed 
+              text: chatResponse.response,
+              isUser: false,
+              // this code for suggestion for feature which we developed
               //      +
               //     (chatResponse.suggestion?.type == "BREATHING"
               //         ? "\n\nWould you like to try a short breathing exercise?"
@@ -213,7 +219,10 @@ class _ChatScreenState extends State<ChatScreen>
                 const SizedBox(height: 12),
                 const Text(
                   "Ask me anything and I'll do my best to help you. ",
-                  style: TextStyle(color: Color.fromARGB(179, 0, 0, 0), fontSize: 16),
+                  style: TextStyle(
+                    color: Color.fromARGB(179, 0, 0, 0),
+                    fontSize: 16,
+                  ),
                   textAlign: TextAlign.center,
                 ),
 
@@ -339,7 +348,9 @@ class _ChatScreenState extends State<ChatScreen>
                             SizedBox(width: 10),
                             Text(
                               "Light is typing...",
-                              style: TextStyle(color: Color.fromARGB(179, 0, 0, 0)),
+                              style: TextStyle(
+                                color: Color.fromARGB(179, 0, 0, 0),
+                              ),
                             ),
                           ],
                         ),
@@ -355,7 +366,7 @@ class _ChatScreenState extends State<ChatScreen>
             ),
           ),
 
-          // new chat is working but hide here 
+          // new chat is working but hide here
 
           // SafeArea(
           //   child:

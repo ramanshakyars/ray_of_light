@@ -73,7 +73,7 @@ class Talktolightservice {
     try {
       final url = "${PathConfig.getChatHistoryById}/$chatId";
       final response = await HttpService.get(url);
-      if (response != null && response['type'] != null) {
+      if (response != null) {
         return {'success': true, 'data': response};
       } else {
         return {'success': false, 'message': 'Chat history Loaded'};
