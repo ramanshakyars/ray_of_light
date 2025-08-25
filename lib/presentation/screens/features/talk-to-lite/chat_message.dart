@@ -1,15 +1,18 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:rayoflite/core/theme/appcolors.dart';
 
 class ChatMessage extends StatefulWidget {
   final String text;
   final bool isUser;
+  final bool animate;
   final Widget? extraWidget;
 
   const ChatMessage({
     super.key,
     required this.text,
     required this.isUser,
+    this.animate = false,
     this.extraWidget,
   });
 
@@ -25,7 +28,7 @@ class _ChatMessageState extends State<ChatMessage> {
   @override
   void initState() {
     super.initState();
-    if (widget.isUser) {
+    if (widget.isUser || !widget.animate) {
       // show user text instantly
       _displayedText = widget.text;
     } else {
@@ -62,15 +65,12 @@ class _ChatMessageState extends State<ChatMessage> {
         mainAxisAlignment:
             widget.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          if (!widget.isUser) _buildBotAvatar(),
+        //  if (!widget.isUser) _buildBotAvatar(),
           Flexible(
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color:
-                    widget.isUser
-                        ? const Color(0xFF0083B0)
-                        : const Color(0xFF0F3460),
+                color: widget.isUser ? AppColors.formsCardColor: AppColors.appBackgroundColor,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -98,8 +98,8 @@ class _ChatMessageState extends State<ChatMessage> {
     return Container(
       margin: const EdgeInsets.only(right: 8),
       child: const CircleAvatar(
-        backgroundColor: Colors.blueAccent,
-        child: Icon(Icons.auto_awesome, color: Colors.white, size: 20),
+       // backgroundColor: Colors.blueAccent,
+      //  child: Icon(Icons.auto_awesome, color: Colors.white, size: 20),
       ),
     );
   }

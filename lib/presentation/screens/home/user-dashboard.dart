@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
@@ -55,9 +57,11 @@ class _UserDashboardState extends State<UserDashboard> {
         leading: IconButton(
           icon: Image.asset('assets/logo.png'),
           onPressed: () {
-            Navigator.pop(context);
+            GoRouter.of(
+              context,
+            ).push('${RouteNames.mainApp}/${RouteNames.profile}');
           },
-        ),
+        ),  
         actions: [
           IconButton(icon: const Icon(Icons.mood), onPressed: _openMoodDialog),
         ],
@@ -83,7 +87,10 @@ class _UserDashboardState extends State<UserDashboard> {
                   const SizedBox(height: 8),
                   const Text(
                     'Here\'s your daily dose of inspiration',
-                    style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 0, 0, 0)),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                    ),
                   ),
                   const SizedBox(height: 24),
                 ],
@@ -125,11 +132,9 @@ class _UserDashboardState extends State<UserDashboard> {
             ),
 
             const SizedBox(height: 24),
-
-           
           ],
         ),
-      )
+      ),
     );
   }
 

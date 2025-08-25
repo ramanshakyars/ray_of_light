@@ -2,24 +2,31 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Primary Colors
-  static const Color primary = Color(0xFF6200EE);
-  static const Color primaryDark = Color(0xFF3700B3);
-  static const Color primaryLight = Color(0xFFBB86FC);
+  // font Color
+  static const Color textPrimaryColor = Colors.black;
+  static const Color textSecondryCOlor = Colors.white;
 
-  // Accent & Secondary Colors
-  static const Color accent = Color(0xFF03DAC6);
-  static const Color secondary = Color(0xFF018786);
-
-  // Background & Surface Colors
-  static const Color background = Color(0xFFF5F5F5);
-  static const Color surface = Color(0xFFFFFFFF);
-  static const Color error = Color(0xFFB00020);
-
-  // Text Colors
-  static const Color textPrimary = Color(0xFF000000);
-  static const Color textSecondary = Color(0xFF666666);
-  static const Color textOnPrimary = Color(0xFFFFFFFF);
-
+  // colors
   static const Color appBackgroundColor = Color(0xFFE3DBCD);
+  static const Color talkToLiteButtonBackgroundColor = Color.fromARGB(255,154,150,142);
+
+  // forms SUbmit buttons
+  static const Color formSubmitButtonColor = Color.fromARGB(255, 255, 223, 163);
+  static const Color formsCardColor = Color.fromARGB(255, 255, 241, 218);
+
+ 
+   // Breathing circle
+  static const Color breathingCircleColor = Color.fromARGB(255, 255, 211, 134);
+
+   // 🔥 Darker Shades for Breathing Cycle
+  static const Color inhaleColor = formSubmitButtonColor; // base
+  static const Color inhaleDark = Color.fromARGB(255, 230, 190, 120);
+
+  static const Color holdColor = talkToLiteButtonBackgroundColor; // base
+  static const Color holdDark = Color.fromARGB(255, 100, 95, 90);
+
+  static const Color exhaleColor = formsCardColor; // base
+  static const Color exhaleDark = Color.fromARGB(255, 220, 200, 170);
+
+  // font style
 }

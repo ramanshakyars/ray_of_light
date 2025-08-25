@@ -11,7 +11,7 @@ class WebLandingPage extends StatefulWidget {
 }
 
 class _WebLandingPageState extends State<WebLandingPage> {
-final Color darkColor = AppColors.appBackgroundColor;
+  final Color darkColor = AppColors.appBackgroundColor;
   final GlobalKey _aboutKey = GlobalKey();
   final GlobalKey _featuresKey = GlobalKey();
 
@@ -89,7 +89,7 @@ final Color darkColor = AppColors.appBackgroundColor;
               color: const Color.fromARGB(255, 0, 0, 0),
             ),
             title: Text(
-              'Login',
+              'Login/signup',
               style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
             ),
             onTap: () {
@@ -114,9 +114,9 @@ final Color darkColor = AppColors.appBackgroundColor;
       ),
       _buildHoverFeatureCard(
         icon: Icons.book_outlined,
-        title: "Journal",
+        title: "Nest",
         description:
-            "Private journal for daily reflections or share with our supportive community. Track your mood patterns over time.",
+            "Private Nest for daily reflections or share with our supportive community. Track your mood patterns over time.",
         color: const Color.fromARGB(255, 0, 0, 0),
         isMobile: isMobile,
       ),
@@ -130,7 +130,7 @@ final Color darkColor = AppColors.appBackgroundColor;
       ),
       _buildHoverFeatureCard(
         icon: Icons.flag_outlined,
-        title: "Goal Tracking",
+        title: "Wish",
         description:
             "Set and track personal goals with reminders. Build healthy habits with our routine management system.",
         color: const Color.fromARGB(255, 0, 0, 0),
@@ -154,7 +154,9 @@ final Color darkColor = AppColors.appBackgroundColor;
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
-          onTap: () {},
+          onTap: () {
+            GoRouter.of(context).go(RouteNames.login);
+          },
           hoverColor: darkColor.withOpacity(0.1),
           child: Padding(
             padding: EdgeInsets.all(isMobile ? 15.0 : 20.0),
@@ -297,7 +299,7 @@ final Color darkColor = AppColors.appBackgroundColor;
                         ),
                       ),
                       child: Text(
-                        "Login",
+                        "Login/Signup",
                         style: TextStyle(
                           color: const Color.fromARGB(255, 0, 0, 0),
                           fontSize: 16,
@@ -389,31 +391,31 @@ final Color darkColor = AppColors.appBackgroundColor;
                               ),
                             ),
                           ),
-                          OutlinedButton(
-                            onPressed: () {
-                              _scrollToSection(_aboutKey);
-                            },
-                            style: OutlinedButton.styleFrom(
-                              side: const BorderSide(
-                                color: Color.fromARGB(255, 0, 0, 0),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: isMobile ? 20 : 30,
-                                vertical: isMobile ? 12 : 15,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                            child: Text(
-                              "Learn More",
-                              style: TextStyle(
-                                fontSize: isMobile ? 16 : 18,
-                                color: const Color.fromARGB(255, 0, 0, 0),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                          // OutlinedButton(
+                          //   onPressed: () {
+                          //     _scrollToSection(_aboutKey);
+                          //   },
+                          //   style: OutlinedButton.styleFrom(
+                          //     side: const BorderSide(
+                          //       color: Color.fromARGB(255, 0, 0, 0),
+                          //     ),
+                          //     padding: EdgeInsets.symmetric(
+                          //       horizontal: isMobile ? 20 : 30,
+                          //       vertical: isMobile ? 12 : 15,
+                          //     ),
+                          //     shape: RoundedRectangleBorder(
+                          //       borderRadius: BorderRadius.circular(30),
+                          //     ),
+                          //   ),
+                          //   child: Text(
+                          //     "Explore button",
+                          //     style: TextStyle(
+                          //       fontSize: isMobile ? 16 : 18,
+                          //       color: const Color.fromARGB(255, 0, 0, 0),
+                          //       fontWeight: FontWeight.bold,
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ],
@@ -614,7 +616,6 @@ final Color darkColor = AppColors.appBackgroundColor;
                                   scheme: 'mailto',
                                   path: 'info@rayoflight.life',
                                 );
-                                print('Email: info@rayoflight.life');
                               },
                             ),
                             IconButton(
@@ -624,8 +625,6 @@ final Color darkColor = AppColors.appBackgroundColor;
                                 size: 24,
                               ),
                               onPressed: () {
-                                // Open Instagram
-                                print('Open Instagram');
                               },
                             ),
                             IconButton(
@@ -636,7 +635,6 @@ final Color darkColor = AppColors.appBackgroundColor;
                               ),
                               onPressed: () {
                                 // Open Facebook
-                                print('Open Facebook');
                               },
                             ),
                             IconButton(
@@ -647,7 +645,7 @@ final Color darkColor = AppColors.appBackgroundColor;
                               ),
                               onPressed: () {
                                 // Open LinkedIn
-                                print('Open LinkedIn');
+                                
                               },
                             ),
                             IconButton(
@@ -658,7 +656,6 @@ final Color darkColor = AppColors.appBackgroundColor;
                               ),
                               onPressed: () {
                                 // Open X (Twitter)
-                                print('Open X (Twitter)');
                               },
                             ),
                           ],
@@ -671,7 +668,6 @@ final Color darkColor = AppColors.appBackgroundColor;
                               scheme: 'mailto',
                               path: 'info@rayoflight.life',
                             );
-                            print('Email: info@rayoflight.life');
                           },
                           child: Text(
                             'info@rayoflight.life',
@@ -729,7 +725,6 @@ final Color darkColor = AppColors.appBackgroundColor;
                                     scheme: 'mailto',
                                     path: 'info@rayoflight.life',
                                   );
-                                  print('Email: info@rayoflight.life');
                                 },
                                 child: Text(
                                   'info@rayoflight.life',
@@ -755,7 +750,6 @@ final Color darkColor = AppColors.appBackgroundColor;
                                         scheme: 'mailto',
                                         path: 'info@rayoflight.life',
                                       );
-                                      print('Email: info@rayoflight.life');
                                     },
                                   ),
                                   IconButton(
@@ -765,7 +759,6 @@ final Color darkColor = AppColors.appBackgroundColor;
                                       size: 24,
                                     ),
                                     onPressed: () {
-                                      print('Open Instagram');
                                     },
                                   ),
                                   IconButton(
@@ -775,7 +768,6 @@ final Color darkColor = AppColors.appBackgroundColor;
                                       size: 24,
                                     ),
                                     onPressed: () {
-                                      print('Open Facebook');
                                     },
                                   ),
                                   IconButton(
@@ -785,7 +777,6 @@ final Color darkColor = AppColors.appBackgroundColor;
                                       size: 24,
                                     ),
                                     onPressed: () {
-                                      print('Open LinkedIn');
                                     },
                                   ),
                                   IconButton(
@@ -795,7 +786,6 @@ final Color darkColor = AppColors.appBackgroundColor;
                                       size: 24,
                                     ),
                                     onPressed: () {
-                                      print('Open X (Twitter)');
                                     },
                                   ),
                                 ],
@@ -840,7 +830,7 @@ final Color darkColor = AppColors.appBackgroundColor;
                                       GoRouter.of(context).go(RouteNames.login);
                                     },
                                     child: Text(
-                                      "Login",
+                                      "Login/Signup",
                                       style: TextStyle(
                                         color: const Color.fromARGB(
                                           255,
