@@ -5,12 +5,14 @@ import 'package:rayoflite/core/theme/appcolors.dart';
 class ChatMessage extends StatefulWidget {
   final String text;
   final bool isUser;
+  final bool animate;
   final Widget? extraWidget;
 
   const ChatMessage({
     super.key,
     required this.text,
     required this.isUser,
+    this.animate = false,
     this.extraWidget,
   });
 
@@ -26,7 +28,7 @@ class _ChatMessageState extends State<ChatMessage> {
   @override
   void initState() {
     super.initState();
-    if (widget.isUser) {
+    if (widget.isUser || !widget.animate) {
       // show user text instantly
       _displayedText = widget.text;
     } else {

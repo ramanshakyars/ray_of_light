@@ -58,7 +58,6 @@ class _ChatScreenState extends State<ChatScreen>
 
   getChatById(String chatId) async {
     final result = await Talktolightservice.getChatHistoryById(chatId);
-      print(result);
     if (result['success'] == true && result['data'] != null) {
       final chatData = result['data'];
       final response = chatData['messages'] as List<dynamic>;     
@@ -69,6 +68,7 @@ class _ChatScreenState extends State<ChatScreen>
             (msg) => ChatMessage(
               text: msg['content'],
               isUser: msg['role'].toString().toUpperCase() == 'USER',
+              animate: false,
             ),
           ),
         );
@@ -86,9 +86,9 @@ class _ChatScreenState extends State<ChatScreen>
     setState(() {
       _messages.add(ChatMessage(text: message, isUser: true));
       _isLoading = true;
-      if (_messages.length == 1) {
+      // if (_messages.length == 1) {
         _starController.repeat();
-      }
+      // }
     });
 
     try {
@@ -105,6 +105,7 @@ class _ChatScreenState extends State<ChatScreen>
             ChatMessage(
               text: chatResponse.response,
               isUser: false,
+              animate: true,
               // this code for suggestion for feature which we developed
               //      +
               //     (chatResponse.suggestion?.type == "BREATHING"

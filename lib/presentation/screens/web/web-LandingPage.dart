@@ -616,7 +616,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                   scheme: 'mailto',
                                   path: 'info@rayoflight.life',
                                 );
-                                print('Email: info@rayoflight.life');
                               },
                             ),
                             IconButton(
@@ -626,8 +625,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                 size: 24,
                               ),
                               onPressed: () {
-                                // Open Instagram
-                                print('Open Instagram');
                               },
                             ),
                             IconButton(
@@ -638,7 +635,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
                               ),
                               onPressed: () {
                                 // Open Facebook
-                                print('Open Facebook');
                               },
                             ),
                             IconButton(
@@ -649,7 +645,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                               ),
                               onPressed: () {
                                 // Open LinkedIn
-                                print('Open LinkedIn');
+                                
                               },
                             ),
                             IconButton(
@@ -660,7 +656,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
                               ),
                               onPressed: () {
                                 // Open X (Twitter)
-                                print('Open X (Twitter)');
                               },
                             ),
                           ],
@@ -673,7 +668,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
                               scheme: 'mailto',
                               path: 'info@rayoflight.life',
                             );
-                            print('Email: info@rayoflight.life');
                           },
                           child: Text(
                             'info@rayoflight.life',
@@ -731,7 +725,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                     scheme: 'mailto',
                                     path: 'info@rayoflight.life',
                                   );
-                                  print('Email: info@rayoflight.life');
                                 },
                                 child: Text(
                                   'info@rayoflight.life',
@@ -757,7 +750,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                         scheme: 'mailto',
                                         path: 'info@rayoflight.life',
                                       );
-                                      print('Email: info@rayoflight.life');
                                     },
                                   ),
                                   IconButton(
@@ -767,7 +759,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                       size: 24,
                                     ),
                                     onPressed: () {
-                                      print('Open Instagram');
                                     },
                                   ),
                                   IconButton(
@@ -777,7 +768,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                       size: 24,
                                     ),
                                     onPressed: () {
-                                      print('Open Facebook');
                                     },
                                   ),
                                   IconButton(
@@ -787,7 +777,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                       size: 24,
                                     ),
                                     onPressed: () {
-                                      print('Open LinkedIn');
                                     },
                                   ),
                                   IconButton(
@@ -797,7 +786,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                       size: 24,
                                     ),
                                     onPressed: () {
-                                      print('Open X (Twitter)');
                                     },
                                   ),
                                 ],
