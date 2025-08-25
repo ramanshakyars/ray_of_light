@@ -16,9 +16,8 @@ class Talktolightservice {
     }
   }
 
-  static Future<ChatResponse?> postChatHistory(String message) async {
-    try {
-      final payload = {"message": message};
+  static Future<ChatResponse?> postChatHistory(Map<String, dynamic> payload) async {
+    try {     
       final response = await HttpService.post(PathConfig.sendChat, payload);
       if (response != null) {
         return ChatResponse.fromJson(response);

@@ -26,6 +26,7 @@ class _ChatScreenState extends State<ChatScreen>
   bool _isLoading = false;
   bool isNewChat = false;
   late AnimationController _starController;
+   String? conversationId;
 
   @override
   void initState() {
@@ -87,10 +88,14 @@ class _ChatScreenState extends State<ChatScreen>
     });
 
     try {
-      final chatResponse = await Talktolightservice.postChatHistory(message);
+      final chatRequest = {
+        "message": message,
+        "conversationId": conversationId ?? "",
+      };      
+      final chatResponse = await Talktolightservice.postChatHistory(chatRequest);
       if (chatResponse != null) {
         setState(() {
-          _messages.add(
+          _messages.add(           
             ChatMessage(
               text:
                   chatResponse.response ,isUser: false,
@@ -158,6 +163,7 @@ class _ChatScreenState extends State<ChatScreen>
               // }(),
             ),
           );
+          conversationId = chatResponse.conversationId;
         });
       } else {
         setState(() {
@@ -245,31 +251,33 @@ class _ChatScreenState extends State<ChatScreen>
     );
   }
 
-  Widget _buildQuestionSuggestion(String question) {
-    return GestureDetector(
-      onTap: () {
-        _textController.text = question;
-        _sendMessage();
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 6),
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-        decoration: BoxDecoration(
-          color: AppColors.appBackgroundColor,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.3)),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.arrow_forward, color: Color.fromARGB(255, 0, 0, 0), size: 16),
-            const SizedBox(width: 8),
-            Text(question, style: const TextStyle(color: Color.fromARGB(179, 0, 0, 0))),
-          ],
-        ),
-      ),
-    );
-  }
+  // this is for the suggestions cards
+
+  // Widget _buildQuestionSuggestion(String question) {
+  //   return GestureDetector(
+  //     onTap: () {
+  //       _textController.text = question;
+  //       _sendMessage();
+  //     },
+  //     child: Container(
+  //       margin: const EdgeInsets.symmetric(vertical: 6),
+  //       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+  //       decoration: BoxDecoration(
+  //         color: AppColors.appBackgroundColor,
+  //         borderRadius: BorderRadius.circular(12),
+  //         border: Border.all(color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.3)),
+  //       ),
+  //       child: Row(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           const Icon(Icons.arrow_forward, color: Color.fromARGB(255, 0, 0, 0), size: 16),
+  //           const SizedBox(width: 8),
+  //           Text(question, style: const TextStyle(color: Color.fromARGB(179, 0, 0, 0))),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   @override
   void dispose() {
