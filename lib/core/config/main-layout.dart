@@ -203,13 +203,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.newspaper),
-          label: 'Junerlism',
+          label: 'Nest',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.filter_vintage),
           label: 'Breath',
         ),
-        BottomNavigationBarItem(icon: Icon(Icons.track_changes), label: 'Goal'),
+        BottomNavigationBarItem(icon: Icon(Icons.track_changes), label: 'Wishes'),
         BottomNavigationBarItem(icon: Icon(Icons.person_pin), label: 'Profile'),
       ],
     );

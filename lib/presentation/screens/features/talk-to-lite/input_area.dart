@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:rayoflite/core/theme/appcolors.dart';
 
 class InputArea extends StatelessWidget {
   final TextEditingController controller;
@@ -17,10 +18,10 @@ class InputArea extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: Color(0xFF16213E),
+      color: AppColors.appBackgroundColor,
       child: Container(
         decoration: BoxDecoration(
-          color: Color(0xFF0F3460),
+          color: Color.fromARGB(255, 162, 163, 164),
           borderRadius: BorderRadius.circular(25),
         ),
         child: Row(
@@ -30,10 +31,10 @@ class InputArea extends StatelessWidget {
                 padding: EdgeInsets.only(left: 16),
                 child: TextField(
                   controller: controller,
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
                   decoration: InputDecoration(
                     hintText: 'Type your message...',
-                    hintStyle: TextStyle(color: Colors.white54),
+                    hintStyle: TextStyle(color: const Color.fromARGB(137, 0, 0, 0)),
                     border: InputBorder.none,
                   ),
                 ),
@@ -46,8 +47,8 @@ class InputArea extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
                   colors: [
-                    Color.fromARGB(255, 176, 188, 190),
-                    Color(0xFF0083B0),
+                    Color.fromARGB(255, 0, 0, 0),
+                    Color.fromARGB(255, 229, 231, 232),
                   ],
                 ),
               ),

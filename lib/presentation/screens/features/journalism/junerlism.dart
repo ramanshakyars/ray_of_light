@@ -86,7 +86,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
       ),
       appBar: AppBar(
         title: Text(
-          'Journalism',
+          'Nest',
           style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w600,
             color: colorScheme.onSurface,
@@ -129,7 +129,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '"Journalism"',
+                    '"Nest"',
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w500,
                       fontStyle: FontStyle.italic,
