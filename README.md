@@ -17,32 +17,33 @@ samples, guidance on mobile development, and a full API reference.
 
 for creating new sha file or key for requesting google to approve these file 
 
-PS D:\flutter-apps\Ray-of-light\ray_of_light\ray_of_light> keytool -genkey -v -keystore upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+PS D:\flutter-apps\Ray-of-light\ray_of_light\ray_of_light> keytool -genkey -v -keystore my-upload-key.keystore -keyalg RSA -keysize 2048 -validity 10000 -alias upload
 Enter keystore password:  
 
-Re-enter new password:
+Re-enter new password: 
+
+They don't match. Try again
+Enter keystore password:  
+
+Re-enter new password: 
 
 Enter the distinguished name. Provide a single dot (.) to leave a sub-component empty or press ENTER to use the default value in braces.
 What is your first and last name?
-  [Unknown]:  Raman shakya      
+  [Unknown]:  Raman shakya 
 What is the name of your organizational unit?
-  [Unknown]:  Ray of light
+  [Unknown]:   Ray of light
 What is the name of your organization?
-  [Unknown]:  Ray of light
+  [Unknown]:  Delhi
 What is the name of your City or Locality?
-  [Unknown]:  Delhi 
+  [Unknown]:  Delhi
 What is the name of your State or Province?
   [Unknown]:  Delhi
 What is the two-letter country code for this unit?
   [Unknown]:  In
-Is CN=Raman shakya      , OU=Ray of light, O=Ray of light, L="Delhi ", ST=Delhi, C=In correct?
+Is CN="Raman shakya ", OU=" Ray of light", O=Delhi, L=Delhi, ST=Delhi, C=In correct?
   [no]:  yes
 
 Generating 2,048 bit RSA key pair and self-signed certificate (SHA384withRSA) with a validity of 10,000 days
-        for: CN=Raman shakya    , OU=Ray of light, O=Ray of light, L="Delhi ", ST=Delhi, C=In
-[Storing upload-keystore.jks]
-PS D:\flutter-apps\Ray-of-light\ray_of_light\ray_of_light> keytool -export -rfc -keystore upload-keystore.jks -alias upload -file upload_certificate.pem
-Enter keystore password:  
-
-Certificate stored in file <upload_certificate.pem>
+        for: CN="Raman shakya ", OU=" Ray of light", O=Delhi, L=Delhi, ST=Delhi, C=In
+[Storing my-upload-key.keystore]
 PS D:\flutter-apps\Ray-of-light\ray_of_light\ray_of_light> 
