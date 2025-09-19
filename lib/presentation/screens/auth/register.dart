@@ -250,11 +250,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       ),
                                     ),
                                     validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your mobile number';
-                                      }
-                                      if (value.length < 10) {
-                                        return 'Enter a valid mobile number';
+                                      // if (value == null || value.isEmpty) {
+                                      //   return 'Please enter your mobile number';
+                                      // }
+                                      if (value != null && value.isNotEmpty) {
+                                        if (value.length < 10) {
+                                          return 'Enter a valid mobile number';
+                                        }
                                       }
                                       return null;
                                     },
@@ -313,15 +315,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           ),
                                         ),
                                         validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please select your date of birth';
+                                          if (value != null &&
+                                              value.isNotEmpty) {
+                                            try {
+                                              DateTime.parse(value);
+                                            } catch (e) {
+                                              return 'Please enter a valid date';
+                                            }
                                           }
-                                          try {
-                                            DateTime.parse(value);
-                                            return null;
-                                          } catch (e) {
-                                            return 'Please enter a valid date';
-                                          }
+                                          return null; 
                                         },
                                       ),
                                     ),
