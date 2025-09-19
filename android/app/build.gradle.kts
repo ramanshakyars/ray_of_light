@@ -7,8 +7,9 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// FIX 1: Use file("key.properties") to match your folder structure
 val keystoreProperties = Properties()
-val keystorePropertiesFile = rootProject.file("key.properties")
+val keystorePropertiesFile = file("key.properties")
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
@@ -27,6 +28,7 @@ android {
     }
 
     defaultConfig {
+        // FIX 3: If you want the correct package, fix any typo here!
         applicationId = "com.wrappedweb.rayoflite"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
@@ -36,10 +38,20 @@ android {
 
     signingConfigs {
         create("release") {
-            keyAlias = keystoreProperties["keyAlias"] as String
-            keyPassword = keystoreProperties["keyPassword"] as String
-            storeFile = (keystoreProperties["storeFile"] as String?)?.let { file(it) }
-            storePassword = keystoreProperties["storePassword"] as String
+            // FIX 2: Null safety to avoid casting errors and give clear error message
+            val keyAlias = keystoreProperties["keyAlias"] as String?
+            val keyPassword = keystoreProperties["keyPassword"] as String?
+            val storeFile = keystoreProperties["storeFile"] as String?
+            val storePassword = keystoreProperties["storePassword"] as String?
+
+            if (keyAlias != null && keyPassword != null && storeFile != null && storePassword != null) {
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
+                this.storeFile = file(storeFile)
+                this.storePassword = storePassword
+            } else {
+                throw GradleException("Missing signing config values in key.properties. Please ensure all: keyAlias, keyPassword, storeFile, storePassword are set.")
+            }
         }
     }
 
