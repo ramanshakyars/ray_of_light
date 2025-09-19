@@ -26,6 +26,7 @@ class _ChatScreenState extends State<ChatScreen>
   bool _isLoading = false;
   bool isNewChat = false;
   late AnimationController _starController;
+  String? conversationId;
 
   @override
   void initState() {
@@ -57,17 +58,21 @@ class _ChatScreenState extends State<ChatScreen>
 
   getChatById(String chatId) async {
     final result = await Talktolightservice.getChatHistoryById(chatId);
-
     if (result['success'] == true && result['data'] != null) {
-      final messages = result['data']['messages'] as List<dynamic>;
-
+      final chatData = result['data'];
+      final response = chatData['messages'] as List<dynamic>;     
       setState(() {
         _messages.clear();
         _messages.addAll(
-          messages.map(
-            (msg) => ChatMessage(text: msg['content'], isUser: false),
+          response.map(
+            (msg) => ChatMessage(
+              text: msg['content'],
+              isUser: msg['role'].toString().toUpperCase() == 'USER',
+              animate: false,
+            ),
           ),
         );
+        conversationId = chatData['id']; 
       });
     }
   }
@@ -81,81 +86,91 @@ class _ChatScreenState extends State<ChatScreen>
     setState(() {
       _messages.add(ChatMessage(text: message, isUser: true));
       _isLoading = true;
-      if (_messages.length == 1) {
+      // if (_messages.length == 1) {
         _starController.repeat();
-      }
+      // }
     });
 
     try {
-      final chatResponse = await Talktolightservice.postChatHistory(message);
+      final chatRequest = {
+        "message": message,
+        "conversationId": conversationId ?? "",
+      };
+      final chatResponse = await Talktolightservice.postChatHistory(
+        chatRequest,
+      );
       if (chatResponse != null) {
         setState(() {
           _messages.add(
             ChatMessage(
-              text:
-                  chatResponse.response +
-                  (chatResponse.suggestion?.type == "BREATHING"
-                      ? "\n\nWould you like to try a short breathing exercise?"
-                      : chatResponse.suggestion?.type == "WALK"
-                      ? "\n\nWould you like to go for a walk and set a goal?"
-                      : chatResponse.suggestion?.type == "JOURNAL"
-                      ? "\n\nWould you like to write in your journal?"
-                      : ""),
+              text: chatResponse.response,
               isUser: false,
-              extraWidget: () {
-                switch (chatResponse.suggestion?.type) {
-                  case "BREATHING":
-                    return TextButton(
-                      onPressed: () {
-                        GoRouter.of(context).push(
-                          '${RouteNames.mainApp}/${RouteNames.breathingExercise}',
-                        );
-                      },
-                      child: const Text(
-                        "👉 Start Breathing Exercise",
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    );
-                  case "WALK":
-                    return TextButton(
-                      onPressed: () {
-                        GoRouter.of(context).push(
-                          '${RouteNames.mainApp}/${RouteNames.goalTracker}',
-                        );
-                      },
-                      child: const Text(
-                        "👉 Set Walk Goal",
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    );
-                  case "JOURNAL":
-                    return TextButton(
-                      onPressed: () {
-                        GoRouter.of(
-                          context,
-                        ).push('${RouteNames.mainApp}/${RouteNames.junerlism}');
-                      },
-                      child: const Text(
-                        "👉 Open Journal",
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    );
-                  case "NONE":
-                  default:
-                    return null;
-                }
-              }(),
+              animate: true,
+              // this code for suggestion for feature which we developed
+              //      +
+              //     (chatResponse.suggestion?.type == "BREATHING"
+              //         ? "\n\nWould you like to try a short breathing exercise?"
+              //         : chatResponse.suggestion?.type == "WALK"
+              //         ? "\n\nWould you like to go for a walk and set a goal?"
+              //         : chatResponse.suggestion?.type == "JOURNAL"
+              //         ? "\n\nWould you like to write in your journal?"
+              //         : ""),
+              // isUser: false,
+              // extraWidget: () {
+              //   switch (chatResponse.suggestion?.type) {
+              //     case "BREATHING":
+              //       return TextButton(
+              //         onPressed: () {
+              //           GoRouter.of(context).push(
+              //             '${RouteNames.mainApp}/${RouteNames.breathingExercise}',
+              //           );
+              //         },
+              //         child: const Text(
+              //           "👉 Start Breathing Exercise",
+              //           style: TextStyle(
+              //             color: Color.fromARGB(255, 0, 0, 0),
+              //             decoration: TextDecoration.underline,
+              //           ),
+              //         ),
+              //       );
+              //     case "WALK":
+              //       return TextButton(
+              //         onPressed: () {
+              //           GoRouter.of(context).push(
+              //             '${RouteNames.mainApp}/${RouteNames.goalTracker}',
+              //           );
+              //         },
+              //         child: const Text(
+              //           "👉 Set Walk wish",
+              //           style: TextStyle(
+              //             color: Color.fromARGB(255, 0, 0, 0),
+              //             decoration: TextDecoration.underline,
+              //           ),
+              //         ),
+              //       );
+              //     case "JOURNAL":
+              //       return TextButton(
+              //         onPressed: () {
+              //           GoRouter.of(
+              //             context,
+              //           ).push('${RouteNames.mainApp}/${RouteNames.junerlism}');
+              //         },
+              //         child: const Text(
+              //           "Try Nest",
+              //           style: TextStyle(
+              //             color: Color.fromARGB(255, 0, 0, 0),
+              //             decoration: TextDecoration.underline,
+              //           ),
+              //         ),
+              //       );
+              //     case "NONE":
+              //     default:
+              //       return null;
+              //   }
+              // }(),
             ),
           );
+          conversationId = chatResponse.conversationId;
         });
       } else {
         setState(() {
@@ -204,14 +219,17 @@ class _ChatScreenState extends State<ChatScreen>
                 ),
                 const SizedBox(height: 12),
                 const Text(
-                  "Ask me anything and I'll do my best to help you. "
-                  "Here are some things you can ask:",
-                  style: TextStyle(color: Color.fromARGB(179, 0, 0, 0), fontSize: 16),
+                  "Ask me anything and I'll do my best to help you. ",
+                  style: TextStyle(
+                    color: Color.fromARGB(179, 0, 0, 0),
+                    fontSize: 16,
+                  ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 16),
-                _buildQuestionSuggestion("Hi, I was thinking about you"),
-                _buildQuestionSuggestion("What were you doing?"),
+
+                // const SizedBox(height: 16),
+                // _buildQuestionSuggestion("Hi, I was thinking about you"),
+                // _buildQuestionSuggestion("What were you doing?"),
               ],
             ),
           ),
@@ -243,31 +261,33 @@ class _ChatScreenState extends State<ChatScreen>
     );
   }
 
-  Widget _buildQuestionSuggestion(String question) {
-    return GestureDetector(
-      onTap: () {
-        _textController.text = question;
-        _sendMessage();
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 6),
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-        decoration: BoxDecoration(
-          color: AppColors.appBackgroundColor,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.3)),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.arrow_forward, color: Color.fromARGB(255, 0, 0, 0), size: 16),
-            const SizedBox(width: 8),
-            Text(question, style: const TextStyle(color: Color.fromARGB(179, 0, 0, 0))),
-          ],
-        ),
-      ),
-    );
-  }
+  // this is for the suggestions cards
+
+  // Widget _buildQuestionSuggestion(String question) {
+  //   return GestureDetector(
+  //     onTap: () {
+  //       _textController.text = question;
+  //       _sendMessage();
+  //     },
+  //     child: Container(
+  //       margin: const EdgeInsets.symmetric(vertical: 6),
+  //       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+  //       decoration: BoxDecoration(
+  //         color: AppColors.appBackgroundColor,
+  //         borderRadius: BorderRadius.circular(12),
+  //         border: Border.all(color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.3)),
+  //       ),
+  //       child: Row(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           const Icon(Icons.arrow_forward, color: Color.fromARGB(255, 0, 0, 0), size: 16),
+  //           const SizedBox(width: 8),
+  //           Text(question, style: const TextStyle(color: Color.fromARGB(179, 0, 0, 0))),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   @override
   void dispose() {
@@ -329,7 +349,9 @@ class _ChatScreenState extends State<ChatScreen>
                             SizedBox(width: 10),
                             Text(
                               "Light is typing...",
-                              style: TextStyle(color: Color.fromARGB(179, 0, 0, 0)),
+                              style: TextStyle(
+                                color: Color.fromARGB(179, 0, 0, 0),
+                              ),
                             ),
                           ],
                         ),
@@ -345,46 +367,48 @@ class _ChatScreenState extends State<ChatScreen>
             ),
           ),
 
-          SafeArea(
-            child:
-                _messages.isNotEmpty
-                    ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 255, 236, 204),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 10,
-                              horizontal: 16,
-                            ),
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _messages.clear();
-                              _isLoading = false;
-                              _textController.clear();
-                              isNewChat = false; // reset flag
-                            });
-                          },
-                          icon: const Icon(
-                            Icons.add_comment,
-                            color: Color.fromARGB(255, 0, 0, 0),
-                            size: 20,
-                          ),
-                          label: const Text(
-                            "New Chat",
-                            style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 14),
-                          ),
-                        ),
-                      ),
-                    )
-                    : const SizedBox.shrink(),
-          ),
+          // new chat is working but hide here
+
+          // SafeArea(
+          //   child:
+          //       _messages.isNotEmpty
+          //           ? Padding(
+          //             padding: const EdgeInsets.all(8.0),
+          //             child: Align(
+          //               alignment: Alignment.center,
+          //               child: ElevatedButton.icon(
+          //                 style: ElevatedButton.styleFrom(
+          //                   backgroundColor: const Color.fromARGB(255, 255, 236, 204),
+          //                   shape: RoundedRectangleBorder(
+          //                     borderRadius: BorderRadius.circular(12),
+          //                   ),
+          //                   padding: const EdgeInsets.symmetric(
+          //                     vertical: 10,
+          //                     horizontal: 16,
+          //                   ),
+          //                 ),
+          //                 onPressed: () {
+          //                   setState(() {
+          //                     _messages.clear();
+          //                     _isLoading = false;
+          //                     _textController.clear();
+          //                     isNewChat = false; // reset flag
+          //                   });
+          //                 },
+          //                 icon: const Icon(
+          //                   Icons.add_comment,
+          //                   color: Color.fromARGB(255, 0, 0, 0),
+          //                   size: 20,
+          //                 ),
+          //                 label: const Text(
+          //                   "New Chat",
+          //                   style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 14),
+          //                 ),
+          //               ),
+          //             ),
+          //           )
+          //           : const SizedBox.shrink(),
+          // ),
 
           /// Input area
           InputArea(

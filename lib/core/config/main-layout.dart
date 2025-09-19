@@ -111,7 +111,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       onTap: (index) => _navigateToTab(context, index),
       type: BottomNavigationBarType.fixed,
       items: [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+       // BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
         BottomNavigationBarItem(
           icon: Stack(
             alignment: Alignment.center,
@@ -210,7 +210,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
           label: 'Breath',
         ),
         BottomNavigationBarItem(icon: Icon(Icons.track_changes), label: 'Wishes'),
-        BottomNavigationBarItem(icon: Icon(Icons.person_pin), label: 'Profile'),
+       // BottomNavigationBarItem(icon: Icon(Icons.person_pin), label: 'Profile'),
       ],
     );
   }
@@ -218,12 +218,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   void _navigateToTab(BuildContext context, int index) {
     setState(() => _currentIndex = index);
     final routes = [
-      RouteNames.home,
+    //  RouteNames.home,
       RouteNames.talkToLight,
       RouteNames.junerlism,
       RouteNames.breathingExercise,
       RouteNames.goalTracker,
-      RouteNames.profile,
+    //  RouteNames.profile,
     ];
     context.push('${RouteNames.mainApp}/${routes[index]}');
     // if (Scaffold.of(context).isDrawerOpen) {

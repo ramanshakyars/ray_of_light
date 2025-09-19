@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 
 class InputArea extends StatelessWidget {
@@ -21,36 +22,40 @@ class InputArea extends StatelessWidget {
       color: AppColors.appBackgroundColor,
       child: Container(
         decoration: BoxDecoration(
-          color: Color.fromARGB(255, 162, 163, 164),
+          color: const Color.fromARGB(255, 255, 236, 204),
           borderRadius: BorderRadius.circular(25),
         ),
         child: Row(
           children: [
             Expanded(
               child: Padding(
-                padding: EdgeInsets.only(left: 16),
+                padding: const EdgeInsets.only(left: 16),
                 child: TextField(
                   controller: controller,
-                  style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
+                  style: AppTextStyles.regular16, 
+                  keyboardType: TextInputType.multiline,
+                  minLines: 1,
+                  maxLines: null,
                   decoration: InputDecoration(
                     hintText: 'Type your message...',
-                    hintStyle: TextStyle(color: const Color.fromARGB(137, 0, 0, 0)),
+                    hintStyle: AppTextStyles.regular16.copyWith(
+                      color: const Color.fromARGB(
+                        137,
+                        0,
+                        0,
+                        0,
+                      ), // override only color
+                    ),
                     border: InputBorder.none,
                   ),
                 ),
               ),
             ),
-            // Light Bulb Icon with rotation animation when loading
             Container(
               margin: EdgeInsets.only(right: 8),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 0, 0, 0),
-                    Color.fromARGB(255, 229, 231, 232),
-                  ],
-                ),
+                color: AppColors.talkToLiteButtonBackgroundColor,
               ),
               child: IconButton(
                 icon:
@@ -67,7 +72,6 @@ class InputArea extends StatelessWidget {
                               color: Colors.white,
                             ),
                             onEnd: () {
-                              // This will keep the animation looping
                               if (isLoading) {
                                 (context as Element).markNeedsBuild();
                               }
