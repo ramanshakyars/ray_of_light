@@ -7,6 +7,7 @@ class RouteNames {
   static const logout = '/login';
   static const landingPage  = '/landing-page';
   static const weblandingPage  = '/ray-of-light';
+  static const accountDeactivate  = '/delete-account';
 
   // Main app structure
   static const mainApp = '/main';

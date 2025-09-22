@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/presentation/screens/auth/accountDeactivation.dart';
 import 'package:rayoflite/presentation/screens/auth/forget-password.dart';
 import 'package:rayoflite/presentation/screens/auth/login.dart';
 import 'package:rayoflite/presentation/screens/auth/register.dart';
@@ -43,6 +44,10 @@ GoRouter createRouter(String initialLocation) {
       GoRoute(
         path: RouteNames.resetPassword,
         builder: (context, state) => const ResetPasswordScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.accountDeactivate,
+        builder: (context, state) => const AccountDeactivatedScreen(),
       ),
 
       // Main App Routes
