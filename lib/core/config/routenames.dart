@@ -8,6 +8,7 @@ class RouteNames {
   static const landingPage  = '/landing-page';
   static const weblandingPage  = '/ray-of-light';
   static const accountDeactivate  = '/delete-account';
+  static const privacyPolicy  = '/privacy-policy';
 
   // Main app structure
   static const mainApp = '/main';
