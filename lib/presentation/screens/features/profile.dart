@@ -49,7 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     debugPrint("Error deactivating account: $e");
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to deactivate account. Please try again.")),
+        const SnackBar(content: Text("Failed to deleting account. Please try again.")),
       );
     }
   }

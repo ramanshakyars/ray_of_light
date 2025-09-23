@@ -27,7 +27,7 @@ class AccountDeactivatedScreen extends StatelessWidget {
 
                 // Title
                 Text(
-                  "Account Deactivated",
+                  "Account Deleted",
                   style: AppTextStyles.medium22.copyWith(
                     color: Colors.red[900],
                   ),
@@ -38,7 +38,7 @@ class AccountDeactivatedScreen extends StatelessWidget {
 
                 // Description
                 Text(
-                  "Your account has been deactivated successfully.\n"
+                  "Your account has been deleted successfully.\n"
                   "You will no longer be able to use it unless reactivated.",
                   style: AppTextStyles.regular16.copyWith(
                     color: Colors.grey[800],
