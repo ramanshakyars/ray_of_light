@@ -103,74 +103,74 @@ class _ChatScreenState extends State<ChatScreen>
         setState(() {
           _messages.add(
             ChatMessage(
-              text: chatResponse.response,
-              isUser: false,
+              // text: chatResponse.response,
+              // isUser: false,
               animate: true,
               // this code for suggestion for feature which we developed
-              //      +
-              //     (chatResponse.suggestion?.type == "BREATHING"
-              //         ? "\n\nWould you like to try a short breathing exercise?"
-              //         : chatResponse.suggestion?.type == "WALK"
-              //         ? "\n\nWould you like to go for a walk and set a goal?"
-              //         : chatResponse.suggestion?.type == "JOURNAL"
-              //         ? "\n\nWould you like to write in your journal?"
-              //         : ""),
-              // isUser: false,
-              // extraWidget: () {
-              //   switch (chatResponse.suggestion?.type) {
-              //     case "BREATHING":
-              //       return TextButton(
-              //         onPressed: () {
-              //           GoRouter.of(context).push(
-              //             '${RouteNames.mainApp}/${RouteNames.breathingExercise}',
-              //           );
-              //         },
-              //         child: const Text(
-              //           "👉 Start Breathing Exercise",
-              //           style: TextStyle(
-              //             color: Color.fromARGB(255, 0, 0, 0),
-              //             decoration: TextDecoration.underline,
-              //           ),
-              //         ),
-              //       );
-              //     case "WALK":
-              //       return TextButton(
-              //         onPressed: () {
-              //           GoRouter.of(context).push(
-              //             '${RouteNames.mainApp}/${RouteNames.goalTracker}',
-              //           );
-              //         },
-              //         child: const Text(
-              //           "👉 Set Walk wish",
-              //           style: TextStyle(
-              //             color: Color.fromARGB(255, 0, 0, 0),
-              //             decoration: TextDecoration.underline,
-              //           ),
-              //         ),
-              //       );
-              //     case "JOURNAL":
-              //       return TextButton(
-              //         onPressed: () {
-              //           GoRouter.of(
-              //             context,
-              //           ).push('${RouteNames.mainApp}/${RouteNames.junerlism}');
-              //         },
-              //         child: const Text(
-              //           "Try Nest",
-              //           style: TextStyle(
-              //             color: Color.fromARGB(255, 0, 0, 0),
-              //             decoration: TextDecoration.underline,
-              //           ),
-              //         ),
-              //       );
-              //     case "NONE":
-              //     default:
-              //       return null;
-              //   }
-              // }(),
+                text: chatResponse.response   +
+                  (chatResponse.suggestion?.type == "BREATHING"
+                      ? "\n\nWould you like to try a short breathing exercise?"
+                      : chatResponse.suggestion?.type == "WALK"
+                      ? "\n\nWould you like to go for a walk and set a goal?"
+                      : chatResponse.suggestion?.type == "JOURNAL"
+                      ? "\n\nWould you like to write in your journal?"
+                      : ""),
+              isUser: false,
+              extraWidget: () {
+                switch (chatResponse.suggestion?.type) {
+                  case "BREATHING":
+                    return TextButton(
+                      onPressed: () {
+                        GoRouter.of(context).push(
+                          '${RouteNames.mainApp}/${RouteNames.breathingExercise}',
+                        );
+                      },
+                      child: const Text(
+                        "Start Breathing Exercise",
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    );
+                  case "WALK":
+                    return TextButton(
+                      onPressed: () {
+                        GoRouter.of(context).push(
+                          '${RouteNames.mainApp}/${RouteNames.goalTracker}',
+                        );
+                      },
+                      child: const Text(
+                        "Set Walk wish",
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    );
+                  case "JOURNAL":
+                    return TextButton(
+                      onPressed: () {
+                        GoRouter.of(
+                          context,
+                        ).push('${RouteNames.mainApp}/${RouteNames.junerlism}');
+                      },
+                      child: const Text(
+                        "Try Nest",
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    );
+                  case "NONE":
+                  default:
+                    return null;
+                }
+              }(),
             ),
           );
-          conversationId = chatResponse.conversationId;
+         conversationId = chatResponse.conversationId;
         });
       } else {
         setState(() {
@@ -318,13 +318,13 @@ class _ChatScreenState extends State<ChatScreen>
               ).push('${RouteNames.mainApp}/${RouteNames.home}');
             },
           ),
-          // IconButton(
-          //   icon: const Icon(Icons.refresh, color: Colors.white),
-          //   tooltip: "Clear Memory",
-          //   onPressed: () {
-          //     clearMemory();
-          //   },
-          // ),
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            tooltip: "Clear Memory",
+            onPressed: () {
+              clearMemory();
+            },
+          ),
         ],
       ),
       body: Column(
