@@ -128,7 +128,7 @@ class _ChatScreenState extends State<ChatScreen>
                       child: const Text(
                         "Start Breathing Exercise",
                         style: TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
+                          color: AppColors.textPrimaryColor,
                           decoration: TextDecoration.underline,
                         ),
                       ),
@@ -143,7 +143,7 @@ class _ChatScreenState extends State<ChatScreen>
                       child: const Text(
                         "Set Walk wish",
                         style: TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
+                          color: AppColors.textPrimaryColor,
                           decoration: TextDecoration.underline,
                         ),
                       ),
@@ -248,7 +248,7 @@ class _ChatScreenState extends State<ChatScreen>
             child: const Icon(
               Icons.auto_awesome,
               size: 60,
-              color: Color.fromARGB(255, 0, 0, 0),
+              color: AppColors.textPrimaryColor,
             ),
           ),
           const SizedBox(height: 16),
