@@ -111,7 +111,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: TextStyle(
                       fontSize: isPortrait ? 32 : 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: AppColors.textPrimaryColor,
                     ),
                   ),
                   SizedBox(height: isPortrait ? 5 : 4),
