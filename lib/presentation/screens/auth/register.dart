@@ -111,7 +111,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: TextStyle(
                       fontSize: isPortrait ? 32 : 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: AppColors.textPrimaryColor,
                     ),
                   ),
                   SizedBox(height: isPortrait ? 5 : 4),
@@ -250,11 +250,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       ),
                                     ),
                                     validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your mobile number';
-                                      }
-                                      if (value.length < 10) {
-                                        return 'Enter a valid mobile number';
+                                      // if (value == null || value.isEmpty) {
+                                      //   return 'Please enter your mobile number';
+                                      // }
+                                      if (value != null && value.isNotEmpty) {
+                                        if (value.length < 10) {
+                                          return 'Enter a valid mobile number';
+                                        }
                                       }
                                       return null;
                                     },
@@ -265,19 +267,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       final values =
                                           await showCalendarDatePicker2Dialog(
                                             context: context,
-                                            config:
-                                                CalendarDatePicker2WithActionButtonsConfig(
-                                                  calendarType:
-                                                      CalendarDatePicker2Type
-                                                          .single,
-                                                  selectedDayHighlightColor:
-                                                      Colors.blue,
-                                                ),
+                                            config: CalendarDatePicker2WithActionButtonsConfig(
+                                              calendarType:
+                                                  CalendarDatePicker2Type
+                                                      .single,
+                                              selectedDayHighlightColor:
+                                                  Colors.blue,
+                                              firstDate: DateTime(
+                                                1900,
+                                              ), // min date
+                                              lastDate:
+                                                  DateTime.now(), // stop selecting future dates
+                                            ),
                                             dialogSize: Size(
                                               screenWidth * 0.9,
                                               screenHeight * 0.5,
                                             ),
                                           );
+
                                       if (values != null && values.isNotEmpty) {
                                         setState(() {
                                           _selectedDate = values[0];
@@ -313,19 +320,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           ),
                                         ),
                                         validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please select your date of birth';
+                                          if (value != null &&
+                                              value.isNotEmpty) {
+                                            try {
+                                              final dob = DateTime.parse(value);
+                                              final today = DateTime.now();
+                                              final age =
+                                                  today.year -
+                                                  dob.year -
+                                                  ((today.month < dob.month ||
+                                                          (today.month ==
+                                                                  dob.month &&
+                                                              today.day <
+                                                                  dob.day))
+                                                      ? 1
+                                                      : 0);
+
+                                              if (age < 14) {
+                                                return 'Age must be at least 14 years';
+                                              }
+                                            } catch (e) {
+                                              return 'Please enter a valid date';
+                                            }
                                           }
-                                          try {
-                                            DateTime.parse(value);
-                                            return null;
-                                          } catch (e) {
-                                            return 'Please enter a valid date';
-                                          }
+                                          return null; // no error if empty
                                         },
                                       ),
                                     ),
                                   ),
+
                                   SizedBox(height: 12),
                                   TextFormField(
                                     controller: _passwordController,

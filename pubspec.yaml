@@ -2,7 +2,7 @@ name: rayoflite
 description: "A new Flutter project."
 publish_to: 'none' 
 
-version: 1.0.0+7
+version: 1.0.0+9
 
 environment:
   sdk: ^3.7.2
@@ -47,7 +47,9 @@ flutter:
 
   assets:
     - assets/logo.png
-    - assets/fonts/   
+    - assets/fonts/
+    - assets/app-background.jpg
+    - assets/red-background.png
 
   fonts:
     - family: Specimen

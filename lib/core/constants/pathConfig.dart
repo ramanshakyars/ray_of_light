@@ -10,6 +10,7 @@ class PathConfig {
   static const String passwordReset = '$baseUrl/public/password/reset/initiate';
   static const String passwordResetComplete = '$baseUrl/public/password/reset/complete';
   static const String logout = '$baseUrl/auth/logout';
+  static const String deleteAccount = '$baseUrl/log-out/deactivate';
 
 
   // User endpoints
