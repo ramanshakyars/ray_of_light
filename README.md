@@ -6,6 +6,17 @@ A new Flutter project.
 
 This project is a starting point for a Flutter application.
 
+// for create web build 
+flutter clean
+flutter flutter build web --release
+And after deploy on aws run this commad on console of aws
+"
+aws cloudfront create-invalidation \
+  --distribution-id EXJDLLVU47D25 \
+  --paths "/*"  "
+
+// for create android build 
+flutter build appbundle --release
 A few resources to get you started if this is your first Flutter project:
 
 - [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)

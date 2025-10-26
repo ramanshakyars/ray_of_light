@@ -97,6 +97,19 @@ class _WebLandingPageState extends State<WebLandingPage> {
               GoRouter.of(context).go(RouteNames.login);
             },
           ),
+          ListTile(
+            leading: Icon(
+              Icons.rule,
+              color: const Color.fromARGB(255, 0, 0, 0),
+            ),
+            title: Text(
+              'Privacy Policy',
+              style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
+            ),
+            onTap: () {
+              GoRouter.of(context).go(RouteNames.privacyPolicy);
+            },
+          ),
         ],
       ),
     );
@@ -597,6 +610,17 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                 ),
                               ),
                             ),
+                            TextButton(
+                              onPressed: () {
+                                GoRouter.of(context).go(RouteNames.privacyPolicy);
+                              },
+                              child: Text(
+                                "Privacy Policy",
+                                style: TextStyle(
+                                  color: const Color.fromARGB(255, 0, 0, 0),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 20),
@@ -624,8 +648,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                 color: const Color.fromARGB(255, 0, 0, 0),
                                 size: 24,
                               ),
-                              onPressed: () {
-                              },
+                              onPressed: () {},
                             ),
                             IconButton(
                               icon: Icon(
@@ -645,7 +668,6 @@ class _WebLandingPageState extends State<WebLandingPage> {
                               ),
                               onPressed: () {
                                 // Open LinkedIn
-                                
                               },
                             ),
                             IconButton(
@@ -758,8 +780,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                       color: const Color.fromARGB(255, 0, 0, 0),
                                       size: 24,
                                     ),
-                                    onPressed: () {
-                                    },
+                                    onPressed: () {},
                                   ),
                                   IconButton(
                                     icon: Icon(
@@ -767,8 +788,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                       color: const Color.fromARGB(255, 0, 0, 0),
                                       size: 24,
                                     ),
-                                    onPressed: () {
-                                    },
+                                    onPressed: () {},
                                   ),
                                   IconButton(
                                     icon: Icon(
@@ -776,8 +796,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                       color: const Color.fromARGB(255, 0, 0, 0),
                                       size: 24,
                                     ),
-                                    onPressed: () {
-                                    },
+                                    onPressed: () {},
                                   ),
                                   IconButton(
                                     icon: Icon(
@@ -785,8 +804,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                       color: const Color.fromARGB(255, 0, 0, 0),
                                       size: 24,
                                     ),
-                                    onPressed: () {
-                                    },
+                                    onPressed: () {},
                                   ),
                                 ],
                               ),
@@ -861,6 +879,23 @@ class _WebLandingPageState extends State<WebLandingPage> {
                                     },
                                     child: Text(
                                       "About Us",
+                                      style: TextStyle(
+                                        color: const Color.fromARGB(
+                                          255,
+                                          0,
+                                          0,
+                                          0,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      GoRouter.of(context).go(RouteNames.privacyPolicy);
+                                    
+                                    },
+                                    child: Text(
+                                      "Privacy Policy",
                                       style: TextStyle(
                                         color: const Color.fromARGB(
                                           255,

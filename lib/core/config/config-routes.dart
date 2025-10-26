@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/presentation/screens/auth/accountDeactivation.dart';
 import 'package:rayoflite/presentation/screens/auth/forget-password.dart';
 import 'package:rayoflite/presentation/screens/auth/login.dart';
 import 'package:rayoflite/presentation/screens/auth/register.dart';
@@ -10,6 +11,7 @@ import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat_screen
 import 'package:rayoflite/presentation/screens/features/journalism/junerlism.dart';
 import 'package:rayoflite/presentation/screens/features/breathing/breathing.dart';
 import 'package:rayoflite/presentation/screens/features/goal-tracker/goal-tracker.dart';
+import 'package:rayoflite/presentation/screens/web/PrivacyPolicyPage.dart';
 import 'package:rayoflite/presentation/screens/web/web-LandingPage.dart';
 import 'package:rayoflite/presentation/welcome-page.dart';
 import 'package:rayoflite/core/config/main-layout.dart';
@@ -43,6 +45,14 @@ GoRouter createRouter(String initialLocation) {
       GoRoute(
         path: RouteNames.resetPassword,
         builder: (context, state) => const ResetPasswordScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.accountDeactivate,
+        builder: (context, state) => const AccountDeactivatedScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.privacyPolicy,
+        builder: (context, state) => const PrivacyPolicyPage(),
       ),
 
       // Main App Routes

@@ -1,11 +1,12 @@
 // lib/services/http_interceptor.dart
 import 'package:dio/dio.dart';
+import 'package:rayoflite/core/constants/pathConfig.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
 
-class AuthInterceptor  {
+class AuthInterceptor {
   static final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: 'http://ec2-3-111-209-210.ap-south-1.compute.amazonaws.com',
+      baseUrl: PathConfig.baseUrl,
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 15),
       contentType: 'application/json',
@@ -19,6 +20,9 @@ class AuthInterceptor  {
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           final token = await LocalStorageService.getToken();
+          // print('TOKEN USED: $token');
+          // print('REQUEST HEADERS: ${options.headers}');
+          // print('REQUEST URL: ${options.uri}');
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
           }
