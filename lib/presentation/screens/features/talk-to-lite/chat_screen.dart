@@ -60,7 +60,7 @@ class _ChatScreenState extends State<ChatScreen>
     final result = await Talktolightservice.getChatHistoryById(chatId);
     if (result['success'] == true && result['data'] != null) {
       final chatData = result['data'];
-      final response = chatData['messages'] as List<dynamic>;     
+      final response = chatData['messages'] as List<dynamic>;
       setState(() {
         _messages.clear();
         _messages.addAll(
@@ -72,7 +72,7 @@ class _ChatScreenState extends State<ChatScreen>
             ),
           ),
         );
-        conversationId = chatData['id']; 
+        conversationId = chatData['id'];
       });
     }
   }
@@ -87,7 +87,7 @@ class _ChatScreenState extends State<ChatScreen>
       _messages.add(ChatMessage(text: message, isUser: true));
       _isLoading = true;
       // if (_messages.length == 1) {
-        _starController.repeat();
+      _starController.repeat();
       // }
     });
 
@@ -107,7 +107,8 @@ class _ChatScreenState extends State<ChatScreen>
               // isUser: false,
               animate: true,
               // this code for suggestion for feature which we developed
-                text: chatResponse.response   +
+              text:
+                  chatResponse.response +
                   (chatResponse.suggestion?.type == "BREATHING"
                       ? "\n\nWould you like to try a short breathing exercise?"
                       : chatResponse.suggestion?.type == "WALK"
@@ -170,7 +171,7 @@ class _ChatScreenState extends State<ChatScreen>
               }(),
             ),
           );
-         conversationId = chatResponse.conversationId;
+          conversationId = chatResponse.conversationId;
         });
       } else {
         setState(() {
@@ -198,7 +199,7 @@ class _ChatScreenState extends State<ChatScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.auto_awesome, size: 60, color: Colors.blueAccent),
+          const Icon(Icons.wb_sunny, size: 60, color: Colors.blueAccent),
           const SizedBox(height: 20),
           Container(
             padding: const EdgeInsets.all(16),
@@ -344,10 +345,17 @@ class _ChatScreenState extends State<ChatScreen>
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
-                          children: const [
-                            CircularProgressIndicator(strokeWidth: 2),
-                            SizedBox(width: 10),
-                            Text(
+                          children: [
+                            RotationTransition(
+                              turns: _starController,
+                              child: const Icon(
+                                Icons.wb_sunny,
+                                size: 35,
+                                color: Color.fromARGB(255, 234, 198, 152),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            const Text(
                               "Light is typing...",
                               style: TextStyle(
                                 color: Color.fromARGB(179, 0, 0, 0),

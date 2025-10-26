@@ -22,7 +22,7 @@ class InputArea extends StatelessWidget {
       color: AppColors.appBackgroundColor,
       child: Container(
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 255, 236, 204),
+          color: AppColors.inputFieldBackgroundColor,
           borderRadius: BorderRadius.circular(25),
         ),
         child: Row(
