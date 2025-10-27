@@ -18,7 +18,7 @@ class TypingIndicator extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.blueAccent,
+              // color: Colors.blueAccent,
               shape: BoxShape.circle,
             ),
             child: Icon(Icons.auto_awesome, size: 20, color: Colors.white),

@@ -21,10 +21,10 @@ class InputArea extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       color: AppColors.appBackgroundColor,
       child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.inputFieldBackgroundColor,
-          borderRadius: BorderRadius.circular(25),
-        ),
+        // decoration: BoxDecoration(
+        //   color: AppColors.inputFieldBackgroundColor,
+        //   borderRadius: BorderRadius.circular(25),
+        // ),
         child: Row(
           children: [
             Expanded(
@@ -32,7 +32,7 @@ class InputArea extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 16),
                 child: TextField(
                   controller: controller,
-                  style: AppTextStyles.regular16, 
+                  style: AppTextStyles.regular16,
                   keyboardType: TextInputType.multiline,
                   minLines: 1,
                   maxLines: null,
@@ -46,7 +46,35 @@ class InputArea extends StatelessWidget {
                         0,
                       ), // override only color
                     ),
-                    border: InputBorder.none,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(25),
+                      borderSide: BorderSide(
+                        color:
+                            Colors
+                                .grey
+                                .shade400, // outline color when not focused
+                        width: 1.2,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(25),
+                      borderSide: BorderSide(
+                        color:
+                            AppColors
+                                .talkToLiteButtonBackgroundColor, // outline color when focused
+                        width: 1.8,
+                      ),
+                    ),
+                    // filled: true,
+                    // fillColor: Colors.white,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(25),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
                 ),
               ),
@@ -59,16 +87,12 @@ class InputArea extends StatelessWidget {
               ),
               child: IconButton(
                 icon:
-                    isLoading
-                        ? RotationTransition(
-                          turns: AlwaysStoppedAnimation(
-                            45 / 360,
-                          ), // Initial rotation
+                    isLoading? RotationTransition(turns: AlwaysStoppedAnimation(45 / 360,), // Initial rotation
                           child: AnimatedRotation(
                             duration: Duration(seconds: 1),
                             turns: 1,
                             child: Icon(
-                              Icons.lightbulb_outline,
+                              Icons.send,
                               color: Colors.white,
                             ),
                             onEnd: () {
@@ -78,7 +102,7 @@ class InputArea extends StatelessWidget {
                             },
                           ),
                         )
-                        : Icon(Icons.sunny, color: Colors.white),
+                        : Icon(Icons.send, color: Colors.white),
                 onPressed: isLoading ? null : onSend,
               ),
             ),

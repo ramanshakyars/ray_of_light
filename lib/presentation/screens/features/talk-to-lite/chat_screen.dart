@@ -199,7 +199,11 @@ class _ChatScreenState extends State<ChatScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.wb_sunny, size: 60, color: Colors.blueAccent),
+          const Icon(
+            Icons.wb_sunny,
+            size: 60,
+            color: AppColors.inputFieldBackgroundColor,
+          ),
           const SizedBox(height: 20),
           Container(
             padding: const EdgeInsets.all(16),
@@ -210,14 +214,14 @@ class _ChatScreenState extends State<ChatScreen>
             ),
             child: Column(
               children: [
-                const Text(
-                  "Welcome to Talk to Light!",
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 0, 0, 0),
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                // const Text(
+                //   "Welcome to Talk to Light!",
+                //   style: TextStyle(
+                //     color: Color.fromARGB(255, 0, 0, 0),
+                //     fontSize: 20,
+                //     fontWeight: FontWeight.bold,
+                //   ),
+                // ),
                 const SizedBox(height: 12),
                 const Text(
                   "Ask me anything and I'll do my best to help you. ",
