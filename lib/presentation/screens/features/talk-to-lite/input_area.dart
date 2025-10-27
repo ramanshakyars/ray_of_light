@@ -75,35 +75,36 @@ class InputArea extends StatelessWidget {
                       borderRadius: BorderRadius.circular(25),
                       borderSide: BorderSide.none,
                     ),
+                    suffixIcon: Container(
+                      margin: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.talkToLiteButtonBackgroundColor,
+                      ),
+                      child: IconButton(
+                        icon: isLoading
+                            ? RotationTransition(
+                                turns: AlwaysStoppedAnimation(45 / 360), // Initial rotation
+                                child: AnimatedRotation(
+                                  duration: Duration(seconds: 1),
+                                  turns: 1,
+                                  child: Icon(
+                                    Icons.send,
+                                    color: Colors.white,
+                                  ),
+                                  onEnd: () {
+                                    if (isLoading) {
+                                      (context as Element).markNeedsBuild();
+                                    }
+                                  },
+                                ),
+                              )
+                            : Icon(Icons.send, color: Colors.white),
+                        onPressed: isLoading ? null : onSend,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(right: 8),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.talkToLiteButtonBackgroundColor,
-              ),
-              child: IconButton(
-                icon:
-                    isLoading? RotationTransition(turns: AlwaysStoppedAnimation(45 / 360,), // Initial rotation
-                          child: AnimatedRotation(
-                            duration: Duration(seconds: 1),
-                            turns: 1,
-                            child: Icon(
-                              Icons.send,
-                              color: Colors.white,
-                            ),
-                            onEnd: () {
-                              if (isLoading) {
-                                (context as Element).markNeedsBuild();
-                              }
-                            },
-                          ),
-                        )
-                        : Icon(Icons.send, color: Colors.white),
-                onPressed: isLoading ? null : onSend,
               ),
             ),
           ],
