@@ -11,6 +11,9 @@ class AppColors {
   // -------------------------
   // 🌞 LIGHT THEME COLORS
   // -------------------------
+
+  static const Color iconBlackColor = Color.fromARGB(255, 0, 0, 0); // --foreground
+  static const Color iconWhiteColor = Color.fromARGB(255, 255, 255, 255); // --foreground
   static const Color textPrimaryColor = Color(0xFF0F0F0F); // --foreground
   static const Color textSecondryCOlor = Color(
     0xFFFFFFFF,

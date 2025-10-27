@@ -202,14 +202,14 @@ class _ChatScreenState extends State<ChatScreen>
           const Icon(
             Icons.wb_sunny,
             size: 60,
-            color: AppColors.inputFieldBackgroundColor,
+            color: AppColors.iconBlackColor,
           ),
           const SizedBox(height: 20),
           Container(
             padding: const EdgeInsets.all(16),
             margin: const EdgeInsets.symmetric(horizontal: 24),
             decoration: BoxDecoration(
-              color: AppColors.appBackgroundColor,
+              // color: AppColors.appBackgroundColor,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
@@ -304,14 +304,14 @@ class _ChatScreenState extends State<ChatScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.appBackgroundColor,
+      // backgroundColor: AppColors.appBackgroundColor,
       drawer: const ChatHistory(),
       appBar: AppBar(
         title: const Text(
           'Talk to Light',
-          style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+          style: TextStyle(color: AppColors.textPrimaryColor),
         ),
-        backgroundColor: AppColors.appBackgroundColor,
+        // backgroundColor: AppColors.appBackgroundColor,
         elevation: 10,
         automaticallyImplyLeading: true,
         actions: [
@@ -324,7 +324,7 @@ class _ChatScreenState extends State<ChatScreen>
             },
           ),
           IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.white),
+            icon: const Icon(Icons.refresh, color: AppColors.iconBlackColor),
             tooltip: "Clear Memory",
             onPressed: () {
               clearMemory();
@@ -362,7 +362,7 @@ class _ChatScreenState extends State<ChatScreen>
                             const Text(
                               "Light is typing...",
                               style: TextStyle(
-                                color: Color.fromARGB(179, 0, 0, 0),
+                                color: AppColors.textPrimaryColor,
                               ),
                             ),
                           ],

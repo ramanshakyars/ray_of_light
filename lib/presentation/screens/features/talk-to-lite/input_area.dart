@@ -19,7 +19,7 @@ class InputArea extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: AppColors.appBackgroundColor,
+      color: AppColors.iconWhiteColor,
       child: Container(
         // decoration: BoxDecoration(
         //   color: AppColors.inputFieldBackgroundColor,
@@ -37,7 +37,7 @@ class InputArea extends StatelessWidget {
                   minLines: 1,
                   maxLines: null,
                   decoration: InputDecoration(
-                    hintText: 'Type your message...',
+                    hintText: 'Ask anything',
                     hintStyle: AppTextStyles.regular16.copyWith(
                       color: const Color.fromARGB(
                         137,

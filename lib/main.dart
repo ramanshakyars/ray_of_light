@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.appBackgroundColor),  
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.iconWhiteColor),  
         fontFamily: 'Specimen',     
         useMaterial3: true,
       ),
