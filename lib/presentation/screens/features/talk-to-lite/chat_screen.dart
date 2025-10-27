@@ -226,7 +226,7 @@ class _ChatScreenState extends State<ChatScreen>
                 const Text(
                   "Ask me anything and I'll do my best to help you. ",
                   style: TextStyle(
-                    color: Color.fromARGB(179, 0, 0, 0),
+                    color: AppColors.textPrimaryColor,
                     fontSize: 16,
                   ),
                   textAlign: TextAlign.center,
@@ -259,7 +259,7 @@ class _ChatScreenState extends State<ChatScreen>
           const SizedBox(height: 16),
           const Text(
             "Thinking...",
-            style: TextStyle(color: Color.fromARGB(179, 0, 0, 0), fontSize: 18),
+            style: TextStyle(color: AppColors.textPrimaryColor),
           ),
         ],
       ),

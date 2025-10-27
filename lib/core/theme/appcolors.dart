@@ -19,7 +19,8 @@ class AppColors {
     0xFFFFFFFF,
   ); // --primary-foreground
 
-  static const Color appBackgroundColor = Color(0xFFFFFFFF); // --background
+  // static const Color appBackgroundColor = Color(0xFFFFFFFF); 
+  static const Color appBackgroundColor = Color.fromARGB(255, 255, 255, 255); 
   static final Color talkToLiteButtonBackgroundColor = hexToColor(
     "#9333ea",
   ); // --secondary
