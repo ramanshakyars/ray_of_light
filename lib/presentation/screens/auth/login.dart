@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/authService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
+import 'package:rayoflite/core/theme/themeProvider.dart';
 
 void main() {
   runApp(Login());
@@ -70,9 +72,11 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final isSmallScreen = screenHeight < 600;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+  final isDarkMode = themeProvider.isDarkMode;
 
     return Scaffold(
-      backgroundColor: AppColors.appBackgroundColor,
+      backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(isSmallScreen ? 16.0 : 24.0),
@@ -115,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                     // Login Form
                     Card(
-                      color:AppColors.formsCardColor,
+                      color:AppColors.getFormsCardColor(isDarkMode),
                       elevation: 2,
                       child: Padding(
                         padding: EdgeInsets.all(isSmallScreen ? 16.0 : 24.0),
@@ -226,7 +230,7 @@ class _LoginPageState extends State<LoginPage> {
                                     padding: EdgeInsets.symmetric(
                                       vertical: isSmallScreen ? 12 : 16,
                                     ),
-                                    backgroundColor: AppColors.formSubmitButtonColor,
+                                    backgroundColor: AppColors.getFormSubmitButtonColor(isDarkMode),
                                   ),
                                   child: Text(
                                     'Login',

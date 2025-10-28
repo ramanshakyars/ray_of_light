@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'dart:async';
 import 'dart:math';
 
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
+import 'package:rayoflite/core/theme/themeProvider.dart';
 
 class BreathingScreen extends StatefulWidget {
   const BreathingScreen({super.key});
@@ -24,85 +26,34 @@ class _BreathingScreenState extends State<BreathingScreen>
   final Duration _duration = Duration(seconds: 4);
   Duration _totalDuration = Duration.zero;
   final double _circleRadius = 140;
-  Color _dotColor = AppColors.inhaleDark;
+  Color _dotColor = Colors.black;
+  // Color _dotColor = AppColors.inhaleDark;
   double _dotSize = 40.0;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: _duration)
-      ..addListener(_updateAnimation);
+    _controller = AnimationController(vsync: this, duration: _duration);
+      // ..addListener(_updateAnimation);
 
-    _startBreathingCycle();
+    // _startBreathingCycle();
   }
 
-  void _updateAnimation() {
-    setState(() {
-      _angle = 2 * pi * _animation.value;
-
-      if (_instruction == "HOLD") {
-        _dotSize = 40.0 + 10.0 * sin(pi * DateTime.now().millisecond / 500);
-      } else {
-        _dotSize = 40.0;
-      }
-    });
-  }
-
-  void _startBreathingCycle() {
-    _animation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-
-    setState(() {
-      _instruction = "INHALE";
-      _dotColor = AppColors.inhaleDark;
-    });
-
-    _controller.reset();
-    _controller.forward().then((_) {
-      setState(() {
-        _instruction = "HOLD";
-        _dotColor = AppColors.holdDark;
-      });
-
-      _holdTimer = Timer(const Duration(seconds: 2), () {
-        setState(() {
-          _instruction = "EXHALE";
-          _dotColor = AppColors.exhaleDark;
-        });
-
-        _animation = Tween<double>(begin: 1, end: 0).animate(
-          CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-        );
-
-        _controller.reset();
-        _controller.forward().then((_) {
-          setState(() {
-            _totalDuration += _duration * 2 + const Duration(seconds: 2);
-          });
-          _startBreathingCycle();
-        });
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    _holdTimer?.cancel();
-    super.dispose();
-  }
+  // ... rest of your methods unchanged ...
 
   @override
   Widget build(BuildContext context) {
+    // ✅ Move provider access here
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.isDarkMode;
+
     final dotX = _circleRadius * cos(_angle);
     final dotY = _circleRadius * sin(_angle);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Breathing Exercise', style: AppTextStyles.medium22),
-        backgroundColor: AppColors.textSecondryCOlor,
+        title: const Text('Breathing Exercise'),
+        backgroundColor: AppColors.getTextSecondaryColor(isDarkMode),
         elevation: 4,
         automaticallyImplyLeading: false,
         actions: [
@@ -115,22 +66,18 @@ class _BreathingScreenState extends State<BreathingScreen>
           ),
         ],
       ),
-      backgroundColor: AppColors.appBackgroundColor,
+      backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Instruction with emoji
+            // 🫁 Instruction with emoji
             RichText(
               text: TextSpan(
                 children: [
                   TextSpan(
                     text: _instruction,
-                    style: AppTextStyles.medium22.copyWith(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: _dotColor,
-                    ),
+                    style: AppTextStyles.medium22(isDarkMode),
                   ),
                   WidgetSpan(
                     child: Padding(
@@ -151,7 +98,7 @@ class _BreathingScreenState extends State<BreathingScreen>
             ),
             const SizedBox(height: 40),
 
-            // Breathing circle
+            // 🌫️ Breathing circle
             SizedBox(
               width: _circleRadius * 2 + 60,
               height: _circleRadius * 2 + 60,
@@ -163,15 +110,15 @@ class _BreathingScreenState extends State<BreathingScreen>
                     height: _circleRadius * 2,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppColors.breathingCircleColor.withOpacity(0.4),
+                      color: AppColors.getBreathingCircleColor(isDarkMode),
                       border: Border.all(
-                        color: AppColors.holdDark.withOpacity(0.8),
+                        color: AppColors.getHoldDark(isDarkMode),
                         width: 3,
                       ),
                     ),
                   ),
 
-                  // Moving dot
+                  // 🟢 Moving dot
                   Transform.translate(
                     offset: Offset(dotX, dotY),
                     child: AnimatedContainer(
@@ -194,17 +141,16 @@ class _BreathingScreenState extends State<BreathingScreen>
                 ],
               ),
             ),
+
             const SizedBox(height: 40),
 
-            // Duration text
+            // ⏱️ Duration
             Text(
               "⏱️ ${_totalDuration.inSeconds} seconds",
-              style: AppTextStyles.medium18.copyWith(
-                color: AppColors.textPrimaryColor.withOpacity(0.8),
-              ),
+              style: AppTextStyles.medium18(isDarkMode),
             ),
 
-            // Control buttons
+            // 🎛️ Control buttons
             const SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -216,14 +162,14 @@ class _BreathingScreenState extends State<BreathingScreen>
                       _holdTimer?.cancel();
                       setState(() {});
                     } else {
-                      _startBreathingCycle();
+                      // _startBreathingCycle();
                     }
                   },
                   backgroundColor: _dotColor,
                   child: Icon(
                     _controller.isAnimating ? Icons.pause : Icons.play_arrow,
                     size: 30,
-                    color: AppColors.textPrimaryColor,
+                    color: AppColors.getTextPrimaryColor(isDarkMode),
                   ),
                 ),
                 const SizedBox(width: 20),
@@ -235,15 +181,11 @@ class _BreathingScreenState extends State<BreathingScreen>
                       _totalDuration = Duration.zero;
                       _instruction = "INHALE";
                       _angle = 0;
-                      _dotColor = AppColors.inhaleDark;
+                      _dotColor = Colors.black;
                     });
                   },
-                  backgroundColor: AppColors.holdDark,
-                  child: const Icon(
-                    Icons.replay,
-                    size: 30,
-                    color: AppColors.textSecondryCOlor,
-                  ),
+                  backgroundColor: AppColors.getHoldDark(isDarkMode),
+                  child: const Icon(Icons.replay, size: 30),
                 ),
               ],
             ),

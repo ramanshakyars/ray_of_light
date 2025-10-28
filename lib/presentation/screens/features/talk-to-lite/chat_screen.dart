@@ -5,6 +5,8 @@ import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/services/talkToLightService.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
+import 'package:rayoflite/core/theme/themeProvider.dart';
+import 'package:provider/provider.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat-history.dart';
 import 'chat_message.dart';
 import 'input_area.dart';
@@ -126,10 +128,11 @@ class _ChatScreenState extends State<ChatScreen>
                           '${RouteNames.mainApp}/${RouteNames.breathingExercise}',
                         );
                       },
-                      child: const Text(
+                      child: Text(
                         "Start Breathing Exercise",
                         style: TextStyle(
-                          color: AppColors.textPrimaryColor,
+                          color: AppColors.getTextPrimaryColor(
+                              Provider.of<ThemeProvider>(context, listen: false).isDarkMode),
                           decoration: TextDecoration.underline,
                         ),
                       ),
@@ -141,10 +144,11 @@ class _ChatScreenState extends State<ChatScreen>
                           '${RouteNames.mainApp}/${RouteNames.goalTracker}',
                         );
                       },
-                      child: const Text(
+                      child: Text(
                         "Set Walk wish",
                         style: TextStyle(
-                          color: AppColors.textPrimaryColor,
+                          color: AppColors.getTextPrimaryColor(
+                              Provider.of<ThemeProvider>(context, listen: false).isDarkMode),
                           decoration: TextDecoration.underline,
                         ),
                       ),
@@ -152,14 +156,13 @@ class _ChatScreenState extends State<ChatScreen>
                   case "JOURNAL":
                     return TextButton(
                       onPressed: () {
-                        GoRouter.of(
-                          context,
-                        ).push('${RouteNames.mainApp}/${RouteNames.junerlism}');
+                        GoRouter.of(context).push('${RouteNames.mainApp}/${RouteNames.junerlism}');
                       },
-                      child: const Text(
+                      child: Text(
                         "Try Nest",
                         style: TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
+                          color: AppColors.getTextPrimaryColor(
+                              Provider.of<ThemeProvider>(context, listen: false).isDarkMode),
                           decoration: TextDecoration.underline,
                         ),
                       ),
@@ -194,15 +197,15 @@ class _ChatScreenState extends State<ChatScreen>
     }
   }
 
-  Widget _buildWelcomeMessage() {
+  Widget _buildWelcomeMessage(bool isDarkMode) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.wb_sunny,
             size: 60,
-            color: AppColors.iconBlackColor,
+            color: AppColors.getIconColor(isDarkMode),
           ),
           const SizedBox(height: 20),
           Container(
@@ -223,10 +226,10 @@ class _ChatScreenState extends State<ChatScreen>
                 //   ),
                 // ),
                 const SizedBox(height: 12),
-                const Text(
+                Text(
                   "Ask me anything and I'll do my best to help you. ",
                   style: TextStyle(
-                    color: AppColors.textPrimaryColor,
+                    color: AppColors.getTextPrimaryColor(isDarkMode),
                     fontSize: 16,
                   ),
                   textAlign: TextAlign.center,
@@ -243,23 +246,23 @@ class _ChatScreenState extends State<ChatScreen>
     );
   }
 
-  Widget _buildLoadingIndicator() {
+  Widget _buildLoadingIndicator(bool isDarkMode) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           RotationTransition(
             turns: _starController,
-            child: const Icon(
+            child: Icon(
               Icons.auto_awesome,
               size: 60,
-              color: AppColors.textPrimaryColor,
+              color: AppColors.getTextPrimaryColor(isDarkMode),
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             "Thinking...",
-            style: TextStyle(color: AppColors.textPrimaryColor),
+            style: TextStyle(color: AppColors.getTextPrimaryColor(isDarkMode)),
           ),
         ],
       ),
@@ -303,28 +306,28 @@ class _ChatScreenState extends State<ChatScreen>
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.isDarkMode;
+
     return Scaffold(
-      // backgroundColor: AppColors.appBackgroundColor,
       drawer: const ChatHistory(),
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Talk to Light',
-          style: TextStyle(color: AppColors.textPrimaryColor),
+          style: TextStyle(color: AppColors.getTextPrimaryColor(isDarkMode)),
         ),
-        // backgroundColor: AppColors.appBackgroundColor,
+        backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
         elevation: 10,
         automaticallyImplyLeading: true,
         actions: [
           IconButton(
             icon: Image.asset('assets/logo.png'),
             onPressed: () {
-              GoRouter.of(
-                context,
-              ).push('${RouteNames.mainApp}/${RouteNames.home}');
+              GoRouter.of(context).push('${RouteNames.mainApp}/${RouteNames.home}');
             },
           ),
           IconButton(
-            icon: const Icon(Icons.refresh, color: AppColors.iconBlackColor),
+            icon: Icon(Icons.refresh, color: AppColors.getIconColor(isDarkMode)),
             tooltip: "Clear Memory",
             onPressed: () {
               clearMemory();
@@ -332,54 +335,51 @@ class _ChatScreenState extends State<ChatScreen>
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                ListView.builder(
-                  padding: const EdgeInsets.all(8),
-                  itemCount:
-                      _messages.length +
-                      ((_isLoading && _messages.isNotEmpty) ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (_isLoading &&
-                        _messages.isNotEmpty &&
-                        index == _messages.length) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            RotationTransition(
-                              turns: _starController,
-                              child: const Icon(
-                                Icons.wb_sunny,
-                                size: 35,
-                                color: Color.fromARGB(255, 234, 198, 152),
+      body: Container(
+        color: AppColors.getAppBackgroundColor(isDarkMode),
+        child: Column(
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  ListView.builder(
+                    padding: const EdgeInsets.all(8),
+                    itemCount: _messages.length + ((_isLoading && _messages.isNotEmpty) ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (_isLoading && _messages.isNotEmpty && index == _messages.length) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              RotationTransition(
+                                turns: _starController,
+                                child: Icon(
+                                  Icons.wb_sunny,
+                                  size: 35,
+                                  color: AppColors.getBreathingCircleColor(isDarkMode),
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 10),
-                            const Text(
-                              "Light is typing...",
-                              style: TextStyle(
-                                color: AppColors.textPrimaryColor,
+                              const SizedBox(width: 10),
+                              Text(
+                                "Light is typing...",
+                                style: TextStyle(
+                                  color: AppColors.getTextPrimaryColor(isDarkMode),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-
-                    return _messages[index];
-                  },
-                ),
-                if (_messages.isEmpty && !_isLoading) _buildWelcomeMessage(),
-                if (_messages.isEmpty && _isLoading) _buildLoadingIndicator(),
-              ],
+                            ],
+                          ),
+                        );
+                      }
+                      return _messages[index];
+                    },
+                  ),
+                  if (_messages.isEmpty && !_isLoading) _buildWelcomeMessage(isDarkMode),
+                  if (_messages.isEmpty && _isLoading) _buildLoadingIndicator(isDarkMode),
+                ],
+              ),
             ),
-          ),
 
-          // new chat is working but hide here
+            // new chat is working but hide here
 
           // SafeArea(
           //   child:
@@ -421,16 +421,13 @@ class _ChatScreenState extends State<ChatScreen>
           //           )
           //           : const SizedBox.shrink(),
           // ),
-
-          /// Input area
-          InputArea(
-            controller: _textController,
-            onSend: _sendMessage,
-            isLoading: _isLoading,
-          ),
-
-          /// Bottom New Chat button
-        ],
+            InputArea(
+              controller: _textController,
+              onSend: _sendMessage,
+              isLoading: _isLoading,
+            ),
+          ],
+        ),
       ),
     );
   }

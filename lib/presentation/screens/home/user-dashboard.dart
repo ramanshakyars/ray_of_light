@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
+import 'package:rayoflite/core/theme/themeProvider.dart';
 import '../features/ṃood-manager/UserMood.dart';
 import '../features/ṃood-manager/mood-managment.dart';
 
@@ -16,6 +18,7 @@ class UserDashboard extends StatefulWidget {
 
 class _UserDashboardState extends State<UserDashboard> {
   String userName = 'User';
+  
 
   @override
   void initState() {
@@ -49,11 +52,13 @@ class _UserDashboardState extends State<UserDashboard> {
 
   @override
   Widget build(BuildContext context) {
+     final themeProvider = Provider.of<ThemeProvider>(context);
+  final isDarkMode = themeProvider.isDarkMode;
     return Scaffold(
       appBar: AppBar(
         // title: const Text('About us'),
         centerTitle: true,
-        backgroundColor: AppColors.appBackgroundColor,
+        backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
         leading: IconButton(
           icon: Image.asset('assets/logo.png'),
           onPressed: () {
@@ -126,7 +131,7 @@ class _UserDashboardState extends State<UserDashboard> {
                 'Each break becomes a sacred start,',
                 'A stronger you, a work of art.',
               ],
-              color: AppColors.appBackgroundColor,
+              color: AppColors.getAppBackgroundColor(isDarkMode),
               borderColor: const Color.fromARGB(255, 131, 130, 134),
               icon: Icons.auto_awesome,
             ),

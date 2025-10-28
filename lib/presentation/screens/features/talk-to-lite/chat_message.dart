@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
+import 'package:rayoflite/core/theme/themeProvider.dart';
 
 class ChatMessage extends StatefulWidget {
   final String text;
@@ -58,6 +60,9 @@ class _ChatMessageState extends State<ChatMessage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.isDarkMode;
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       child: Row(
@@ -70,7 +75,9 @@ class _ChatMessageState extends State<ChatMessage> {
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: widget.isUser ? AppColors.formsCardColor: AppColors.iconWhiteColor,
+                color: widget.isUser 
+                  ? AppColors.getFormsCardColor(isDarkMode)
+                  : AppColors.getTalkToLiteButtonBackgroundColor(isDarkMode),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -78,7 +85,12 @@ class _ChatMessageState extends State<ChatMessage> {
                 children: [
                   Text(
                     _displayedText,
-                    style: const TextStyle(color: Colors.black, fontSize: 15),
+                    style: TextStyle(
+                      color: widget.isUser 
+                        ? AppColors.getTextPrimaryColor(isDarkMode)
+                        : AppColors.getTextSecondaryColor(isDarkMode),
+                      fontSize: 15,
+                    ),
                   ),
                   if (widget.extraWidget != null) ...[
                     const SizedBox(height: 10),

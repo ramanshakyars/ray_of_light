@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:rayoflite/core/theme/AppFont.dart';
+import 'package:provider/provider.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
+import 'package:rayoflite/core/theme/themeProvider.dart';
 
 class InputArea extends StatelessWidget {
   final TextEditingController controller;
@@ -17,9 +17,12 @@ class InputArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.isDarkMode;
+
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: AppColors.iconWhiteColor,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      color: AppColors.getAppBackgroundColor(isDarkMode),
       child: Container(
         // decoration: BoxDecoration(
         //   color: AppColors.inputFieldBackgroundColor,
@@ -32,42 +35,36 @@ class InputArea extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 16),
                 child: TextField(
                   controller: controller,
-                  style: AppTextStyles.regular16,
+                  style: TextStyle(
+                    color: AppColors.getTextPrimaryColor(isDarkMode),
+                    fontSize: 16,
+                    fontFamily: "Specimen",
+                  ),
                   keyboardType: TextInputType.multiline,
                   minLines: 1,
                   maxLines: null,
                   decoration: InputDecoration(
                     hintText: 'Ask anything',
-                    hintStyle: AppTextStyles.regular16.copyWith(
-                      color: const Color.fromARGB(
-                        137,
-                        0,
-                        0,
-                        0,
-                      ), // override only color
+                    hintStyle: TextStyle(
+                      color: AppColors.getTextPrimaryColor(isDarkMode).withOpacity(0.6),
+                      fontSize: 16,
+                      fontFamily: "Specimen",
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(25),
                       borderSide: BorderSide(
-                        color:
-                            Colors
-                                .grey
-                                .shade400, // outline color when not focused
+                        color: Colors.grey.shade400,
                         width: 1.2,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(25),
                       borderSide: BorderSide(
-                        color:
-                            AppColors
-                                .talkToLiteButtonBackgroundColor, // outline color when focused
+                        color: AppColors.getTalkToLiteButtonBackgroundColor(isDarkMode),
                         width: 1.8,
                       ),
                     ),
-                    // filled: true,
-                    // fillColor: Colors.white,
-                    contentPadding: EdgeInsets.symmetric(
+                    contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 10,
                     ),
@@ -76,30 +73,15 @@ class InputArea extends StatelessWidget {
                       borderSide: BorderSide.none,
                     ),
                     suffixIcon: Container(
-                      margin: EdgeInsets.all(4),
+                      margin: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: AppColors.talkToLiteButtonBackgroundColor,
+                        color: AppColors.getTalkToLiteButtonBackgroundColor(isDarkMode),
                       ),
                       child: IconButton(
                         icon: isLoading
-                            ? RotationTransition(
-                                turns: AlwaysStoppedAnimation(45 / 360), // Initial rotation
-                                child: AnimatedRotation(
-                                  duration: Duration(seconds: 1),
-                                  turns: 1,
-                                  child: Icon(
-                                    Icons.send,
-                                    color: Colors.white,
-                                  ),
-                                  onEnd: () {
-                                    if (isLoading) {
-                                      (context as Element).markNeedsBuild();
-                                    }
-                                  },
-                                ),
-                              )
-                            : Icon(Icons.send, color: Colors.white),
+                            ? const Icon(Icons.send, color: Colors.white)
+                            : const Icon(Icons.send, color: Colors.white),
                         onPressed: isLoading ? null : onSend,
                       ),
                     ),
