@@ -50,9 +50,7 @@ class _ChatScreenState extends State<ChatScreen>
   }
 
   clearMemory({String? chatId}) async {
-    final result = await Talktolightservice.clearMemory({
-      "chatId": chatId ?? "default",
-    });
+    final result = await Talktolightservice.clearMemory(chatId!);
     if (result['success'] == true && result['data'] != null) {
       MessageService.showSuccess(context, 'Memory cleared successfully');
     }

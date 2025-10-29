@@ -36,6 +36,6 @@ class PathConfig {
   static const String getChatHistoryById = '$baseUrl/chat/conversations';
   static const String renameChat = '$baseUrl/chat/conversations/rename';
   static const String deletechat = '$baseUrl/chat/conversations';
-  static const String clearChatsMemory = '$baseUrl/chat/conversations';
+  static const String clearChatsMemory = '$baseUrl/chat//conversations/clear-memory';
   static const String getConversationsList = '$baseUrl/chat/conversations/list';
 }

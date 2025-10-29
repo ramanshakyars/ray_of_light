@@ -52,8 +52,8 @@ class _UserDashboardState extends State<UserDashboard> {
 
   @override
   Widget build(BuildContext context) {
-     final themeProvider = Provider.of<ThemeProvider>(context);
-  final isDarkMode = themeProvider.isDarkMode;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.isDarkMode;
     return Scaffold(
       appBar: AppBar(
         // title: const Text('About us'),
@@ -66,7 +66,7 @@ class _UserDashboardState extends State<UserDashboard> {
               context,
             ).push('${RouteNames.mainApp}/${RouteNames.profile}');
           },
-        ),  
+        ),
         actions: [
           IconButton(icon: const Icon(Icons.mood), onPressed: _openMoodDialog),
         ],
@@ -83,18 +83,18 @@ class _UserDashboardState extends State<UserDashboard> {
                 children: [
                   Text(
                     'Hi $userName',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 0, 0, 0),
+                      color: AppColors.getTextPrimaryColor(isDarkMode),
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'Here\'s your daily dose of inspiration',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Color.fromARGB(255, 0, 0, 0),
+                      color: AppColors.getTextPrimaryColor(isDarkMode),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -102,7 +102,7 @@ class _UserDashboardState extends State<UserDashboard> {
               ),
             ),
 
-            // Single Poem Card
+            // Poem Card
             _buildStanzaCard(
               context,
               title: 'Ray of Light',
@@ -132,7 +132,8 @@ class _UserDashboardState extends State<UserDashboard> {
                 'A stronger you, a work of art.',
               ],
               color: AppColors.getAppBackgroundColor(isDarkMode),
-              borderColor: const Color.fromARGB(255, 131, 130, 134),
+              borderColor: AppColors.getBorder(isDarkMode),
+              isDarkMode: isDarkMode, 
               icon: Icons.auto_awesome,
             ),
 
@@ -149,13 +150,14 @@ class _UserDashboardState extends State<UserDashboard> {
     required List<String> lines,
     required Color color,
     required Color borderColor,
+    required bool isDarkMode, 
     IconData? icon,
   }) {
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: borderColor.withOpacity(0.3), width: 1.5),
+        side: BorderSide(color: AppColors.getBorder(isDarkMode), width: 1.5),
       ),
       color: color,
       child: Padding(
@@ -185,7 +187,11 @@ class _UserDashboardState extends State<UserDashboard> {
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Text(
                   line,
-                  style: const TextStyle(fontSize: 16, height: 1.4),
+                  style: TextStyle(
+                    fontSize: 16,
+                    height: 1.4,
+                    color: AppColors.getTextPrimaryColor(isDarkMode),
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),

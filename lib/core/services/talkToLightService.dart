@@ -83,12 +83,10 @@ class Talktolightservice {
     }
   }
 
-  static Future<Map<String, dynamic>> clearMemory(body) async {
+  static Future<Map<String, dynamic>> clearMemory(String chatId) async {
     try {
-      final response = await HttpService.post(
-        PathConfig.clearChatsMemory,
-        body,
-      );
+      final url = "${PathConfig.clearChatsMemory}/$chatId";
+      final response = await HttpService.post(url,{});
       if (response != null && response['type'] != null) {
         return {'success': true, 'data': response};
       } else {
