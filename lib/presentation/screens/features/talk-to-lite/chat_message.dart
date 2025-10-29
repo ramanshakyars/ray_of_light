@@ -84,7 +84,7 @@ class _ChatMessageState extends State<ChatMessage> {
                   Text(
                     _displayedText,
                     style: TextStyle(
-                      color: widget.isUser ? AppColors.getTextPrimaryColor(isDarkMode): AppColors.getTextSecondaryColor(isDarkMode),
+                      color: AppColors.getTextPrimaryColor(isDarkMode),
                       fontSize: 15,
                     ),
                   ),
