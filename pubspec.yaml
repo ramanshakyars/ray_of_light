@@ -51,6 +51,7 @@ flutter:
     - assets/fonts/
     - assets/app-background.jpg
     - assets/red-background.png
+    - assets/talk-to-light.png
 
   fonts:
     - family: Specimen

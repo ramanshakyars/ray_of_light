@@ -132,7 +132,11 @@ class _ChatScreenState extends State<ChatScreen>
                         "Start Breathing Exercise",
                         style: TextStyle(
                           color: AppColors.getTextPrimaryColor(
-                              Provider.of<ThemeProvider>(context, listen: false).isDarkMode),
+                            Provider.of<ThemeProvider>(
+                              context,
+                              listen: false,
+                            ).isDarkMode,
+                          ),
                           decoration: TextDecoration.underline,
                         ),
                       ),
@@ -148,7 +152,11 @@ class _ChatScreenState extends State<ChatScreen>
                         "Set Walk wish",
                         style: TextStyle(
                           color: AppColors.getTextPrimaryColor(
-                              Provider.of<ThemeProvider>(context, listen: false).isDarkMode),
+                            Provider.of<ThemeProvider>(
+                              context,
+                              listen: false,
+                            ).isDarkMode,
+                          ),
                           decoration: TextDecoration.underline,
                         ),
                       ),
@@ -156,13 +164,19 @@ class _ChatScreenState extends State<ChatScreen>
                   case "JOURNAL":
                     return TextButton(
                       onPressed: () {
-                        GoRouter.of(context).push('${RouteNames.mainApp}/${RouteNames.junerlism}');
+                        GoRouter.of(
+                          context,
+                        ).push('${RouteNames.mainApp}/${RouteNames.junerlism}');
                       },
                       child: Text(
                         "Try Nest",
                         style: TextStyle(
                           color: AppColors.getTextPrimaryColor(
-                              Provider.of<ThemeProvider>(context, listen: false).isDarkMode),
+                            Provider.of<ThemeProvider>(
+                              context,
+                              listen: false,
+                            ).isDarkMode,
+                          ),
                           decoration: TextDecoration.underline,
                         ),
                       ),
@@ -202,44 +216,29 @@ class _ChatScreenState extends State<ChatScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.wb_sunny,
-            size: 60,
+          // Icon(
+          //   Icons.wb_sunny,
+          //   size: 60,
+          //   color: AppColors.getIconColor(isDarkMode),
+          // ),
+          Image.asset(
+            "assets/talk-to-light.png",
+            height: 120,
+            width: 120,
             color: AppColors.getIconColor(isDarkMode),
           ),
           const SizedBox(height: 20),
-          Container(
-            padding: const EdgeInsets.all(16),
-            margin: const EdgeInsets.symmetric(horizontal: 24),
-            decoration: BoxDecoration(
-              // color: AppColors.appBackgroundColor,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              children: [
-                // const Text(
-                //   "Welcome to Talk to Light!",
-                //   style: TextStyle(
-                //     color: Color.fromARGB(255, 0, 0, 0),
-                //     fontSize: 20,
-                //     fontWeight: FontWeight.bold,
-                //   ),
-                // ),
-                const SizedBox(height: 12),
-                Text(
-                  "Ask me anything and I'll do my best to help you. ",
-                  style: TextStyle(
-                    color: AppColors.getTextPrimaryColor(isDarkMode),
-                    fontSize: 16,
-                  ),
-                  textAlign: TextAlign.center,
+          Column(
+            children: [
+              Text(
+                "Ask me anything and I'll do my best to help you.",
+                style: TextStyle(
+                  color: AppColors.getTextPrimaryColor(isDarkMode),
+                  fontSize: 16,
                 ),
-
-                // const SizedBox(height: 16),
-                // _buildQuestionSuggestion("Hi, I was thinking about you"),
-                // _buildQuestionSuggestion("What were you doing?"),
-              ],
-            ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ],
       ),
@@ -269,34 +268,6 @@ class _ChatScreenState extends State<ChatScreen>
     );
   }
 
-  // this is for the suggestions cards
-
-  // Widget _buildQuestionSuggestion(String question) {
-  //   return GestureDetector(
-  //     onTap: () {
-  //       _textController.text = question;
-  //       _sendMessage();
-  //     },
-  //     child: Container(
-  //       margin: const EdgeInsets.symmetric(vertical: 6),
-  //       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-  //       decoration: BoxDecoration(
-  //         color: AppColors.appBackgroundColor,
-  //         borderRadius: BorderRadius.circular(12),
-  //         border: Border.all(color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.3)),
-  //       ),
-  //       child: Row(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: [
-  //           const Icon(Icons.arrow_forward, color: Color.fromARGB(255, 0, 0, 0), size: 16),
-  //           const SizedBox(width: 8),
-  //           Text(question, style: const TextStyle(color: Color.fromARGB(179, 0, 0, 0))),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
   @override
   void dispose() {
     _tts.stop();
@@ -323,11 +294,16 @@ class _ChatScreenState extends State<ChatScreen>
           IconButton(
             icon: Image.asset('assets/logo.png'),
             onPressed: () {
-              GoRouter.of(context).push('${RouteNames.mainApp}/${RouteNames.home}');
+              GoRouter.of(
+                context,
+              ).push('${RouteNames.mainApp}/${RouteNames.home}');
             },
           ),
           IconButton(
-            icon: Icon(Icons.refresh, color: AppColors.getIconColor(isDarkMode)),
+            icon: Icon(
+              Icons.refresh,
+              color: AppColors.getIconColor(isDarkMode),
+            ),
             tooltip: "Clear Memory",
             onPressed: () {
               clearMemory();
@@ -344,26 +320,33 @@ class _ChatScreenState extends State<ChatScreen>
                 children: [
                   ListView.builder(
                     padding: const EdgeInsets.all(8),
-                    itemCount: _messages.length + ((_isLoading && _messages.isNotEmpty) ? 1 : 0),
+                    itemCount:
+                        _messages.length +
+                        ((_isLoading && _messages.isNotEmpty) ? 1 : 0),
                     itemBuilder: (context, index) {
-                      if (_isLoading && _messages.isNotEmpty && index == _messages.length) {
+                      if (_isLoading &&
+                          _messages.isNotEmpty &&
+                          index == _messages.length) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
                             children: [
                               RotationTransition(
                                 turns: _starController,
-                                child: Icon(
-                                  Icons.wb_sunny,
-                                  size: 35,
-                                  color: AppColors.getBreathingCircleColor(isDarkMode),
+                                child: Image.asset(
+                                  "assets/talk-to-light.png",
+                                  height: 50,
+                                  width: 50,
+                                  color: AppColors.getIconColor(isDarkMode),
                                 ),
                               ),
                               const SizedBox(width: 10),
                               Text(
                                 "Light is typing...",
                                 style: TextStyle(
-                                  color: AppColors.getTextPrimaryColor(isDarkMode),
+                                  color: AppColors.getTextPrimaryColor(
+                                    isDarkMode,
+                                  ),
                                 ),
                               ),
                             ],
@@ -373,54 +356,13 @@ class _ChatScreenState extends State<ChatScreen>
                       return _messages[index];
                     },
                   ),
-                  if (_messages.isEmpty && !_isLoading) _buildWelcomeMessage(isDarkMode),
-                  if (_messages.isEmpty && _isLoading) _buildLoadingIndicator(isDarkMode),
+                  if (_messages.isEmpty && !_isLoading)
+                    _buildWelcomeMessage(isDarkMode),
+                  if (_messages.isEmpty && _isLoading)
+                    _buildLoadingIndicator(isDarkMode),
                 ],
               ),
             ),
-
-            // new chat is working but hide here
-
-          // SafeArea(
-          //   child:
-          //       _messages.isNotEmpty
-          //           ? Padding(
-          //             padding: const EdgeInsets.all(8.0),
-          //             child: Align(
-          //               alignment: Alignment.center,
-          //               child: ElevatedButton.icon(
-          //                 style: ElevatedButton.styleFrom(
-          //                   backgroundColor: const Color.fromARGB(255, 255, 236, 204),
-          //                   shape: RoundedRectangleBorder(
-          //                     borderRadius: BorderRadius.circular(12),
-          //                   ),
-          //                   padding: const EdgeInsets.symmetric(
-          //                     vertical: 10,
-          //                     horizontal: 16,
-          //                   ),
-          //                 ),
-          //                 onPressed: () {
-          //                   setState(() {
-          //                     _messages.clear();
-          //                     _isLoading = false;
-          //                     _textController.clear();
-          //                     isNewChat = false; // reset flag
-          //                   });
-          //                 },
-          //                 icon: const Icon(
-          //                   Icons.add_comment,
-          //                   color: Color.fromARGB(255, 0, 0, 0),
-          //                   size: 20,
-          //                 ),
-          //                 label: const Text(
-          //                   "New Chat",
-          //                   style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 14),
-          //                 ),
-          //               ),
-          //             ),
-          //           )
-          //           : const SizedBox.shrink(),
-          // ),
             InputArea(
               controller: _textController,
               onSend: _sendMessage,

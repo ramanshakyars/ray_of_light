@@ -32,7 +32,7 @@ class InputArea extends StatelessWidget {
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(left: 16),
+                padding: const EdgeInsets.only(left: 0),
                 child: TextField(
                   controller: controller,
                   style: TextStyle(

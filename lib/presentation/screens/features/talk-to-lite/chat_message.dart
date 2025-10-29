@@ -74,21 +74,17 @@ class _ChatMessageState extends State<ChatMessage> {
           Flexible(
             child: Container(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: widget.isUser 
-                  ? AppColors.getFormsCardColor(isDarkMode)
-                  : AppColors.getTalkToLiteButtonBackgroundColor(isDarkMode),
-                borderRadius: BorderRadius.circular(12),
-              ),
+              // decoration: BoxDecoration(
+              //   color: widget.isUser ? AppColors.getFormsCardColor(isDarkMode): AppColors.getTalkToLiteButtonBackgroundColor(isDarkMode),
+              //   borderRadius: BorderRadius.circular(12),
+              // ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     _displayedText,
                     style: TextStyle(
-                      color: widget.isUser 
-                        ? AppColors.getTextPrimaryColor(isDarkMode)
-                        : AppColors.getTextSecondaryColor(isDarkMode),
+                      color: widget.isUser ? AppColors.getTextPrimaryColor(isDarkMode): AppColors.getTextSecondaryColor(isDarkMode),
                       fontSize: 15,
                     ),
                   ),
