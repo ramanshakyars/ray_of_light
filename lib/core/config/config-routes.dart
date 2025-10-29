@@ -32,7 +32,7 @@ GoRouter createRouter(String initialLocation) {
       ),
       GoRoute(
         path: RouteNames.login,
-        builder: (context, state) => const Login(),
+        builder: (context, state) =>  const LoginPage(),
       ),
       GoRoute(
         path: RouteNames.register,
