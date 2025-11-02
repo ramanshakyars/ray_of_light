@@ -93,10 +93,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors:
-                    isDarkMode
-                        ? [Colors.blueAccent, Colors.purpleAccent]
-                        : [Colors.blue.shade400, Colors.lightBlue.shade300],
+                colors:isDarkMode? [Colors.blueAccent, Colors.purpleAccent]: [Colors.blue.shade400, Colors.lightBlue.shade300],
               ),
               shape: BoxShape.circle,
             ),
