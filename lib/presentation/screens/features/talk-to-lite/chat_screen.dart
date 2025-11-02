@@ -229,7 +229,7 @@ class _ChatScreenState extends State<ChatScreen>
           Column(
             children: [
               Text(
-                "Ask me anything and I'll do my best to help you.",
+                "Ask me anything\nand I'll do my best to help you.",
                 style: TextStyle(
                   color: AppColors.getTextPrimaryColor(isDarkMode),
                   fontSize: 16,

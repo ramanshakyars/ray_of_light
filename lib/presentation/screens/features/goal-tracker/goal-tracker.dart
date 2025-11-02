@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rayoflite/core/services/goalService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
+import 'package:rayoflite/core/theme/AppFont.dart';
+import 'package:rayoflite/core/theme/appcolors.dart';
+import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/screens/features/goal-tracker/addGoal.dart';
 
 class GoalTrackerExercises extends StatefulWidget {
@@ -54,35 +58,34 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
     await showDialog(
       context: context,
       barrierDismissible: false, // Prevent dismissing by tapping outside
-      builder:
-          (dialogContext) => AddGoalDialog(
-            onSubmit: (goalData) async {
-              try {
-                final response = await GoalService.addGoal(goalData);
-                if (!mounted) return;
-                if (response['success']) {
-                  MessageService.showSuccess(
-                    dialogContext,
-                    'Goal added successfully',
-                  );
-                  Navigator.of(dialogContext, rootNavigator: true).pop();
-                  await _loadGoals();
-                } else {
-                  MessageService.showError(
-                    dialogContext,
-                    'Failed to add goal: ${response['message']}',
-                  );
-                }
-              } catch (e) {
-                if (mounted) {
-                  MessageService.showError(
-                    dialogContext,
-                    'Failed to add goal: $e',
-                  );
-                }
-              }
-            },
-          ),
+      builder: (dialogContext) => AddGoalDialog(
+        onSubmit: (goalData) async {
+          try {
+            final response = await GoalService.addGoal(goalData);
+            if (!mounted) return;
+            if (response['success']) {
+              MessageService.showSuccess(
+                dialogContext,
+                'Goal added successfully',
+              );
+              Navigator.of(dialogContext, rootNavigator: true).pop();
+              await _loadGoals();
+            } else {
+              MessageService.showError(
+                dialogContext,
+                'Failed to add goal: ${response['message']}',
+              );
+            }
+          } catch (e) {
+            if (mounted) {
+              MessageService.showError(
+                dialogContext,
+                'Failed to add goal: $e',
+              );
+            }
+          }
+        },
+      ),
     );
   }
 
@@ -90,7 +93,8 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
     Future.delayed(const Duration(seconds: 5), () {
       if (mounted) {
         setState(() {
-          currentQuoteIndex =(currentQuoteIndex + 1) % motivationalQuotes.length;
+          currentQuoteIndex =
+              (currentQuoteIndex + 1) % motivationalQuotes.length;
         });
         _rotateQuotes();
       }
@@ -115,16 +119,18 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
     }
   }
 
-  Widget _buildGoalCard(Map<String, dynamic> goal) {
+  Widget _buildGoalCard(Map<String, dynamic> goal, bool isDarkMode) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 236, 234, 234),
+        color: AppColors.getCard(isDarkMode),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(),
+            color: isDarkMode
+                ? Colors.black.withOpacity(0.3)
+                : Colors.grey.withOpacity(0.2),
             blurRadius: 5,
             offset: const Offset(0, 3),
           ),
@@ -138,24 +144,19 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
             children: [
               Text(
                 goal['title'] ?? '',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
+                style: AppTextStyles.bold22(isDarkMode),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.blue[50],
+                  color: AppColors.getAccent(isDarkMode).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   "${goal['streak'] ?? '0'} day streak",
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.blue[700],
-                    fontWeight: FontWeight.w500,
+                  style: AppTextStyles.medium18(isDarkMode).copyWith(
+                    color: AppColors.getAccent(isDarkMode),
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -164,7 +165,7 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
           const SizedBox(height: 8),
           Text(
             goal['description'] ?? '',
-            style: const TextStyle(fontSize: 14, color: Colors.black54),
+            style: AppTextStyles.button16(isDarkMode),
           ),
           const SizedBox(height: 12),
           if (goal['reason'] != null && goal['reason'].isNotEmpty)
@@ -172,7 +173,7 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
               padding: const EdgeInsets.only(bottom: 4),
               child: Text(
                 "Reason: ${goal['reason']}",
-                style: const TextStyle(fontSize: 12, color: Colors.black45),
+                style: AppTextStyles.button16(isDarkMode),
               ),
             ),
           if (goal['objective'] != null && goal['objective'].isNotEmpty)
@@ -180,13 +181,13 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
               padding: const EdgeInsets.only(bottom: 4),
               child: Text(
                 "Objective: ${goal['objective']}",
-                style: const TextStyle(fontSize: 12, color: Colors.black45),
+                style: AppTextStyles.regular14(isDarkMode),
               ),
             ),
           if (goal['category'] != null && goal['category'].isNotEmpty)
             Text(
               "Category: ${goal['category']}",
-              style: const TextStyle(fontSize: 12, color: Colors.black45),
+              style: AppTextStyles.regular14(isDarkMode),
             ),
         ],
       ),
@@ -195,78 +196,91 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
 
   @override
   Widget build(BuildContext context) {
+     final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.isDarkMode;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Wishes',
-          style: TextStyle(color: Colors.black),
+          style: AppTextStyles.bold22(isDarkMode),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.getBackground(isDarkMode),
         elevation: 2,
+        iconTheme: IconThemeData(
+          color: AppColors.getTextPrimaryColor(isDarkMode),
+        ),
       ),
-      body:
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : RefreshIndicator(
-                onRefresh: _loadGoals,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        margin: const EdgeInsets.only(bottom: 16),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[50],
+      backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : RefreshIndicator(
+              onRefresh: _loadGoals,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: AppColors.getAccent(isDarkMode)
+                            .withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Daily Motivation',
+                            style: AppTextStyles.regular14(isDarkMode)
+                                .copyWith(
+                                    color:
+                                        AppColors.getAccent(isDarkMode)),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            motivationalQuotes[currentQuoteIndex],
+                            style: AppTextStyles.bold22(isDarkMode)
+                                .copyWith(fontStyle: FontStyle.italic),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: _showAddGoalDialog,
+                      icon: const Icon(Icons.add),
+                      label: Text(
+                        "Add Wish",
+                        style: AppTextStyles.bold22(isDarkMode).copyWith(
+                          color: AppColors.getFormSubmitButtonColor(isDarkMode),
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            AppColors.getTextPrimaryColor(isDarkMode),
+                        minimumSize: const Size.fromHeight(50),
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Daily Motivation',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: Colors.blue,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              motivationalQuotes[currentQuoteIndex],
-                              style: const TextStyle(
-                                fontStyle: FontStyle.italic,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
-                      ElevatedButton.icon(
-                        onPressed: _showAddGoalDialog,
-                        icon: const Icon(Icons.add),
-                        label: const Text("Add Wish"),
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size.fromHeight(50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                    ),
+                    const SizedBox(height: 20),
+                    if (goals.isEmpty)
+                      Text(
+                        "No goals added yet.",
+                        style: AppTextStyles.bold22(isDarkMode).copyWith(
+                          color: AppColors.getTextSecondaryColor(isDarkMode),
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      if (goals.isEmpty)
-                        const Text(
-                          "No goals added yet.",
-                          style: TextStyle(color: Colors.grey),
-                        )
-                      else
-                        ...goals.map(_buildGoalCard),
-                    ],
-                  ),
+                      )
+                    else
+                      ...goals.map((goal) => _buildGoalCard(goal, isDarkMode)),
+                  ],
                 ),
               ),
+            ),
     );
   }
 }
