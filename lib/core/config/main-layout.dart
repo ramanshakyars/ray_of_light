@@ -201,11 +201,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
           ),
           label: 'Talk',
         ),
+
+        BottomNavigationBarItem(icon: Icon(Icons.newspaper), label: 'Nest'),
         BottomNavigationBarItem(
           icon: Icon(Icons.filter_vintage),
           label: 'Breath',
         ),
-        BottomNavigationBarItem(icon: Icon(Icons.newspaper), label: 'Nest'),
 
         BottomNavigationBarItem(
           icon: Icon(Icons.track_changes),
