@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/goalService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
@@ -129,10 +131,7 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color:
-                isDarkMode
-                    ? Colors.black.withOpacity(0.3)
-                    : Colors.grey.withOpacity(0.2),
+            color:isDarkMode? Colors.black : Colors.grey,
             blurRadius: 5,
             offset: const Offset(0, 3),
           ),
@@ -151,12 +150,12 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppColors.getAccent(isDarkMode).withOpacity(0.1),
+                  color: AppColors.getFormSubmitButtonColor(isDarkMode),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   "${goal['streak'] ?? '0'} day streak",
-                  style: AppTextStyles.medium18(isDarkMode).copyWith(
+                  style: AppTextStyles.regular14(isDarkMode).copyWith(
                     color: AppColors.getAccent(isDarkMode),
                     fontWeight: FontWeight.w600,
                   ),
@@ -203,12 +202,19 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Wishes', style: AppTextStyles.bold22(isDarkMode)),
-        backgroundColor: AppColors.getBackground(isDarkMode),
-        elevation: 2,
-        iconTheme: IconThemeData(
-          color: AppColors.getTextPrimaryColor(isDarkMode),
-        ),
+        backgroundColor: AppColors.getCard(isDarkMode),
+        elevation: 1,
+        title: Text('wishes', style: AppTextStyles.bold22(isDarkMode)),
+        actions: [
+          IconButton(
+            icon: Image.asset('assets/logo.png'),
+            onPressed:
+                () => GoRouter.of(
+                  context,
+                ).push('${RouteNames.mainApp}/${RouteNames.home}'),
+            iconSize: 32,
+          ),
+        ],
       ),
       backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
       body:
@@ -226,9 +232,7 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
                         padding: const EdgeInsets.all(16),
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
-                          color: AppColors.getAccent(
-                            isDarkMode,
-                          ).withOpacity(0.08),
+                          color: AppColors.getAccent(isDarkMode),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Column(
@@ -257,7 +261,7 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
                         icon: const Icon(Icons.add),
                         label: Text(
                           "Add Wish",
-                          style: AppTextStyles.bold22(isDarkMode).copyWith(
+                          style: AppTextStyles.button16(isDarkMode).copyWith(
                             color: AppColors.getFormSubmitButtonColor(
                               isDarkMode,
                             ),

@@ -167,7 +167,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                       colors: [Colors.blueAccent, Colors.purpleAccent],
                     ).createShader(bounds);
                   },
-                  child: Icon(Icons.chat, size: 28, color: Colors.white),
+                  child: Icon(Icons.auto_awesome, size: 28, color: Colors.white),
                 ),
               ),
               // AI badge with glow
@@ -209,13 +209,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         ),
 
         BottomNavigationBarItem(
-          icon: Icon(Icons.track_changes),
+          icon: Icon(Icons.favorite),
           label: 'Wishes',
         ),
         // BottomNavigationBarItem(icon: Icon(Icons.person_pin), label: 'Profile'),
       ],
     );
   }
+
 
   void _navigateToTab(BuildContext context, int index) {
     setState(() => _currentIndex = index);
