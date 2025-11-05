@@ -1,196 +1,373 @@
+import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'dart:async';
-import 'dart:math';
 
 import 'package:rayoflite/core/config/routenames.dart';
-import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
+import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 
 class BreathingScreen extends StatefulWidget {
   const BreathingScreen({super.key});
 
   @override
-  _BreathingScreenState createState() => _BreathingScreenState();
+  State<BreathingScreen> createState() => _BreathingScreenState();
 }
 
 class _BreathingScreenState extends State<BreathingScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _animation;
-  Timer? _holdTimer;
-  String _instruction = "INHALE";
-  double _angle = 0;
-  final Duration _duration = Duration(seconds: 4);
-  Duration _totalDuration = Duration.zero;
-  final double _circleRadius = 140;
-  Color _dotColor = Colors.black;
-  // Color _dotColor = AppColors.inhaleDark;
-  double _dotSize = 40.0;
+  late Animation<double> _scaleAnimation;
+
+  Timer? _phaseTimer;
+  String _instruction = "Breathe In";
+  int _count = 4;
+  bool _isRunning = false;
+
+  // Box breathing pattern timings
+  final int _inhaleSeconds = 4;
+  final int _holdSeconds = 4;
+  final int _exhaleSeconds = 4;
+  final int _holdAfterExhaleSeconds = 4;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: _duration);
-      // ..addListener(_updateAnimation);
 
-    // _startBreathingCycle();
+    // ✅ FIXED: use normal 0–1 controller range and apply Tween for scaling
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: _inhaleSeconds),
+    );
+
+    _scaleAnimation = Tween<double>(begin: 0.7, end: 1.2).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
   }
 
-  // ... rest of your methods unchanged ...
+  void _startCycle() {
+    if (_isRunning) return;
+    setState(() {
+      _isRunning = true;
+      _instruction = "Breathe In";
+      _count = _inhaleSeconds;
+    });
+    _runPhase("inhale");
+  }
+
+  void _runPhase(String phase) {
+    _phaseTimer?.cancel();
+
+    if (phase == "inhale") {
+      _controller.forward();
+      _instruction = "Breathe In";
+      _count = _inhaleSeconds;
+    } else if (phase == "hold1") {
+      _instruction = "Hold";
+      _count = _holdSeconds;
+    } else if (phase == "exhale") {
+      _controller.reverse();
+      _instruction = "Breathe Out";
+      _count = _exhaleSeconds;
+    } else if (phase == "hold2") {
+      _instruction = "Hold";
+      _count = _holdAfterExhaleSeconds;
+    }
+
+    _startCountdown(phase);
+  }
+
+  void _startCountdown(String phase) {
+    _phaseTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_count > 1) {
+        setState(() => _count--);
+      } else {
+        timer.cancel();
+        _nextPhase(phase);
+      }
+    });
+  }
+
+  void _nextPhase(String current) {
+    switch (current) {
+      case "inhale":
+        _runPhase("hold1");
+        break;
+      case "hold1":
+        _runPhase("exhale");
+        break;
+      case "exhale":
+        _runPhase("hold2");
+        break;
+      case "hold2":
+        _runPhase("inhale");
+        break;
+    }
+  }
+
+  void _pauseCycle() {
+    _phaseTimer?.cancel();
+    if (_controller.isAnimating) _controller.stop();
+    setState(() => _isRunning = false);
+  }
+
+  void _resetCycle() {
+    _phaseTimer?.cancel();
+    if (mounted) _controller.reset();
+    setState(() {
+      _isRunning = false;
+      _instruction = "Breathe In";
+      _count = _inhaleSeconds;
+    });
+  }
+
+  @override
+  void dispose() {
+    _phaseTimer?.cancel();
+    if (mounted) _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // ✅ Move provider access here
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
 
-    final dotX = _circleRadius * cos(_angle);
-    final dotY = _circleRadius * sin(_angle);
-
     return Scaffold(
+      backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
       appBar: AppBar(
-        title: const Text('Breathing Exercise'),
-        backgroundColor: AppColors.getTextSecondaryColor(isDarkMode),
-        elevation: 4,
+        title: Text('Box Breathing', style: AppTextStyles.medium18(isDarkMode)),
+        backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
+        elevation: 0,
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: Image.asset('assets/logo.png'),
-            onPressed:
-                () => GoRouter.of(
-                  context,
-                ).push('${RouteNames.mainApp}/${RouteNames.home}'),
+            icon: Image.asset('assets/logo.png', height: 30),
+            onPressed: () => GoRouter.of(context).push(
+              '${RouteNames.mainApp}/${RouteNames.home}',
+            ),
           ),
         ],
       ),
-      backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
-      body: Center(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // 🫁 Instruction with emoji
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: _instruction,
-                    style: AppTextStyles.medium22(isDarkMode),
-                  ),
-                  WidgetSpan(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Icon(
-                        _instruction == "INHALE"
-                            ? Icons.arrow_upward
-                            : _instruction == "EXHALE"
-                            ? Icons.arrow_downward
-                            : Icons.pause,
-                        color: _dotColor,
-                        size: 30,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 40),
-
-            // 🌫️ Breathing circle
-            SizedBox(
-              width: _circleRadius * 2 + 60,
-              height: _circleRadius * 2 + 60,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    width: _circleRadius * 2,
-                    height: _circleRadius * 2,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.getBreathingCircleColor(isDarkMode),
-                      border: Border.all(
-                        color: AppColors.getHoldDark(isDarkMode),
-                        width: 3,
-                      ),
-                    ),
-                  ),
-
-                  // 🟢 Moving dot
-                  Transform.translate(
-                    offset: Offset(dotX, dotY),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      width: _dotSize,
-                      height: _dotSize,
-                      decoration: BoxDecoration(
-                        color: _dotColor,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: _dotColor.withOpacity(0.5),
-                            blurRadius: 15,
-                            spreadRadius: 3,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 40),
-
-            // ⏱️ Duration
-            Text(
-              "⏱️ ${_totalDuration.inSeconds} seconds",
-              style: AppTextStyles.medium18(isDarkMode),
-            ),
-
-            // 🎛️ Control buttons
+            const SizedBox(height: 10),
+            _buildBreathingCard(isDarkMode),
             const SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FloatingActionButton(
-                  onPressed: () {
-                    if (_controller.isAnimating) {
-                      _controller.stop();
-                      _holdTimer?.cancel();
-                      setState(() {});
-                    } else {
-                      // _startBreathingCycle();
-                    }
-                  },
-                  backgroundColor: _dotColor,
-                  child: Icon(
-                    _controller.isAnimating ? Icons.pause : Icons.play_arrow,
-                    size: 30,
-                    color: AppColors.getTextPrimaryColor(isDarkMode),
-                  ),
-                ),
-                const SizedBox(width: 20),
-                FloatingActionButton(
-                  onPressed: () {
-                    _controller.reset();
-                    _holdTimer?.cancel();
-                    setState(() {
-                      _totalDuration = Duration.zero;
-                      _instruction = "INHALE";
-                      _angle = 0;
-                      _dotColor = Colors.black;
-                    });
-                  },
-                  backgroundColor: AppColors.getHoldDark(isDarkMode),
-                  child: const Icon(Icons.replay, size: 30),
-                ),
-              ],
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Practice Sessions",
+                style: AppTextStyles.medium18(isDarkMode),
+              ),
+            ),
+            const SizedBox(height: 15),
+            _buildSessionCard(
+              isDarkMode,
+              title: 'Box Breathing',
+              subtitle: 'Equal breathing for balance and calm',
+              duration: '5 min',
+            ),
+            const SizedBox(height: 10),
+            _buildSessionCard(
+              isDarkMode,
+              icon: Icons.air_rounded,
+              bgColor: AppColors.hexToColor('#E9D5FF'),
+              title: '4-7-8 Breathing',
+              subtitle: 'Relaxation technique for better sleep',
+              duration: '10 min',
+            ),
+            const SizedBox(height: 10),
+            _buildSessionCard(
+              isDarkMode,
+              icon: Icons.self_improvement_rounded,
+              bgColor: AppColors.hexToColor('#E0E7FF'),
+              title: 'Morning Energizer',
+              subtitle: 'Start your day with vitality',
+              duration: '3 min',
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildBreathingCard(bool isDarkMode) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColors.hexToColor('#8E2DE2'),
+            AppColors.hexToColor('#4A00E0'),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+        borderRadius: BorderRadius.circular(25),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Text("Box Breathing", style: AppTextStyles.medium22(isDarkMode)),
+          const SizedBox(height: 4),
+          Text("Find your center", style: AppTextStyles.regular14(isDarkMode)),
+          const SizedBox(height: 25),
+          AnimatedBuilder(
+            animation: _scaleAnimation,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: _scaleAnimation.value,
+                child: Container(
+                  width: 180,
+                  height: 180,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.hexToColor('#6A11CB'),
+                        AppColors.hexToColor('#2575FC'),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.15),
+                        blurRadius: 15,
+                        spreadRadius: 3,
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          _instruction,
+                          style: AppTextStyles.medium18(isDarkMode)
+                              .copyWith(color: Colors.white),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          _count.toString(),
+                          style: AppTextStyles.bold28(isDarkMode).copyWith(
+                            color: Colors.white,
+                            fontSize: 48,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 25),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FloatingActionButton(
+                heroTag: "startBtn",
+                onPressed: _isRunning ? _pauseCycle : _startCycle,
+                backgroundColor: Colors.white,
+                child: Icon(
+                  _isRunning ? Icons.pause : Icons.play_arrow,
+                  color: AppColors.hexToColor('#6A11CB'),
+                  size: 30,
+                ),
+              ),
+              const SizedBox(width: 20),
+              FloatingActionButton(
+                heroTag: "resetBtn",
+                onPressed: _resetCycle,
+                backgroundColor: Colors.white,
+                child: Icon(
+                  Icons.replay,
+                  color: AppColors.hexToColor('#6A11CB'),
+                  size: 28,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSessionCard(
+    bool isDarkMode, {
+    String? image,
+    IconData? icon,
+    Color? bgColor,
+    required String title,
+    required String subtitle,
+    required String duration,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.getCard(isDarkMode),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          if (image != null)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(image, height: 50, width: 50, fit: BoxFit.cover),
+            )
+          else
+            Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                color: bgColor ?? AppColors.getAccent(isDarkMode),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: AppColors.getPrimary(isDarkMode)),
+            ),
+          const SizedBox(width: 15),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: AppTextStyles.medium18(isDarkMode)),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: AppTextStyles.regular14(isDarkMode).copyWith(
+                    color: AppColors.getMutedForeground(isDarkMode),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            duration,
+            style: AppTextStyles.regular14(isDarkMode).copyWith(
+              color: AppColors.getMutedForeground(isDarkMode),
+            ),
+          ),
+        ],
       ),
     );
   }
