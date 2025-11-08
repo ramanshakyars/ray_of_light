@@ -138,7 +138,7 @@ class _BreathingScreenState extends State<BreathingScreen>
     return Scaffold(
       backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
       appBar: AppBar(
-        title: Text('Box Breathing', style: AppTextStyles.medium18(isDarkMode)),
+        title: Text('Breathing Exercise', style: AppTextStyles.medium18(isDarkMode)),
         backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
         elevation: 0,
         automaticallyImplyLeading: false,
@@ -202,10 +202,7 @@ class _BreathingScreenState extends State<BreathingScreen>
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            AppColors.hexToColor('#8E2DE2'),
-            AppColors.hexToColor('#4A00E0'),
-          ],
+          colors: [AppColors.hexToColor('#8E2DE2'),AppColors.hexToColor('#4A00E0')],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
