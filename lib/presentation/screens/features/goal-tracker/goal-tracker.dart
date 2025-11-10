@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/constants/pathConfig.dart';
 import 'package:rayoflite/core/services/goalService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
@@ -92,6 +93,29 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
     );
   }
 
+  Future<void> updateGoalStatus(String goalId, bool isCompleted) async {
+    try {
+      final String updatedStatus = isCompleted ? 'COMPLETED' : 'PENDING';
+      final url =
+          '${PathConfig.updateGoalStatus}/$goalId?status=$updatedStatus';
+      final response = await GoalService.updateGoalStatus(url);
+      if (response['success']) {
+        await _loadGoals();
+        MessageService.showSuccess(
+          context,
+          'Goal status updated to $updatedStatus',
+        );
+      } else {
+        MessageService.showError(
+          context,
+          'Failed to update goal status: ${response['message']}',
+        );
+      }
+    } catch (e) {
+      MessageService.showError(context, 'Error updating goal status: $e');
+    }
+  }
+
   void _rotateQuotes() {
     Future.delayed(const Duration(seconds: 5), () {
       if (mounted) {
@@ -123,15 +147,22 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
   }
 
   Widget _buildGoalCard(Map<String, dynamic> goal, bool isDarkMode) {
+    // Determine color based on goal status
+    final isCompleted = (goal['status'] == 'COMPLETED');
+    final cardColor =
+        isCompleted ? const Color(0xFFB9F6CA) : const Color(0xFFFFF9C4);
+    final borderColor =
+        isCompleted ? const Color(0xFF00C853) : const Color(0xFFFFD600);
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.getCard(isDarkMode),
+        color: cardColor,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: borderColor, width: 2),
         boxShadow: [
           BoxShadow(
-            color:isDarkMode? Colors.black : Colors.grey,
+            color: isDarkMode ? Colors.black : Colors.grey,
             blurRadius: 5,
             offset: const Offset(0, 3),
           ),
@@ -143,23 +174,43 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                goal['title'] ?? '',
-                style: AppTextStyles.bold22(isDarkMode),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AppColors.getFormSubmitButtonColor(isDarkMode),
-                  borderRadius: BorderRadius.circular(12),
-                ),
+              Expanded(
                 child: Text(
-                  "${goal['streak'] ?? '0'} day streak",
-                  style: AppTextStyles.regular14(isDarkMode).copyWith(
-                    color: AppColors.getAccent(isDarkMode),
-                    fontWeight: FontWeight.w600,
-                  ),
+                  goal['title'] ?? '',
+                  style: AppTextStyles.bold22(isDarkMode),
+                  overflow: TextOverflow.ellipsis,
                 ),
+              ),
+              Row(
+                children: [
+                  Checkbox(
+                    value: isCompleted,
+                    onChanged: (bool? value) {
+                      if (value != null) {
+                        updateGoalStatus(goal['id'], value);
+                      }
+                    },
+                    activeColor: Colors.green,
+                    checkColor: Colors.white,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.getFormSubmitButtonColor(isDarkMode),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      "${goal['streak'] ?? '0'} day streak",
+                      style: AppTextStyles.regular14(isDarkMode).copyWith(
+                        color: AppColors.getAccent(isDarkMode),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

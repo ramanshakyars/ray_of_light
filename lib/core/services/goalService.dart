@@ -40,4 +40,24 @@ class GoalService {
       return {'success': false, 'message': 'Exception in getGoals(): $e'};
     }
   }
+
+  static Future<Map<String, dynamic>> updateGoalStatus(String url) async {
+    try {
+      final raw = await HttpService.put(url, {});
+
+      if (raw is! Map) {
+        return {
+          'success': false,
+          'message': 'Unexpected response format: ${raw.runtimeType}',
+        };
+      }
+
+      return {'success': true, 'data': raw};
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Exception in updateGoalStatus(): $e',
+      };
+    }
+  }
 }
