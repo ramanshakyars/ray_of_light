@@ -60,11 +60,11 @@ class AppColors {
   static const Color lightTextSecondaryColor = Color(0xFFFFFFFF);
   static const Color lightAppBackgroundColor = Color(0xFFFFFFFF);
   static final Color lightTalkToLiteButtonBackgroundColor = hexToColor(
-    "#9333ea",
+    "#ad33ea",
   );
 
-  static final Color lightFormSubmitButtonColor = hexToColor("#9333ea");
-  static final Color slectedBottomIconColor = hexToColor("#9333ea");
+  static final Color lightFormSubmitButtonColor = hexToColor("#ad33ea");
+  static final Color slectedBottomIconColor = hexToColor("#ad33ea");
   static const Color lightFormsCardColor = Color(0xFFFFFFFF);
   static const Color lightInputFieldBackgroundColor = Color(0xFFD5D4D1);
   static const Color lightBreathingCircleColor = Color(0xFFFBBF24);

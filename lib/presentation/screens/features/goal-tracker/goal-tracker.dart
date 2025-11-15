@@ -97,10 +97,8 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
       final String updatedStatus = isCompleted ? 'COMPLETED' : 'PENDING';
       final url = '${PathConfig.updateGoalStatus}/$goalId?status=$updatedStatus';
       final response = await GoalService.updateGoalStatus(url);
-      print(response);
       if (response['success']) {
         // reload goals after status update
-        print(response);
         await _loadGoals();
         MessageService.showSuccess(
           context,

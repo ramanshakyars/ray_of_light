@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 
@@ -70,7 +71,7 @@ class _ChatMessageState extends State<ChatMessage> {
         mainAxisAlignment:
             widget.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-        //  if (!widget.isUser) _buildBotAvatar(),
+          //  if (!widget.isUser) _buildBotAvatar(),
           Flexible(
             child: Container(
               padding: const EdgeInsets.all(12),
@@ -83,10 +84,7 @@ class _ChatMessageState extends State<ChatMessage> {
                 children: [
                   Text(
                     _displayedText,
-                    style: TextStyle(
-                      color: AppColors.getTextPrimaryColor(isDarkMode),
-                      fontSize: 15,
-                    ),
+                    style: AppTextStyles.chatBotText(isDarkMode),
                   ),
                   if (widget.extraWidget != null) ...[
                     const SizedBox(height: 10),
@@ -106,8 +104,8 @@ class _ChatMessageState extends State<ChatMessage> {
     return Container(
       margin: const EdgeInsets.only(right: 8),
       child: const CircleAvatar(
-       // backgroundColor: Colors.blueAccent,
-      //  child: Icon(Icons.auto_awesome, color: Colors.white, size: 20),
+        // backgroundColor: Colors.blueAccent,
+        //  child: Icon(Icons.auto_awesome, color: Colors.white, size: 20),
       ),
     );
   }

@@ -96,7 +96,7 @@ class _ChatScreenState extends State<ChatScreen>
         "message": message,
         "conversationId": conversationId ?? "",
       };
-      final chatResponse = await Talktolightservice.postChatHistory(
+      final  chatResponse = await Talktolightservice.postChatHistory(
         chatRequest,
       );
       if (chatResponse != null) {
