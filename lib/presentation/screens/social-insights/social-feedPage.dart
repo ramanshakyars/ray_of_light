@@ -8,29 +8,11 @@ import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/UserMood.dart';
 import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/mood-managment.dart';
+import 'package:rayoflite/presentation/screens/social-insights/Post.dart';
+
 
 // Simple Post model (expand as needed)
-class Post {
-  final String id;
-  final String authorName;
-  final String avatarUrl;
-  final String tag;
-  final String timeAgo;
-  final String imageUrl;
-  bool liked;
-  int likesCount;
 
-  Post({
-    required this.id,
-    required this.authorName,
-    required this.avatarUrl,
-    required this.tag,
-    required this.timeAgo,
-    required this.imageUrl,
-    this.liked = false,
-    this.likesCount = 0,
-  });
-}
 
 class SocialFeedPage extends StatefulWidget {
   const SocialFeedPage({Key? key}) : super(key: key);
@@ -86,6 +68,7 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
 
     // TODO: Call your create-post API to persist post.
     // On success, add to list or refresh posts.
+    // final response = await SocialService
     final newPost = Post(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       authorName: 'You',

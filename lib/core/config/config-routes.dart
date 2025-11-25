@@ -6,7 +6,7 @@ import 'package:rayoflite/presentation/screens/auth/login.dart';
 import 'package:rayoflite/presentation/screens/auth/register.dart';
 import 'package:rayoflite/presentation/screens/auth/reset-password.dart';
 import 'package:rayoflite/presentation/screens/features/profile.dart';
-import 'package:rayoflite/presentation/screens/home/social-feedPage.dart';
+import 'package:rayoflite/presentation/screens/social-insights/social-feedPage.dart';
 import 'package:rayoflite/presentation/screens/home/user-dashboard.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat_screen.dart';
 import 'package:rayoflite/presentation/screens/features/journalism/junerlism.dart';

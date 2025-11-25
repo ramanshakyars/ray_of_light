@@ -39,4 +39,12 @@ class PathConfig {
   static const String deletechat = '$baseUrl/chat/conversations';
   static const String clearChatsMemory = '$baseUrl/chat//conversations/clear-memory';
   static const String getConversationsList = '$baseUrl/chat/conversations/list';
+
+  // social -feed 
+    static const String postInsight = '$baseUrl/insight/post';
+    static const String getAllPosts = '$baseUrl/insight/get';
+    static const String doCommentOnPost = '$baseUrl/insight/comment';
+    static const String doLikeOnPost = '$baseUrl/insight/like';
+    static const String getCommentsByPostId = '$baseUrl/insight/comments/{postId}';
+
 }
