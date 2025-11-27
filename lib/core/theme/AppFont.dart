@@ -65,8 +65,8 @@ class AppTextStyles {
 
   static TextStyle chatBotText(bool isDarkMode) => TextStyle(
     fontFamily: 'Roboto',
-    fontSize: 12,
-    fontWeight: FontWeight.w300, // light
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
     color: AppColors.getTextPrimaryColor(isDarkMode),
     height: 1.3,
   );
