@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
@@ -9,10 +10,6 @@ import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/UserMood.dart';
 import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/mood-managment.dart';
 import 'package:rayoflite/presentation/screens/social-insights/Post.dart';
-
-
-// Simple Post model (expand as needed)
-
 
 class SocialFeedPage extends StatefulWidget {
   const SocialFeedPage({Key? key}) : super(key: key);
@@ -24,6 +21,7 @@ class SocialFeedPage extends StatefulWidget {
 class _SocialFeedPageState extends State<SocialFeedPage> {
   final TextEditingController _createController = TextEditingController();
   List<Post> _posts = [];
+  String loggedInUserRole = '';
 
   @override
   void initState() {
@@ -32,14 +30,16 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
   }
 
   Future<void> _loadInitialPosts() async {
-    // TODO: Replace this mock with an API call to fetch posts.
-    // Example: await apiService.fetchPosts();
+    final loggedInUserRole = await LocalStorageService.getUser();
+    this.loggedInUserRole = loggedInUserRole?['roles'];
+
     setState(() {
+      this.loggedInUserRole = loggedInUserRole?['roles'];
       _posts = [
         Post(
           id: '1',
           authorName: 'Ray of Light',
-          avatarUrl: '', // empty will fallback to initials
+          avatarUrl: '',
           tag: 'Daily inspiration',
           timeAgo: 'Just now',
           imageUrl:
@@ -50,7 +50,7 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
         Post(
           id: '2',
           authorName: 'Ray of Light',
-          avatarUrl: '', // empty will fallback to initials
+          avatarUrl: '',
           tag: 'Daily inspiration',
           timeAgo: 'Just now',
           imageUrl:
@@ -66,9 +66,6 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
     final text = _createController.text.trim();
     if (text.isEmpty) return;
 
-    // TODO: Call your create-post API to persist post.
-    // On success, add to list or refresh posts.
-    // final response = await SocialService
     final newPost = Post(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       authorName: 'You',
@@ -76,7 +73,7 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
       tag: '',
       timeAgo: 'Just now',
       imageUrl:
-          'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1000&q=80', // placeholder
+          'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1000&q=80',
       likesCount: 0,
     );
 
@@ -87,7 +84,6 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
   }
 
   void _toggleLike(Post post) {
-    // TODO: Call like/unlike API as required.
     setState(() {
       post.liked = !post.liked;
       post.likesCount += post.liked ? 1 : -1;
@@ -113,6 +109,7 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDarkMode;
     final bg = AppColors.getAppBackgroundColor(isDark);
+
     return Scaffold(
       backgroundColor: bg,
       appBar: AppBar(
@@ -139,8 +136,12 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
             child: Column(
               children: [
-                _buildCreatePostRow(isDark),
+                /// 👇👇 ONLY ADMINS CAN SEE THIS
+                if (loggedInUserRole == 'ROLE_ADMIN')
+                  _buildCreatePostRow(isDark),
+
                 const SizedBox(height: 12),
+
                 for (final post in _posts) ...[
                   PostCard(
                     post: post,
@@ -217,7 +218,6 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
   }
 }
 
-// Post card widget
 class PostCard extends StatelessWidget {
   final Post post;
   final VoidCallback? onLike;
@@ -256,7 +256,6 @@ class PostCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header row
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             child: Row(
@@ -318,7 +317,6 @@ class PostCard extends StatelessWidget {
             ),
           ),
 
-          // Image
           if (post.imageUrl.isNotEmpty)
             ClipRRect(
               borderRadius: const BorderRadius.only(
@@ -344,7 +342,6 @@ class PostCard extends StatelessWidget {
               ),
             ),
 
-          // Actions row
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: Row(
@@ -369,9 +366,7 @@ class PostCard extends StatelessWidget {
                     Icons.chat_bubble_outline,
                     color: AppColors.getIconColor(isDarkMode),
                   ),
-                  onPressed: () {
-                    // TODO: Navigate to comments screen or open comments bottom sheet
-                  },
+                  onPressed: () {},
                 ),
                 Spacer(),
                 IconButton(
@@ -379,9 +374,7 @@ class PostCard extends StatelessWidget {
                     Icons.bookmark_border,
                     color: AppColors.getIconColor(isDarkMode),
                   ),
-                  onPressed: () {
-                    // TODO: bookmark API
-                  },
+                  onPressed: () {},
                 ),
               ],
             ),
@@ -392,8 +385,6 @@ class PostCard extends StatelessWidget {
   }
 }
 
-// Example main to preview the widget and theme integration.
-// Remove or adapt if you already have an App scaffold.
 void main() {
   runApp(
     ChangeNotifierProvider(
@@ -409,6 +400,7 @@ class MyAppPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDarkMode;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
