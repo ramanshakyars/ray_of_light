@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/journalService.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
+import 'package:rayoflite/core/theme/AppFont.dart';
+import 'package:rayoflite/core/theme/appcolors.dart';
+import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'journalism_drawer.dart';
+// Make sure this is the ThemeProvider code from your snippet
 
 class JournalismScreen extends StatefulWidget {
   const JournalismScreen({super.key});
@@ -81,10 +87,11 @@ class _JournalismScreenState extends State<JournalismScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.isDarkMode;
 
     return Scaffold(
+      backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
       key: _scaffoldKey,
       drawer: Drawer(
         child: JournalismDrawer(
@@ -92,31 +99,24 @@ class _JournalismScreenState extends State<JournalismScreen> {
           onThoughtSelected: (thought) {
             _thoughtController.text = thought;
           },
-          theme: theme,
+          theme: Theme.of(context),
         ),
       ),
       appBar: AppBar(
+        backgroundColor: AppColors.getCard(isDarkMode),
+        elevation: 1,
         title: Text(
           'Nest',
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: colorScheme.onSurface,
-          ),
+          style: AppTextStyles.bold22(isDarkMode),
         ),
-        backgroundColor: colorScheme.surface,
-        elevation: 1,
-        shadowColor: Colors.black.withValues(),
         leading: IconButton(
-          icon: Icon(Icons.menu, color: colorScheme.onSurface),
+          icon: Icon(Icons.menu, color: AppColors.getIconColor(isDarkMode)),
           onPressed: () => _scaffoldKey.currentState?.openDrawer(),
         ),
         actions: [
           IconButton(
             icon: Image.asset('assets/logo.png'),
-            onPressed:
-                () => GoRouter.of(
-                  context,
-                ).push('${RouteNames.mainApp}/${RouteNames.home}'),
+            onPressed: () => GoRouter.of(context).push('${RouteNames.mainApp}/${RouteNames.home}'),
             iconSize: 32,
           ),
         ],
@@ -126,48 +126,36 @@ class _JournalismScreenState extends State<JournalismScreen> {
           children: [
             // Inspiration section
             Container(
+              width: double.infinity,
               padding: const EdgeInsets.all(16),
-              // decoration: BoxDecoration(
-              //   color: colorScheme.surfaceBright.withOpacity(0.5),
-              //   border: Border(
-              //     bottom: BorderSide(
-              //       color: colorScheme.outline.withOpacity(0.2),
-              //       width: 1,
-              //     ),
-              //   ),
-              // ),
+              decoration: BoxDecoration(
+                color: AppColors.getMuted(isDarkMode).withOpacity(0.08),
+                border: Border(
+                  bottom: BorderSide(
+                    color: AppColors.getBorder(isDarkMode),
+                    width: 1,
+                  ),
+                ),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Text(
-                  //   '"Nest"',
-                  //   style: theme.textTheme.titleMedium?.copyWith(
-                  //     fontWeight: FontWeight.w500,
-                  //     fontStyle: FontStyle.italic,
-                  //     color: colorScheme.onSurfaceVariant,
-                  //   ),
-                  // ),
-                  // const SizedBox(height: 8),
-
-                  // Daily affirmation (only 1 per day)
                   Chip(
                     label: Text(
                       _todaysAffirmation,
-                      style: theme.textTheme.labelMedium,
+                      style: AppTextStyles.regular14(isDarkMode),
                     ),
-                    backgroundColor: colorScheme.primaryContainer,
-                    side: BorderSide.none,
+                    backgroundColor: AppColors.getAccent(isDarkMode),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
+                    side: BorderSide.none,
                   ),
                   const SizedBox(height: 12),
-
                   Text(
                     'Write what\'s in your mind. Share your thoughts, affirmations, or motivations.',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
+                    style: AppTextStyles.regular16(isDarkMode)
+                        .copyWith(color: AppColors.getMutedForeground(isDarkMode)),
                   ),
                 ],
               ),
@@ -175,97 +163,90 @@ class _JournalismScreenState extends State<JournalismScreen> {
 
             // Posted thoughts section
             Expanded(
-              child:
-                  _postedThoughts.isEmpty
-                      ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.lightbulb_outline,
-                              size: 48,
-                              color: colorScheme.onSurface.withValues(),
+              child: _postedThoughts.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.lightbulb_outline,
+                            size: 48,
+                            color: AppColors.getMutedForeground(isDarkMode),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No thoughts shared yet.\nBe the first to inspire others!',
+                            textAlign: TextAlign.center,
+                            style: AppTextStyles.medium18(isDarkMode).copyWith(
+                              color: AppColors.getMutedForeground(isDarkMode),
                             ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No thoughts shared yet.\nBe the first to inspire others!',
-                              textAlign: TextAlign.center,
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                color: colorScheme.onSurface.withValues(),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      itemCount: _postedThoughts.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: AppColors.getCard(isDarkMode),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.getBorder(isDarkMode).withOpacity(0.13),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                      : ListView.builder(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        itemCount: _postedThoughts.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: colorScheme.surface,
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 2),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 16,
+                                      backgroundColor: AppColors.getAccent(isDarkMode),
+                                      child: Icon(
+                                        Icons.person,
+                                        size: 16,
+                                        color: AppColors.getAccentForeground(isDarkMode),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Posted ${index + 1} hour${index == 0 ? '' : 's'} ago',
+                                      style: AppTextStyles.regular14(isDarkMode).copyWith(
+                                        color: AppColors.getMutedForeground(isDarkMode),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  _postedThoughts[index],
+                                  style: AppTextStyles.regular16(isDarkMode),
                                 ),
                               ],
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 16,
-                                        backgroundColor:
-                                            colorScheme.primaryContainer,
-                                        child: Icon(
-                                          Icons.person,
-                                          size: 16,
-                                          color: colorScheme.onPrimaryContainer,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        'Posted ${index + 1} hour${index == 0 ? '' : 's'} ago',
-                                        style: theme.textTheme.labelSmall
-                                            ?.copyWith(
-                                              color:
-                                                  colorScheme.onSurfaceVariant,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Text(
-                                    _postedThoughts[index],
-                                    style: theme.textTheme.bodyLarge,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      },
+                    ),
             ),
 
             // Input section
             Container(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               decoration: BoxDecoration(
-                color: colorScheme.surface,
+                color: AppColors.getCard(isDarkMode),
                 border: Border(
                   top: BorderSide(
-                    color: colorScheme.outline.withValues(),
+                    color: AppColors.getBorder(isDarkMode),
                     width: 1,
                   ),
                 ),
@@ -278,19 +259,20 @@ class _JournalismScreenState extends State<JournalismScreen> {
                     minLines: 1,
                     decoration: InputDecoration(
                       hintText: 'Write your thought or affirmation here...',
-                      hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
+                      hintStyle: AppTextStyles.regular16(isDarkMode)
+                          .copyWith(color: AppColors.getMutedForeground(isDarkMode)),
+                      fillColor: AppColors.getInputBackground(isDarkMode),
+                      filled: true,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(
-                          color: colorScheme.outline.withValues(),
+                          color: AppColors.getBorder(isDarkMode),
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(
-                          color: colorScheme.primary,
+                          color: AppColors.getPrimary(isDarkMode),
                           width: 1.5,
                         ),
                       ),
@@ -298,42 +280,40 @@ class _JournalismScreenState extends State<JournalismScreen> {
                       suffixIcon: IconButton(
                         icon: Icon(
                           Icons.send,
-                          color:
-                              _isPosting
-                                  ? colorScheme.onSurface.withValues()
-                                  : colorScheme.primary,
+                          color: _isPosting
+                              ? AppColors.getBorder(isDarkMode)
+                              : AppColors.getPrimary(isDarkMode),
                         ),
                         onPressed: _isPosting ? null : _postThought,
                       ),
                     ),
-                    style: theme.textTheme.bodyLarge,
+                    style: AppTextStyles.regular16(isDarkMode),
                   ),
                   const SizedBox(height: 12),
                   SizedBox(
                     width: double.infinity,
-                    child: FilledButton(
+                    child: ElevatedButton(
                       onPressed: _isPosting ? null : _postThought,
-                      style: FilledButton.styleFrom(
+                      style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: AppColors.getFormSubmitButtonColor(isDarkMode),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
+                        foregroundColor: AppColors.getPrimaryForeground(isDarkMode),
+                        elevation: _isPosting ? 0 : 2,
+                        textStyle: AppTextStyles.button16(isDarkMode),
                       ),
-                      child:
-                          _isPosting
-                              ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                              : Text(
-                                'Share Your Thought',
-                                style: theme.textTheme.labelLarge?.copyWith(
-                                  color: colorScheme.onPrimary,
-                                ),
-                              ),
+                      child: _isPosting
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Text(
+                              'Share Your Thought',
+                              style: AppTextStyles.buttonText(isDarkMode),
+                            ),
                     ),
                   ),
                 ],

@@ -1,22 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/authService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
+import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
-
-void main() {
-  runApp(Login());
-}
-
-class Login extends StatelessWidget {
-  const Login({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: LoginPage());
-  }
-}
+import 'package:rayoflite/core/theme/themeProvider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -70,9 +60,11 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final isSmallScreen = screenHeight < 600;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.isDarkMode;
 
     return Scaffold(
-      backgroundColor: AppColors.appBackgroundColor,
+      backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(isSmallScreen ? 16.0 : 24.0),
@@ -96,27 +88,25 @@ class _LoginPageState extends State<LoginPage> {
                         height: 80,
                         fit: BoxFit.contain,
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       Text(
                         'Ray of Light',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
+                        style: AppTextStyles.bold28(isDarkMode),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
                         'We are here to help you to be better than yesterday',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                        style: AppTextStyles.regular14(isDarkMode),
                       ),
-                      SizedBox(height: 32),
+                      const SizedBox(height: 32),
                     ],
-                    // Login Form
                     Card(
-                      color:AppColors.formsCardColor,
+                      color: AppColors.getFormsCardColor(isDarkMode),
                       elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                       child: Padding(
                         padding: EdgeInsets.all(isSmallScreen ? 16.0 : 24.0),
                         child: Form(
@@ -125,22 +115,22 @@ class _LoginPageState extends State<LoginPage> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'Login/Signup',
-                                style: TextStyle(
-                                  fontSize: isSmallScreen ? 20 : 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                'Login / Signup',
+                                style: AppTextStyles.bold22(isDarkMode),
                               ),
-                              SizedBox(height: 20),
+                              const SizedBox(height: 20),
                               TextFormField(
                                 controller: _emailController,
                                 decoration: InputDecoration(
                                   labelText: 'Email',
-                                  prefixIcon: Icon(Icons.email, size: 20),
+                                  labelStyle: AppTextStyles.regular14(isDarkMode),
+                                  prefixIcon: Icon(
+                                    Icons.email,
+                                    size: 20,
+                                    color: AppColors.getIconColor(isDarkMode),
+                                  ),
                                   border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      30,
-                                    ), // 👈 border radius here
+                                    borderRadius: BorderRadius.circular(30),
                                   ),
                                   contentPadding: EdgeInsets.symmetric(
                                     vertical: isSmallScreen ? 12 : 14,
@@ -157,20 +147,25 @@ class _LoginPageState extends State<LoginPage> {
                                   return null;
                                 },
                               ),
-                              SizedBox(height: 12),
-                              // Password Field
+                              const SizedBox(height: 12),
                               TextFormField(
                                 controller: _passwordController,
                                 obscureText: !_isPasswordVisible,
                                 decoration: InputDecoration(
                                   labelText: 'Password',
-                                  prefixIcon: Icon(Icons.lock, size: 20),
+                                  labelStyle: AppTextStyles.regular14(isDarkMode),
+                                  prefixIcon: Icon(
+                                    Icons.lock,
+                                    size: 20,
+                                    color: AppColors.getIconColor(isDarkMode),
+                                  ),
                                   suffixIcon: IconButton(
                                     icon: Icon(
                                       _isPasswordVisible
                                           ? Icons.visibility
                                           : Icons.visibility_off,
                                       size: 20,
+                                      color: AppColors.getIconColor(isDarkMode),
                                     ),
                                     onPressed: () {
                                       setState(() {
@@ -180,9 +175,7 @@ class _LoginPageState extends State<LoginPage> {
                                     },
                                   ),
                                   border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      30,
-                                    ), // 👈 border radius here
+                                    borderRadius: BorderRadius.circular(30),
                                   ),
                                   contentPadding: EdgeInsets.symmetric(
                                     vertical: isSmallScreen ? 12 : 14,
@@ -199,59 +192,54 @@ class _LoginPageState extends State<LoginPage> {
                                   return null;
                                 },
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               Align(
                                 alignment: Alignment.centerRight,
                                 child: TextButton(
                                   onPressed: () {
-                                    GoRouter.of(
-                                      context,
-                                    ).push(RouteNames.forgotPassword);
+                                    GoRouter.of(context)
+                                        .push(RouteNames.forgotPassword);
                                   },
                                   child: Text(
                                     'Forgot Password?',
-                                    style: TextStyle(
-                                      fontSize: isSmallScreen ? 12 : 14,
-                                      color: Colors.blue,
-                                    ),
+                                    style: AppTextStyles.link14(isDarkMode),
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 16),
+                              const SizedBox(height: 16),
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
                                   onPressed: _login,
                                   style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        AppColors.getFormSubmitButtonColor(isDarkMode),
                                     padding: EdgeInsets.symmetric(
                                       vertical: isSmallScreen ? 12 : 16,
                                     ),
-                                    backgroundColor: AppColors.formSubmitButtonColor,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
                                   ),
                                   child: Text(
                                     'Login',
-                                    style: TextStyle(
-                                      fontSize: isSmallScreen ? 14 : 16,
-                                    ),
+                                    style: AppTextStyles.button16(isDarkMode),
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 12),
+                              const SizedBox(height: 12),
                               TextButton(
                                 onPressed: () {
-                                  GoRouter.of(
-                                    context,
-                                  ).push(RouteNames.register);
+                                  GoRouter.of(context)
+                                      .push(RouteNames.register);
                                 },
                                 child: Text(
                                   'Don\'t have an account? Sign Up',
-                                  style: TextStyle(
-                                    fontSize: isSmallScreen ? 12 : 14,
-                                  ),
+                                  style: AppTextStyles.link14(isDarkMode),
                                 ),
                               ),
                             ],
-                          ),  
+                          ),
                         ),
                       ),
                     ),

@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'package:rayoflite/core/constants/pathConfig.dart';
 import 'package:rayoflite/core/services/httpService.dart';
 
-class GoalService {
-  static Future<Map<String, dynamic>> addGoal(
+class SocialService {
+  static Future<Map<String, dynamic>> postInsight(
     Map<String, dynamic> goalData,
   ) async {
     try {
@@ -25,7 +24,7 @@ class GoalService {
     }
   }
 
-  static Future<Map<String, dynamic>> getGoals() async {
+  static Future<Map<String, dynamic>> getPostInsights() async {
     try {
       final raw = await HttpService.get(PathConfig.getGoals);
       if (raw is List<dynamic>) {

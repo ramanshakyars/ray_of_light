@@ -6,6 +6,7 @@ import 'package:rayoflite/presentation/screens/auth/login.dart';
 import 'package:rayoflite/presentation/screens/auth/register.dart';
 import 'package:rayoflite/presentation/screens/auth/reset-password.dart';
 import 'package:rayoflite/presentation/screens/features/profile.dart';
+import 'package:rayoflite/presentation/screens/social-insights/social-feedPage.dart';
 import 'package:rayoflite/presentation/screens/home/user-dashboard.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat_screen.dart';
 import 'package:rayoflite/presentation/screens/features/journalism/junerlism.dart';
@@ -32,7 +33,7 @@ GoRouter createRouter(String initialLocation) {
       ),
       GoRoute(
         path: RouteNames.login,
-        builder: (context, state) => const Login(),
+        builder: (context, state) =>  const LoginPage(),
       ),
       GoRoute(
         path: RouteNames.register,
@@ -60,12 +61,20 @@ GoRouter createRouter(String initialLocation) {
         builder: (context, state, child) => MainScreen(child: child),
         routes: [
           GoRoute(
+            // path: RouteNames.mainApp,
+            // builder: (context, state) => UserDashboard(),
+            // change routes here when social feed is implemented
             path: RouteNames.mainApp,
-            builder: (context, state) => UserDashboard(),
+            builder: (context, state) => SocialFeedPage(),
             routes: [
               GoRoute(
+
+                 // change routes here when social feed is implemented
+
+                // path: RouteNames.home,
+                // builder: (context, state) => UserDashboard(),
                 path: RouteNames.home,
-                builder: (context, state) => UserDashboard(),
+                builder: (context, state) => SocialFeedPage(),
               ),
               GoRoute(
                 path: RouteNames.talkToLight,

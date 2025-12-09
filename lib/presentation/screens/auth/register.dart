@@ -1,10 +1,12 @@
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/authService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
+import 'package:rayoflite/core/theme/themeProvider.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -82,13 +84,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isPortrait =
-        MediaQuery.of(context).orientation == Orientation.portrait;
+    final isPortrait =MediaQuery.of(context).orientation == Orientation.portrait;
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+  final isDarkMode = themeProvider.isDarkMode;
 
     return Scaffold(
-      backgroundColor: AppColors.appBackgroundColor,
+      backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
       body: SafeArea(
         child: Center(
           child: Container(
@@ -111,7 +114,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: TextStyle(
                       fontSize: isPortrait ? 32 : 24,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimaryColor,
+                      color: AppColors.getTextPrimaryColor(isDarkMode),
                     ),
                   ),
                   SizedBox(height: isPortrait ? 5 : 4),
@@ -185,7 +188,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       onPressed: _sendOtp,
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor:
-                                            AppColors.formSubmitButtonColor,
+                                            AppColors.getFormSubmitButtonColor(isDarkMode),
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
                                             30,

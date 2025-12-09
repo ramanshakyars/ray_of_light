@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/theme/appcolors.dart';
+import 'package:rayoflite/core/theme/themeProvider.dart';
 
 class MainScreen extends StatefulWidget {
   final Widget child;
@@ -106,12 +109,18 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   // }
 
   BottomNavigationBar _buildBottomNavigationBar() {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isDarkMode = themeProvider.isDarkMode;
+
     return BottomNavigationBar(
       currentIndex: _currentIndex,
       onTap: (index) => _navigateToTab(context, index),
       type: BottomNavigationBarType.fixed,
+      selectedItemColor: AppColors.slectedBottomIconColor, 
+      unselectedItemColor: AppColors.getIconColor(isDarkMode),
+      backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
       items: [
-       // BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
         BottomNavigationBarItem(
           icon: Stack(
             alignment: Alignment.center,
@@ -167,7 +176,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                       colors: [Colors.blueAccent, Colors.purpleAccent],
                     ).createShader(bounds);
                   },
-                  child: Icon(Icons.chat, size: 28, color: Colors.white),
+                  child: Icon(
+                    Icons.auto_awesome,
+                    size: 28,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               // AI badge with glow
@@ -201,16 +214,15 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
           ),
           label: 'Talk',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.newspaper),
-          label: 'Nest',
-        ),
+
+        BottomNavigationBarItem(icon: Icon(Icons.newspaper), label: 'Nest'),
         BottomNavigationBarItem(
           icon: Icon(Icons.filter_vintage),
           label: 'Breath',
         ),
-        BottomNavigationBarItem(icon: Icon(Icons.track_changes), label: 'Wishes'),
-       // BottomNavigationBarItem(icon: Icon(Icons.person_pin), label: 'Profile'),
+
+        BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Wishes'),
+        // BottomNavigationBarItem(icon: Icon(Icons.person_pin), label: 'Profile'),
       ],
     );
   }
@@ -218,12 +230,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   void _navigateToTab(BuildContext context, int index) {
     setState(() => _currentIndex = index);
     final routes = [
-    //  RouteNames.home,
+      RouteNames.home,
       RouteNames.talkToLight,
       RouteNames.junerlism,
       RouteNames.breathingExercise,
       RouteNames.goalTracker,
-    //  RouteNames.profile,
+      // RouteNames.profile,
     ];
     context.push('${RouteNames.mainApp}/${routes[index]}');
     // if (Scaffold.of(context).isDrawerOpen) {

@@ -13,6 +13,7 @@ class RouteNames {
   // Main app structure
   static const mainApp = '/main';
   static const profile = 'profile';
+  static const socialFeed = '/social-feed';
 
   // Nested routes under main app
   static const home = 'home';

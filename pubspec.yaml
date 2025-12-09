@@ -2,7 +2,8 @@ name: rayoflite
 description: "A new Flutter project."
 publish_to: 'none' 
 
-version: 1.0.0+9
+# version: 1.0.0+9
+version: 1.1.0+11
 
 environment:
   sdk: ^3.7.2
@@ -20,6 +21,7 @@ dependencies:
   shared_preferences: ^2.2.2
   dio: ^5.4.0
   calendar_date_picker2: ^2.0.1
+  provider: ^6.1.1
 
 dev_dependencies:
   flutter_test:
@@ -50,6 +52,7 @@ flutter:
     - assets/fonts/
     - assets/app-background.jpg
     - assets/red-background.png
+    - assets/talk-to-light.png
 
   fonts:
     - family: Specimen
