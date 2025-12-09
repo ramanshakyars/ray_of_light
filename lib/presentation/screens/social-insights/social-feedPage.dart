@@ -10,16 +10,16 @@ import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/UserMood.dart';
 import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/mood-managment.dart';
 import 'package:rayoflite/presentation/screens/social-insights/Post.dart';
+import 'package:rayoflite/presentation/screens/social-insights/socialService.dart';
 
 class SocialFeedPage extends StatefulWidget {
-  const SocialFeedPage({Key? key}) : super(key: key);
+  const SocialFeedPage({super.key});
 
   @override
   State<SocialFeedPage> createState() => _SocialFeedPageState();
 }
 
 class _SocialFeedPageState extends State<SocialFeedPage> {
-  final TextEditingController _createController = TextEditingController();
   List<Post> _posts = [];
   String loggedInUserRole = '';
 
@@ -29,64 +29,36 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
     _loadInitialPosts();
   }
 
-  Future<void> _loadInitialPosts() async {
-    final loggedInUserRole = await LocalStorageService.getUser();
-    this.loggedInUserRole = loggedInUserRole?['roles'];
-
-    setState(() {
-      this.loggedInUserRole = loggedInUserRole?['roles'];
-      _posts = [
-        Post(
-          id: '1',
-          authorName: 'Ray of Light',
-          avatarUrl: '',
-          tag: 'Daily inspiration',
-          timeAgo: 'Just now',
-          imageUrl:
-              'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1000&q=80',
-          liked: false,
-          likesCount: 12,
-        ),
-        Post(
-          id: '2',
-          authorName: 'Ray of Light',
-          avatarUrl: '',
-          tag: 'Daily inspiration',
-          timeAgo: 'Just now',
-          imageUrl:
-              'https://m.media-amazon.com/images/I/61LjnhXXWIL._AC_UF1000,1000_QL80_.jpg',
-          liked: false,
-          likesCount: 12,
-        ),
-      ];
-    });
+  String timeAgo(DateTime date) {
+    final diff = DateTime.now().difference(date);
+    if (diff.inMinutes < 1) return "Just now";
+    if (diff.inHours < 1) return "${diff.inMinutes}m ago";
+    if (diff.inDays < 1) return "${diff.inHours}h ago";
+    return "${diff.inDays}d ago";
   }
 
-  Future<void> _onCreatePost() async {
-    final text = _createController.text.trim();
-    if (text.isEmpty) return;
+  Future<void> _loadInitialPosts() async {
+    final loggedInUser = await LocalStorageService.getUser();
+    loggedInUserRole = loggedInUser?['roles'] ?? '';
 
-    final newPost = Post(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      authorName: 'You',
-      avatarUrl: '',
-      tag: '',
-      timeAgo: 'Just now',
-      imageUrl:
-          'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1000&q=80',
-      likesCount: 0,
-    );
+    try {
+      final response = await SocialService.getPostInsights();
 
-    setState(() {
-      _posts.insert(0, newPost);
-      _createController.clear();
-    });
+      if (response['success'] == true) {
+        setState(() {
+          _posts =
+              (response['data'] as List).map((e) => Post.fromJson(e)).toList();
+        });
+      }
+    } catch (e) {
+      MessageService.showError(context, "Error fetching posts");
+    }
   }
 
   void _toggleLike(Post post) {
     setState(() {
       post.liked = !post.liked;
-      post.likesCount += post.liked ? 1 : -1;
+      post.likeCount + (post.liked ? 1 : -1);
     });
   }
 
@@ -108,14 +80,11 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
   @override
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDarkMode;
-    final bg = AppColors.getAppBackgroundColor(isDark);
 
     return Scaffold(
-      backgroundColor: bg,
       appBar: AppBar(
         title: const Text('Ray Of Light'),
         centerTitle: true,
-        backgroundColor: AppColors.getAppBackgroundColor(isDark),
         leading: IconButton(
           icon: Image.asset('assets/logo.png'),
           onPressed: () {
@@ -130,89 +99,23 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
       ),
       body: RefreshIndicator(
         onRefresh: _loadInitialPosts,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
-            child: Column(
+        child: ListView.builder(
+          padding: const EdgeInsets.all(12),
+          itemCount: _posts.length,
+          itemBuilder: (context, index) {
+            return Column(
               children: [
-                /// 👇👇 ONLY ADMINS CAN SEE THIS
-                if (loggedInUserRole == 'ROLE_ADMIN')
-                  _buildCreatePostRow(isDark),
-
-                const SizedBox(height: 12),
-
-                for (final post in _posts) ...[
-                  PostCard(
-                    post: post,
-                    onLike: () => _toggleLike(post),
-                    isDarkMode: isDark,
-                  ),
-                  const SizedBox(height: 12),
-                ],
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCreatePostRow(bool isDark) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColors.getFormsCardColor(isDark),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.getBorder(isDark)),
-      ),
-      child: Row(
-        children: [
-          _buildAvatar('You', isDark, radius: 20),
-          const SizedBox(width: 10),
-          Expanded(
-            child: TextField(
-              controller: _createController,
-              style: AppTextStyles.regular16(isDark),
-              decoration: InputDecoration(
-                hintText: 'Share your daily reflection...',
-                hintStyle: AppTextStyles.regular14(isDark).copyWith(
-                  color: AppColors.getTextPrimaryColor(isDark).withOpacity(0.6),
+                PostCard(
+                  post: _posts[index],
+                  onLike: () => _toggleLike(_posts[index]),
+                  isDarkMode: isDark,
+                  timeText: timeAgo(_posts[index].createdAt),
                 ),
-                border: InputBorder.none,
-                isDense: true,
-                contentPadding: EdgeInsets.zero,
-              ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.getFormSubmitButtonColor(isDark),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            onPressed: _onCreatePost,
-            child: Icon(
-              Icons.add,
-              color: AppColors.getPrimaryForeground(isDark),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAvatar(String name, bool isDark, {double radius = 18}) {
-    final initials = name.isNotEmpty ? name[0].toUpperCase() : '';
-    return CircleAvatar(
-      radius: radius,
-      backgroundColor: AppColors.getTalkToLiteButtonBackgroundColor(isDark),
-      child: Text(
-        initials,
-        style: AppTextStyles.bold22(isDark).copyWith(fontSize: radius * 0.9),
+                const SizedBox(height: 12),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -222,12 +125,14 @@ class PostCard extends StatelessWidget {
   final Post post;
   final VoidCallback? onLike;
   final bool isDarkMode;
+  final String timeText;
 
   const PostCard({
     Key? key,
     required this.post,
     this.onLike,
     required this.isDarkMode,
+    required this.timeText,
   }) : super(key: key);
 
   Widget _buildAvatar(String name) {
@@ -245,175 +150,90 @@ class PostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cardBg = AppColors.getFormsCardColor(isDarkMode);
-    final borderColor = AppColors.getBorder(isDarkMode);
 
     return Container(
       decoration: BoxDecoration(
         color: cardBg,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: borderColor),
+        border: Border.all(color: AppColors.getBorder(isDarkMode)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          /// ---- Header ----
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            padding: const EdgeInsets.all(12),
             child: Row(
               children: [
-                _buildAvatar(post.authorName),
+                _buildAvatar(post.author.username),
                 const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        post.authorName,
-                        style: AppTextStyles.medium18(isDarkMode),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      post.author.username,
+                      style: AppTextStyles.medium18(isDarkMode),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      timeText,
+                      style: AppTextStyles.regular14(isDarkMode).copyWith(
+                        color: AppColors.getTextPrimaryColor(
+                          isDarkMode,
+                        ).withOpacity(0.6),
                       ),
-                      const SizedBox(height: 2),
-                      Row(
-                        children: [
-                          if (post.tag.isNotEmpty)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.getAccent(
-                                  isDarkMode,
-                                ).withOpacity(0.14),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                post.tag,
-                                style: AppTextStyles.regular14(
-                                  isDarkMode,
-                                ).copyWith(fontSize: 12),
-                              ),
-                            ),
-                          const SizedBox(width: 8),
-                          Text(
-                            post.timeAgo,
-                            style: AppTextStyles.regular14(isDarkMode).copyWith(
-                              color: AppColors.getTextPrimaryColor(
-                                isDarkMode,
-                              ).withOpacity(0.6),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                PopupMenuButton<int>(
-                  itemBuilder:
-                      (_) => [
-                        const PopupMenuItem(value: 1, child: Text('Share')),
-                        const PopupMenuItem(value: 2, child: Text('Report')),
-                      ],
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
 
-          if (post.imageUrl.isNotEmpty)
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(14),
-                bottomRight: Radius.circular(14),
+          /// ---- Caption ----
+          if (post.caption.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Text(
+                post.caption,
+                style: AppTextStyles.regular16(isDarkMode),
               ),
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: Image.network(
-                  post.imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder:
-                      (c, e, s) => Container(
-                        color: AppColors.getAccent(isDarkMode),
-                        child: Center(
-                          child: Icon(
-                            Icons.broken_image,
-                            color: AppColors.getIconColor(isDarkMode),
-                          ),
-                        ),
-                      ),
-                ),
+            ),
+          const SizedBox(height: 10),
+
+          /// ---- Image ----
+          if (post.imageUrl != null && post.imageUrl!.isNotEmpty)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: Image.network(
+                post.imageUrl!,
+                fit: BoxFit.cover,
+                height: 260,
+                width: double.infinity,
+                errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
               ),
             ),
 
+          /// ---- Actions ----
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            padding: const EdgeInsets.all(8),
             child: Row(
               children: [
                 IconButton(
                   icon: Icon(
                     post.liked ? Icons.favorite : Icons.favorite_border,
-                    color:
-                        post.liked
-                            ? Colors.red
-                            : AppColors.getIconColor(isDarkMode),
+                    color: post.liked ? Colors.red : Colors.grey,
                   ),
                   onPressed: onLike,
                 ),
                 Text(
-                  '${post.likesCount}',
+                  '${post.likeCount}',
                   style: AppTextStyles.regular14(isDarkMode),
-                ),
-                const SizedBox(width: 8),
-                IconButton(
-                  icon: Icon(
-                    Icons.chat_bubble_outline,
-                    color: AppColors.getIconColor(isDarkMode),
-                  ),
-                  onPressed: () {},
-                ),
-                Spacer(),
-                IconButton(
-                  icon: Icon(
-                    Icons.bookmark_border,
-                    color: AppColors.getIconColor(isDarkMode),
-                  ),
-                  onPressed: () {},
                 ),
               ],
             ),
           ),
         ],
       ),
-    );
-  }
-}
-
-void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeProvider(),
-      child: const MyAppPreview(),
-    ),
-  );
-}
-
-class MyAppPreview extends StatelessWidget {
-  const MyAppPreview({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
-
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: AppColors.getAppBackgroundColor(isDark),
-        useMaterial3: true,
-        brightness: isDark ? Brightness.dark : Brightness.light,
-        appBarTheme: AppBarTheme(
-          backgroundColor: AppColors.getCard(isDark),
-          iconTheme: IconThemeData(color: AppColors.getIconColor(isDark)),
-          elevation: 0,
-        ),
-      ),
-      home: const SocialFeedPage(),
     );
   }
 }

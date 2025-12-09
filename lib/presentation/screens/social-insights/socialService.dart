@@ -26,7 +26,7 @@ class SocialService {
 
   static Future<Map<String, dynamic>> getPostInsights() async {
     try {
-      final raw = await HttpService.get(PathConfig.getGoals);
+      final raw = await HttpService.get(PathConfig.getAllPosts);
       if (raw is List<dynamic>) {
         return {'success': true, 'data': raw};
       } else {
