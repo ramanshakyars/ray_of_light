@@ -21,7 +21,7 @@ class Post {
   final String? imageUrl;
   final DateTime createdAt;
   final Author author;
-  final int likeCount;
+  int likeCount;
   final int commentCount;
   final int shareCount;
 

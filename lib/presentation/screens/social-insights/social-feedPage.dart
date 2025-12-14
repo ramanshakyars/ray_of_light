@@ -11,6 +11,8 @@ import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/Use
 import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/mood-managment.dart';
 import 'package:rayoflite/presentation/screens/social-insights/Post.dart';
 import 'package:rayoflite/presentation/screens/social-insights/socialService.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 class SocialFeedPage extends StatefulWidget {
   const SocialFeedPage({super.key});
@@ -55,12 +57,14 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
     }
   }
 
-  void _toggleLike(Post post) {
-    setState(() {
-      post.liked = !post.liked;
-      post.likeCount + (post.liked ? 1 : -1);
-    });
-  }
+ void _toggleLike(Post post) {
+  setState(() {
+    post.liked = !post.liked;
+    post.likeCount += post.liked ? 1 : -1;
+  });
+}
+
+
 
   Future<void> _openMoodDialog() async {
     final updatedMood = await showDialog<UserMood?>(
@@ -200,18 +204,34 @@ class PostCard extends StatelessWidget {
             ),
           const SizedBox(height: 10),
 
-          /// ---- Image ----
-          if (post.imageUrl != null && post.imageUrl!.isNotEmpty)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: Image.network(
-                post.imageUrl!,
-                fit: BoxFit.cover,
-                height: 260,
-                width: double.infinity,
-                errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
-              ),
-            ),
+          
+if (post.imageUrl != null && post.imageUrl!.isNotEmpty)
+  ClipRRect(
+    borderRadius: BorderRadius.circular(14),
+    child: CachedNetworkImage(
+      imageUrl: post.imageUrl!,
+      height: 260,
+      width: double.infinity,
+      fit: BoxFit.cover,
+
+      /// Dummy image while loading 
+      placeholder: (context, url) => Image.asset(
+        'assets/talk-to-light.png',
+        fit: BoxFit.cover,
+        height: 260,
+        width: double.infinity,
+      ),
+
+      /// Dummy image if error
+      errorWidget: (context, url, error) => Image.asset(
+        'assets/talk-to-light.png',
+        fit: BoxFit.cover,
+        height: 260,
+        width: double.infinity,
+      ),
+    ),
+  ),
+
 
           /// ---- Actions ----
           Padding(
