@@ -38,4 +38,22 @@ class HttpService {
     final response = await _dio.patch(url, data: body);
     return response.data;
   }
+
+  static Future<dynamic> postMultipart(
+  String url,
+  FormData formData,
+) async {
+  final response = await _dio.post(
+    url,
+    data: formData,
+    options: Options(
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    ),
+  );
+
+  return response.data;
+}
+
 }

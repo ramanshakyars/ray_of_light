@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
@@ -11,8 +16,6 @@ import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/Use
 import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/mood-managment.dart';
 import 'package:rayoflite/presentation/screens/social-insights/Post.dart';
 import 'package:rayoflite/presentation/screens/social-insights/socialService.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-
 
 class SocialFeedPage extends StatefulWidget {
   const SocialFeedPage({super.key});
@@ -22,8 +25,12 @@ class SocialFeedPage extends StatefulWidget {
 }
 
 class _SocialFeedPageState extends State<SocialFeedPage> {
+  final TextEditingController _createController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
+
   List<Post> _posts = [];
   String loggedInUserRole = '';
+  File? _selectedImage;
 
   @override
   void initState() {
@@ -31,6 +38,7 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
     _loadInitialPosts();
   }
 
+  // ---------------- TIME AGO ----------------
   String timeAgo(DateTime date) {
     final diff = DateTime.now().difference(date);
     if (diff.inMinutes < 1) return "Just now";
@@ -39,13 +47,84 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
     return "${diff.inDays}d ago";
   }
 
+  // ---------------- IMAGE PICKER ----------------
+  Future<void> _pickImage(ImageSource source) async {
+    final XFile? image = await _picker.pickImage(
+      source: source,
+      imageQuality: 80,
+    );
+
+    if (image != null) {
+      setState(() {
+        _selectedImage = File(image.path);
+      });
+    }
+  }
+
+  // ---------------- CREATE POST CARD ----------------
+  Widget _buildCreatePostCard(bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.getFormsCardColor(isDark),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.getBorder(isDark)),
+      ),
+      child: Column(
+        children: [
+          TextField(
+            controller: _createController,
+            maxLines: 3,
+            decoration: const InputDecoration(
+              hintText: 'Write something...',
+              border: InputBorder.none,
+            ),
+          ),
+
+          if (_selectedImage != null) ...[
+            const SizedBox(height: 10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.file(
+                _selectedImage!,
+                height: 180,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ],
+
+          const SizedBox(height: 8),
+
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.photo),
+                onPressed: () => _pickImage(ImageSource.gallery),
+              ),
+              IconButton(
+                icon: const Icon(Icons.camera_alt),
+                onPressed: () => _pickImage(ImageSource.camera),
+              ),
+              const Spacer(),
+              ElevatedButton(
+                onPressed: _onCreatePost,
+                child: const Text('Post'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ---------------- LOAD POSTS ----------------
   Future<void> _loadInitialPosts() async {
     final loggedInUser = await LocalStorageService.getUser();
     loggedInUserRole = loggedInUser?['roles'] ?? '';
 
     try {
       final response = await SocialService.getPostInsights();
-
       if (response['success'] == true) {
         setState(() {
           _posts =
@@ -57,15 +136,40 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
     }
   }
 
- void _toggleLike(Post post) {
-  setState(() {
-    post.liked = !post.liked;
-    post.likeCount += post.liked ? 1 : -1;
-  });
-}
+  // ---------------- LIKE ----------------
+  void _toggleLike(Post post) {
+    setState(() {
+      post.liked = !post.liked;
+      post.likeCount += post.liked ? 1 : -1;
+    });
+  }
 
+  // ---------------- CREATE POST ----------------
+  Future<void> _onCreatePost() async {
+    if (loggedInUserRole != 'ROLE_ADMIN') return;
 
+    if (_selectedImage == null && _createController.text.trim().isEmpty) {
+      MessageService.showError(context, 'Add image or caption');
+      return;
+    }
 
+    try {
+      await SocialService.createPost(
+        caption: _createController.text.trim(),
+        imageFile: _selectedImage,
+      );
+
+      _createController.clear();
+      _selectedImage = null;
+
+      await _loadInitialPosts();
+      MessageService.showSuccess(context, 'Post created');
+    } catch (e) {
+      MessageService.showError(context, 'Failed to create post');
+    }
+  }
+
+  // ---------------- MOOD ----------------
   Future<void> _openMoodDialog() async {
     final updatedMood = await showDialog<UserMood?>(
       context: context,
@@ -81,6 +185,7 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
     }
   }
 
+  // ---------------- UI ----------------
   @override
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDarkMode;
@@ -92,9 +197,8 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
         leading: IconButton(
           icon: Image.asset('assets/logo.png'),
           onPressed: () {
-            GoRouter.of(
-              context,
-            ).push('${RouteNames.mainApp}/${RouteNames.profile}');
+            GoRouter.of(context)
+                .push('${RouteNames.mainApp}/${RouteNames.profile}');
           },
         ),
         actions: [
@@ -103,28 +207,37 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
       ),
       body: RefreshIndicator(
         onRefresh: _loadInitialPosts,
-        child: ListView.builder(
+        child: ListView(
           padding: const EdgeInsets.all(12),
-          itemCount: _posts.length,
-          itemBuilder: (context, index) {
-            return Column(
-              children: [
-                PostCard(
-                  post: _posts[index],
-                  onLike: () => _toggleLike(_posts[index]),
-                  isDarkMode: isDark,
-                  timeText: timeAgo(_posts[index].createdAt),
-                ),
-                const SizedBox(height: 12),
-              ],
-            );
-          },
+          children: [
+            if (loggedInUserRole == 'ROLE_ADMIN') ...[
+              _buildCreatePostCard(isDark),
+              const SizedBox(height: 16),
+            ],
+
+            ..._posts.map((post) {
+              return Column(
+                children: [
+                  PostCard(
+                    post: post,
+                    onLike: () => _toggleLike(post),
+                    isDarkMode: isDark,
+                    timeText: timeAgo(post.createdAt),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+              );
+            }).toList(),
+          ],
         ),
       ),
     );
   }
 }
 
+// ===================================================================
+// POST CARD
+// ===================================================================
 class PostCard extends StatelessWidget {
   final Post post;
   final VoidCallback? onLike;
@@ -132,12 +245,12 @@ class PostCard extends StatelessWidget {
   final String timeText;
 
   const PostCard({
-    Key? key,
+    super.key,
     required this.post,
     this.onLike,
     required this.isDarkMode,
     required this.timeText,
-  }) : super(key: key);
+  });
 
   Widget _buildAvatar(String name) {
     final initials = name.isNotEmpty ? name[0].toUpperCase() : '';
@@ -164,7 +277,6 @@ class PostCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// ---- Header ----
           Padding(
             padding: const EdgeInsets.all(12),
             child: Row(
@@ -178,14 +290,10 @@ class PostCard extends StatelessWidget {
                       post.author.username,
                       style: AppTextStyles.medium18(isDarkMode),
                     ),
-                    const SizedBox(height: 2),
                     Text(
                       timeText,
-                      style: AppTextStyles.regular14(isDarkMode).copyWith(
-                        color: AppColors.getTextPrimaryColor(
-                          isDarkMode,
-                        ).withOpacity(0.6),
-                      ),
+                      style: AppTextStyles.regular14(isDarkMode)
+                          .copyWith(color: Colors.grey),
                     ),
                   ],
                 ),
@@ -193,7 +301,6 @@ class PostCard extends StatelessWidget {
             ),
           ),
 
-          /// ---- Caption ----
           if (post.caption.isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -202,38 +309,25 @@ class PostCard extends StatelessWidget {
                 style: AppTextStyles.regular16(isDarkMode),
               ),
             ),
-          const SizedBox(height: 10),
 
-          
-if (post.imageUrl != null && post.imageUrl!.isNotEmpty)
-  ClipRRect(
-    borderRadius: BorderRadius.circular(14),
-    child: CachedNetworkImage(
-      imageUrl: post.imageUrl!,
-      height: 260,
-      width: double.infinity,
-      fit: BoxFit.cover,
+          if (post.imageUrl != null && post.imageUrl!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: CachedNetworkImage(
+                  imageUrl: post.imageUrl!,
+                  height: 260,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  placeholder: (_, __) =>
+                      Image.asset('assets/talk-to-light.png'),
+                  errorWidget: (_, __, ___) =>
+                      Image.asset('assets/talk-to-light.png'),
+                ),
+              ),
+            ),
 
-      /// Dummy image while loading 
-      placeholder: (context, url) => Image.asset(
-        'assets/talk-to-light.png',
-        fit: BoxFit.cover,
-        height: 260,
-        width: double.infinity,
-      ),
-
-      /// Dummy image if error
-      errorWidget: (context, url, error) => Image.asset(
-        'assets/talk-to-light.png',
-        fit: BoxFit.cover,
-        height: 260,
-        width: double.infinity,
-      ),
-    ),
-  ),
-
-
-          /// ---- Actions ----
           Padding(
             padding: const EdgeInsets.all(8),
             child: Row(
@@ -245,10 +339,7 @@ if (post.imageUrl != null && post.imageUrl!.isNotEmpty)
                   ),
                   onPressed: onLike,
                 ),
-                Text(
-                  '${post.likeCount}',
-                  style: AppTextStyles.regular14(isDarkMode),
-                ),
+                Text('${post.likeCount}'),
               ],
             ),
           ),

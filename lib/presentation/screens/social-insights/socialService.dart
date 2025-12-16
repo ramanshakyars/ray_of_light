@@ -1,61 +1,133 @@
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:rayoflite/core/constants/pathConfig.dart';
 import 'package:rayoflite/core/services/httpService.dart';
 
 class SocialService {
-  static Future<Map<String, dynamic>> postInsight(
-    Map<String, dynamic> goalData,
-  ) async {
+
+  /// =============================
+  /// CREATE POST (Admin only)
+  /// =============================
+  static Future<Map<String, dynamic>> createPost({
+    required String caption,
+    File? imageFile,
+  }) async {
     try {
-      final data = await HttpService.post(PathConfig.createGoal, goalData);
-      if (data['id'] != null) {
-        return {
-          'success': true,
-          'message': 'Goal added successfully',
-          'data': data,
-        };
-      } else {
-        return {
-          'success': false,
-          'message': data['message'] ?? 'Failed to add goal',
-        };
-      }
-    } catch (e) {
-      return {'success': false, 'message': 'Something went wrong: $e'};
-    }
-  }
+      final formData = FormData.fromMap({
+        'caption': caption,
+        if (imageFile != null)
+          'image': await MultipartFile.fromFile(
+            imageFile.path,
+            filename: imageFile.path.split('/').last,
+          ),
+      });
 
-  static Future<Map<String, dynamic>> getPostInsights() async {
-    try {
-      final raw = await HttpService.get(PathConfig.getAllPosts);
-      if (raw is List<dynamic>) {
-        return {'success': true, 'data': raw};
-      } else {
-        return {
-          'success': false,
-          'message': 'Unexpected response format: ${raw.runtimeType}',
-        };
-      }
-    } catch (e) {
-      return {'success': false, 'message': 'Exception in getGoals(): $e'};
-    }
-  }
+      final response = await HttpService.postMultipart(
+        PathConfig.postInsight,
+        formData,
+      );
 
-  static Future<Map<String, dynamic>> updateGoalStatus(String url) async {
-    try {
-      final raw = await HttpService.put(url, {});
-
-      if (raw is! Map) {
-        return {
-          'success': false,
-          'message': 'Unexpected response format: ${raw.runtimeType}',
-        };
-      }
-
-      return {'success': true, 'data': raw};
+      return {
+        'success': true,
+        'data': response,
+      };
     } catch (e) {
       return {
         'success': false,
-        'message': 'Exception in updateGoalStatus(): $e',
+        'message': 'Failed to create post: $e',
+      };
+    }
+  }
+
+  /// =============================
+  /// GET ALL POSTS
+  /// =============================
+  static Future<Map<String, dynamic>> getPostInsights() async {
+    try {
+      final raw = await HttpService.get(PathConfig.getAllPosts);
+
+      if (raw is List) {
+        return {'success': true, 'data': raw};
+      }
+
+      return {
+        'success': false,
+        'message': 'Unexpected response format',
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Error fetching posts: $e',
+      };
+    }
+  }
+
+  /// =============================
+  /// LIKE / UNLIKE POST
+  /// =============================
+  static Future<Map<String, dynamic>> likePost(String postId) async {
+    try {
+      final response = await HttpService.post(
+        PathConfig.doLikeOnPost,
+        {'postId': postId},
+      );
+
+      return {'success': true, 'data': response};
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Failed to like post: $e',
+      };
+    }
+  }
+
+  /// =============================
+  /// COMMENT ON POST
+  /// =============================
+  static Future<Map<String, dynamic>> commentOnPost({
+    required String postId,
+    required String comment,
+  }) async {
+    try {
+      final response = await HttpService.post(
+        PathConfig.doCommentOnPost,
+        {
+          'postId': postId,
+          'comment': comment,
+        },
+      );
+
+      return {'success': true, 'data': response};
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Failed to comment: $e',
+      };
+    }
+  }
+
+  /// =============================
+  /// GET COMMENTS BY POST ID
+  /// =============================
+  static Future<Map<String, dynamic>> getComments(String postId) async {
+    try {
+      final url =
+          PathConfig.getCommentsByPostId.replaceFirst('{postId}', postId);
+
+      final raw = await HttpService.get(url);
+
+      if (raw is List) {
+        return {'success': true, 'data': raw};
+      }
+
+      return {
+        'success': false,
+        'message': 'Unexpected response format',
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Error fetching comments: $e',
       };
     }
   }
