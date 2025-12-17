@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
@@ -27,10 +26,11 @@ class SocialFeedPage extends StatefulWidget {
 class _SocialFeedPageState extends State<SocialFeedPage> {
   final TextEditingController _createController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
-
   List<Post> _posts = [];
   String loggedInUserRole = '';
+  String loggedInUserName = '';
   File? _selectedImage;
+  
 
   @override
   void initState() {
@@ -122,6 +122,8 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
   Future<void> _loadInitialPosts() async {
     final loggedInUser = await LocalStorageService.getUser();
     loggedInUserRole = loggedInUser?['roles'] ?? '';
+    loggedInUserName = loggedInUser?['name'] ?? '';
+    print('Logged in user role: $loggedInUser');
 
     try {
       final response = await SocialService.getPostInsights();
@@ -288,6 +290,7 @@ class PostCard extends StatelessWidget {
                   children: [
                     Text(
                       post.author.username,
+                      // loggedInUserName,
                       style: AppTextStyles.medium18(isDarkMode),
                     ),
                     Text(
