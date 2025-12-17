@@ -328,21 +328,47 @@ class PostCard extends StatelessWidget {
               ),
             ),
 
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: Icon(
-                    post.liked ? Icons.favorite : Icons.favorite_border,
-                    color: post.liked ? Colors.red : Colors.grey,
-                  ),
-                  onPressed: onLike,
-                ),
-                Text('${post.likeCount}'),
-              ],
-            ),
-          ),
+         Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+  child: Row(
+    children: [
+      /// LIKE
+      IconButton(
+        icon: Icon(
+          post.liked ? Icons.favorite : Icons.favorite_border,
+          color: post.liked ? Colors.red : Colors.grey,
+        ),
+        onPressed: onLike,
+      ),
+      Text('${post.likeCount}'),
+
+      const SizedBox(width: 12),
+
+      /// COMMENT
+      IconButton(
+        icon: const Icon(
+          Icons.chat_bubble_outline,
+          color: Colors.grey,
+        ),
+        onPressed: (){}// onComment,
+      ),
+      // Text('${post.commentCount}'),
+
+      /// PUSH SHARE ICON TO END
+      const Spacer(),
+
+      /// SHARE (ICON ONLY)
+      IconButton(
+        icon: const Icon(
+          Icons.share_outlined,
+          color: Colors.grey,
+        ),
+        onPressed: (){}//onShare,
+      ),
+    ],
+  ),
+),
+
         ],
       ),
     );

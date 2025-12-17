@@ -110,7 +110,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 20),
           if (userData?['name'] != null)
             Text(
-              userData?['name'],
+               userData?['name'] != null
+      ? '${userData!['name'][0].toUpperCase()}${userData!['name'].substring(1).toLowerCase()}'
+      : '',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
