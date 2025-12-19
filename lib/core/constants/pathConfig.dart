@@ -45,6 +45,6 @@ class PathConfig {
     static const String getAllPosts = '$baseUrl/insight/get';
     static const String doCommentOnPost = '$baseUrl/insight/comment';
     static const String doLikeOnPost = '$baseUrl/insight/like';
-    static const String getCommentsByPostId = '$baseUrl/insight/comments/{postId}';
+    static const String getCommentsByPostId = '$baseUrl/insight/comments';
 
 }

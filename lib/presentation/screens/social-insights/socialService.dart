@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:rayoflite/core/constants/pathConfig.dart';
 import 'package:rayoflite/core/services/httpService.dart';
+import 'package:rayoflite/presentation/screens/social-insights/models/comment_model.dart';
 
 class SocialService {
 
@@ -109,26 +110,15 @@ class SocialService {
   /// =============================
   /// GET COMMENTS BY POST ID
   /// =============================
-  static Future<Map<String, dynamic>> getComments(String postId) async {
-    try {
-      final url =
-          PathConfig.getCommentsByPostId.replaceFirst('{postId}', postId);
+ static Future<List<Comment>> getComments(String postId) async {
+  final res = await HttpService.get(
+    '${PathConfig.getCommentsByPostId}/$postId',
+  );
 
-      final raw = await HttpService.get(url);
-
-      if (raw is List) {
-        return {'success': true, 'data': raw};
-      }
-
-      return {
-        'success': false,
-        'message': 'Unexpected response format',
-      };
-    } catch (e) {
-      return {
-        'success': false,
-        'message': 'Error fetching comments: $e',
-      };
-    }
+  if (res is List) {
+    return res.map((e) => Comment.fromJson(e)).toList();
   }
+  return [];
+}
+
 }

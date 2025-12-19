@@ -14,6 +14,7 @@ import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/UserMood.dart';
 import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/mood-managment.dart';
 import 'package:rayoflite/presentation/screens/social-insights/Post.dart';
+import 'package:rayoflite/presentation/screens/social-insights/comment_bottom_sheet.dart';
 import 'package:rayoflite/presentation/screens/social-insights/socialService.dart';
 
 class SocialFeedPage extends StatefulWidget {
@@ -199,8 +200,9 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
         leading: IconButton(
           icon: Image.asset('assets/logo.png'),
           onPressed: () {
-            GoRouter.of(context)
-                .push('${RouteNames.mainApp}/${RouteNames.profile}');
+            GoRouter.of(
+              context,
+            ).push('${RouteNames.mainApp}/${RouteNames.profile}');
           },
         ),
         actions: [
@@ -295,8 +297,9 @@ class PostCard extends StatelessWidget {
                     ),
                     Text(
                       timeText,
-                      style: AppTextStyles.regular14(isDarkMode)
-                          .copyWith(color: Colors.grey),
+                      style: AppTextStyles.regular14(
+                        isDarkMode,
+                      ).copyWith(color: Colors.grey),
                     ),
                   ],
                 ),
@@ -323,55 +326,56 @@ class PostCard extends StatelessWidget {
                   height: 260,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  placeholder: (_, __) =>
-                      Image.asset('assets/talk-to-light.png'),
-                  errorWidget: (_, __, ___) =>
-                      Image.asset('assets/talk-to-light.png'),
+                  placeholder:
+                      (_, __) => Image.asset('assets/talk-to-light.png'),
+                  errorWidget:
+                      (_, __, ___) => Image.asset('assets/talk-to-light.png'),
                 ),
               ),
             ),
 
-         Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-  child: Row(
-    children: [
-      /// LIKE
-      IconButton(
-        icon: Icon(
-          post.liked ? Icons.favorite : Icons.favorite_border,
-          color: post.liked ? Colors.red : Colors.grey,
-        ),
-        onPressed: onLike,
-      ),
-      Text('${post.likeCount}'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            child: Row(
+              children: [
+                /// LIKE
+                IconButton(
+                  icon: Icon(
+                    post.liked ? Icons.favorite : Icons.favorite_border,
+                    color: post.liked ? Colors.red : Colors.grey,
+                  ),
+                  onPressed: onLike,
+                ),
+                Text('${post.likeCount}'),
 
-      const SizedBox(width: 12),
+                const SizedBox(width: 12),
 
-      /// COMMENT
-      IconButton(
-        icon: const Icon(
-          Icons.chat_bubble_outline,
-          color: Colors.grey,
-        ),
-        onPressed: (){}// onComment,
-      ),
-      // Text('${post.commentCount}'),
+                /// COMMENT
+                IconButton(
+                  icon: const Icon(Icons.chat_bubble_outline),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => CommentBottomSheet(post: post),
+                    );
+                  },
+                ),
 
-      /// PUSH SHARE ICON TO END
-      const Spacer(),
+                // Text('${post.commentCount}'),
 
-      /// SHARE (ICON ONLY)
-      IconButton(
-        icon: const Icon(
-          Icons.share_outlined,
-          color: Colors.grey,
-        ),
-        onPressed: (){}//onShare,
-      ),
-    ],
-  ),
-),
+                /// PUSH SHARE ICON TO END
+                const Spacer(),
 
+                /// SHARE (ICON ONLY)
+                IconButton(
+                  icon: const Icon(Icons.share_outlined, color: Colors.grey),
+                  onPressed: () {}, //onShare,
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
