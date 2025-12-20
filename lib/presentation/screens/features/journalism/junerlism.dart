@@ -259,7 +259,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
                     minLines: 1,
                     decoration: InputDecoration(
                       hintText: 'Write your thought or affirmation here...',
-                      hintStyle: AppTextStyles.regular16(isDarkMode)
+                      hintStyle: AppTextStyles.regular14(isDarkMode)
                           .copyWith(color: AppColors.getMutedForeground(isDarkMode)),
                       fillColor: AppColors.getInputBackground(isDarkMode),
                       filled: true,
@@ -287,7 +287,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
                         onPressed: _isPosting ? null : _postThought,
                       ),
                     ),
-                    style: AppTextStyles.regular16(isDarkMode),
+                    style: AppTextStyles.regular14(isDarkMode),
                   ),
                   const SizedBox(height: 12),
                   SizedBox(

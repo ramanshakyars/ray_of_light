@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 
@@ -37,7 +38,7 @@ class InputArea extends StatelessWidget {
                   controller: controller,
                   style: TextStyle(
                     color: AppColors.getTextPrimaryColor(isDarkMode),
-                    fontSize: 16,
+                    fontSize: AppTextStyles.regular14(isDarkMode).fontSize,
                     fontFamily: "Specimen",
                   ),
                   keyboardType: TextInputType.multiline,
