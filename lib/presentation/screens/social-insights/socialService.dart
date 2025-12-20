@@ -94,7 +94,7 @@ class SocialService {
         PathConfig.doCommentOnPost,
         {
           'postId': postId,
-          'comment': comment,
+          'text': comment,
         },
       );
 
