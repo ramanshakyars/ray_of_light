@@ -1,61 +1,62 @@
-import 'dart:io';
-import 'package:dio/dio.dart';
 import 'package:rayoflite/core/constants/pathConfig.dart';
 import 'package:rayoflite/core/services/httpService.dart';
-import 'package:rayoflite/presentation/screens/social-insights/Post.dart';
-import 'package:rayoflite/presentation/screens/social-insights/models/comment_model.dart';
 
 class SocialService {
-  /// GET ALL POSTS
-  static Future<List<Post>> getPostInsights() async {
+  static Future<Map<String, dynamic>> postInsight(
+    Map<String, dynamic> goalData,
+  ) async {
     try {
-      final res = await HttpService.get(PathConfig.getAllPosts);
-      if (res is List) {
-        return res.map((e) => Post.fromJson(e)).toList();
+      final data = await HttpService.post(PathConfig.createGoal, goalData);
+      if (data['id'] != null) {
+        return {
+          'success': true,
+          'message': 'Goal added successfully',
+          'data': data,
+        };
+      } else {
+        return {
+          'success': false,
+          'message': data['message'] ?? 'Failed to add goal',
+        };
       }
-      return [];
     } catch (e) {
-      rethrow;
+      return {'success': false, 'message': 'Something went wrong: $e'};
     }
   }
 
-  /// CREATE POST
-  /// Note: key is 'file' to match Spring Boot @RequestPart("file")
-  static Future<void> createPost({required String caption, File? imageFile}) async {
-    final formData = FormData.fromMap({
-      'caption': caption,
-      if (imageFile != null)
-        'file': await MultipartFile.fromFile(
-          imageFile.path,
-          filename: imageFile.path.split('/').last,
-        ),
-    });
-    await HttpService.postMultipart(PathConfig.postInsight, formData);
-  }
-
-  /// LIKE POST
-  static Future<void> likePost(String postId, String userId) async {
-    await HttpService.post(PathConfig.doLikeOnPost, {
-      'postId': postId,
-      'userId': userId,
-    });
-  }
-
-  /// COMMENT ON POST
-  static Future<Comment> commentOnPost({required String postId, required String text}) async {
-    final response = await HttpService.post(PathConfig.doCommentOnPost, {
-      'postId': postId,
-      'text': text,
-    });
-    return Comment.fromJson(response);
-  }
-
-  /// GET COMMENTS
-  static Future<List<Comment>> getComments(String postId) async {
-    final res = await HttpService.get('${PathConfig.getCommentsByPostId}/$postId');
-    if (res is List) {
-      return res.map((e) => Comment.fromJson(e)).toList();
+  static Future<Map<String, dynamic>> getPostInsights() async {
+    try {
+      final raw = await HttpService.get(PathConfig.getGoals);
+      if (raw is List<dynamic>) {
+        return {'success': true, 'data': raw};
+      } else {
+        return {
+          'success': false,
+          'message': 'Unexpected response format: ${raw.runtimeType}',
+        };
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Exception in getGoals(): $e'};
     }
-    return [];
+  }
+
+  static Future<Map<String, dynamic>> updateGoalStatus(String url) async {
+    try {
+      final raw = await HttpService.put(url, {});
+
+      if (raw is! Map) {
+        return {
+          'success': false,
+          'message': 'Unexpected response format: ${raw.runtimeType}',
+        };
+      }
+
+      return {'success': true, 'data': raw};
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Exception in updateGoalStatus(): $e',
+      };
+    }
   }
 }

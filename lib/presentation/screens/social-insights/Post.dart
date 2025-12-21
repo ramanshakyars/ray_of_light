@@ -1,67 +1,22 @@
-class Author {
-  final String id;
-  final String username;
-
-  Author({
-    required this.id,
-    required this.username,
-  });
-
-  factory Author.fromJson(Map<String, dynamic> json) {
-    return Author(
-      id: json['id'] ?? '',
-      username: json['username'] ?? '',
-    );
-  }
-}
-
+// ignore: file_names
 class Post {
   final String id;
-  final String caption;
-  final String? imageUrl;
-  final DateTime createdAt;
-  final Author author;
-  int likeCount;
-  final int commentCount;
-  final int shareCount;
-
-  bool liked; // UI only
+  final String authorName;
+  final String avatarUrl;
+  final String tag;
+  final String timeAgo;
+  final String imageUrl;
+  bool liked;
+  int likesCount;
 
   Post({
     required this.id,
-    required this.caption,
-    this.imageUrl,
-    required this.createdAt,
-    required this.author,
-    required this.likeCount,
-    required this.commentCount,
-    required this.shareCount,
+    required this.authorName,
+    required this.avatarUrl,
+    required this.tag,
+    required this.timeAgo,
+    required this.imageUrl,
     this.liked = false,
+    this.likesCount = 0,
   });
-
-  factory Post.fromJson(Map<String, dynamic> json) {
-    final createdList = json['createdAt'] as List?;
-    DateTime parsedDate = DateTime.now();
-    if (createdList != null && createdList.length >= 6) {
-      parsedDate = DateTime(
-        createdList[0],
-        createdList[1],
-        createdList[2],
-        createdList[3],
-        createdList[4],
-        createdList[5],
-      );
-    }
-
-    return Post(
-      id: json['id'] ?? '',
-      caption: json['caption'] ?? '',
-      imageUrl: json['imageUrl'],
-      createdAt: parsedDate,
-      author: Author.fromJson(json['author']),
-      likeCount: json['likeCount'] ?? 0,
-      commentCount: json['commentCount'] ?? 0,
-      shareCount: json['shareCount'] ?? 0,
-    );
-  }
 }
