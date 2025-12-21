@@ -47,7 +47,7 @@ class InputArea extends StatelessWidget {
                   decoration: InputDecoration(
                     hintText: 'Ask anything',
                     hintStyle: TextStyle(
-                      color: AppColors.getTextPrimaryColor(isDarkMode).withOpacity(0.6),
+                      color: AppColors.getTextPrimaryColor(isDarkMode).withValues(),
                       fontSize: 16,
                       fontFamily: "Specimen",
                     ),

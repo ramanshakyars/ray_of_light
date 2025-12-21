@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
-import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 
 class ChatMessage extends StatefulWidget {
@@ -75,7 +74,17 @@ class _ChatMessageState extends State<ChatMessage> {
           Flexible(
             child: Container(
               padding: const EdgeInsets.all(12),
-              // decoration: BoxDecoration(
+              decoration:
+                  widget.isUser
+                      ? BoxDecoration(
+                        color:
+                            isDarkMode
+                                ? Colors.white.withValues()
+                                : Colors.black.withValues(),
+                        borderRadius: BorderRadius.circular(12),
+                      )
+                      : null,
+
               //   color: widget.isUser ? AppColors.getFormsCardColor(isDarkMode): AppColors.getTalkToLiteButtonBackgroundColor(isDarkMode),
               //   borderRadius: BorderRadius.circular(12),
               // ),
