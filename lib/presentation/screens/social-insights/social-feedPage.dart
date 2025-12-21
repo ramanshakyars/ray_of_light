@@ -136,36 +136,15 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
     }
   }
 
-  // ---------------- LIKE ----------------
-  // Inside _SocialFeedPageState
-
-  // Future<void> _toggleLike(Post post) async {
-  //   final user = await LocalStorageService.getUser();
-  //   final userId = user?['id'] ?? '';
-
-  //   // Optimistic UI Update
-  //   setState(() {
-  //     post.liked = !post.liked;
-  //     post.likeCount += post.liked ? 1 : -1;
-  //   });
-
-  //   try {
-  //     await SocialService.likePost(post.id, userId);
-  //   } catch (e) {
-  //     // Revert if network fails
-  //     setState(() {
-  //       post.liked = !post.liked;
-  //       post.likeCount += post.liked ? 1 : -1;
-  //     });
-  //     MessageService.showError(context, "Connection error");
-  //   }
-  // }
+ 
 
   Future<void> _handleLike(Post post) async {
     final user = await LocalStorageService.getUser();
-    final userId = user?['id'] ?? '';
-
-    // Optimistic UI Update: Toggle instantly for better UX
+    final String userId = user?['id'] ?? user?['_id'] ?? user?['userId'] ?? '';
+    if (userId.isEmpty) {
+      MessageService.showError(context, "User session expired. Please re-login.");
+      return;
+    }
     setState(() {
       post.liked = !post.liked;
       post.likeCount += post.liked ? 1 : -1;
@@ -174,7 +153,6 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
     try {
       await SocialService.likePost(post.id, userId);
     } catch (e) {
-      // Revert if API fails
       setState(() {
         post.liked = !post.liked;
         post.likeCount += post.liked ? 1 : -1;
