@@ -31,7 +31,6 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
   String loggedInUserRole = '';
   String loggedInUserName = '';
   File? _selectedImage;
-  
 
   @override
   void initState() {
@@ -122,53 +121,84 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
   // ---------------- LOAD POSTS ----------------
   Future<void> _loadInitialPosts() async {
     final loggedInUser = await LocalStorageService.getUser();
-    loggedInUserRole = loggedInUser?['roles'] ?? '';
-    loggedInUserName = loggedInUser?['name'] ?? '';
-    print('Logged in user role: $loggedInUser');
+    setState(() {
+      loggedInUserRole = loggedInUser?['roles'] ?? '';
+      loggedInUserName = loggedInUser?['name'] ?? '';
+    });
 
     try {
-      final response = await SocialService.getPostInsights();
-      if (response['success'] == true) {
-        setState(() {
-          _posts =
-              (response['data'] as List).map((e) => Post.fromJson(e)).toList();
-        });
-      }
+      final posts = await SocialService.getPostInsights();
+      setState(() {
+        _posts = posts;
+      });
     } catch (e) {
-      MessageService.showError(context, "Error fetching posts");
+      if (mounted) MessageService.showError(context, "Error fetching posts");
     }
   }
 
   // ---------------- LIKE ----------------
-  void _toggleLike(Post post) {
+  // Inside _SocialFeedPageState
+
+  // Future<void> _toggleLike(Post post) async {
+  //   final user = await LocalStorageService.getUser();
+  //   final userId = user?['id'] ?? '';
+
+  //   // Optimistic UI Update
+  //   setState(() {
+  //     post.liked = !post.liked;
+  //     post.likeCount += post.liked ? 1 : -1;
+  //   });
+
+  //   try {
+  //     await SocialService.likePost(post.id, userId);
+  //   } catch (e) {
+  //     // Revert if network fails
+  //     setState(() {
+  //       post.liked = !post.liked;
+  //       post.likeCount += post.liked ? 1 : -1;
+  //     });
+  //     MessageService.showError(context, "Connection error");
+  //   }
+  // }
+
+  Future<void> _handleLike(Post post) async {
+    final user = await LocalStorageService.getUser();
+    final userId = user?['id'] ?? '';
+
+    // Optimistic UI Update: Toggle instantly for better UX
     setState(() {
       post.liked = !post.liked;
       post.likeCount += post.liked ? 1 : -1;
     });
+
+    try {
+      await SocialService.likePost(post.id, userId);
+    } catch (e) {
+      // Revert if API fails
+      setState(() {
+        post.liked = !post.liked;
+        post.likeCount += post.liked ? 1 : -1;
+      });
+      MessageService.showError(context, "Failed to update like");
+    }
   }
 
   // ---------------- CREATE POST ----------------
   Future<void> _onCreatePost() async {
     if (loggedInUserRole != 'ROLE_ADMIN') return;
-
-    if (_selectedImage == null && _createController.text.trim().isEmpty) {
-      MessageService.showError(context, 'Add image or caption');
-      return;
-    }
+    if (_selectedImage == null && _createController.text.trim().isEmpty) return;
 
     try {
       await SocialService.createPost(
         caption: _createController.text.trim(),
         imageFile: _selectedImage,
       );
-
       _createController.clear();
-      _selectedImage = null;
-
-      await _loadInitialPosts();
+      setState(() => _selectedImage = null);
+      _loadInitialPosts();
       MessageService.showSuccess(context, 'Post created');
     } catch (e) {
-      MessageService.showError(context, 'Failed to create post');
+      MessageService.showError(context, 'Post creation failed');
     }
   }
 
@@ -224,7 +254,7 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
                 children: [
                   PostCard(
                     post: post,
-                    onLike: () => _toggleLike(post),
+                    onLike: () => _handleLike(post),
                     isDarkMode: isDark,
                     timeText: timeAgo(post.createdAt),
                   ),
