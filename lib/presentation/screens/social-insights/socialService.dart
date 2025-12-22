@@ -34,12 +34,18 @@ class SocialService {
   }
 
   /// LIKE POST
-  static Future<void> likePost(String postId, String userId) async {
+ static Future<void> likePost(String postId, String userId) async {
+  try {
     await HttpService.post(PathConfig.doLikeOnPost, {
       'postId': postId,
       'userId': userId,
     });
+  } catch (e, st) {
+    // Print full error & stack to console to see server response body / status
+    print('SocialService.likePost error: $e\n$st');
+    rethrow;
   }
+}
 
   /// COMMENT ON POST
   static Future<Comment> commentOnPost({required String postId, required String text}) async {
