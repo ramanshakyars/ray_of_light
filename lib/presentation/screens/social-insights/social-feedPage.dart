@@ -49,14 +49,17 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
   }
 
   // ---------------- IMAGE PICKER ----------------
-  Future<void> _pickImage(ImageSource source) async {
+  Future<void> _pickImage(
+    ImageSource source,
+    void Function(void Function()) setModalState,
+  ) async {
     final XFile? image = await _picker.pickImage(
       source: source,
       imageQuality: 80,
     );
 
     if (image != null) {
-      setState(() {
+      setModalState(() {
         _selectedImage = File(image.path);
       });
     }
@@ -85,7 +88,9 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
                 radius: 22,
                 backgroundColor: AppColors.getPrimary(isDark),
                 child: Text(
-                  loggedInUserName.isNotEmpty ? loggedInUserName[0].toUpperCase() : 'U',
+                  loggedInUserName.isNotEmpty
+                      ? loggedInUserName[0].toUpperCase()
+                      : 'U',
                   style: AppTextStyles.bold22(isDark).copyWith(
                     fontSize: 14,
                     color: AppColors.getPrimaryForeground(isDark),
@@ -99,7 +104,10 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
                     _showCreatePostModal(isDark);
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.getInputBackground(isDark),
                       borderRadius: BorderRadius.circular(30),
@@ -110,9 +118,9 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
                     ),
                     child: Text(
                       "What's on your mind?",
-                      style: AppTextStyles.regular16(isDark).copyWith(
-                        color: AppColors.getMutedForeground(isDark),
-                      ),
+                      style: AppTextStyles.regular16(
+                        isDark,
+                      ).copyWith(color: AppColors.getMutedForeground(isDark)),
                     ),
                   ),
                 ),
@@ -172,9 +180,9 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
             const SizedBox(width: 6),
             Text(
               label,
-              style: AppTextStyles.regular14(isDark).copyWith(
-                fontWeight: FontWeight.w500,
-              ),
+              style: AppTextStyles.regular14(
+                isDark,
+              ).copyWith(fontWeight: FontWeight.w500),
             ),
           ],
         ),
@@ -195,7 +203,9 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
               height: MediaQuery.of(context).size.height * 0.85,
               decoration: BoxDecoration(
                 color: AppColors.getCard(isDark),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24),
+                ),
               ),
               child: Column(
                 children: [
@@ -231,7 +241,7 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
                       ],
                     ),
                   ),
-                  
+
                   // User info
                   Padding(
                     padding: const EdgeInsets.all(16),
@@ -241,7 +251,9 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
                           radius: 22,
                           backgroundColor: AppColors.getPrimary(isDark),
                           child: Text(
-                            loggedInUserName.isNotEmpty ? loggedInUserName[0].toUpperCase() : 'U',
+                            loggedInUserName.isNotEmpty
+                                ? loggedInUserName[0].toUpperCase()
+                                : 'U',
                             style: AppTextStyles.bold22(isDark).copyWith(
                               fontSize: 14,
                               color: AppColors.getPrimaryForeground(isDark),
@@ -257,7 +269,10 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
                               style: AppTextStyles.medium18(isDark),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppColors.getAccent(isDark),
                                 borderRadius: BorderRadius.circular(20),
@@ -272,8 +287,12 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
                                   const SizedBox(width: 4),
                                   Text(
                                     'Public',
-                                    style: AppTextStyles.regular14(isDark).copyWith(
-                                      color: AppColors.getMutedForeground(isDark),
+                                    style: AppTextStyles.regular14(
+                                      isDark,
+                                    ).copyWith(
+                                      color: AppColors.getMutedForeground(
+                                        isDark,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -284,7 +303,7 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
                       ],
                     ),
                   ),
-                  
+
                   // Content
                   Expanded(
                     child: SingleChildScrollView(
@@ -298,13 +317,15 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
                               style: AppTextStyles.regular16(isDark),
                               decoration: InputDecoration(
                                 hintText: "What's on your mind?",
-                                hintStyle: AppTextStyles.regular16(isDark).copyWith(
+                                hintStyle: AppTextStyles.regular16(
+                                  isDark,
+                                ).copyWith(
                                   color: AppColors.getMutedForeground(isDark),
                                 ),
                                 border: InputBorder.none,
                               ),
                             ),
-                            
+
                             if (_selectedImage != null)
                               Padding(
                                 padding: const EdgeInsets.only(top: 16),
@@ -332,7 +353,9 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
                                           padding: const EdgeInsets.all(6),
                                           decoration: BoxDecoration(
                                             color: Colors.black54,
-                                            borderRadius: BorderRadius.circular(20),
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
                                           ),
                                           child: const Icon(
                                             Icons.close,
@@ -350,7 +373,7 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
                       ),
                     ),
                   ),
-                  
+
                   // Actions
                   Container(
                     padding: const EdgeInsets.all(16),
@@ -382,9 +405,15 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
                                   IconButton(
                                     icon: Icon(
                                       Icons.photo_library_outlined,
-                                      color: AppColors.getMutedForeground(isDark),
+                                      color: AppColors.getMutedForeground(
+                                        isDark,
+                                      ),
                                     ),
-                                    onPressed: () => _pickImage(ImageSource.gallery),
+                                    onPressed:
+                                        () => _pickImage(
+                                          ImageSource.gallery,
+                                          setModalState,
+                                        ),
                                   ),
                                   // IconButton(
                                   //   icon: Icon(
@@ -419,26 +448,32 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
                             onPressed: _isPosting ? null : _onCreatePost,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.getPrimary(isDark),
-                              foregroundColor: AppColors.getPrimaryForeground(isDark),
+                              foregroundColor: AppColors.getPrimaryForeground(
+                                isDark,
+                              ),
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               elevation: 0,
                             ),
-                            child: _isPosting
-                                ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            child:
+                                _isPosting
+                                    ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
+                                      ),
+                                    )
+                                    : Text(
+                                      'Post',
+                                      style: AppTextStyles.button16(isDark),
                                     ),
-                                  )
-                                : Text(
-                                    'Post',
-                                    style: AppTextStyles.button16(isDark),
-                                  ),
                           ),
                         ),
                       ],
@@ -456,7 +491,7 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
   // ---------------- LOAD POSTS ----------------
   Future<void> _loadInitialPosts() async {
     setState(() => _isLoading = true);
-    
+
     final loggedInUser = await LocalStorageService.getUser();
     setState(() {
       loggedInUserRole = loggedInUser?['roles'] ?? '';
@@ -479,7 +514,10 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
     final user = await LocalStorageService.getUser();
     final String userId = user?['id'] ?? user?['_id'] ?? user?['userId'] ?? '';
     if (userId.isEmpty) {
-      MessageService.showError(context, "User session expired. Please re-login.");
+      MessageService.showError(
+        context,
+        "User session expired. Please re-login.",
+      );
       return;
     }
     setState(() {
@@ -504,7 +542,7 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
       MessageService.showError(context, "Only admin can create posts");
       return;
     }
-    
+
     if (_selectedImage == null && _createController.text.trim().isEmpty) {
       MessageService.showError(context, "Please add text or image");
       return;
@@ -555,10 +593,7 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
     return Scaffold(
       backgroundColor: AppColors.getBackground(isDark),
       appBar: AppBar(
-        title: Text(
-          'Ray Of Light',
-          style: AppTextStyles.bold22(isDark),
-        ),
+        title: Text('Ray Of Light', style: AppTextStyles.bold22(isDark)),
         centerTitle: true,
         leading: IconButton(
           icon: CircleAvatar(
@@ -577,10 +612,7 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
         ),
         actions: [
           IconButton(
-            icon: Icon(
-              Icons.mood,
-              color: AppColors.getPrimary(isDark),
-            ),
+            icon: Icon(Icons.mood, color: AppColors.getPrimary(isDark)),
             onPressed: _openMoodDialog,
           ),
         ],
@@ -601,7 +633,6 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
 
             // Stories/Highlights Section (optional)
             // _buildStoriesSection(isDark),
-
             const SizedBox(height: 16),
 
             // Loading indicator
@@ -635,9 +666,9 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
                       const SizedBox(height: 8),
                       Text(
                         'Be the first to create a post!',
-                        style: AppTextStyles.regular14(isDark).copyWith(
-                          color: AppColors.getMutedForeground(isDark),
-                        ),
+                        style: AppTextStyles.regular14(
+                          isDark,
+                        ).copyWith(color: AppColors.getMutedForeground(isDark)),
                       ),
                     ],
                   ),
@@ -686,15 +717,12 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Stories',
-                  style: AppTextStyles.medium18(isDark),
-                ),
+                Text('Stories', style: AppTextStyles.medium18(isDark)),
                 Text(
                   'See all',
-                  style: AppTextStyles.regular14(isDark).copyWith(
-                    color: AppColors.getPrimary(isDark),
-                  ),
+                  style: AppTextStyles.regular14(
+                    isDark,
+                  ).copyWith(color: AppColors.getPrimary(isDark)),
                 ),
               ],
             ),
@@ -806,13 +834,19 @@ class PostCard extends StatelessWidget {
                 Icon(
                   isActive ? activeIcon : icon,
                   size: 20,
-                  color: isActive ? activeColor : AppColors.getMutedForeground(isDarkMode),
+                  color:
+                      isActive
+                          ? activeColor
+                          : AppColors.getMutedForeground(isDarkMode),
                 ),
                 const SizedBox(width: 6),
                 Text(
                   label,
                   style: AppTextStyles.regular14(isDarkMode).copyWith(
-                    color: isActive ? activeColor : AppColors.getMutedForeground(isDarkMode),
+                    color:
+                        isActive
+                            ? activeColor
+                            : AppColors.getMutedForeground(isDarkMode),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -865,16 +899,23 @@ class PostCard extends StatelessWidget {
                           if (post.author.username == "Admin")
                             Container(
                               margin: const EdgeInsets.only(left: 6),
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppColors.getPrimary(isDarkMode),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
                                 'Verified',
-                                style: AppTextStyles.regular14(isDarkMode).copyWith(
+                                style: AppTextStyles.regular14(
+                                  isDarkMode,
+                                ).copyWith(
                                   fontSize: 10,
-                                  color: AppColors.getPrimaryForeground(isDarkMode),
+                                  color: AppColors.getPrimaryForeground(
+                                    isDarkMode,
+                                  ),
                                 ),
                               ),
                             ),
@@ -935,18 +976,20 @@ class PostCard extends StatelessWidget {
                         height: 300,
                         width: double.infinity,
                         fit: BoxFit.cover,
-                        placeholder: (_, __) => Container(
-                          height: 300,
-                          color: AppColors.getMuted(isDarkMode),
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                        errorWidget: (_, __, ___) => Container(
-                          height: 300,
-                          color: AppColors.getMuted(isDarkMode),
-                          child: const Icon(Icons.broken_image),
-                        ),
+                        placeholder:
+                            (_, __) => Container(
+                              height: 300,
+                              color: AppColors.getMuted(isDarkMode),
+                              child: const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
+                        errorWidget:
+                            (_, __, ___) => Container(
+                              height: 300,
+                              color: AppColors.getMuted(isDarkMode),
+                              child: const Icon(Icons.broken_image),
+                            ),
                       ),
                       Positioned.fill(
                         child: AnimatedOpacity(
@@ -1019,9 +1062,9 @@ class PostCard extends StatelessWidget {
                 if (post.shareCount > 0)
                   Text(
                     '${post.shareCount} shares',
-                    style: AppTextStyles.regular14(isDarkMode).copyWith(
-                      color: AppColors.getMutedForeground(isDarkMode),
-                    ),
+                    style: AppTextStyles.regular14(
+                      isDarkMode,
+                    ).copyWith(color: AppColors.getMutedForeground(isDarkMode)),
                   ),
               ],
             ),
