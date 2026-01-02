@@ -50,4 +50,6 @@ class PathConfig {
 // notifications
     static const String getNotifications = '$baseUrl/notifications';
     static const String readNotifications = '$baseUrl/notifications/read';
+    static const String registerDeviceToken = '$baseUrl/devices/register';
+
 }

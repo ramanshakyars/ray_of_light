@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:rayoflite/core/constants/pathConfig.dart';
+import 'package:rayoflite/core/services/httpService.dart';
+import 'package:rayoflite/core/services/localStorageService.dart';
 
 /// 🔹 BACKGROUND HANDLER (TOP LEVEL - VERY IMPORTANT)
 Future<void> firebaseBackgroundHandler(RemoteMessage message) async {
@@ -9,35 +12,42 @@ Future<void> firebaseBackgroundHandler(RemoteMessage message) async {
 }
 
 class PushService {
-  static final FirebaseMessaging _messaging =
-      FirebaseMessaging.instance;
+   static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
-  /// 🔹 CALL THIS FROM main()
   static Future<void> init() async {
-    // iOS permission
-    await _messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-
-    // Background handler register
-    FirebaseMessaging.onBackgroundMessage(
-        firebaseBackgroundHandler);
-
-    // Foreground listener
+    await _messaging.requestPermission(alert: true, badge: true, sound: true);
+    FirebaseMessaging.onBackgroundMessage(firebaseBackgroundHandler);
     FirebaseMessaging.onMessage.listen((message) {
       print("Foreground push: ${message.notification?.title}");
     });
+
+    // get initial token and send to backend
+    String? token = await _messaging.getToken();
+    if (token != null) {
+      await _registerTokenWithServer(token);
+    }
+
+    // listen for token refresh
+    _messaging.onTokenRefresh.listen((newToken) async {
+      await _registerTokenWithServer(newToken);
+    });
   }
 
-  /// 🔹 TOKEN FETCH
-  static Future<String?> getToken() async {
-    return await _messaging.getToken();
+  static Future<void> _registerTokenWithServer(String token) async {
+    try {
+      final userId = await LocalStorageService.getUser(); // implement or adjust
+      final deviceId = 'flutter-${Platform.operatingSystem}-${DateTime.now().millisecondsSinceEpoch}';
+      await HttpService.post(PathConfig.registerDeviceToken, {
+        "userId": userId ?? "",
+        "deviceId": deviceId,
+        "platform": Platform.isIOS ? "IOS" : "ANDROID",
+        "token": token,
+      });
+      print('Registered push token with server');
+    } catch (e) {
+      print('Failed to register push token: $e');
+    }
   }
 
-  /// 🔹 TOKEN REFRESH (IMPORTANT)
-  static void onTokenRefresh(Function(String) callback) {
-    _messaging.onTokenRefresh.listen(callback);
-  }
+  static Future<String?> getToken() async => await _messaging.getToken();
 }

@@ -5,9 +5,9 @@ import 'package:rayoflite/presentation/screens/notifications/notification_model.
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationController extends ChangeNotifier {
-   List<AppNotification> notifications = [];
+  List<AppNotification> notifications = [];
   bool loading = false;
-    final NotificationService _service = NotificationService();
+  final NotificationService _service = NotificationService();
   NotificationController() {
     _listenConnectivity();
   }
@@ -22,18 +22,32 @@ class NotificationController extends ChangeNotifier {
   }
 
   /// 🔹 MARK READ OFFLINE SAFE
-  Future<void> markReadOffline(List<String> ids) async {
+  Future<void> markReadOffline(List<String> ids, String userId) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setBool("pending_read_sync", true);
+    // store pending ids
+    final existing = prefs.getStringList("pending_read_ids") ?? [];
+    existing.addAll(ids);
+    await prefs.setStringList("pending_read_ids", existing);
+    await prefs.setBool("pending_read_sync", true);
+    await prefs.setString("pending_read_user", userId);
   }
 
   /// 🔹 SYNC WHEN INTERNET BACK
   Future<void> _syncPendingReads() async {
     final prefs = await SharedPreferences.getInstance();
-
     if (prefs.getBool("pending_read_sync") == true) {
-      await NotificationService.markRead([]);
-      prefs.remove("pending_read_sync");
+      final ids = prefs.getStringList("pending_read_ids") ?? [];
+      final userId = prefs.getString("pending_read_user") ?? "";
+      if (ids.isNotEmpty) {
+        final ok = await NotificationService.markRead(userId, ids);
+        if (ok) {
+          prefs.remove("pending_read_ids");
+          prefs.remove("pending_read_user");
+          prefs.remove("pending_read_sync");
+        }
+      } else {
+        prefs.remove("pending_read_sync");
+      }
     }
   }
 
