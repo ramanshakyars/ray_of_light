@@ -20,7 +20,7 @@ Future<void> main() async {
 
   /// 🔹 Push notifications init
   /// (permission, foreground/background listeners)
-  await PushService.init();
+ 
 
   /// 🔹 Local storage init
   await LocalStorageService.getInstance();

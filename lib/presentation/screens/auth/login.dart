@@ -7,6 +7,8 @@ import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
+import 'package:rayoflite/presentation/screens/notifications/dummy_notification_scheduler.dart';
+import 'package:rayoflite/presentation/screens/notifications/push-service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -40,6 +42,8 @@ class _LoginPageState extends State<LoginPage> {
           context,
           response['message'] ?? 'Login Successful!',
         );
+         await PushService.init();
+         await DummyNotificationScheduler.initAndSchedule();
         if (mounted) {
           GoRouter.of(context).go('${RouteNames.mainApp}/${RouteNames.home}');
         }

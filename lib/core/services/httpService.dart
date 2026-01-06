@@ -56,4 +56,12 @@ class HttpService {
   return response.data;
 }
 
+static Future<dynamic> postRaw(
+  String url,
+  Map<String, dynamic> body,
+) async {
+  final response = await _dio.post(url, data: body);
+  return response.data;
+}
+
 }
