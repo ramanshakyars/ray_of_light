@@ -58,7 +58,7 @@ GoRouter createRouter(String initialLocation) {
 
       // Main App Routes
       ShellRoute(
-        builder: (context, state, child) => MainScreen(child: child),
+          builder: (context, state, child) => const MainScreen(),
         routes: [
           GoRoute(
             // path: RouteNames.mainApp,

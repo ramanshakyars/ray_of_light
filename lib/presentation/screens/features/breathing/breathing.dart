@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:rayoflite/core/config/main-layout.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
@@ -169,9 +170,7 @@ class _BreathingScreenState extends State<BreathingScreen>
           IconButton(
             icon: Image.asset('assets/logo.png', height: 30),
             onPressed:
-                () => GoRouter.of(
-                  context,
-                ).push('${RouteNames.mainApp}/${RouteNames.home}'),
+                () => MainScreen.goToTab(context, 0),
           ),
         ],
       ),

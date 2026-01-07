@@ -10,6 +10,7 @@ class DummyNotificationScheduler {
 
   /// 🔹 Call only ONCE (after login)
   static Future<void> initAndSchedule() async {
+      print("🔔 DummyNotificationScheduler CALLED");
     await _init();
     await _requestPermission();
     await _scheduleEvery6Hours();
@@ -65,27 +66,28 @@ class DummyNotificationScheduler {
   //     );
   //   }
   // }
-  static Future<void> _scheduleEvery6Hours() async {
-    await _plugin.cancelAll(); // avoid duplicates
+ static Future<void> _scheduleEvery6Hours() async {
+  await _plugin.cancelAll(); // avoid duplicates
 
-    final now = tz.TZDateTime.now(tz.local);
+  final now = tz.TZDateTime.now(tz.local);
 
-    for (int i = 1; i <= 5; i++) {
-      final scheduledTime = now.add(Duration(minutes: i));
-
-      await _plugin.zonedSchedule(
-        i,
-        "🧪 Dummy Test Notification",
-        "Triggered at ${scheduledTime.hour}:${scheduledTime.minute}",
-        scheduledTime,
-        _details(),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.time,
-      );
-    }
+  for (int i = 1; i <= 20; i++) {
+    final scheduledTime = now.add(Duration(minutes: i));
+  print("⏰ Scheduled notification $i at $scheduledTime");
+    await _plugin.zonedSchedule(
+      i, // unique notification id
+      "🧪 Dummy Test Notification",
+      "Test message #$i at ${scheduledTime.hour}:${scheduledTime.minute}",
+      scheduledTime,
+      _details(),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
   }
+}
+
 
   static NotificationDetails _details() {
     return const NotificationDetails(

@@ -1,28 +1,50 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
+import 'package:rayoflite/presentation/screens/social-insights/social-feedPage.dart';
+import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat_screen.dart';
+import 'package:rayoflite/presentation/screens/features/journalism/junerlism.dart';
+import 'package:rayoflite/presentation/screens/features/breathing/breathing.dart';
+import 'package:rayoflite/presentation/screens/features/goal-tracker/goal-tracker.dart';
 
 class MainScreen extends StatefulWidget {
-  final Widget child;
+  const MainScreen({super.key});
 
-  const MainScreen({super.key, required this.child});
+  /// 🔹 GLOBAL TAB NAVIGATION (AppBar / anywhere)
+  static void goToTab(BuildContext context, int index) {
+    final state = context.findAncestorStateOfType<_MainScreenState>();
+    state?._jumpToTab(index);
+  }
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
+class _MainScreenState extends State<MainScreen>
+    with TickerProviderStateMixin {
+
   int _currentIndex = 0;
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late PageController _pageController;
+
   late AnimationController _pulseController;
   late AnimationController _rotateController;
+
+  /// 🔹 ALL MAIN TABS
+  final List<Widget> _tabs = const [
+    SocialFeedPage(),          // 0 Home
+    ChatScreen(chatId: null),  // 1 Talk
+    JournalismScreen(),        // 2 Nest
+    BreathingScreen(),         // 3 Breath
+    GoalTrackerExercises(),    // 4 Wishes
+  ];
 
   @override
   void initState() {
     super.initState();
+
+    _pageController = PageController(initialPage: _currentIndex);
+
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2000),
@@ -36,28 +58,44 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    _pageController.dispose();
     _pulseController.dispose();
     _rotateController.dispose();
     super.dispose();
   }
 
+  // ---------------------------------------------------------------------------
+  // 🔹 TAB CHANGE LOGIC
+  // ---------------------------------------------------------------------------
+
+  /// BottomNav / Drawer → INSTANT jump (NO animation)
+  void _jumpToTab(int index) {
+    if (_currentIndex == index) return;
+
+    setState(() => _currentIndex = index);
+    _pageController.jumpToPage(index);
+  }
+
+  /// Swipe → Animated (handled automatically)
+  void _onSwipe(int index) {
+    setState(() => _currentIndex = index);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 🔹 UI
+  // ---------------------------------------------------------------------------
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
-      // appBar: AppBar(
-      // title: const Text('Ray of Light'),
-      // leading: IconButton(
-      //   icon: const Icon(Icons.menu),
-      //   onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-      // ),
-      // ),
-      // drawer: _buildDrawer(context),
-      body: widget.child,
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: _onSwipe,
+        children: _tabs,
+      ),
+      bottomNavigationBar: _buildBottomNav(),
     );
   }
-
   // Drawer _buildDrawer(BuildContext context) {
   //   return Drawer(
   //     child: ListView(
@@ -108,32 +146,33 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   //   );
   // }
 
-  BottomNavigationBar _buildBottomNavigationBar() {
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    final isDarkMode = themeProvider.isDarkMode;
+  BottomNavigationBar _buildBottomNav() {
+    final isDarkMode =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
     return BottomNavigationBar(
       currentIndex: _currentIndex,
-      onTap: (index) => _navigateToTab(context, index),
       type: BottomNavigationBarType.fixed,
-      selectedItemColor: AppColors.slectedBottomIconColor, 
+      onTap: _jumpToTab, // 🔥 IMPORTANT
+      selectedItemColor: AppColors.slectedBottomIconColor,
       unselectedItemColor: AppColors.getIconColor(isDarkMode),
       backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
       items: [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
         BottomNavigationBarItem(
+          label: 'Talk',
           icon: Stack(
             alignment: Alignment.center,
             children: [
-              // Glass circle background
               AnimatedBuilder(
                 animation: _rotateController,
-                builder: (context, child) {
-                  return Transform.rotate(
-                    angle: _rotateController.value * 2 * 3.1416,
-                    child: child,
-                  );
-                },
+                builder: (_, child) => Transform.rotate(
+                  angle: _rotateController.value * 6.28,
+                  child: child,
+                ),
                 child: Container(
                   width: 40,
                   height: 40,
@@ -168,78 +207,24 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                     curve: Curves.easeInOut,
                   ),
                 ),
-                child: ShaderMask(
-                  shaderCallback: (Rect bounds) {
-                    return LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Colors.blueAccent, Colors.purpleAccent],
-                    ).createShader(bounds);
-                  },
-                  child: Icon(
-                    Icons.auto_awesome,
-                    size: 28,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              // AI badge with glow
-              Positioned(
-                right: 0,
-                top: 0,
-                child: Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.blueAccent,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.blueAccent.withOpacity(0.8),
-                        blurRadius: 8,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    'AI',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 8,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+                child: const Icon(Icons.auto_awesome, color: Colors.white),
               ),
             ],
           ),
-          label: 'Talk',
         ),
-
-        BottomNavigationBarItem(icon: Icon(Icons.newspaper), label: 'Nest'),
-        BottomNavigationBarItem(
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.newspaper),
+          label: 'Nest',
+        ),
+        const BottomNavigationBarItem(
           icon: Icon(Icons.filter_vintage),
           label: 'Breath',
         ),
-
-        BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Wishes'),
-        // BottomNavigationBarItem(icon: Icon(Icons.person_pin), label: 'Profile'),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.favorite),
+          label: 'Wishes',
+        ),
       ],
     );
-  }
-
-  void _navigateToTab(BuildContext context, int index) {
-    setState(() => _currentIndex = index);
-    final routes = [
-      RouteNames.home,
-      RouteNames.talkToLight,
-      RouteNames.junerlism,
-      RouteNames.breathingExercise,
-      RouteNames.goalTracker,
-      // RouteNames.profile,
-    ];
-    context.push('${RouteNames.mainApp}/${routes[index]}');
-    // if (Scaffold.of(context).isDrawerOpen) {
-    //   Navigator.pop(context);
-    // }
   }
 }

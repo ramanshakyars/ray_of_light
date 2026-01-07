@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:rayoflite/core/config/main-layout.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
@@ -61,11 +62,7 @@ class _UserDashboardState extends State<UserDashboard> {
         backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
         leading: IconButton(
           icon: Image.asset('assets/logo.png'),
-          onPressed: () {
-            GoRouter.of(
-              context,
-            ).push('${RouteNames.mainApp}/${RouteNames.profile}');
-          },
+          onPressed: ()=> MainScreen.goToTab(context, 0),
         ),
         actions: [
           IconButton(icon: const Icon(Icons.mood), onPressed: _openMoodDialog),
