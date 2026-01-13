@@ -53,7 +53,8 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
       }
     } else {
       if (mounted) {
-        MessageService.showError(context, 'Error: ${response['message']}');
+        // MessageService.showError(context, 'Error: ${response['message']}');
+        MessageService.showError(context, 'Getting issue in fetching goals');
       }
     }
   }

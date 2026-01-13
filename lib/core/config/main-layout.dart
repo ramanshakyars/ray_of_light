@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/screens/social-insights/social-feedPage.dart';
@@ -9,7 +11,8 @@ import 'package:rayoflite/presentation/screens/features/breathing/breathing.dart
 import 'package:rayoflite/presentation/screens/features/goal-tracker/goal-tracker.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final Widget child;
+  const MainScreen({super.key, required this.child});
 
   /// 🔹 GLOBAL TAB NAVIGATION (AppBar / anywhere)
   static void goToTab(BuildContext context, int index) {
@@ -21,9 +24,7 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen>
-    with TickerProviderStateMixin {
-
+class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   int _currentIndex = 0;
   late PageController _pageController;
 
@@ -32,11 +33,11 @@ class _MainScreenState extends State<MainScreen>
 
   /// 🔹 ALL MAIN TABS
   final List<Widget> _tabs = const [
-    SocialFeedPage(),          // 0 Home
-    ChatScreen(chatId: null),  // 1 Talk
-    JournalismScreen(),        // 2 Nest
-    BreathingScreen(),         // 3 Breath
-    GoalTrackerExercises(),    // 4 Wishes
+    SocialFeedPage(), // 0 Home
+    ChatScreen(chatId: null), // 1 Talk
+    JournalismScreen(), // 2 Nest
+    BreathingScreen(), // 3 Breath
+    GoalTrackerExercises(), // 4 Wishes
   ];
 
   @override
@@ -87,15 +88,23 @@ class _MainScreenState extends State<MainScreen>
 
   @override
   Widget build(BuildContext context) {
+    final location = GoRouterState.of(context).uri.toString();
+    final isProfilePage = location.contains(RouteNames.profile);
+
     return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: _onSwipe,
-        children: _tabs,
-      ),
-      bottomNavigationBar: _buildBottomNav(),
+      body:
+          isProfilePage
+              ? widget
+                  .child // 🔥 PROFILE / OTHER NON-TAB PAGES
+              : PageView(
+                controller: _pageController,
+                onPageChanged: _onSwipe,
+                children: _tabs,
+              ),
+      bottomNavigationBar: isProfilePage ? null : _buildBottomNav(),
     );
   }
+
   // Drawer _buildDrawer(BuildContext context) {
   //   return Drawer(
   //     child: ListView(
@@ -158,10 +167,7 @@ class _MainScreenState extends State<MainScreen>
       unselectedItemColor: AppColors.getIconColor(isDarkMode),
       backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
       items: [
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
+        const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
         BottomNavigationBarItem(
           label: 'Talk',
           icon: Stack(
