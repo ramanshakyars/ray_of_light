@@ -47,4 +47,9 @@ class PathConfig {
     static const String doLikeOnPost = '$baseUrl/insight/like';
     static const String getCommentsByPostId = '$baseUrl/insight/comments';
 
+// notifications
+    static const String getNotifications = '$baseUrl/notifications';
+    static const String readNotifications = '$baseUrl/notifications/read';
+    static const String registerDeviceToken = '$baseUrl/device/register';
+
 }

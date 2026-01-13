@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:rayoflite/core/config/main-layout.dart';
 
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/journalService.dart';
@@ -116,7 +117,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
         actions: [
           IconButton(
             icon: Image.asset('assets/logo.png'),
-            onPressed: () => GoRouter.of(context).push('${RouteNames.mainApp}/${RouteNames.home}'),
+            onPressed: () => MainScreen.goToTab(context, 0),
             iconSize: 32,
           ),
         ],
