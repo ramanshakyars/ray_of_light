@@ -79,12 +79,15 @@ class _ChatMessageState extends State<ChatMessage> {
                       ? BoxDecoration(
                         color:
                             isDarkMode
-                                ? Colors.white.withValues()
-                                : Colors.black.withValues(),
+                                ? const Color(
+                                  0xFF2A2A2A,
+                                ) // dark grey (visible in dark mode)
+                                : const Color(
+                                  0xFFF2F2F2,
+                                ), // light grey (visible in light mode)
                         borderRadius: BorderRadius.circular(12),
                       )
                       : null,
-
               //   color: widget.isUser ? AppColors.getFormsCardColor(isDarkMode): AppColors.getTalkToLiteButtonBackgroundColor(isDarkMode),
               //   borderRadius: BorderRadius.circular(12),
               // ),
