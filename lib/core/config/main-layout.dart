@@ -89,11 +89,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final location = GoRouterState.of(context).uri.toString();
-    final isProfilePage = location.contains(RouteNames.profile);
+    final isSinglePage =
+    location.contains(RouteNames.profile) ||
+    location.contains(RouteNames.notification);
 
     return Scaffold(
       body:
-          isProfilePage
+          isSinglePage
               ? widget
                   .child // 🔥 PROFILE / OTHER NON-TAB PAGES
               : PageView(
@@ -101,7 +103,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 onPageChanged: _onSwipe,
                 children: _tabs,
               ),
-      bottomNavigationBar: isProfilePage ? null : _buildBottomNav(),
+      bottomNavigationBar: isSinglePage ? null : _buildBottomNav(),
     );
   }
 

@@ -6,6 +6,7 @@ import 'package:rayoflite/presentation/screens/auth/login.dart';
 import 'package:rayoflite/presentation/screens/auth/register.dart';
 import 'package:rayoflite/presentation/screens/auth/reset-password.dart';
 import 'package:rayoflite/presentation/screens/features/profile.dart';
+import 'package:rayoflite/presentation/screens/notifications/notification_page.dart';
 import 'package:rayoflite/presentation/screens/social-insights/social-feedPage.dart';
 import 'package:rayoflite/presentation/screens/home/user-dashboard.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat_screen.dart';
@@ -112,6 +113,13 @@ GoRouter createRouter(String initialLocation) {
               GoRoute(
                 path: RouteNames.profile,
                 builder: (context, state) => const ProfileScreen(),
+              ),
+              GoRoute(
+                path: RouteNames.notification,
+                builder: (context, state) {
+                  final userId = state.extra as String;
+                  return NotificationPage(userId: userId);
+                },
               ),
             ],
           ),

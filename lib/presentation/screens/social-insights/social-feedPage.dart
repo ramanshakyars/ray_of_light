@@ -615,6 +615,19 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
             icon: Icon(Icons.mood, color: AppColors.getPrimary(isDark)),
             onPressed: _openMoodDialog,
           ),
+          IconButton(
+            icon: Icon(
+              Icons.notifications_outlined,
+              color: AppColors.getPrimary(isDark),
+            ),
+            onPressed: () {
+              context.push(
+                '${RouteNames.mainApp}/${RouteNames.notification}',
+                // todo : pass id here
+                extra: '32', // 🔥 pass logged-in userId
+              );
+            },
+          ),
         ],
         elevation: 0,
         backgroundColor: AppColors.getCard(isDark),

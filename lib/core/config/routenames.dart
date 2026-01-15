@@ -21,4 +21,7 @@ class RouteNames {
   static const junerlism = 'junerlism';
   static const breathingExercise = 'breathing-exercises';
   static const goalTracker = 'goal-tracker';
+
+  // Notifications
+  static const notification = 'notification';
 }
