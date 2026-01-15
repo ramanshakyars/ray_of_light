@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "579133991964",
+    "project_id": "ray-of-light-70f71",
+    "storage_bucket": "ray-of-light-70f71.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:579133991964:android:7cc70aaeb6d0cd3b4603d9",
+        "android_client_info": {
+          "package_name": "com.wrappedweb.rayoflite"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDa5cyjp19Z4T0e06KNlowJyxc7ALy45uU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
