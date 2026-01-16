@@ -127,7 +127,9 @@ class _LoginPageState extends State<LoginPage> {
                                 controller: _emailController,
                                 decoration: InputDecoration(
                                   labelText: 'Email',
-                                  labelStyle: AppTextStyles.regular14(isDarkMode),
+                                  labelStyle: AppTextStyles.regular14(
+                                    isDarkMode,
+                                  ),
                                   prefixIcon: Icon(
                                     Icons.email,
                                     size: 20,
@@ -157,7 +159,9 @@ class _LoginPageState extends State<LoginPage> {
                                 obscureText: !_isPasswordVisible,
                                 decoration: InputDecoration(
                                   labelText: 'Password',
-                                  labelStyle: AppTextStyles.regular14(isDarkMode),
+                                  labelStyle: AppTextStyles.regular14(
+                                    isDarkMode,
+                                  ),
                                   prefixIcon: Icon(
                                     Icons.lock,
                                     size: 20,
@@ -201,8 +205,9 @@ class _LoginPageState extends State<LoginPage> {
                                 alignment: Alignment.centerRight,
                                 child: TextButton(
                                   onPressed: () {
-                                    GoRouter.of(context)
-                                        .push(RouteNames.forgotPassword);
+                                    GoRouter.of(
+                                      context,
+                                    ).push(RouteNames.forgotPassword);
                                   },
                                   child: Text(
                                     'Forgot Password?',
@@ -217,7 +222,9 @@ class _LoginPageState extends State<LoginPage> {
                                   onPressed: _login,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor:
-                                        AppColors.getFormSubmitButtonColor(isDarkMode),
+                                        AppColors.getFormSubmitButtonColor(
+                                          isDarkMode,
+                                        ),
                                     padding: EdgeInsets.symmetric(
                                       vertical: isSmallScreen ? 12 : 16,
                                     ),
@@ -234,8 +241,9 @@ class _LoginPageState extends State<LoginPage> {
                               const SizedBox(height: 12),
                               TextButton(
                                 onPressed: () {
-                                  GoRouter.of(context)
-                                      .push(RouteNames.register);
+                                  GoRouter.of(
+                                    context,
+                                  ).push(RouteNames.register);
                                 },
                                 child: Text(
                                   'Don\'t have an account? Sign Up',
