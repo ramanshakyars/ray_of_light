@@ -73,58 +73,69 @@ class _ChatDrawerState extends State<ChatHistory> {
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.getFormsCardColor(isDarkMode),
-        title: Text("Rename Chat", 
-          style: TextStyle(
-            color: AppColors.getTextPrimaryColor(isDarkMode),
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-            fontFamily: 'Specimen',
-          )),
-        content: TextField(
-          controller: controller,
-          style: TextStyle(
-            color: AppColors.getTextPrimaryColor(isDarkMode),
-            fontSize: 16,
-            fontFamily: 'Specimen',
-          ),
-          decoration: InputDecoration(
-            hintText: "Enter new name",
-            hintStyle: TextStyle(
-              color: AppColors.getTextPrimaryColor(isDarkMode).withOpacity(0.6),
+      builder:
+          (context) => AlertDialog(
+            backgroundColor: AppColors.getFormsCardColor(isDarkMode),
+            title: Text(
+              "Rename Chat",
+              style: TextStyle(
+                color: AppColors.getTextPrimaryColor(isDarkMode),
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Specimen',
+              ),
             ),
-            border: const OutlineInputBorder(),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text("Cancel", 
+            content: TextField(
+              controller: controller,
               style: TextStyle(
                 color: AppColors.getTextPrimaryColor(isDarkMode),
                 fontSize: 16,
                 fontFamily: 'Specimen',
-              )),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.getFormSubmitButtonColor(isDarkMode),
-              foregroundColor: AppColors.getTextSecondaryColor(isDarkMode),
+              ),
+              decoration: InputDecoration(
+                hintText: "Enter new name",
+                hintStyle: TextStyle(
+                  color: AppColors.getTextPrimaryColor(
+                    isDarkMode,
+                  ).withOpacity(0.6),
+                ),
+                border: const OutlineInputBorder(),
+              ),
             ),
-            onPressed: () {
-              Navigator.pop(context);
-              renameChat(chatId, controller.text.trim());
-            },
-            child: Text("Save", 
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                fontFamily: 'Specimen',
-              )),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  "Cancel",
+                  style: TextStyle(
+                    color: AppColors.getTextPrimaryColor(isDarkMode),
+                    fontSize: 16,
+                    fontFamily: 'Specimen',
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.getFormSubmitButtonColor(
+                    isDarkMode,
+                  ),
+                  foregroundColor: AppColors.getTextSecondaryColor(isDarkMode),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  renameChat(chatId, controller.text.trim());
+                },
+                child: Text(
+                  "Save",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Specimen',
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -144,13 +155,15 @@ class _ChatDrawerState extends State<ChatHistory> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Chat History", 
+                Text(
+                  "Chat History",
                   style: TextStyle(
                     color: AppColors.getTextPrimaryColor(isDarkMode),
                     fontSize: 22,
                     fontWeight: FontWeight.w500,
                     fontFamily: 'Specimen',
-                  )),
+                  ),
+                ),
                 IconButton(
                   icon: Icon(
                     Icons.close,
@@ -176,8 +189,12 @@ class _ChatDrawerState extends State<ChatHistory> {
                       width: double.infinity,
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.getFormSubmitButtonColor(isDarkMode),
-                          foregroundColor: AppColors.getTextSecondaryColor(isDarkMode),
+                          backgroundColor: AppColors.getFormSubmitButtonColor(
+                            isDarkMode,
+                          ),
+                          foregroundColor: AppColors.getTextSecondaryColor(
+                            isDarkMode,
+                          ),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 12,
@@ -193,12 +210,14 @@ class _ChatDrawerState extends State<ChatHistory> {
                           );
                         },
                         icon: const Icon(Icons.add),
-                        label: Text("New Chat", 
+                        label: Text(
+                          "New Chat",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
                             fontFamily: 'Specimen',
-                          )),
+                          ),
+                        ),
                       ),
                     ),
                   );
@@ -207,9 +226,10 @@ class _ChatDrawerState extends State<ChatHistory> {
                 final item = chatHistory[index - 1];
                 final chatId = item['id'].toString();
                 final rawTitle = item['title'];
-                final title = (rawTitle == null || rawTitle.trim().isEmpty)
-                    ? "Untitled Chat"
-                    : rawTitle.trim();
+                final title =
+                    (rawTitle == null || rawTitle.trim().isEmpty)
+                        ? "Untitled Chat"
+                        : rawTitle.trim();
 
                 return ListTile(
                   contentPadding: const EdgeInsets.symmetric(
@@ -244,38 +264,49 @@ class _ChatDrawerState extends State<ChatHistory> {
                         showRenameDialog(chatId, title);
                       }
                     },
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: 'delete',
-                        child: Row(
-                          children: [
-                            Icon(Icons.delete, color: Colors.red, size: 20),
-                            const SizedBox(width: 8),
-                            Text("Delete",
-                              style: TextStyle(
-                                color: AppColors.getTextPrimaryColor(isDarkMode),
-                              )),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: 'rename',
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.edit,
-                              color: AppColors.getTextPrimaryColor(isDarkMode),
-                              size: 20,
+                    itemBuilder:
+                        (context) => [
+                          PopupMenuItem(
+                            value: 'delete',
+                            child: Row(
+                              children: [
+                                Icon(Icons.delete, color: Colors.red, size: 20),
+                                const SizedBox(width: 8),
+                                Text(
+                                  "Delete",
+                                  style: TextStyle(
+                                    color: AppColors.getTextPrimaryColor(
+                                      isDarkMode,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 8),
-                            Text("Rename",
-                              style: TextStyle(
-                                color: AppColors.getTextPrimaryColor(isDarkMode),
-                              )),
-                          ],
-                        ),
-                      ),
-                    ],
+                          ),
+                          PopupMenuItem(
+                            value: 'rename',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.edit,
+                                  color: AppColors.getTextPrimaryColor(
+                                    isDarkMode,
+                                  ),
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  "Rename",
+                                  style: TextStyle(
+                                    color: AppColors.getTextPrimaryColor(
+                                      isDarkMode,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                   ),
                 );
               },
