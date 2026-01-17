@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rayoflite/core/config/main-layout.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/services/talkToLightService.dart';
@@ -292,7 +291,11 @@ class _ChatScreenState extends State<ChatScreen>
         actions: [
           IconButton(
             icon: Image.asset('assets/logo.png'),
-            onPressed: () =>MainScreen.goToTab(context, 0),
+            onPressed: () {
+              GoRouter.of(
+                context,
+              ).push('${RouteNames.mainApp}/${RouteNames.home}');
+            },
           ),
           IconButton(
             icon: Icon(

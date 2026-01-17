@@ -170,7 +170,9 @@ class _BreathingScreenState extends State<BreathingScreen>
           IconButton(
             icon: Image.asset('assets/logo.png', height: 30),
             onPressed:
-                () => MainScreen.goToTab(context, 0),
+                () => GoRouter.of(
+                  context,
+                ).push('${RouteNames.mainApp}/${RouteNames.home}'),
           ),
         ],
       ),

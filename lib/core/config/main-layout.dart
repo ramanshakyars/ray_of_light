@@ -4,47 +4,36 @@ import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
-import 'package:rayoflite/presentation/screens/social-insights/social-feedPage.dart';
-import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat_screen.dart';
-import 'package:rayoflite/presentation/screens/features/journalism/junerlism.dart';
-import 'package:rayoflite/presentation/screens/features/breathing/breathing.dart';
-import 'package:rayoflite/presentation/screens/features/goal-tracker/goal-tracker.dart';
 
 class MainScreen extends StatefulWidget {
   final Widget child;
-  const MainScreen({super.key, required this.child});
 
-  /// 🔹 GLOBAL TAB NAVIGATION (AppBar / anywhere)
-  static void goToTab(BuildContext context, int index) {
-    final state = context.findAncestorStateOfType<_MainScreenState>();
-    state?._jumpToTab(index);
-  }
+  const MainScreen({super.key, required this.child});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
+class _MainScreenState extends State<MainScreen>
+    with TickerProviderStateMixin {
   int _currentIndex = 0;
-  late PageController _pageController;
+
+  late final List<String> _routes;
 
   late AnimationController _pulseController;
   late AnimationController _rotateController;
-
-  /// 🔹 ALL MAIN TABS
-  final List<Widget> _tabs = const [
-    SocialFeedPage(), // 0 Home
-    ChatScreen(chatId: null), // 1 Talk
-    JournalismScreen(), // 2 Nest
-    BreathingScreen(), // 3 Breath
-    GoalTrackerExercises(), // 4 Wishes
-  ];
 
   @override
   void initState() {
     super.initState();
 
-    _pageController = PageController(initialPage: _currentIndex);
+    _routes = [
+      RouteNames.home,
+      RouteNames.talkToLight,
+      RouteNames.junerlism,
+      RouteNames.breathingExercise,
+      RouteNames.goalTracker,
+    ];
 
     _pulseController = AnimationController(
       vsync: this,
@@ -59,117 +48,72 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    _pageController.dispose();
     _pulseController.dispose();
     _rotateController.dispose();
     super.dispose();
   }
 
-  // ---------------------------------------------------------------------------
-  // 🔹 TAB CHANGE LOGIC
-  // ---------------------------------------------------------------------------
-
-  /// BottomNav / Drawer → INSTANT jump (NO animation)
-  void _jumpToTab(int index) {
-    if (_currentIndex == index) return;
-
-    setState(() => _currentIndex = index);
-    _pageController.jumpToPage(index);
-  }
-
-  /// Swipe → Animated (handled automatically)
-  void _onSwipe(int index) {
-    setState(() => _currentIndex = index);
-  }
-
-  // ---------------------------------------------------------------------------
-  // 🔹 UI
-  // ---------------------------------------------------------------------------
-
   @override
   Widget build(BuildContext context) {
-    final location = GoRouterState.of(context).uri.toString();
-    final isSinglePage =
-    location.contains(RouteNames.profile) ||
-    location.contains(RouteNames.notification);
-
     return Scaffold(
-      body:
-          isSinglePage
-              ? widget
-                  .child // 🔥 PROFILE / OTHER NON-TAB PAGES
-              : PageView(
-                controller: _pageController,
-                onPageChanged: _onSwipe,
-                children: _tabs,
-              ),
-      bottomNavigationBar: isSinglePage ? null : _buildBottomNav(),
+      body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onHorizontalDragEnd: (details) {
+          final velocity = details.primaryVelocity ?? 0;
+
+          // 👉 Swipe Left → Next tab
+          if (velocity < -300) {
+            _goNext();
+          }
+
+          // 👉 Swipe Right → Previous tab
+          if (velocity > 300) {
+            _goPrevious();
+          }
+        },
+        child: widget.child,
+      ),
+      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
-  // Drawer _buildDrawer(BuildContext context) {
-  //   return Drawer(
-  //     child: ListView(
-  //       children: [
-  //         const DrawerHeader(
-  //           decoration: BoxDecoration(color: Colors.blue),
-  //           child: Text('Menu'),
-  //         ),
-  //         ListTile(
-  //           leading: const Icon(Icons.home),
-  //           title: const Text('Home'),
-  //           onTap: () => _navigateToTab(context, 0),
-  //         ),
-  //         ListTile(
-  //           leading: const Icon(Icons.chat),
-  //           title: const Text('Talk To Lite'),
-  //           onTap: () => _navigateToTab(context, 1),
-  //         ),
-  //         ListTile(
-  //           leading: const Icon(Icons.newspaper),
-  //           title: const Text('Junerlism'),
-  //           onTap: () => _navigateToTab(context, 2),
-  //         ),
-  //         ListTile(
-  //           leading: const Icon(Icons.filter_vintage),
-  //           title: const Text('Breathing'),
-  //           onTap: () => _navigateToTab(context, 3),
-  //         ),
-  //         const Divider(),
-  //         ListTile(
-  //           leading: const Icon(Icons.track_changes),
-  //           title: const Text('Goal Tracker'),
-  //           onTap: () {
-  //             context.push('${RouteNames.mainApp}/${RouteNames.goalTracker}');
-  //             Navigator.pop(context);
-  //           },
-  //         ),
-  //         ListTile(
-  //           leading: const Icon(Icons.logout),
-  //           title: const Text('Logout'),
-  //           onTap: () {
-  //             context.push('${RouteNames.login}');
-  //             Navigator.pop(context);
-  //           },
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+  // ------------------ NAVIGATION LOGIC ------------------
 
-  BottomNavigationBar _buildBottomNav() {
-    final isDarkMode =
-        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+  void _goNext() {
+    if (_currentIndex < _routes.length - 1) {
+      _navigateToTab(context, _currentIndex + 1);
+    }
+  }
+
+  void _goPrevious() {
+    if (_currentIndex > 0) {
+      _navigateToTab(context, _currentIndex - 1);
+    }
+  }
+
+  void _navigateToTab(BuildContext context, int index) {
+    setState(() => _currentIndex = index);
+    context.push('${RouteNames.mainApp}/${_routes[index]}');
+  }
+
+  // ------------------ BOTTOM NAV ------------------
+
+  BottomNavigationBar _buildBottomNavigationBar() {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isDarkMode = themeProvider.isDarkMode;
 
     return BottomNavigationBar(
       currentIndex: _currentIndex,
+      onTap: (index) => _navigateToTab(context, index),
       type: BottomNavigationBarType.fixed,
-      onTap: _jumpToTab, // 🔥 IMPORTANT
       selectedItemColor: AppColors.slectedBottomIconColor,
       unselectedItemColor: AppColors.getIconColor(isDarkMode),
       backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
       items: [
-        const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
         BottomNavigationBarItem(
           label: 'Talk',
           icon: Stack(
@@ -178,7 +122,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               AnimatedBuilder(
                 animation: _rotateController,
                 builder: (_, child) => Transform.rotate(
-                  angle: _rotateController.value * 6.28,
+                  angle: _rotateController.value * 2 * 3.1416,
                   child: child,
                 ),
                 child: Container(
@@ -186,10 +130,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   height: 40,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: RadialGradient(
+                    gradient: const RadialGradient(
                       colors: [
-                        const Color.fromARGB(25, 35, 74, 246),
-                        const Color.fromARGB(25, 210, 47, 239),
+                        Color.fromARGB(25, 35, 74, 246),
+                        Color.fromARGB(25, 210, 47, 239),
                       ],
                       stops: [0.1, 1.0],
                     ),
@@ -207,7 +151,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-              // Pulsing chat icon with neon effect
               ScaleTransition(
                 scale: Tween(begin: 0.9, end: 1.1).animate(
                   CurvedAnimation(
@@ -215,7 +158,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                     curve: Curves.easeInOut,
                   ),
                 ),
-                child: const Icon(Icons.auto_awesome, color: Colors.white),
+                child: const Icon(
+                  Icons.auto_awesome,
+                  color: Colors.white,
+                ),
               ),
             ],
           ),
