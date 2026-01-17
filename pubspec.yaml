@@ -2,8 +2,12 @@ name: rayoflite
 description: "A new Flutter project."
 publish_to: 'none' 
 
-# version: 1.0.0+9
-version: 1.1.0+11
+# version android: 1.0.0+9
+# version: 1.1.0+12
+
+# version ios : 1.0.0+9 before + is actual build ios version
+version: 2.2.0+12
+
 
 environment:
   sdk: ^3.7.2
@@ -40,13 +44,13 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/logo.png"
+  image_path: "assets/final.png"
 
 flutter_native_splash:
   android: true
   ios: true
   color: "#ffffff"       
-  image: "assets/logo.png"
+  image: "assets/final.png"
   android_gravity: center
   android_12:
     image: "assets/logo.png"
@@ -59,6 +63,8 @@ flutter:
     - assets/logo.png
     - assets/fonts/
     - assets/app-background.jpg
+    - assets/orginal_logo.png
+    - assets/final.png
     - assets/red-background.png
     - assets/talk-to-light.png
 
