@@ -16,6 +16,14 @@ import 'package:rayoflite/presentation/screens/social-insights/Post.dart';
 import 'package:rayoflite/presentation/screens/social-insights/comment_bottom_sheet.dart';
 import 'package:rayoflite/presentation/screens/social-insights/socialService.dart';
 
+class SocialFeedConfig {
+  /// Instagram post ratio = 4:5
+  static const double postImageAspectRatio = 4 / 5;
+
+  static const double maxPostImageHeight = 520;
+  static const double postImageRadius = 12;
+}
+
 class SocialFeedPage extends StatefulWidget {
   const SocialFeedPage({super.key});
 
@@ -332,12 +340,17 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
                                 child: Stack(
                                   children: [
                                     ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Image.file(
-                                        _selectedImage!,
-                                        width: double.infinity,
-                                        height: 200,
-                                        fit: BoxFit.cover,
+                                      borderRadius: BorderRadius.circular(
+                                        SocialFeedConfig.postImageRadius,
+                                      ),
+                                      child: AspectRatio(
+                                        aspectRatio:
+                                            SocialFeedConfig.postImageAspectRatio,
+                                        child: Image.file(
+                                          _selectedImage!,
+                                          width: double.infinity,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
                                     Positioned(
@@ -981,46 +994,66 @@ class PostCard extends StatelessWidget {
               child: GestureDetector(
                 onDoubleTap: onLike,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Stack(
-                    children: [
-                      CachedNetworkImage(
-                        imageUrl: post.imageUrl!,
-                        height: 300,
+                  borderRadius: BorderRadius.circular(
+                    SocialFeedConfig.postImageRadius,
+                  ),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final double width = constraints.maxWidth;
+
+                      double height = width / SocialFeedConfig.postImageAspectRatio;
+                      if (height > SocialFeedConfig.maxPostImageHeight) {
+                        height = SocialFeedConfig.maxPostImageHeight;
+                      }
+
+                      return SizedBox(
                         width: double.infinity,
-                        fit: BoxFit.cover,
-                        placeholder:
-                            (_, __) => Container(
-                              height: 300,
-                              color: AppColors.getMuted(isDarkMode),
-                              child: const Center(
-                                child: CircularProgressIndicator(),
+                        height: height,
+                        child: Stack(
+                          children: [
+                            CachedNetworkImage(
+                              imageUrl: post.imageUrl!,
+                              width: double.infinity,
+                              height: height,
+                              fit: BoxFit.cover,
+                              placeholder:
+                                  (_, __) => Container(
+                                    width: double.infinity,
+                                    height: height,
+                                    color: AppColors.getMuted(isDarkMode),
+                                    child: const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  ),
+                              errorWidget:
+                                  (_, __, ___) => Container(
+                                    width: double.infinity,
+                                    height: height,
+                                    color: AppColors.getMuted(isDarkMode),
+                                    child: const Icon(Icons.broken_image),
+                                  ),
+                            ),
+
+                            Positioned.fill(
+                              child: AnimatedOpacity(
+                                opacity: 0,
+                                duration: const Duration(milliseconds: 300),
+                                child: Container(
+                                  color: Colors.black.withOpacity(0.3),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.favorite,
+                                      color: Colors.white,
+                                      size: 60,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                        errorWidget:
-                            (_, __, ___) => Container(
-                              height: 300,
-                              color: AppColors.getMuted(isDarkMode),
-                              child: const Icon(Icons.broken_image),
-                            ),
-                      ),
-                      Positioned.fill(
-                        child: AnimatedOpacity(
-                          opacity: 0,
-                          duration: const Duration(milliseconds: 300),
-                          child: Container(
-                            color: Colors.black.withOpacity(0.3),
-                            child: const Center(
-                              child: Icon(
-                                Icons.favorite,
-                                color: Colors.white,
-                                size: 60,
-                              ),
-                            ),
-                          ),
+                          ],
                         ),
-                      ),
-                    ],
+                      );
+                    },
                   ),
                 ),
               ),
@@ -1083,14 +1116,12 @@ class PostCard extends StatelessWidget {
             ),
           ),
 
-          // Divider
           Container(
             height: 1,
             margin: const EdgeInsets.symmetric(horizontal: 16),
             color: AppColors.getBorder(isDarkMode),
           ),
 
-          // Action Buttons
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Row(
