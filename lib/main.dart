@@ -9,14 +9,16 @@ import 'package:rayoflite/core/config/config-routes.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
-import 'package:rayoflite/presentation/screens/notifications/push-service.dart';
+import 'package:rayoflite/firebase_options.dart';
 
 Future<void> main() async {
   /// 🔹 Required for async before runApp
   WidgetsFlutterBinding.ensureInitialized();
 
   /// 🔹 Firebase init (must be first for push)
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+);
 
   /// 🔹 Push notifications init
   /// (permission, foreground/background listeners)
