@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,13 +18,16 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   /// 🔹 Firebase init (must be first for push)
-  await Firebase.initializeApp(
-  options: DefaultFirebaseOptions.currentPlatform,
-);
+  if (!Platform.isIOS) {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    }
+  }
 
   /// 🔹 Push notifications init
   /// (permission, foreground/background listeners)
- 
 
   /// 🔹 Local storage init
   await LocalStorageService.getInstance();
@@ -33,8 +38,7 @@ Future<void> main() async {
   if (isLoggedIn) {
     initialRoute = '${RouteNames.mainApp}/${RouteNames.home}';
   } else {
-    initialRoute =
-        kIsWeb ? RouteNames.weblandingPage : RouteNames.landingPage;
+    initialRoute = kIsWeb ? RouteNames.weblandingPage : RouteNames.landingPage;
   }
 
   /// 🔹 Create router ONCE (very important)
@@ -67,17 +71,14 @@ class MyApp extends StatelessWidget {
               ),
               fontFamily: 'Specimen',
               useMaterial3: true,
-              scaffoldBackgroundColor:
-                  AppColors.getAppBackgroundColor(
+              scaffoldBackgroundColor: AppColors.getAppBackgroundColor(
                 themeProvider.isDarkMode,
               ),
               appBarTheme: AppBarTheme(
-                backgroundColor:
-                    AppColors.getAppBackgroundColor(
+                backgroundColor: AppColors.getAppBackgroundColor(
                   themeProvider.isDarkMode,
                 ),
-                foregroundColor:
-                    AppColors.getTextPrimaryColor(
+                foregroundColor: AppColors.getTextPrimaryColor(
                   themeProvider.isDarkMode,
                 ),
               ),
@@ -93,26 +94,22 @@ class MyApp extends StatelessWidget {
               ),
               fontFamily: 'Specimen',
               useMaterial3: true,
-              scaffoldBackgroundColor:
-                  AppColors.getAppBackgroundColor(
+              scaffoldBackgroundColor: AppColors.getAppBackgroundColor(
                 themeProvider.isDarkMode,
               ),
               appBarTheme: AppBarTheme(
-                backgroundColor:
-                    AppColors.getAppBackgroundColor(
+                backgroundColor: AppColors.getAppBackgroundColor(
                   themeProvider.isDarkMode,
                 ),
-                foregroundColor:
-                    AppColors.getTextPrimaryColor(
+                foregroundColor: AppColors.getTextPrimaryColor(
                   themeProvider.isDarkMode,
                 ),
               ),
             ),
 
             /// 🔹 Theme mode
-            themeMode: themeProvider.isDarkMode
-                ? ThemeMode.dark
-                : ThemeMode.light,
+            themeMode:
+                themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
 
             /// 🔹 Router (single instance)
             routerConfig: router,

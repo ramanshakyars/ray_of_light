@@ -72,6 +72,33 @@ class DummyNotificationScheduler {
     await _plugin.cancelAll(); // 🔒 avoid duplicates
 
     final notifications = <Map<String, String>>[
+      // ✅ Your 11 messages (NEW)
+      {
+        "title": "🏆 Winner Mindset",
+        "body": "Trust me, You will have everything.",
+      },
+      {"title": "🥇 Champion", "body": "You are winner."},
+      {"title": "🔥 Stronger", "body": "You will beat everyone."},
+      {
+        "title": "🎯 Focus",
+        "body":
+            "You are facing yourself, there is only one competition its you.",
+      },
+      {"title": "💡 Meaning", "body": "What you do is meaningful."},
+      {"title": "😄 Enjoy", "body": "Hey!…………Enjoy."},
+      {
+        "title": "✅ Winning",
+        "body": "You know? You are a winner, you are winning.",
+      },
+      {"title": "⚡ Reality", "body": "Its not that simple……….., and its a lie"},
+      {"title": "💰 Money", "body": "Money matters"},
+      {
+        "title": "🧠 Truth",
+        "body": "Everything you were afraid of losing, you have already lost.",
+      },
+      {"title": "📖 Lesson", "body": "Life teaches you everything"},
+
+      // ✅ Old messages (keep like before)
       {
         "title": "🌱 Keep Growing",
         "body": "Every day is a chance to grow a little more.",
@@ -127,31 +154,6 @@ class DummyNotificationScheduler {
       {"title": "🔁 One More Try", "body": "Tomorrow is another chance."},
       {"title": "🧠 Clear Space", "body": "A calm pause can reset everything."},
       {"title": "🌿 Grounded", "body": "Stay present. Stay grounded."},
-      {"title": "💪 Quiet Strength", "body": "Your resilience is real."},
-      {"title": "🌼 Simple Joy", "body": "Notice one small good thing."},
-      {
-        "title": "🎈Lighten Up",
-        "body": "Not everything needs fixing right now.",
-      },
-      {"title": "🫶 You’re Enough", "body": "Exactly as you are."},
-      {"title": "🌊 Keep Moving", "body": "Even slow motion is motion."},
-      {
-        "title": "✨ Gentle Progress",
-        "body": "Progress doesn’t have to be loud.",
-      },
-      {"title": "🧘 Inner Balance", "body": "Balance brings clarity."},
-      {"title": "🌞 Soft Start", "body": "Begin gently today."},
-      {"title": "💭 Clear Mind", "body": "Let unnecessary thoughts pass by."},
-      {"title": "🪶 Light Heart", "body": "Choose ease where you can."},
-      {"title": "🌸 Healing", "body": "Healing is not linear—and that’s okay."},
-      {"title": "🔆 Inner Light", "body": "Your light doesn’t need approval."},
-      {"title": "🧩 Step by Step", "body": "One step is enough right now."},
-      {"title": "💙 Stay Gentle", "body": "Gentleness is strength too."},
-      {"title": "🌱 Still Here", "body": "And that itself matters."},
-      {
-        "title": "🙏 Gratitude",
-        "body": "Take a moment to appreciate yourself.",
-      },
     ];
 
     // 🔹 SCHEDULE NOTIFICATIONS EVERY 2 MIN
@@ -231,6 +233,7 @@ class DummyNotificationScheduler {
         'Dummy Notifications',
         importance: Importance.high,
         priority: Priority.high,
+        channelDescription: 'RayOfLight motivational alerts',
       ),
       iOS: DarwinNotificationDetails(),
     );

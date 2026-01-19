@@ -42,8 +42,8 @@ class _LoginPageState extends State<LoginPage> {
           context,
           response['message'] ?? 'Login Successful!',
         );
-         await PushService.init();
-         await DummyNotificationScheduler.initAndSchedule();
+        //  await PushService.init();
+        //  await DummyNotificationScheduler.initAndSchedule();
         if (mounted) {
           GoRouter.of(context).go('${RouteNames.mainApp}/${RouteNames.home}');
         }

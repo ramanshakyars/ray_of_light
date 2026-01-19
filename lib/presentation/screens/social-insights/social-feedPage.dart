@@ -12,6 +12,7 @@ import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/UserMood.dart';
 import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/mood-managment.dart';
+import 'package:rayoflite/presentation/screens/notifications/dummy_notification_scheduler.dart';
 import 'package:rayoflite/presentation/screens/social-insights/Post.dart';
 import 'package:rayoflite/presentation/screens/social-insights/comment_bottom_sheet.dart';
 import 'package:rayoflite/presentation/screens/social-insights/socialService.dart';
@@ -45,6 +46,9 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
   void initState() {
     super.initState();
     _loadInitialPosts();
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+    await DummyNotificationScheduler.initAndSchedule();
+  });
   }
 
   // ---------------- TIME AGO ----------------

@@ -7,7 +7,9 @@ import 'package:rayoflite/core/services/localStorageService.dart';
 
 /// 🔹 BACKGROUND HANDLER (TOP LEVEL - VERY IMPORTANT)
 Future<void> firebaseBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp();
+  }
   print("Background push: ${message.notification?.title}");
 }
 
