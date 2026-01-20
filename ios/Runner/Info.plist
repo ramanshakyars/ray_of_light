@@ -24,6 +24,10 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Ray Of Light needs access to your microphone so you can talk to Light.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Ray Of Light needs speech recognition permission to understand your voice messages.</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>

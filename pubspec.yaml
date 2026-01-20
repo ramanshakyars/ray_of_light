@@ -34,6 +34,8 @@ dependencies:
   flutter_local_notifications: ^17.2.2
   timezone: ^0.9.4
   permission_handler: ^11.3.1
+  speech_to_text: ^6.6.2
+  avatar_glow: ^3.0.1
 
 dev_dependencies:
   flutter_test:
