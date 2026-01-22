@@ -38,7 +38,7 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
   List<Post> _posts = [];
   String loggedInUserRole = '';
   String loggedInUserName = '';
-  File? _selectedImage;
+  List<File> _selectedImages = [];
   bool _isPosting = false;
   bool _isLoading = false;
 
@@ -46,9 +46,9 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
   void initState() {
     super.initState();
     _loadInitialPosts();
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-    await DummyNotificationScheduler.initAndSchedule();
-  });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await DummyNotificationScheduler.initAndSchedule();
+    });
   }
 
   // ---------------- TIME AGO ----------------
@@ -61,18 +61,14 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
   }
 
   // ---------------- IMAGE PICKER ----------------
-  Future<void> _pickImage(
-    ImageSource source,
+  Future<void> _pickMultiImages(
     void Function(void Function()) setModalState,
   ) async {
-    final XFile? image = await _picker.pickImage(
-      source: source,
-      imageQuality: 80,
-    );
+    final List<XFile> images = await _picker.pickMultiImage(imageQuality: 80);
 
-    if (image != null) {
+    if (images.isNotEmpty) {
       setModalState(() {
-        _selectedImage = File(image.path);
+        _selectedImages = images.take(20).map((e) => File(e.path)).toList();
       });
     }
   }
@@ -338,51 +334,51 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
                               ),
                             ),
 
-                            if (_selectedImage != null)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 16),
-                                child: Stack(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(
-                                        SocialFeedConfig.postImageRadius,
-                                      ),
-                                      child: AspectRatio(
-                                        aspectRatio:
-                                            SocialFeedConfig.postImageAspectRatio,
-                                        child: Image.file(
-                                          _selectedImage!,
-                                          width: double.infinity,
-                                          fit: BoxFit.cover,
+                            if (_selectedImages.isNotEmpty)
+                              SizedBox(
+                                height: 300,
+                                child: PageView.builder(
+                                  itemCount: _selectedImages.length,
+                                  itemBuilder: (context, index) {
+                                    return Stack(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          child: Image.file(
+                                            _selectedImages[index],
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: 8,
-                                      right: 8,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setModalState(() {
-                                            _selectedImage = null;
-                                          });
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.all(6),
-                                          decoration: BoxDecoration(
-                                            color: Colors.black54,
-                                            borderRadius: BorderRadius.circular(
-                                              20,
+                                        Positioned(
+                                          top: 10,
+                                          right: 10,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              setModalState(() {
+                                                _selectedImages.removeAt(index);
+                                              });
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets.all(6),
+                                              decoration: BoxDecoration(
+                                                color: Colors.black54,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: const Icon(
+                                                Icons.close,
+                                                color: Colors.white,
+                                                size: 18,
+                                              ),
                                             ),
                                           ),
-                                          child: const Icon(
-                                            Icons.close,
-                                            color: Colors.white,
-                                            size: 18,
-                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  ],
+                                      ],
+                                    );
+                                  },
                                 ),
                               ),
                           ],
@@ -427,10 +423,7 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
                                       ),
                                     ),
                                     onPressed:
-                                        () => _pickImage(
-                                          ImageSource.gallery,
-                                          setModalState,
-                                        ),
+                                        () => _pickMultiImages(setModalState),
                                   ),
                                   // IconButton(
                                   //   icon: Icon(
@@ -560,7 +553,7 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
       return;
     }
 
-    if (_selectedImage == null && _createController.text.trim().isEmpty) {
+    if (_selectedImages == null && _createController.text.trim().isEmpty) {
       MessageService.showError(context, "Please add text or image");
       return;
     }
@@ -570,11 +563,11 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
     try {
       await SocialService.createPost(
         caption: _createController.text.trim(),
-        imageFile: _selectedImage,
+        images: _selectedImages,
       );
       _createController.clear();
       setState(() {
-        _selectedImage = null;
+        _selectedImages = [];
         _isPosting = false;
       });
       Navigator.pop(context); // Close modal
@@ -992,73 +985,30 @@ class PostCard extends StatelessWidget {
             ),
 
           // Image
-          if (post.imageUrl != null && post.imageUrl!.isNotEmpty)
+          // Carousel Images
+          if (post.mediaUrls.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(top: 12),
-              child: GestureDetector(
-                onDoubleTap: onLike,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(
-                    SocialFeedConfig.postImageRadius,
-                  ),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final double width = constraints.maxWidth;
-
-                      double height = width / SocialFeedConfig.postImageAspectRatio;
-                      if (height > SocialFeedConfig.maxPostImageHeight) {
-                        height = SocialFeedConfig.maxPostImageHeight;
-                      }
-
-                      return SizedBox(
+              child: SizedBox(
+                height: 350,
+                child: PageView.builder(
+                  itemCount: post.mediaUrls.length,
+                  itemBuilder: (context, index) {
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: CachedNetworkImage(
+                        imageUrl: post.mediaUrls[index],
+                        fit: BoxFit.cover,
                         width: double.infinity,
-                        height: height,
-                        child: Stack(
-                          children: [
-                            CachedNetworkImage(
-                              imageUrl: post.imageUrl!,
-                              width: double.infinity,
-                              height: height,
-                              fit: BoxFit.cover,
-                              placeholder:
-                                  (_, __) => Container(
-                                    width: double.infinity,
-                                    height: height,
-                                    color: AppColors.getMuted(isDarkMode),
-                                    child: const Center(
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                  ),
-                              errorWidget:
-                                  (_, __, ___) => Container(
-                                    width: double.infinity,
-                                    height: height,
-                                    color: AppColors.getMuted(isDarkMode),
-                                    child: const Icon(Icons.broken_image),
-                                  ),
+                        placeholder:
+                            (_, __) => const Center(
+                              child: CircularProgressIndicator(),
                             ),
-
-                            Positioned.fill(
-                              child: AnimatedOpacity(
-                                opacity: 0,
-                                duration: const Duration(milliseconds: 300),
-                                child: Container(
-                                  color: Colors.black.withOpacity(0.3),
-                                  child: const Center(
-                                    child: Icon(
-                                      Icons.favorite,
-                                      color: Colors.white,
-                                      size: 60,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                        errorWidget:
+                            (_, __, ___) => const Icon(Icons.broken_image),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),

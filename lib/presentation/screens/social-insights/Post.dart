@@ -1,24 +1,9 @@
-class Author {
-  final String id;
-  final String username;
-
-  Author({
-    required this.id,
-    required this.username,
-  });
-
-  factory Author.fromJson(Map<String, dynamic> json) {
-    return Author(
-      id: json['id'] ?? '',
-      username: json['username'] ?? '',
-    );
-  }
-}
+import 'package:rayoflite/presentation/screens/social-insights/models/author.dart';
 
 class Post {
   final String id;
   final String caption;
-  final String? imageUrl;
+  final List<String> mediaUrls;
   final DateTime createdAt;
   final Author author;
   int likeCount;
@@ -30,7 +15,7 @@ class Post {
   Post({
     required this.id,
     required this.caption,
-    this.imageUrl,
+    required this.mediaUrls,
     required this.createdAt,
     required this.author,
     required this.likeCount,
@@ -56,7 +41,7 @@ class Post {
     return Post(
       id: json['id'] ?? '',
       caption: json['caption'] ?? '',
-      imageUrl: json['imageUrl'],
+      mediaUrls: (json['mediaUrls'] as List?)?.map((e) => e.toString()).toList() ?? [],
       createdAt: parsedDate,
       author: Author.fromJson(json['author']),
       likeCount: json['likeCount'] ?? 0,

@@ -1,4 +1,5 @@
 import 'package:rayoflite/presentation/screens/social-insights/Post.dart';
+import 'package:rayoflite/presentation/screens/social-insights/models/author.dart';
 
 class Comment {
   final String id;

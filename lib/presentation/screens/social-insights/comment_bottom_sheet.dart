@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/presentation/screens/social-insights/Post.dart';
+import 'package:rayoflite/presentation/screens/social-insights/models/author.dart';
 import 'package:rayoflite/presentation/screens/social-insights/models/comment_model.dart';
 import 'package:rayoflite/presentation/screens/social-insights/socialService.dart';
 import 'package:rayoflite/presentation/screens/social-insights/widgets/comment_tile.dart';

@@ -21,17 +21,20 @@ class SocialService {
 
   /// CREATE POST
   /// Note: key is 'file' to match Spring Boot @RequestPart("file")
-  static Future<void> createPost({required String caption, File? imageFile}) async {
-    final formData = FormData.fromMap({
-      'caption': caption,
-      if (imageFile != null)
-        'file': await MultipartFile.fromFile(
-          imageFile.path,
-          filename: imageFile.path.split('/').last,
-        ),
-    });
-    await HttpService.postMultipart(PathConfig.postInsight, formData);
-  }
+ static Future<void> createPost({
+  required String caption,
+  required List<File> images,
+}) async {
+  final formData = FormData.fromMap({
+    'caption': caption,
+    'files': [
+      for (final img in images)
+        await MultipartFile.fromFile(img.path, filename: img.path.split('/').last),
+    ],
+  });
+
+  await HttpService.postMultipart(PathConfig.postInsight, formData);
+}
 
   /// LIKE POST
  static Future<void> likePost(String postId, String userId) async {
