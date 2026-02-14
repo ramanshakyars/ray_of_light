@@ -12,6 +12,7 @@ import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/firebase_options.dart';
+import 'package:rayoflite/presentation/screens/features/profile/provider/profile_provider.dart';
 
 Future<void> main() async {
   /// 🔹 Required for async before runApp
@@ -25,9 +26,6 @@ Future<void> main() async {
       );
     }
   }
-
-  /// 🔹 Push notifications init
-  /// (permission, foreground/background listeners)
 
   /// 🔹 Local storage init
   await LocalStorageService.getInstance();
@@ -54,8 +52,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ThemeProvider(),
+    return MultiProvider(
+      providers: [
+        /// ✅ Existing Theme Provider
+        ChangeNotifierProvider(
+          create: (_) => ThemeProvider(),
+        ),
+
+        /// ✅ NEW Profile Provider (FIXES YOUR ERROR)
+        ChangeNotifierProvider(
+          create: (_) => ProfileProvider(),
+        ),
+      ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
           return MaterialApp.router(

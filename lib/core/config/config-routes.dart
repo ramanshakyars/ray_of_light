@@ -5,7 +5,8 @@ import 'package:rayoflite/presentation/screens/auth/forget-password.dart';
 import 'package:rayoflite/presentation/screens/auth/login.dart';
 import 'package:rayoflite/presentation/screens/auth/register.dart';
 import 'package:rayoflite/presentation/screens/auth/reset-password.dart';
-import 'package:rayoflite/presentation/screens/features/profile.dart';
+import 'package:rayoflite/presentation/screens/features/profile/profile.dart';
+import 'package:rayoflite/presentation/screens/features/profile/profile_page.dart';
 import 'package:rayoflite/presentation/screens/notifications/notification_page.dart';
 import 'package:rayoflite/presentation/screens/social-insights/social-feedPage.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat_screen.dart';
@@ -111,7 +112,8 @@ GoRouter createRouter(String initialLocation) {
 
               GoRoute(
                 path: RouteNames.profile,
-                builder: (context, state) => const ProfileScreen(),
+                // builder: (context, state) => const ProfileScreen(),
+                builder: (context, state) => const ProfilePage(),
               ),
               GoRoute(
                 path: RouteNames.notification,
