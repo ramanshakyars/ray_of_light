@@ -251,4 +251,66 @@ class AppColors {
       isDarkMode ? darkExhaleColor : lightExhaleColor;
   static Color getExhaleDark(bool isDarkMode) =>
       isDarkMode ? darkExhaleDark : lightExhaleDark;
+
+  //////////// new variables for breathing cycle colors
+  // =====================================================
+  // 🆕 MONOCHROME THEME (SAFE MIGRATION)
+  // =====================================================
+
+  // ---------- LIGHT MONO ----------
+  static const Color monoLightBackground = Color(0xFFFFFFFF);
+  static const Color monoLightSurface = Color(0xFFF5F5F5);
+  static const Color monoLightCard = Color(0xFFFFFFFF);
+
+  static const Color monoLightTextPrimary = Color(0xFF000000);
+  static const Color monoLightTextSecondary = Color(0xFF6B7280);
+  static const Color monoLightTextMuted = Color(0xFF9CA3AF);
+
+  static const Color monoLightBorder = Color(0xFFE5E7EB);
+  static const Color monoLightDivider = Color(0xFFE5E7EB);
+  static const Color monoLightIcon = Color(0xFF111111);
+
+  // ---------- DARK MONO ----------
+  static const Color monoDarkBackground = Color(0xFF000000);
+  static const Color monoDarkSurface = Color(0xFF111111);
+  static const Color monoDarkCard = Color(0xFF171717);
+
+  static const Color monoDarkTextPrimary = Color(0xFFFFFFFF);
+  static const Color monoDarkTextSecondary = Color(0xFFD1D5DB);
+  static const Color monoDarkTextMuted = Color(0xFF9CA3AF);
+
+  static const Color monoDarkBorder = Color(0xFF262626);
+  static const Color monoDarkDivider = Color(0xFF262626);
+  static const Color monoDarkIcon = Color(0xFFFFFFFF);
+
+  // =====================================================
+  // 🆕 MONO GETTERS (USE THESE NEW ONES)
+  // =====================================================
+
+  static Color getMonoBackground(bool isDark) =>
+      isDark ? monoDarkBackground : monoLightBackground;
+
+  static Color getMonoSurface(bool isDark) =>
+      isDark ? monoDarkSurface : monoLightSurface;
+
+  static Color getMonoCard(bool isDark) =>
+      isDark ? monoDarkCard : monoLightCard;
+
+  static Color getMonoTextPrimary(bool isDark) =>
+      isDark ? monoDarkTextPrimary : monoLightTextPrimary;
+
+  static Color getMonoTextSecondary(bool isDark) =>
+      isDark ? monoDarkTextSecondary : monoLightTextSecondary;
+
+  static Color getMonoTextMuted(bool isDark) =>
+      isDark ? monoDarkTextMuted : monoLightTextMuted;
+
+  static Color getMonoBorder(bool isDark) =>
+      isDark ? monoDarkBorder : monoLightBorder;
+
+  static Color getMonoDivider(bool isDark) =>
+      isDark ? monoDarkDivider : monoLightDivider;
+
+  static Color getMonoIcon(bool isDark) =>
+      isDark ? monoDarkIcon : monoLightIcon;
 }

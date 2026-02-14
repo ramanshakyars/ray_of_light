@@ -70,4 +70,40 @@ class AppTextStyles {
     color: AppColors.getTextPrimaryColor(isDarkMode),
     height: 1.3,
   );
+
+  // =====================================================
+  // 🆕 MONO TEXT STYLES (NEW SYSTEM)
+  // =====================================================
+
+  static TextStyle monoRegular16(bool isDark) => TextStyle(
+    fontFamily: "Arial",
+    fontSize: 16,
+    color: AppColors.getMonoTextPrimary(isDark),
+  );
+
+  static TextStyle monoMedium18(bool isDark) => TextStyle(
+    fontFamily: "Arial",
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+    color: AppColors.getMonoTextPrimary(isDark),
+  );
+
+  static TextStyle monoBold22(bool isDark) => TextStyle(
+    fontFamily: "Arial",
+    fontSize: 22,
+    fontWeight: FontWeight.bold,
+    color: AppColors.getMonoTextPrimary(isDark),
+  );
+
+  static TextStyle monoSecondary14(bool isDark) => TextStyle(
+    fontFamily: "Arial",
+    fontSize: 14,
+    color: AppColors.getMonoTextSecondary(isDark),
+  );
+
+  static TextStyle monoMuted12(bool isDark) => TextStyle(
+    fontFamily: "Arial",
+    fontSize: 12,
+    color: AppColors.getMonoTextMuted(isDark),
+  );
 }

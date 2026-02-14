@@ -5,6 +5,8 @@ import 'package:rayoflite/presentation/screens/auth/forget-password.dart';
 import 'package:rayoflite/presentation/screens/auth/login.dart';
 import 'package:rayoflite/presentation/screens/auth/register.dart';
 import 'package:rayoflite/presentation/screens/auth/reset-password.dart';
+import 'package:rayoflite/presentation/screens/features/breathing/breathing_duration_screen.dart';
+import 'package:rayoflite/presentation/screens/features/breathing/breathing_player_screen.dart';
 import 'package:rayoflite/presentation/screens/features/profile/profile.dart';
 import 'package:rayoflite/presentation/screens/features/profile/profile_page.dart';
 import 'package:rayoflite/presentation/screens/notifications/notification_page.dart';
@@ -100,9 +102,19 @@ GoRouter createRouter(String initialLocation) {
                 builder: (context, state) => const JournalismScreen(),
               ),
 
+              // GoRoute(
+              //   path: RouteNames.breathingExercise,
+              //   builder: (context, state) => BreathingScreen(),
+              // ),
               GoRoute(
                 path: RouteNames.breathingExercise,
-                builder: (context, state) => BreathingScreen(),
+                builder: (context, state) => const BreathingDurationScreen(),
+                routes: [
+                  GoRoute(
+                    path: RouteNames.breathingPlayer,
+                    builder: (context, state) => const BreathingPlayerScreen(),
+                  ),
+                ],
               ),
 
               GoRoute(
