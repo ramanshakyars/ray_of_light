@@ -18,26 +18,75 @@ class _BreathingPlayerScreenState extends State<BreathingPlayerScreen>
   late AnimationController _controller;
   late Animation<double> _scale;
 
-  final engine = BreathingEngine();
+  final BreathingEngine engine = BreathingEngine();
 
+  // =========================================================
+  // INIT
+  // =========================================================
   @override
   void initState() {
     super.initState();
 
-    _controller =
-        AnimationController(vsync: this, duration: const Duration(seconds: 4));
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    );
 
-    _scale =
-        Tween<double>(begin: 0.75, end: 1.05).animate(_controller);
+    _scale = Tween<double>(
+      begin: 0.82, // smaller (exhale)
+      end: 1.12,   // bigger (inhale)
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+    // 🔥 IMPORTANT — sync animation with breathing phase
+    engine.addListener(_syncAnimationWithPhase);
   }
 
+  // =========================================================
+  // SYNC ANIMATION WITH ENGINE
+  // =========================================================
+  void _syncAnimationWithPhase() {
+    if (!mounted) return;
+
+    switch (engine.phase) {
+      case BreathingPhase.inhale:
+        _controller.duration = Duration(seconds: engine.secondsLeft);
+        _controller.forward();
+        break;
+
+      case BreathingPhase.exhale:
+        _controller.duration = Duration(seconds: engine.secondsLeft);
+        _controller.reverse();
+        break;
+
+      case BreathingPhase.hold:
+        _controller.stop();
+        break;
+
+      case BreathingPhase.ready:
+        _controller.reset();
+        break;
+    }
+  }
+
+  // =========================================================
+  // DISPOSE
+  // =========================================================
   @override
   void dispose() {
+    engine.removeListener(_syncAnimationWithPhase);
     engine.disposeEngine();
     _controller.dispose();
     super.dispose();
   }
 
+  // =========================================================
+  // UI
+  // =========================================================
   @override
   Widget build(BuildContext context) {
     final isDark =
@@ -53,6 +102,7 @@ class _BreathingPlayerScreenState extends State<BreathingPlayerScreen>
               children: [
                 const SizedBox(height: 40),
 
+                // Title
                 Text(
                   "Sama Vritti",
                   style: AppTextStyles.monoBold22(isDark),
@@ -60,10 +110,12 @@ class _BreathingPlayerScreenState extends State<BreathingPlayerScreen>
 
                 const SizedBox(height: 40),
 
+                // Breathing circle
                 Expanded(child: _breathingCircle(isDark)),
 
                 const SizedBox(height: 20),
 
+                // Controls
                 _controls(isDark),
 
                 const SizedBox(height: 40),
@@ -75,6 +127,9 @@ class _BreathingPlayerScreenState extends State<BreathingPlayerScreen>
     );
   }
 
+  // =========================================================
+  // BREATHING CIRCLE
+  // =========================================================
   Widget _breathingCircle(bool isDark) {
     return Center(
       child: ScaleTransition(
@@ -84,7 +139,7 @@ class _BreathingPlayerScreenState extends State<BreathingPlayerScreen>
           height: 220,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isDark ? Colors.black : Colors.black,
+            color: Colors.black, // always black (design requirement)
             border: Border.all(
               color: AppColors.getMonoDivider(isDark),
               width: 12,
@@ -102,8 +157,10 @@ class _BreathingPlayerScreenState extends State<BreathingPlayerScreen>
                 const SizedBox(height: 6),
                 Text(
                   "${engine.secondsLeft}s",
-                  style: AppTextStyles.monoBold22(isDark)
-                      .copyWith(color: Colors.white, fontSize: 32),
+                  style: AppTextStyles.monoBold22(isDark).copyWith(
+                    color: Colors.white,
+                    fontSize: 32,
+                  ),
                 ),
               ],
             ),
@@ -113,6 +170,9 @@ class _BreathingPlayerScreenState extends State<BreathingPlayerScreen>
     );
   }
 
+  // =========================================================
+  // CONTROLS
+  // =========================================================
   Widget _controls(bool isDark) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -131,7 +191,10 @@ class _BreathingPlayerScreenState extends State<BreathingPlayerScreen>
           heroTag: "end",
           backgroundColor: AppColors.getMonoSurface(isDark),
           onPressed: engine.reset,
-          child: Icon(Icons.close, color: AppColors.getMonoIcon(isDark)),
+          child: Icon(
+            Icons.close,
+            color: AppColors.getMonoIcon(isDark),
+          ),
         ),
       ],
     );
