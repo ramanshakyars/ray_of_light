@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rayoflite/core/services/journalService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
+import 'package:rayoflite/core/theme/AppFont.dart';
+import 'package:rayoflite/core/theme/appcolors.dart';
 
 class JournalismDrawer extends StatefulWidget {
   final List<String> postedThoughts;
@@ -44,75 +46,96 @@ class _JournalismDrawerState extends State<JournalismDrawer> {
         setState(() {});
       });
     } else {
-      MessageService.showError(context, 'Error: ${response['message']}');
+      MessageService.showError(context, 'Failed to load journal history.');
+      print('Error fetching journal history: ${response['message']}');
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    final colorScheme = widget.theme.colorScheme;
-    final isDark = colorScheme.brightness == Brightness.dark;
+@override
+Widget build(BuildContext context) {
+  final isDark =
+      widget.theme.brightness == Brightness.dark;
 
-    return Drawer(
-      width: MediaQuery.of(context).size.width * 0.85,
+  return Drawer(
+    backgroundColor: AppColors.getMonoBackground(isDark),
+    width: MediaQuery.of(context).size.width * 0.88,
+    child: SafeArea(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
-          Container(
-            height: kToolbarHeight + MediaQuery.of(context).padding.top,
-            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-            decoration: BoxDecoration(
-              color: isDark ? Colors.grey[900] : Colors.white,
-              border: Border(
-                bottom: BorderSide(color: colorScheme.outline, width: 1),
-              ),
-            ),
-            child: Stack(
+          // ===== HEADER =====
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 16, 12),
+            child: Row(
+              mainAxisAlignment:
+                  MainAxisAlignment.spaceBetween,
               children: [
-                Center(
-                  child: Text(
-                    'Journal History',
-                    style: widget.theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                Text(
+                  "Journal History",
+                  style: AppTextStyles.monoMedium18(isDark),
                 ),
-                Positioned(
-                  right: 16,
-                  bottom: 12,
-                  child: IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
+                IconButton(
+                  icon: Icon(Icons.close,
+                      color:
+                          AppColors.getMonoIcon(isDark)),
+                  onPressed: () => Navigator.pop(context),
                 ),
               ],
             ),
           ),
 
+          // ===== LIST =====
           Expanded(
-            child: Container(
-              color: isDark ? Colors.grey[900] : Colors.grey[50],
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child:
-                        isLoading
-                            ? const Center(child: CircularProgressIndicator())
-                            : journalHistory.isEmpty
-                            ? _buildEmptyState()
-                            : _buildThoughtsList(),
-                  ),
-                ],
-              ),
-            ),
+            child: isLoading
+                ? const Center(
+                    child: CircularProgressIndicator())
+                : journalHistory.isEmpty
+                    ? _buildEmptyState()
+                    : ListView.separated(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20),
+                        itemCount: journalHistory.length,
+                        separatorBuilder: (_, __) =>
+                            const SizedBox(height: 18),
+                        itemBuilder: (context, index) {
+                          final item =
+                              journalHistory[index];
+                          final content =
+                              item['content'] ?? '';
+
+                          return Column(
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                content,
+                                maxLines: 1,
+                                overflow:
+                                    TextOverflow.ellipsis,
+                                style:
+                                    AppTextStyles.monoRegular16(
+                                        isDark),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "Today",
+                                style:
+                                    AppTextStyles.monoMuted12(
+                                        isDark),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
+  
   Widget _buildEmptyState() {
     return Center(
       child: Column(

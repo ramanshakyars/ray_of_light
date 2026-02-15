@@ -86,269 +86,169 @@ class _JournalismScreenState extends State<JournalismScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDarkMode = themeProvider.isDarkMode;
+@override
+Widget build(BuildContext context) {
+  final isDarkMode =
+      Provider.of<ThemeProvider>(context).isDarkMode;
 
-    return Scaffold(
-      backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
-      key: _scaffoldKey,
-      drawer: Drawer(
-        child: JournalismDrawer(
-          postedThoughts: _postedThoughts,
-          onThoughtSelected: (thought) {
-            _thoughtController.text = thought;
-          },
-          theme: Theme.of(context),
-        ),
+  return Scaffold(
+    key: _scaffoldKey,
+    backgroundColor: AppColors.getMonoBackground(isDarkMode),
+
+    // ================= APP BAR =================
+    appBar: AppBar(
+      backgroundColor: AppColors.getMonoBackground(isDarkMode),
+      elevation: 0,
+      leading: IconButton(
+        icon: Icon(Icons.menu,
+            color: AppColors.getMonoIcon(isDarkMode)),
+        onPressed: () => _scaffoldKey.currentState?.openDrawer(),
       ),
-      appBar: AppBar(
-        backgroundColor: AppColors.getCard(isDarkMode),
-        elevation: 1,
-        title: Text('Nest', style: AppTextStyles.bold22(isDarkMode)),
-        leading: IconButton(
-          icon: Icon(Icons.menu, color: AppColors.getIconColor(isDarkMode)),
-          onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-        ),
-        actions: [
-          IconButton(
-            icon: Image.asset('assets/logo.png'),
-            onPressed:
-                () => GoRouter.of(
-                  context,
-                ).push('${RouteNames.mainApp}/${RouteNames.home}'),
-            iconSize: 32,
+      actions: [
+        IconButton(
+          icon: Image.asset('assets/logo.png', height: 26),
+          onPressed: () => context.push(
+            '${RouteNames.mainApp}/${RouteNames.home}',
           ),
-        ],
+        ),
+      ],
+    ),
+
+    drawer: Drawer(
+      backgroundColor: AppColors.getMonoBackground(isDarkMode),
+      child: JournalismDrawer(
+        postedThoughts: _postedThoughts,
+        onThoughtSelected: (thought) {
+          _thoughtController.text = thought;
+        },
+        theme: Theme.of(context),
       ),
-      body: SafeArea(
+    ),
+
+    body: SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           children: [
-            // Inspiration section
+            const SizedBox(height: 16),
+
+            // ===== TITLE =====
+            Text(
+              "Nest",
+              style: AppTextStyles.monoBold22(isDarkMode)
+                  .copyWith(fontSize: 34),
+            ),
+
+            const SizedBox(height: 6),
+
+            Text(
+              "A safe place for your thoughts",
+              style: AppTextStyles.monoSecondary14(isDarkMode),
+            ),
+
+            const SizedBox(height: 40),
+
+            // ===== AFFIRMATION =====
+            Text(
+              _todaysAffirmation,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.monoMedium18(isDarkMode)
+                  .copyWith(height: 1.5),
+            ),
+
+            const Spacer(),
+
+            // ===== BLACK LOGO CIRCLE =====
             Container(
+              width: 92,
+              height: 92,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.black, // intentional
+              ),
+              child: Center(
+                child: Image.asset(
+                  'assets/logo.png',
+                  height: 36,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            Text(
+              "Your nest is quiet right now",
+              style: AppTextStyles.monoSecondary14(isDarkMode),
+            ),
+
+            const Spacer(),
+
+            // ===== INPUT LABEL =====
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "What's on your heart today?",
+                style: AppTextStyles.monoSecondary14(isDarkMode),
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            // ===== INPUT =====
+            TextField(
+              controller: _thoughtController,
+              style: AppTextStyles.monoRegular16(isDarkMode),
+              decoration: InputDecoration(
+                hintText: "Write your thought...",
+                hintStyle:
+                    AppTextStyles.monoSecondary14(isDarkMode),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: AppColors.getMonoDivider(isDarkMode),
+                  ),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: AppColors.getMonoTextPrimary(isDarkMode),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // ===== BUTTON =====
+            SizedBox(
               width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.getMuted(isDarkMode).withOpacity(0.08),
-                border: Border(
-                  bottom: BorderSide(
-                    color: AppColors.getBorder(isDarkMode),
-                    width: 1,
+              child: ElevatedButton(
+                onPressed: _isPosting ? null : _postThought,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
                   ),
+                  elevation: 0,
                 ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Chip(
-                    label: Text(
-                      _todaysAffirmation,
-                      style: AppTextStyles.regular14(isDarkMode),
-                    ),
-                    backgroundColor: AppColors.getAccent(isDarkMode),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    side: BorderSide.none,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Write what\'s in your mind. Share your thoughts, affirmations, or motivations.',
-                    style: AppTextStyles.regular16(
-                      isDarkMode,
-                    ).copyWith(color: AppColors.getMutedForeground(isDarkMode)),
-                  ),
-                ],
-              ),
-            ),
-
-            // Posted thoughts section
-            Expanded(
-              child:
-                  _postedThoughts.isEmpty
-                      ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.lightbulb_outline,
-                              size: 48,
-                              color: AppColors.getMutedForeground(isDarkMode),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No thoughts shared yet.\nBe the first to inspire others!',
-                              textAlign: TextAlign.center,
-                              style: AppTextStyles.medium18(
-                                isDarkMode,
-                              ).copyWith(
-                                color: AppColors.getMutedForeground(isDarkMode),
-                              ),
-                            ),
-                          ],
-                        ),
+                child: _isPosting
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child:
+                            CircularProgressIndicator(strokeWidth: 2),
                       )
-                      : ListView.builder(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        itemCount: _postedThoughts.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.getCard(isDarkMode),
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.getBorder(
-                                    isDarkMode,
-                                  ).withOpacity(0.13),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 16,
-                                        backgroundColor: AppColors.getAccent(
-                                          isDarkMode,
-                                        ),
-                                        child: Icon(
-                                          Icons.person,
-                                          size: 16,
-                                          color: AppColors.getAccentForeground(
-                                            isDarkMode,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        'Posted ${index + 1} hour${index == 0 ? '' : 's'} ago',
-                                        style: AppTextStyles.regular14(
-                                          isDarkMode,
-                                        ).copyWith(
-                                          color: AppColors.getMutedForeground(
-                                            isDarkMode,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Text(
-                                    _postedThoughts[index],
-                                    style: AppTextStyles.regular16(isDarkMode),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                    : const Text("Share your thought"),
+              ),
             ),
 
-            // Input section
-            Container(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              decoration: BoxDecoration(
-                color: AppColors.getCard(isDarkMode),
-                border: Border(
-                  top: BorderSide(
-                    color: AppColors.getBorder(isDarkMode),
-                    width: 1,
-                  ),
-                ),
-              ),
-              child: Column(
-                children: [
-                  TextField(
-                    controller: _thoughtController,
-                    maxLines: 3,
-                    minLines: 1,
-                    decoration: InputDecoration(
-                      hintText: 'Write your thought or affirmation here...',
-                      hintStyle: AppTextStyles.regular14(isDarkMode).copyWith(
-                        color: AppColors.getMutedForeground(isDarkMode),
-                      ),
-                      fillColor: AppColors.getInputBackground(isDarkMode),
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: AppColors.getBorder(isDarkMode),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: AppColors.getPrimary(isDarkMode),
-                          width: 1.5,
-                        ),
-                      ),
-                      contentPadding: const EdgeInsets.all(16),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          Icons.send,
-                          color:
-                              _isPosting
-                                  ? AppColors.getBorder(isDarkMode)
-                                  : AppColors.getPrimary(isDarkMode),
-                        ),
-                        onPressed: _isPosting ? null : _postThought,
-                      ),
-                    ),
-                    style: AppTextStyles.regular14(isDarkMode),
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _isPosting ? null : _postThought,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: AppColors.getFormSubmitButtonColor(
-                          isDarkMode,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        foregroundColor: AppColors.getPrimaryForeground(
-                          isDarkMode,
-                        ),
-                        elevation: _isPosting ? 0 : 2,
-                        textStyle: AppTextStyles.button16(isDarkMode),
-                      ),
-                      child:
-                          _isPosting
-                              ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                              : Text(
-                                'Share Your Thought',
-                                style: AppTextStyles.buttonText(isDarkMode),
-                              ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            const SizedBox(height: 20),
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }

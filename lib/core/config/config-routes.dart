@@ -124,8 +124,8 @@ GoRouter createRouter(String initialLocation) {
 
               GoRoute(
                 path: RouteNames.profile,
-                // builder: (context, state) => const ProfileScreen(),
-                builder: (context, state) => const ProfilePage(),
+                builder: (context, state) => const ProfileScreen(),
+                // builder: (context, state) => const ProfilePage(),
               ),
               GoRoute(
                 path: RouteNames.notification,
