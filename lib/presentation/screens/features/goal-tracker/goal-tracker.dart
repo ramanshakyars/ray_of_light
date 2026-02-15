@@ -10,6 +10,7 @@ import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/screens/features/goal-tracker/addGoal.dart';
+import 'package:rayoflite/presentation/screens/features/goal-tracker/dream_garden_screen.dart';
 
 class GoalTrackerExercises extends StatefulWidget {
   const GoalTrackerExercises({super.key});
@@ -265,110 +266,121 @@ class _GoalTrackerExercisesState extends State<GoalTrackerExercises> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.getCard(isDarkMode),
-        elevation: 1,
-        title: Text('wishes', style: AppTextStyles.bold22(isDarkMode)),
-        actions: [
-          IconButton(
-            icon: Image.asset('assets/logo.png'),
-            onPressed:
-                () => GoRouter.of(
-                  context,
-                ).push('${RouteNames.mainApp}/${RouteNames.home}'),
-            iconSize: 32,
-          ),
-        ],
-      ),
-      backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
-      body:
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : RefreshIndicator(
-                onRefresh: _loadGoals,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(18),
-                        margin: const EdgeInsets.only(bottom: 20),
-                        decoration: BoxDecoration(
-                          color: AppColors.getAccent(isDarkMode),
-                          borderRadius: BorderRadius.circular(18),
-                          boxShadow: [
-                            BoxShadow(
-                              color: isDarkMode ? Colors.black : Colors.grey,
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Daily Motivation',
-                              style: AppTextStyles.regular14(
-                                isDarkMode,
-                              ).copyWith(
-                                color: AppColors.getTextPrimaryColor(
-                                  isDarkMode,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              motivationalQuotes[currentQuoteIndex],
-                              style: AppTextStyles.bold22(
-                                isDarkMode,
-                              ).copyWith(fontStyle: FontStyle.italic),
-                            ),
-                          ],
-                        ),
-                      ),
-                      ElevatedButton.icon(
-                        onPressed: _showAddGoalDialog,
-                        icon: const Icon(Icons.add),
-                        label: Text(
-                          "Add Wish",
-                          style: AppTextStyles.button16(
-                            isDarkMode,
-                          ).copyWith(color: Colors.white),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.getFormSubmitButtonColor(
-                            isDarkMode,
-                          ),
-                          minimumSize: const Size.fromHeight(50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          shadowColor: AppColors.getFormSubmitButtonColor(
-                            isDarkMode,
-                          ),
-                          elevation: 5,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      if (goals.isEmpty)
-                        Text(
-                          "No goals added yet.",
-                          style: AppTextStyles.bold22(isDarkMode).copyWith(
-                            color: AppColors.getTextSecondaryColor(isDarkMode),
-                          ),
-                        )
-                      else
-                        ...goals.map(
-                          (goal) => _buildGoalCard(goal, isDarkMode),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-    );
+    // return Scaffold(
+    //   appBar: AppBar(
+    //     backgroundColor: AppColors.getCard(isDarkMode),
+    //     elevation: 1,
+    //     title: Text('wishes', style: AppTextStyles.bold22(isDarkMode)),
+    //     actions: [
+    //       IconButton(
+    //         icon: Image.asset('assets/logo.png'),
+    //         onPressed:
+    //             () => GoRouter.of(
+    //               context,
+    //             ).push('${RouteNames.mainApp}/${RouteNames.home}'),
+    //         iconSize: 32,
+    //       ),
+    //     ],
+    //   ),
+    //   backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
+    //   body:
+    //       isLoading
+    //           ? const Center(child: CircularProgressIndicator())
+    //           : RefreshIndicator(
+    //             onRefresh: _loadGoals,
+    //             child: SingleChildScrollView(
+    //               physics: const AlwaysScrollableScrollPhysics(),
+    //               padding: const EdgeInsets.all(16),
+    //               child: Column(
+    //                 children: [
+    //                   Container(
+    //                     width: double.infinity,
+    //                     padding: const EdgeInsets.all(18),
+    //                     margin: const EdgeInsets.only(bottom: 20),
+    //                     decoration: BoxDecoration(
+    //                       color: AppColors.getAccent(isDarkMode),
+    //                       borderRadius: BorderRadius.circular(18),
+    //                       boxShadow: [
+    //                         BoxShadow(
+    //                           color: isDarkMode ? Colors.black : Colors.grey,
+    //                           blurRadius: 8,
+    //                           offset: const Offset(0, 4),
+    //                         ),
+    //                       ],
+    //                     ),
+    //                     child: Column(
+    //                       crossAxisAlignment: CrossAxisAlignment.start,
+    //                       children: [
+    //                         Text(
+    //                           'Daily Motivation',
+    //                           style: AppTextStyles.regular14(
+    //                             isDarkMode,
+    //                           ).copyWith(
+    //                             color: AppColors.getTextPrimaryColor(
+    //                               isDarkMode,
+    //                             ),
+    //                           ),
+    //                         ),
+    //                         const SizedBox(height: 10),
+    //                         Text(
+    //                           motivationalQuotes[currentQuoteIndex],
+    //                           style: AppTextStyles.bold22(
+    //                             isDarkMode,
+    //                           ).copyWith(fontStyle: FontStyle.italic),
+    //                         ),
+    //                       ],
+    //                     ),
+    //                   ),
+    //                   ElevatedButton.icon(
+    //                     onPressed: _showAddGoalDialog,
+    //                     icon: const Icon(Icons.add),
+    //                     label: Text(
+    //                       "Add Wish",
+    //                       style: AppTextStyles.button16(
+    //                         isDarkMode,
+    //                       ).copyWith(color: Colors.white),
+    //                     ),
+    //                     style: ElevatedButton.styleFrom(
+    //                       backgroundColor: AppColors.getFormSubmitButtonColor(
+    //                         isDarkMode,
+    //                       ),
+    //                       minimumSize: const Size.fromHeight(50),
+    //                       shape: RoundedRectangleBorder(
+    //                         borderRadius: BorderRadius.circular(12),
+    //                       ),
+    //                       shadowColor: AppColors.getFormSubmitButtonColor(
+    //                         isDarkMode,
+    //                       ),
+    //                       elevation: 5,
+    //                     ),
+    //                   ),
+    //                   const SizedBox(height: 24),
+    //                   if (goals.isEmpty)
+    //                     Text(
+    //                       "No goals added yet.",
+    //                       style: AppTextStyles.bold22(isDarkMode).copyWith(
+    //                         color: AppColors.getTextSecondaryColor(isDarkMode),
+    //                       ),
+    //                     )
+    //                   else
+    //                     ...goals.map(
+    //                       (goal) => _buildGoalCard(goal, isDarkMode),
+    //                     ),
+    //                 ],
+    //               ),
+    //             ),
+    //           ),
+    // );
+
+  return DreamGardenScreen(
+  goals: goals,
+  isLoading: isLoading,
+  onCreateWish: (data) async {
+    final response = await GoalService.addGoal(data);
+    await _loadGoals();
+  },
+  onToggle: updateGoalStatus,
+);
+
   }
 }

@@ -17,6 +17,8 @@ import 'package:rayoflite/presentation/screens/social-insights/Post.dart';
 import 'package:rayoflite/presentation/screens/social-insights/comment_bottom_sheet.dart';
 import 'package:rayoflite/presentation/screens/social-insights/socialService.dart';
 
+import '../features/ṃood-manager/mood_bottom_sheet.dart';
+
 class SocialFeedConfig {
   /// Instagram post ratio = 4:5
   static const double postImageAspectRatio = 4 / 5;
@@ -602,6 +604,19 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
     }
   }
 
+  void _openMoodSheet() {
+  if (!mounted) return;
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    backgroundColor: Colors.transparent,
+    builder: (_) => const MoodBottomSheet(),
+  );
+}
+
+
   // ---------------- UI ----------------
   @override
   Widget build(BuildContext context) {
@@ -630,7 +645,8 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
         actions: [
           IconButton(
             icon: Icon(Icons.mood, color: AppColors.getPrimary(isDark)),
-            onPressed: _openMoodDialog,
+            onPressed: _openMoodSheet,
+            // onPressed: _openMoodDialog,
           ),
           IconButton(
             icon: Icon(

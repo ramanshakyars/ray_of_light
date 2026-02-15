@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 
@@ -14,8 +15,7 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen>
-    with TickerProviderStateMixin {
+class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   int _currentIndex = 0;
 
   late final List<String> _routes;
@@ -61,12 +61,10 @@ class _MainScreenState extends State<MainScreen>
         onHorizontalDragEnd: (details) {
           final velocity = details.primaryVelocity ?? 0;
 
-          // 👉 Swipe Left → Next tab
           if (velocity < -300) {
             _goNext();
           }
 
-          // 👉 Swipe Right → Previous tab
           if (velocity > 300) {
             _goPrevious();
           }
@@ -96,89 +94,172 @@ class _MainScreenState extends State<MainScreen>
     context.push('${RouteNames.mainApp}/${_routes[index]}');
   }
 
-  // ------------------ BOTTOM NAV ------------------
+  // ------------------ NEW PREMIUM BOTTOM NAV ------------------
 
-  BottomNavigationBar _buildBottomNavigationBar() {
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    final isDarkMode = themeProvider.isDarkMode;
+  Widget _buildBottomNavigationBar() {
+    final isDarkMode =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
-    return BottomNavigationBar(
-      currentIndex: _currentIndex,
-      onTap: (index) => _navigateToTab(context, index),
-      type: BottomNavigationBarType.fixed,
-      selectedItemColor: AppColors.slectedBottomIconColor,
-      unselectedItemColor: AppColors.getIconColor(isDarkMode),
-      backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
-      items: [
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
+    final bg = AppColors.getMonoCard(isDarkMode);
+    final border = AppColors.getMonoBorder(isDarkMode);
+    final iconColor = AppColors.getMonoIcon(isDarkMode);
+    final selectedBg = AppColors.getMonoTextPrimary(isDarkMode);
+
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: bg,
+        border: Border(top: BorderSide(color: border)),
+      ),
+      child: Padding(
+        // ✅ THIS is the magic fix
+        padding: EdgeInsets.fromLTRB(
+          12,
+          4,
+          12,
+          bottomInset > 0 ? bottomInset : 6,
         ),
-        BottomNavigationBarItem(
-          label: 'Talk',
-          icon: Stack(
-            alignment: Alignment.center,
-            children: [
-              AnimatedBuilder(
-                animation: _rotateController,
-                builder: (_, child) => Transform.rotate(
-                  angle: _rotateController.value * 2 * 3.1416,
-                  child: child,
-                ),
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: const RadialGradient(
-                      colors: [
-                        Color.fromARGB(25, 35, 74, 246),
-                        Color.fromARGB(25, 210, 47, 239),
-                      ],
-                      stops: [0.1, 1.0],
-                    ),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.5),
-                      width: 1.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.blueAccent.withOpacity(0.5),
-                        blurRadius: 10,
-                        spreadRadius: 2,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: List.generate(_routes.length, (index) {
+            final selected = _currentIndex == index;
+
+            return Expanded(
+              child: GestureDetector(
+                onTap: () => _navigateToTab(context, index),
+                behavior: HitTestBehavior.opaque,
+                child: SizedBox(
+                  height: 65,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      /// ICON PILL
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 220),
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: selected ? selectedBg : Colors.transparent,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: _buildNavIcon(index, selected, iconColor),
+                      ),
+
+                      const SizedBox(height: 2),
+
+                      /// LABEL
+                      Text(
+                        _getLabel(index),
+                        style: AppTextStyles.monoMuted12(isDarkMode).copyWith(
+                          color:
+                              selected
+                                  ? AppColors.getMonoTextPrimary(isDarkMode)
+                                  : AppColors.getMonoTextSecondary(isDarkMode),
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
-              ScaleTransition(
-                scale: Tween(begin: 0.9, end: 1.1).animate(
-                  CurvedAnimation(
-                    parent: _pulseController,
-                    curve: Curves.easeInOut,
+            );
+          }),
+        ),
+      ),
+    );
+  }
+
+  // ------------------ ICON BUILDER ------------------
+
+  Widget _buildNavIcon(int index, bool selected, Color iconColor) {
+    final isDark =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+
+    final selectedIconColor = isDark ? Colors.black : Colors.white;
+
+    switch (index) {
+      case 0:
+        return Icon(
+          Icons.home,
+          color: selected ? selectedIconColor : iconColor,
+        );
+
+      case 1:
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            AnimatedBuilder(
+              animation: _rotateController,
+              builder:
+                  (_, child) => Transform.rotate(
+                    angle: _rotateController.value * 2 * 3.1416,
+                    child: child,
+                  ),
+              child: Container(
+                width: 28,
+                height: 28,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      Color.fromARGB(25, 35, 74, 246),
+                      Color.fromARGB(25, 210, 47, 239),
+                    ],
                   ),
                 ),
-                child: const Icon(
-                  Icons.auto_awesome,
-                  color: Colors.white,
+              ),
+            ),
+            ScaleTransition(
+              scale: Tween(begin: 0.9, end: 1.1).animate(
+                CurvedAnimation(
+                  parent: _pulseController,
+                  curve: Curves.easeInOut,
                 ),
               ),
-            ],
-          ),
-        ),
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.newspaper),
-          label: 'Nest',
-        ),
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.filter_vintage),
-          label: 'Breath',
-        ),
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.favorite),
-          label: 'Wishes',
-        ),
-      ],
-    );
+              child: Icon(
+                Icons.auto_awesome,
+                size: 17,
+                color: selected ? selectedIconColor : iconColor,
+              ),
+            ),
+          ],
+        );
+
+      case 2:
+        return Icon(
+          Icons.cloud_outlined,
+          color: selected ? selectedIconColor : iconColor,
+        );
+
+      case 3:
+        return Icon(Icons.air, color: selected ? selectedIconColor : iconColor);
+
+      case 4:
+        return Icon(
+          Icons.favorite_border,
+          color: selected ? selectedIconColor : iconColor,
+        );
+
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  // ------------------ LABEL HELPER ------------------
+
+  String _getLabel(int index) {
+    switch (index) {
+      case 0:
+        return "Home";
+      case 1:
+        return "Talk";
+      case 2:
+        return "Nest";
+      case 3:
+        return "Breathe";
+      case 4:
+        return "Wishes";
+      default:
+        return "";
+    }
   }
 }
