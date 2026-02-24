@@ -18,6 +18,7 @@ import 'package:rayoflite/presentation/screens/features/breathing/breathing.dart
 import 'package:rayoflite/presentation/screens/features/goal-tracker/goal-tracker.dart';
 import 'package:rayoflite/presentation/screens/web/PrivacyPolicyPage.dart';
 import 'package:rayoflite/presentation/screens/web/web-LandingPage.dart';
+import 'package:rayoflite/presentation/screens/welcome/introduction_screen.dart';
 import 'package:rayoflite/presentation/welcome-page.dart';
 import 'package:rayoflite/core/config/main-layout.dart';
 
@@ -30,6 +31,11 @@ GoRouter createRouter(String initialLocation) {
         path: RouteNames.landingPage,
         // builder: (context, state) => const ResetSuccessScreen (),
         builder: (context, state) => const WelcomePage(),
+      ),
+
+      GoRoute(
+        path: RouteNames.IntroductionPage,
+        builder: (context, state) => const IntroductionScreen(),
       ),
 
       // Web landing page

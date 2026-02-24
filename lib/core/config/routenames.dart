@@ -9,6 +9,7 @@ class RouteNames {
   static const weblandingPage = '/ray-of-light';
   static const accountDeactivate = '/delete-account';
   static const privacyPolicy = '/privacy-policy';
+  static const IntroductionPage = '/introduction-page';
 
   // Main app structure
   static const mainApp = '/main';
