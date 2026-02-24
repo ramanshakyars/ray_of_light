@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/constants/app_text_field.dart';
+import 'package:rayoflite/core/constants/common_button.dart';
 import 'package:rayoflite/core/services/authService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
@@ -22,6 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -30,31 +33,42 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _login() async {
-    if (_formKey.currentState!.validate()) {
-      final body = {
-        'email': _emailController.text.trim(),
-        'password': _passwordController.text.trim(),
-      };
-      final response = await AuthService.login(body);
-      if (response['success'] == true) {
-        MessageService.showSuccess(
-          context,
-          response['message'] ?? 'Login Successful!',
-        );
-        //  await PushService.init();
-        //  await DummyNotificationScheduler.initAndSchedule();
-        if (mounted) {
-          GoRouter.of(context).go('${RouteNames.mainApp}/${RouteNames.home}');
-        }
-      } else {
-        MessageService.showError(
-          context,
-          response['message'] ?? 'Login failed!',
-        );
-      }
+void _login() async {
+  if (!_formKey.currentState!.validate()) return;
+
+  setState(() => _isLoading = true);
+
+  try {
+    final body = {
+      'email': _emailController.text.trim(),
+      'password': _passwordController.text.trim(),
+    };
+
+    final response = await AuthService.login(body);
+
+    if (!mounted) return;
+
+    if (response['success'] == true) {
+      MessageService.showSuccess(
+        context,
+        response['message'] ?? 'Login Successful!',
+      );
+
+      GoRouter.of(context).go(
+        '${RouteNames.mainApp}/${RouteNames.home}',
+      );
+    } else {
+      MessageService.showError(
+        context,
+        response['message'] ?? 'Login failed!',
+      );
     }
+  } catch (e) {
+    MessageService.showError(context, 'Something went wrong');
+  } finally {
+    if (mounted) setState(() => _isLoading = false);
   }
+}
 
   void _forgotPassword() {
     MessageService.showInfo(context, 'Password reset link sent to your email');
@@ -67,201 +81,151 @@ class _LoginPageState extends State<LoginPage> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
 
-    return Scaffold(
-      backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
-      body: SafeArea(
+return Scaffold(
+  backgroundColor: AppColors.getMonoBackground(isDarkMode),
+  body: SafeArea(
+    child: Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 420),
         child: Padding(
-          padding: EdgeInsets.all(isSmallScreen ? 16.0 : 24.0),
-          child: Center(
-            child: SingleChildScrollView(
-              // Only for emergency - shouldn't normally scroll
-              physics: NeverScrollableScrollPhysics(),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: 400,
-                  minHeight:
-                      screenHeight - MediaQuery.of(context).padding.vertical,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Logo Section - Only show if there's enough space
-                    if (!isSmallScreen) ...[
-                      Image.asset(
-                        'assets/logo.png',
-                        height: 80,
-                        fit: BoxFit.contain,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Ray of Light',
-                        style: AppTextStyles.bold28(isDarkMode),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'We are here to help you to be better than yesterday',
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.regular14(isDarkMode),
-                      ),
-                      const SizedBox(height: 32),
-                    ],
-                    Card(
-                      color: AppColors.getFormsCardColor(isDarkMode),
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(isSmallScreen ? 16.0 : 24.0),
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'Login / Signup',
-                                style: AppTextStyles.bold22(isDarkMode),
-                              ),
-                              const SizedBox(height: 20),
-                              TextFormField(
-                                controller: _emailController,
-                                decoration: InputDecoration(
-                                  labelText: 'Email',
-                                  labelStyle: AppTextStyles.regular14(
-                                    isDarkMode,
-                                  ),
-                                  prefixIcon: Icon(
-                                    Icons.email,
-                                    size: 20,
-                                    color: AppColors.getIconColor(isDarkMode),
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                  contentPadding: EdgeInsets.symmetric(
-                                    vertical: isSmallScreen ? 12 : 14,
-                                    horizontal: 12,
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter your email';
-                                  }
-                                  if (!value.contains('@')) {
-                                    return 'Enter a valid email';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(height: 12),
-                              TextFormField(
-                                controller: _passwordController,
-                                obscureText: !_isPasswordVisible,
-                                decoration: InputDecoration(
-                                  labelText: 'Password',
-                                  labelStyle: AppTextStyles.regular14(
-                                    isDarkMode,
-                                  ),
-                                  prefixIcon: Icon(
-                                    Icons.lock,
-                                    size: 20,
-                                    color: AppColors.getIconColor(isDarkMode),
-                                  ),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      _isPasswordVisible
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
-                                      size: 20,
-                                      color: AppColors.getIconColor(isDarkMode),
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _isPasswordVisible =
-                                            !_isPasswordVisible;
-                                      });
-                                    },
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                  contentPadding: EdgeInsets.symmetric(
-                                    vertical: isSmallScreen ? 12 : 14,
-                                    horizontal: 12,
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter your password';
-                                  }
-                                  if (value.length < 6) {
-                                    return 'Password must be at least 6 characters';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(height: 8),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: TextButton(
-                                  onPressed: () {
-                                    GoRouter.of(
-                                      context,
-                                    ).push(RouteNames.forgotPassword);
-                                  },
-                                  child: Text(
-                                    'Forgot Password?',
-                                    style: AppTextStyles.link14(isDarkMode),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  onPressed: _login,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        AppColors.getFormSubmitButtonColor(
-                                          isDarkMode,
-                                        ),
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: isSmallScreen ? 12 : 16,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Login',
-                                    style: AppTextStyles.button16(isDarkMode),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              TextButton(
-                                onPressed: () {
-                                  GoRouter.of(
-                                    context,
-                                  ).push(RouteNames.register);
-                                },
-                                child: Text(
-                                  'Don\'t have an account? Sign Up',
-                                  style: AppTextStyles.link14(isDarkMode),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              /// 🔹 Header
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: () => context.pop(),
+                  icon: const Icon(Icons.arrow_back, size: 18),
+                  label: Text(
+                    'Back',
+                    style: AppTextStyles.monoSecondary14(isDarkMode),
+                  ),
                 ),
               ),
-            ),
+
+              const SizedBox(height: 200),
+
+              /// 🔹 Card
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: AppColors.getMonoCard(isDarkMode),
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        /// Title
+                        Text(
+                          'Welcome back',
+                          style: AppTextStyles.monoBold22(isDarkMode),
+                        ),
+
+                        const SizedBox(height: 6),
+
+                        /// Subtitle
+                        Text(
+                          'Continue your journey towards peace',
+                          style:
+                              AppTextStyles.monoSecondary14(isDarkMode),
+                        ),
+
+                        const SizedBox(height: 28),
+
+                        /// Email
+                        AppTextField(
+                          controller: _emailController,
+                          label: 'Email',
+                          prefixIcon: Icons.email,
+                          validator: (v) {
+                            if (v == null || v.isEmpty) {
+                              return 'Please enter your email';
+                            }
+                            if (!v.contains('@')) {
+                              return 'Enter a valid email';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        /// Password
+                        AppTextField(
+                          controller: _passwordController,
+                          label: 'Password',
+                          prefixIcon: Icons.lock,
+                          obscureText: !_isPasswordVisible,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordVisible =
+                                    !_isPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton(
+                            onPressed: () => context.push(
+                              RouteNames.forgotPassword,
+                            ),
+                            child: Text(
+                              'Forgot password?',
+                              style: AppTextStyles.monoSecondary14(
+                                  isDarkMode),
+                            ),
+                          ),
+                        ),
+
+                        const Spacer(),
+
+                        /// Login button
+                        CommonButton(
+                          text: "Log In",
+                          isLoading: _isLoading,
+                          onPressed:
+                              _isLoading ? null : _login,
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        Center(
+                          child: TextButton(
+                            onPressed: () =>
+                                context.push(RouteNames.register),
+                            child: Text(
+                              "Don't have an account? Sign up",
+                              style: AppTextStyles
+                                  .monoSecondary14(isDarkMode),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
-    );
+    ),
+  ),
+);
+
   }
 }

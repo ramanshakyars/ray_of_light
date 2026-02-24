@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/constants/app_text_field.dart';
+import 'package:rayoflite/core/constants/common_button.dart';
 import 'package:rayoflite/core/services/authService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
+import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 
@@ -17,15 +20,19 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
+
   final _nameController = TextEditingController();
   final _mobileController = TextEditingController();
   final _emailController = TextEditingController();
   final _dateOfBirthController = TextEditingController();
   final _passwordController = TextEditingController();
   final _otpController = TextEditingController();
+
   DateTime? _selectedDate;
+
   bool _isPasswordVisible = false;
-  bool _isOtpSent = false;
+  bool _isOtpSent = true;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -38,27 +45,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
+  // ================= OTP =================
+
   Future<void> _sendOtp() async {
-    final email = _emailController.text.trim();
-    if (email.isEmpty || !email.contains('@')) {
-      MessageService.showError(context, 'Please enter a valid email!');
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
-    final response = await AuthService.verifyOtp({'email': email});
+    setState(() => _isLoading = true);
 
-    if (response['success'] == true) {
-      setState(() {
-        _isOtpSent = true;
-      });
-      MessageService.showSuccess(context, response['message']);
-    } else {
-      MessageService.showError(context, response['message']);
+    try {
+      final response =
+          await AuthService.verifyOtp({'email': _emailController.text.trim()});
+
+      if (!mounted) return;
+
+      if (response['success'] == true) {
+        setState(() => _isOtpSent = true);
+        MessageService.showSuccess(context, response['message']);
+      } else {
+        MessageService.showError(context, response['message']);
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  void _register() async {
-    if (_formKey.currentState!.validate()) {
+  // ================= REGISTER =================
+
+  Future<void> _register() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    try {
       final body = {
         'name': _nameController.text.trim(),
         'phoneNumber': _mobileController.text.trim(),
@@ -70,364 +88,233 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       final response = await AuthService.register(body);
 
+      if (!mounted) return;
+
       if (!response['success']) {
         MessageService.showError(context, response['message']);
         return;
       }
 
       MessageService.showSuccess(context, response['message']);
-      if (mounted) {
-        GoRouter.of(context).go(RouteNames.login);
-      }
+      context.go(RouteNames.login);
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
+  // ================= UI =================
+
   @override
   Widget build(BuildContext context) {
-    final isPortrait =MediaQuery.of(context).orientation == Orientation.portrait;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final themeProvider = Provider.of<ThemeProvider>(context);
-  final isDarkMode = themeProvider.isDarkMode;
+    final isDark = context.watch<ThemeProvider>().isDarkMode;
 
     return Scaffold(
-      backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
-      body: SafeArea(
-        child: Center(
-          child: Container(
-            constraints: BoxConstraints(
-              maxWidth: isPortrait ? 500 : 700,
-              maxHeight: screenHeight,
-            ),
-            padding: EdgeInsets.symmetric(
-              horizontal: isPortrait ? 20.0 : screenWidth * 0.1,
-              vertical: 20.0,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (isPortrait || screenHeight > 400) ...[
-                  Image.asset('assets/logo.png', height: isPortrait ? 80 : 60),
-                  SizedBox(height: isPortrait ? 10 : 5),
-                  Text(
-                    'Ray of Light',
-                    style: TextStyle(
-                      fontSize: isPortrait ? 32 : 24,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.getTextPrimaryColor(isDarkMode),
-                    ),
-                  ),
-                  SizedBox(height: isPortrait ? 5 : 4),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isPortrait ? 0 : 20,
-                    ),
-                    child: Text(
-                      'We are here to help you to be better than yesterday',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: isPortrait ? 14 : 12,
-                        color: Colors.grey[600],
+      backgroundColor: AppColors.getMonoBackground(isDark),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    // 🔙 Back
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton.icon(
+                        onPressed:
+                            _isLoading ? null : () => context.pop(),
+                        icon: const Icon(Icons.arrow_back, size: 18),
+                        label: Text(
+                          'Back',
+                          style:
+                              AppTextStyles.monoSecondary14(isDark),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: isPortrait ? 30 : 20),
-                ],
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Center(
-                      child: Card(
-                        elevation: 2,
-                        margin: EdgeInsets.symmetric(vertical: 20),
-                        child: Padding(
-                          padding: EdgeInsets.all(isPortrait ? 20.0 : 16.0),
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
-                              mainAxisSize:
-                                  MainAxisSize.min, // 👈 height wraps content
-                              children: [
-                                Text(
-                                  'Sign Up',
-                                  style: TextStyle(
-                                    fontSize: isPortrait ? 24 : 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+
+                    const SizedBox(height: 16),
+
+                    // 🧊 Card
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: AppColors.getMonoCard(isDark),
+                          borderRadius: BorderRadius.circular(32),
+                        ),
+                        child: Form(
+                          key: _formKey,
+                          child: ListView(
+                            physics: const BouncingScrollPhysics(),
+                            children: [
+                              Text(
+                                'Begin your journey',
+                                style:
+                                    AppTextStyles.monoBold22(isDark),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                'Create your account and find your light',
+                                style: AppTextStyles
+                                    .monoSecondary14(isDark),
+                              ),
+                              const SizedBox(height: 28),
+
+                              // 📧 Email
+                              AppTextField(
+                                controller: _emailController,
+                                label: 'Email',
+                                prefixIcon: Icons.email,
+                                readOnly: _isOtpSent,
+                                validator: (v) {
+                                  if (v == null || v.isEmpty) {
+                                    return 'Please enter your email';
+                                  }
+                                  if (!v.contains('@')) {
+                                    return 'Enter a valid email';
+                                  }
+                                  return null;
+                                },
+                              ),
+
+                              const SizedBox(height: 16),
+
+                              // 🔐 Send OTP
+                              if (!_isOtpSent)
+                                CommonButton(
+                                  text: "Send OTP",
+                                  isLoading: _isLoading,
+                                  onPressed:
+                                      _isLoading ? null : _sendOtp,
                                 ),
-                                SizedBox(height: isPortrait ? 20 : 15),
-                                // Email Field
-                                TextFormField(
-                                  controller: _emailController,
-                                  decoration: InputDecoration(
-                                    labelText: 'Email',
-                                    prefixIcon: Icon(Icons.email, size: 20),
-                                    contentPadding: EdgeInsets.symmetric(
-                                      vertical: 12,
-                                      horizontal: 12,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter your email';
+
+                              // ✅ AFTER OTP
+                              if (_isOtpSent) ...[
+                                AppTextField(
+                                  controller: _otpController,
+                                  label: 'Enter OTP',
+                                  prefixIcon: Icons.code,
+                                  validator: (v) =>
+                                      v == null || v.isEmpty
+                                          ? 'Enter OTP'
+                                          : null,
+                                ),
+                                const SizedBox(height: 16),
+
+                                AppTextField(
+                                  controller: _nameController,
+                                  label: 'Full Name',
+                                  prefixIcon: Icons.person,
+                                  validator: (v) =>
+                                      v == null || v.isEmpty
+                                          ? 'Enter your name'
+                                          : null,
+                                ),
+                                const SizedBox(height: 16),
+
+                                AppTextField(
+                                  controller: _mobileController,
+                                  label: 'Mobile Number',
+                                  prefixIcon: Icons.phone,
+                                  keyboardType: TextInputType.phone,
+                                ),
+                                const SizedBox(height: 16),
+
+                                // 📅 DOB
+                                AppTextField(
+                                  controller: _dateOfBirthController,
+                                  label: 'Date Of Birth',
+                                  prefixIcon: Icons.calendar_today,
+                                  readOnly: true,
+                                  onTap: () async {
+                                    final values =
+                                        await showCalendarDatePicker2Dialog(
+                                      context: context,
+                                      dialogSize: const Size(350, 400),
+                                      config:
+                                          CalendarDatePicker2WithActionButtonsConfig(
+                                        calendarType:
+                                            CalendarDatePicker2Type.single,
+                                        lastDate: DateTime.now(),
+                                      ),
+                                    );
+
+                                    if (values != null &&
+                                        values.isNotEmpty) {
+                                      setState(() {
+                                        _selectedDate = values[0];
+                                        _dateOfBirthController.text =
+                                            _selectedDate!
+                                                .toIso8601String()
+                                                .split('T')
+                                                .first;
+                                      });
                                     }
-                                    if (!value.contains('@')) {
-                                      return 'Enter a valid email';
+                                  },
+                                ),
+                                const SizedBox(height: 16),
+
+                                AppTextField(
+                                  controller: _passwordController,
+                                  label: 'Password',
+                                  prefixIcon: Icons.lock,
+                                  obscureText: !_isPasswordVisible,
+                                  validator: (v) {
+                                    if (v == null || v.isEmpty) {
+                                      return 'Enter password';
+                                    }
+                                    if (v.length < 6) {
+                                      return 'Minimum 6 characters';
                                     }
                                     return null;
                                   },
-                                  readOnly: _isOtpSent,
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _isPasswordVisible
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                    ),
+                                    onPressed: () => setState(() =>
+                                        _isPasswordVisible =
+                                            !_isPasswordVisible),
+                                  ),
                                 ),
-                                SizedBox(height: 12),
-                                if (!_isOtpSent)
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      onPressed: _sendOtp,
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            AppColors.getFormSubmitButtonColor(isDarkMode),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            30,
-                                          ),
-                                        ),
-                                      ),
-                                      child: Text('Send OTP'),
-                                    ),
-                                  ),
-                                if (_isOtpSent) ...[
-                                  TextFormField(
-                                    controller: _otpController,
-                                    keyboardType: TextInputType.number,
-                                    decoration: InputDecoration(
-                                      labelText: 'Enter OTP',
-                                      prefixIcon: Icon(Icons.code, size: 20),
-                                      contentPadding: EdgeInsets.symmetric(
-                                        vertical: 12,
-                                        horizontal: 12,
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                                if (_isOtpSent) ...[
-                                  SizedBox(height: 12),
-                                  TextFormField(
-                                    controller: _nameController,
-                                    decoration: InputDecoration(
-                                      labelText: 'Full Name',
-                                      prefixIcon: Icon(Icons.person, size: 20),
-                                      contentPadding: EdgeInsets.symmetric(
-                                        vertical: 12,
-                                        horizontal: 12,
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your name';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  SizedBox(height: 12),
-                                  TextFormField(
-                                    controller: _mobileController,
-                                    keyboardType: TextInputType.phone,
-                                    decoration: InputDecoration(
-                                      labelText: 'Mobile Number',
-                                      prefixIcon: Icon(Icons.phone, size: 20),
-                                      contentPadding: EdgeInsets.symmetric(
-                                        vertical: 12,
-                                        horizontal: 12,
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                    ),
-                                    validator: (value) {
-                                      // if (value == null || value.isEmpty) {
-                                      //   return 'Please enter your mobile number';
-                                      // }
-                                      if (value != null && value.isNotEmpty) {
-                                        if (value.length < 10) {
-                                          return 'Enter a valid mobile number';
-                                        }
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  SizedBox(height: 12),
-                                  GestureDetector(
-                                    onTap: () async {
-                                      final values =
-                                          await showCalendarDatePicker2Dialog(
-                                            context: context,
-                                            config: CalendarDatePicker2WithActionButtonsConfig(
-                                              calendarType:
-                                                  CalendarDatePicker2Type
-                                                      .single,
-                                              selectedDayHighlightColor:
-                                                  Colors.blue,
-                                              firstDate: DateTime(
-                                                1900,
-                                              ), // min date
-                                              lastDate:
-                                                  DateTime.now(), // stop selecting future dates
-                                            ),
-                                            dialogSize: Size(
-                                              screenWidth * 0.9,
-                                              screenHeight * 0.5,
-                                            ),
-                                          );
 
-                                      if (values != null && values.isNotEmpty) {
-                                        setState(() {
-                                          _selectedDate = values[0];
-                                          _dateOfBirthController.text =
-                                              _selectedDate!
-                                                  .toIso8601String()
-                                                  .split('T')
-                                                  .first;
-                                        });
-                                      }
-                                    },
-                                    child: AbsorbPointer(
-                                      child: TextFormField(
-                                        controller: _dateOfBirthController,
-                                        decoration: InputDecoration(
-                                          labelText: 'Date Of Birth',
-                                          prefixIcon: Icon(
-                                            Icons.calendar_today,
-                                            size: 20,
-                                          ),
-                                          suffixIcon: Icon(
-                                            Icons.arrow_drop_down,
-                                            size: 20,
-                                          ),
-                                          contentPadding: EdgeInsets.symmetric(
-                                            vertical: 12,
-                                            horizontal: 12,
-                                          ),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              30,
-                                            ),
-                                          ),
-                                        ),
-                                        validator: (value) {
-                                          if (value != null &&
-                                              value.isNotEmpty) {
-                                            try {
-                                              final dob = DateTime.parse(value);
-                                              final today = DateTime.now();
-                                              final age =
-                                                  today.year -
-                                                  dob.year -
-                                                  ((today.month < dob.month ||
-                                                          (today.month ==
-                                                                  dob.month &&
-                                                              today.day <
-                                                                  dob.day))
-                                                      ? 1
-                                                      : 0);
+                                const SizedBox(height: 28),
 
-                                              if (age < 14) {
-                                                return 'Age must be at least 14 years';
-                                              }
-                                            } catch (e) {
-                                              return 'Please enter a valid date';
-                                            }
-                                          }
-                                          return null; // no error if empty
-                                        },
-                                      ),
-                                    ),
-                                  ),
+                                CommonButton(
+                                  text: "Create Account",
+                                  isLoading: _isLoading,
+                                  onPressed: _isLoading
+                                      ? null
+                                      : _register,
+                                ),
 
-                                  SizedBox(height: 12),
-                                  TextFormField(
-                                    controller: _passwordController,
-                                    obscureText: !_isPasswordVisible,
-                                    decoration: InputDecoration(
-                                      labelText: 'Password',
-                                      prefixIcon: Icon(Icons.lock, size: 20),
-                                      suffixIcon: IconButton(
-                                        icon: Icon(
-                                          _isPasswordVisible
-                                              ? Icons.visibility
-                                              : Icons.visibility_off,
-                                          size: 20,
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            _isPasswordVisible =
-                                                !_isPasswordVisible;
-                                          });
-                                        },
-                                      ),
-                                      contentPadding: EdgeInsets.symmetric(
-                                        vertical: 12,
-                                        horizontal: 12,
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your password';
-                                      }
-                                      if (value.length < 6) {
-                                        return 'Password must be at least 6 characters';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  SizedBox(height: 20),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      onPressed: _register,
-                                      style: ElevatedButton.styleFrom(
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: 14,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        'Register',
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 12),
-                                  TextButton(
-                                    onPressed: () {
-                                      GoRouter.of(
-                                        context,
-                                      ).push(RouteNames.login);
-                                    },
+                                const SizedBox(height: 16),
+
+                                Center(
+                                  child: TextButton(
+                                    onPressed: () =>
+                                        context.push(RouteNames.login),
                                     child: Text(
-                                      'Already have an account? Login',
+                                      'Already have an account? Log in',
+                                      style: AppTextStyles
+                                          .monoSecondary14(isDark),
                                     ),
                                   ),
-                                ],
+                                ),
                               ],
-                            ),
+                            ],
                           ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),

@@ -5,6 +5,7 @@ import 'package:rayoflite/presentation/screens/auth/forget-password.dart';
 import 'package:rayoflite/presentation/screens/auth/login.dart';
 import 'package:rayoflite/presentation/screens/auth/register.dart';
 import 'package:rayoflite/presentation/screens/auth/reset-password.dart';
+import 'package:rayoflite/presentation/screens/auth/reset_success_screen.dart';
 import 'package:rayoflite/presentation/screens/features/breathing/breathing_duration_screen.dart';
 import 'package:rayoflite/presentation/screens/features/breathing/breathing_player_screen.dart';
 import 'package:rayoflite/presentation/screens/features/profile/profile.dart';
@@ -27,6 +28,7 @@ GoRouter createRouter(String initialLocation) {
       // Mobile landing page
       GoRoute(
         path: RouteNames.landingPage,
+        // builder: (context, state) => const ResetSuccessScreen (),
         builder: (context, state) => const WelcomePage(),
       ),
 

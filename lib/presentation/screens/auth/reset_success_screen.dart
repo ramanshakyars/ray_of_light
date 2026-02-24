@@ -7,8 +7,8 @@ import '../../../core/config/routenames.dart';
 import '../../../core/theme/appcolors.dart';
 import '../../../core/theme/themeProvider.dart';
 
-class WelcomePage extends StatelessWidget {
-  const WelcomePage({super.key});
+class ResetSuccessScreen extends StatelessWidget {
+  const ResetSuccessScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,61 +19,46 @@ class WelcomePage extends StatelessWidget {
       backgroundColor: AppColors.getMonoBackground(isDark),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.all(24),
           child: Column(
             children: [
               const Spacer(),
 
               Container(
-                height: 90,
-                width: 90,
+                height: 72,
+                width: 72,
                 decoration: BoxDecoration(
                   color: AppColors.getMonoTextPrimary(isDark),
                   shape: BoxShape.circle,
                 ),
+                child: const Icon(Icons.mail_outline,
+                    color: Colors.white),
               ),
 
               const SizedBox(height: 24),
 
               Text(
-                'Ray of Light',
+                'Check your email',
                 style: AppTextStyles.monoBold22(isDark),
               ),
 
               const SizedBox(height: 8),
 
               Text(
-                'Find your calm, share your\nlight, nurture your inner peace',
+                "We've sent a password reset link to your email.",
                 textAlign: TextAlign.center,
                 style: AppTextStyles.monoSecondary14(isDark),
               ),
 
+              const SizedBox(height: 32),
+
+              CommonButton(
+                text: "Back to Login",
+                onPressed: () =>
+                    context.go(RouteNames.login),
+              ),
+
               const Spacer(),
-
-              CommonButton(
-                text: "Get Started",
-                onPressed: () =>
-                    context.push(RouteNames.register),
-              ),
-
-              const SizedBox(height: 12),
-
-              CommonButton(
-                text: "Log In",
-                variant: ButtonVariant.outline,
-                onPressed: () =>
-                    context.push(RouteNames.login),
-              ),
-
-              const SizedBox(height: 24),
-
-              Text(
-                'A space for reflection, connection, and gentle growth',
-                textAlign: TextAlign.center,
-                style: AppTextStyles.monoMuted12(isDark),
-              ),
-
-              const SizedBox(height: 24),
             ],
           ),
         ),
