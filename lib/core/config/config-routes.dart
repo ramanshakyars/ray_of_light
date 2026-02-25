@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/presentation/screens/auth/accountDeactivation.dart';
 import 'package:rayoflite/presentation/screens/auth/forget-password.dart';
@@ -10,6 +11,8 @@ import 'package:rayoflite/presentation/screens/features/breathing/breathing_dura
 import 'package:rayoflite/presentation/screens/features/breathing/breathing_player_screen.dart';
 import 'package:rayoflite/presentation/screens/features/profile/profile.dart';
 import 'package:rayoflite/presentation/screens/features/profile/profile_page.dart';
+import 'package:rayoflite/presentation/screens/features/social-insights-v2/provider/social_feed_provider.dart';
+import 'package:rayoflite/presentation/screens/features/social-insights-v2/social_feed_page_v2.dart';
 import 'package:rayoflite/presentation/screens/notifications/notification_page.dart';
 import 'package:rayoflite/presentation/screens/social-insights/social-feedPage.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat_screen.dart';
@@ -86,6 +89,11 @@ GoRouter createRouter(String initialLocation) {
             // change routes here when social feed is implemented
             path: RouteNames.mainApp,
             builder: (context, state) => SocialFeedPage(),
+            // builder:
+            //     (context, state) => ChangeNotifierProvider(
+            //       create: (_) => SocialFeedProvider(),
+            //       child: const SocialFeedPageV2(),
+            //     ),
 
             routes: [
               GoRoute(
@@ -95,6 +103,11 @@ GoRouter createRouter(String initialLocation) {
                 // builder: (context, state) => UserDashboard(),
                 path: RouteNames.home,
                 builder: (context, state) => SocialFeedPage(),
+                // builder:
+                //     (context, state) => ChangeNotifierProvider(
+                //       create: (_) => SocialFeedProvider(),
+                //       child: const SocialFeedPageV2(),
+                //     ),
               ),
 
               GoRoute(
