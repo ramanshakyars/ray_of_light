@@ -11,6 +11,8 @@ import 'package:rayoflite/presentation/screens/features/breathing/breathing_dura
 import 'package:rayoflite/presentation/screens/features/breathing/breathing_player_screen.dart';
 import 'package:rayoflite/presentation/screens/features/profile/profile.dart';
 import 'package:rayoflite/presentation/screens/features/profile/profile_page.dart';
+import 'package:rayoflite/presentation/screens/features/profile/setting/deactivate_account_page.dart';
+import 'package:rayoflite/presentation/screens/features/profile/setting/settings_page.dart';
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/provider/social_feed_provider.dart';
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/social_feed_page_v2.dart';
 import 'package:rayoflite/presentation/screens/notifications/notification_page.dart';
@@ -89,12 +91,12 @@ GoRouter createRouter(String initialLocation) {
             // change routes here when social feed is implemented
             path: RouteNames.mainApp,
             builder: (context, state) => SocialFeedPage(),
+
             // builder:
             //     (context, state) => ChangeNotifierProvider(
             //       create: (_) => SocialFeedProvider(),
             //       child: const SocialFeedPageV2(),
             //     ),
-
             routes: [
               GoRoute(
                 // change routes here when social feed is implemented
@@ -144,9 +146,19 @@ GoRouter createRouter(String initialLocation) {
               ),
 
               GoRoute(
+                path: RouteNames.settings,
+                builder: (context, state) => const SettingsPage(),
+              ),
+
+              GoRoute(
+                path: RouteNames.deactivateAccount,
+                builder: (context, state) => const DeactivateAccountPage(),
+              ),
+
+              GoRoute(
                 path: RouteNames.profile,
-                builder: (context, state) => const ProfileScreen(),
-                // builder: (context, state) => const ProfilePage(),
+                // builder: (context, state) => const ProfileScreen(),
+                builder: (context, state) => const ProfilePage(),
               ),
               GoRoute(
                 path: RouteNames.notification,

@@ -11,6 +11,9 @@ class RouteNames {
   static const privacyPolicy = '/privacy-policy';
   static const IntroductionPage = '/introduction-page';
 
+  static const settings = 'settings';
+  static const deactivateAccount = 'deactivate-account';
+
   // Main app structure
   static const mainApp = '/main';
   static const profile = 'profile';

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
@@ -30,51 +32,68 @@ class _ProfilePageState extends State<ProfilePage>
     final provider = context.watch<ProfileProvider>();
     return Scaffold(
       backgroundColor: AppColors.getAppBackgroundColor(isDark),
-      body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            const ProfileHeader(),
-            const SizedBox(height: 24),
-            WeeklyChart(),
-            const SizedBox(height: 24),
-            TabBar(
-              controller: _tabController,
-              labelStyle: AppTextStyles.medium18(isDark),
-              tabs: [Tab(text: "Thoughts"), Tab(text: "Posts")],
-            ),
-           Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  /// Thoughts
-                  provider.isLoadingThoughts
-                      ? const Center(child: CircularProgressIndicator())
-                      : ListView.builder(
-                          itemCount: provider.thoughts.length,
-                          itemBuilder: (_, i) => ListTile(
-                            title:
-                                Text("Demo Content"), // Replace with actual content when API is ready
-                                // Text(provider.thoughts[i].content),
-                          ),
-                        ),
+    body: SafeArea(
+  child: Stack(
+    children: [
 
-                  /// Posts
-                  provider.isLoadingPosts
-                      ? const Center(child: CircularProgressIndicator())
-                      : ListView.builder(
-                          itemCount: provider.posts.length,
-                          itemBuilder: (_, i) => ListTile(
-                            title: Text("Demo Content"), // Replace with actual content when API is ready
-                            // title: Text(provider.posts[i].content),
-                          ),
-                        ),
-                ],
-              ),
+      /// 🔹 Main Content
+      Column(
+        children: [
+          const SizedBox(height: 16),
+          const ProfileHeader(),
+          const SizedBox(height: 24),
+          WeeklyChart(),
+          const SizedBox(height: 24),
+          TabBar(
+            controller: _tabController,
+            labelStyle: AppTextStyles.medium18(isDark),
+            tabs: const [
+              Tab(text: "Thoughts"),
+              Tab(text: "Posts"),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                provider.isLoadingThoughts
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        itemCount: provider.thoughts.length,
+                        itemBuilder: (_, i) =>
+                            const ListTile(title: Text("Demo Content")),
+                      ),
+                provider.isLoadingPosts
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        itemCount: provider.posts.length,
+                        itemBuilder: (_, i) =>
+                            const ListTile(title: Text("Demo Content")),
+                      ),
+              ],
             ),
-          ],
+          ),
+        ],
+      ),
+
+      /// 🔹 Settings Icon (Top Right)
+      Positioned(
+        top: 8,
+        right: 16,
+        child: IconButton(
+          onPressed: () {
+              context.push('${RouteNames.mainApp}/${RouteNames.settings}');
+          },
+          icon: Icon(
+            Icons.settings_outlined,
+            size: 26,
+            color: AppColors.monoDarkBackground,
+          ),
         ),
       ),
+    ],
+  ),
+),
     );
   }
 }
