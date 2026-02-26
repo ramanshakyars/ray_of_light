@@ -97,16 +97,21 @@ class Talktolightservice {
     }
   }
 
-  static Future<Map<String, dynamic>> getConversationsList() async {
-    try {
-      final response = await HttpService.get(PathConfig.getConversationsList);
-      if (response != null && response['type'] != null) {
-        return {'success': true, 'data': response};
-      } else {
-        return {'success': false, 'message': 'Chat history Loaded'};
-      }
-    } catch (e) {
-      return {'success': false, 'message': 'Something went wrong'};
+ static Future<Map<String, dynamic>> getConversationsList() async {
+  try {
+    final response =
+        await HttpService.get(PathConfig.getConversationsList);
+
+    if (response != null && response is List) {
+      return {'success': true, 'data': response};
+    } else {
+      return {'success': false, 'message': 'No conversations found'};
     }
+  } catch (e) {
+    return {
+      'success': false,
+      'message': 'Something went wrong: $e'
+    };
   }
+}
 }

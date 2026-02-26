@@ -15,9 +15,10 @@ import 'package:rayoflite/presentation/screens/features/profile/setting/deactiva
 import 'package:rayoflite/presentation/screens/features/profile/setting/settings_page.dart';
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/provider/social_feed_provider.dart';
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/social_feed_page_v2.dart';
+import 'package:rayoflite/presentation/screens/features/talk-to-lite-v2/chat_screen-v2.dart';
 import 'package:rayoflite/presentation/screens/notifications/notification_page.dart';
 import 'package:rayoflite/presentation/screens/social-insights/social-feedPage.dart';
-import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat_screen.dart';
+// import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat_screen.dart';
 import 'package:rayoflite/presentation/screens/features/journalism/junerlism.dart';
 import 'package:rayoflite/presentation/screens/features/breathing/breathing.dart';
 import 'package:rayoflite/presentation/screens/features/goal-tracker/goal-tracker.dart';
@@ -116,7 +117,8 @@ GoRouter createRouter(String initialLocation) {
                 path: RouteNames.talkToLight,
                 builder: (context, state) {
                   final chatId = state.uri.queryParameters['chatId'];
-                  return ChatScreen(chatId: chatId); // pass it here
+                 // return ChatScreen(chatId: chatId); // pass it here  /// old one 
+                  return ChatScreen(chatId: chatId); // pass it here  /// new ui 
                 },
               ),
 

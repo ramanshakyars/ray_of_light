@@ -44,6 +44,22 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       vsync: this,
       duration: const Duration(seconds: 8),
     )..repeat();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final location = GoRouterState.of(context).uri.toString();
+      setState(() {
+        _currentIndex = _calculateIndex(location);
+      });
+    });
+  }
+
+  int _calculateIndex(String location) {
+    if (location.contains(RouteNames.home)) return 0;
+    if (location.contains(RouteNames.talkToLight)) return 1;
+    if (location.contains(RouteNames.junerlism)) return 2;
+    if (location.contains(RouteNames.breathingExercise)) return 3;
+    if (location.contains(RouteNames.goalTracker)) return 4;
+    return 0;
   }
 
   @override
@@ -53,25 +69,27 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
- @override
-Widget build(BuildContext context) {
-  final isDarkMode = context.watch<ThemeProvider>().isDarkMode;
+  @override
+  Widget build(BuildContext context) {
+    final isDarkMode = context.watch<ThemeProvider>().isDarkMode;
+    final location = GoRouterState.of(context).uri.toString();
 
-  return Scaffold(
-    backgroundColor: AppColors.getMonoBackground(isDarkMode),
-    body: GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onHorizontalDragEnd: (details) {
-        final velocity = details.primaryVelocity ?? 0;
+    _currentIndex = _calculateIndex(location);
 
-        if (velocity < -300) _goNext();
-        if (velocity > 300) _goPrevious();
-      },
-      child: widget.child,
-    ),
-    bottomNavigationBar: _buildBottomNavigationBar(isDarkMode), // 👈 pass it
-  );
-}
+    return Scaffold(
+      backgroundColor: AppColors.getMonoBackground(isDarkMode),
+      body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onHorizontalDragEnd: (details) {
+          final velocity = details.primaryVelocity ?? 0;
+          if (velocity < -300) _goNext();
+          if (velocity > 300) _goPrevious();
+        },
+        child: widget.child,
+      ),
+      bottomNavigationBar: _buildBottomNavigationBar(isDarkMode),
+    );
+  }
 
   // ------------------ NAVIGATION LOGIC ------------------
 
@@ -89,7 +107,8 @@ Widget build(BuildContext context) {
 
   void _navigateToTab(BuildContext context, int index) {
     setState(() => _currentIndex = index);
-    context.push('${RouteNames.mainApp}/${_routes[index]}');
+    // context.push('${RouteNames.mainApp}/${_routes[index]}');
+    context.go('${RouteNames.mainApp}/${_routes[index]}');
   }
 
   // ------------------ NEW PREMIUM BOTTOM NAV ------------------
@@ -140,7 +159,12 @@ Widget build(BuildContext context) {
                           color: selected ? selectedBg : Colors.transparent,
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: _buildNavIcon(index, selected, iconColor, isDarkMode,),
+                        child: _buildNavIcon(
+                          index,
+                          selected,
+                          iconColor,
+                          isDarkMode,
+                        ),
                       ),
 
                       const SizedBox(height: 2),
@@ -168,7 +192,7 @@ Widget build(BuildContext context) {
 
   // ------------------ ICON BUILDER ------------------
 
-  Widget _buildNavIcon(int index, bool selected, Color iconColor,bool isDark,) {
+  Widget _buildNavIcon(int index, bool selected, Color iconColor, bool isDark) {
     // final isDark =
     //     Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
