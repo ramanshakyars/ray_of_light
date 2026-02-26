@@ -53,27 +53,25 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onHorizontalDragEnd: (details) {
-          final velocity = details.primaryVelocity ?? 0;
+ @override
+Widget build(BuildContext context) {
+  final isDarkMode = context.watch<ThemeProvider>().isDarkMode;
 
-          if (velocity < -300) {
-            _goNext();
-          }
+  return Scaffold(
+    backgroundColor: AppColors.getMonoBackground(isDarkMode),
+    body: GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onHorizontalDragEnd: (details) {
+        final velocity = details.primaryVelocity ?? 0;
 
-          if (velocity > 300) {
-            _goPrevious();
-          }
-        },
-        child: widget.child,
-      ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
-    );
-  }
+        if (velocity < -300) _goNext();
+        if (velocity > 300) _goPrevious();
+      },
+      child: widget.child,
+    ),
+    bottomNavigationBar: _buildBottomNavigationBar(isDarkMode), // 👈 pass it
+  );
+}
 
   // ------------------ NAVIGATION LOGIC ------------------
 
@@ -96,9 +94,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   // ------------------ NEW PREMIUM BOTTOM NAV ------------------
 
-  Widget _buildBottomNavigationBar() {
-    final isDarkMode =
-        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+  Widget _buildBottomNavigationBar(bool isDarkMode) {
+    // final isDarkMode =
+    //     Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
     final bg = AppColors.getMonoCard(isDarkMode);
     final border = AppColors.getMonoBorder(isDarkMode);
@@ -142,7 +140,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                           color: selected ? selectedBg : Colors.transparent,
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: _buildNavIcon(index, selected, iconColor),
+                        child: _buildNavIcon(index, selected, iconColor, isDarkMode,),
                       ),
 
                       const SizedBox(height: 2),
@@ -170,9 +168,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   // ------------------ ICON BUILDER ------------------
 
-  Widget _buildNavIcon(int index, bool selected, Color iconColor) {
-    final isDark =
-        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+  Widget _buildNavIcon(int index, bool selected, Color iconColor,bool isDark,) {
+    // final isDark =
+    //     Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
     final selectedIconColor = isDark ? Colors.black : Colors.white;
 

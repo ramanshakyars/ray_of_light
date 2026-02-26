@@ -62,7 +62,7 @@ void showLogoutModal(BuildContext context) {
             const SizedBox(height: 12),
 
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
               child: Text(
                 "Stay",
                 style: TextStyle(
