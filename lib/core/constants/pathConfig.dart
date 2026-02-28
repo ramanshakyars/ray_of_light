@@ -1,8 +1,8 @@
 class PathConfig {
-   static const String baseUrl = 'http://localhost:9090/rayoflight/api';
+  //  static const String baseUrl = 'http://localhost:9090/rayoflight/api';
   //  static const String baseUrl = 'http://192.168.1.6:9090/rayoflight/api';
   // static const String baseUrl = 'http://ec2-3-111-209-210.ap-south-1.compute.amazonaws.com/rayoflight/api';
-//  static const String baseUrl = 'https://api.rayoflight.life/rayoflight/api';
+ static const String baseUrl = 'https://api.rayoflight.life/rayoflight/api';
 
   // Auth endpoints
   static const String login = '$baseUrl/public/login';
@@ -52,5 +52,8 @@ class PathConfig {
     static const String getNotifications = '$baseUrl/notifications';
     static const String readNotifications = '$baseUrl/notifications/read';
     static const String registerDeviceToken = '$baseUrl/device/register';
+
+    // screen time
+    static const String getWeeklyScreenTime = '$baseUrl/screen-time/weekly';
 
 }

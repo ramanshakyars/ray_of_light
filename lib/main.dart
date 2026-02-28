@@ -13,6 +13,7 @@ import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/firebase_options.dart';
 import 'package:rayoflite/presentation/screens/features/profile/provider/profile_provider.dart';
+import 'package:rayoflite/presentation/screens/features/screen_time/data/ScreenTimeProvider.dart';
 
 Future<void> main() async {
   /// 🔹 Required for async before runApp
@@ -55,14 +56,11 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         /// ✅ Existing Theme Provider
-        ChangeNotifierProvider(
-          create: (_) => ThemeProvider(),
-        ),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
 
         /// ✅ NEW Profile Provider (FIXES YOUR ERROR)
-        ChangeNotifierProvider(
-          create: (_) => ProfileProvider(),
-        ),
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),
+        ChangeNotifierProvider(create: (_) => ScreenTimeProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {

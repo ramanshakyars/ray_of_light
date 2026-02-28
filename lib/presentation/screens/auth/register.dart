@@ -31,7 +31,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   DateTime? _selectedDate;
 
   bool _isPasswordVisible = false;
-  bool _isOtpSent = true;
+  bool _isOtpSent = false;
   bool _isLoading = false;
 
   @override
