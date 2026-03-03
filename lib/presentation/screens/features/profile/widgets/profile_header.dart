@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rayoflite/core/providers/auth_provider.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
@@ -10,18 +11,19 @@ class ProfileHeader extends StatelessWidget{
  @override
  Widget build(BuildContext context){
   final isDark = context.watch<ThemeProvider>().isDarkMode;
+  final auth = context.watch<AuthProvider>();
   return Column(
       children: [
         CircleAvatar(
           radius: 40,
           backgroundColor: AppColors.getMuted(isDark),
           child: Text(
-            "K",
+            auth.userName.isNotEmpty ? auth.userName[0].toUpperCase() : "",
             style: AppTextStyles.bold22(isDark),
           ),
         ),
         const SizedBox(height: 12),
-        Text("Khushi", style: AppTextStyles.bold28(isDark)),
+        Text(auth.userName, style: AppTextStyles.bold28(isDark)),
         const SizedBox(height: 4),
         Text(
           "Spreading light since Jan 2026",

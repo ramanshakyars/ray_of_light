@@ -91,7 +91,12 @@ GoRouter createRouter(String initialLocation) {
             // builder: (context, state) => UserDashboard(),
             // change routes here when social feed is implemented
             path: RouteNames.mainApp,
-            builder: (context, state) => SocialFeedPage(),
+            // builder: (context, state) => SocialFeedPage(),
+            builder:
+                (context, state) => ChangeNotifierProvider(
+                  create: (_) => SocialFeedProvider(),
+                  child: const SocialFeedPageV2(),
+                ),
 
             // builder:
             //     (context, state) => ChangeNotifierProvider(
@@ -105,7 +110,12 @@ GoRouter createRouter(String initialLocation) {
                 // path: RouteNames.home,
                 // builder: (context, state) => UserDashboard(),
                 path: RouteNames.home,
-                builder: (context, state) => SocialFeedPage(),
+                // builder: (context, state) => SocialFeedPage(),
+                builder:
+                    (context, state) => ChangeNotifierProvider(
+                      create: (_) => SocialFeedProvider(),
+                      child: const SocialFeedPageV2(),
+                    ),
                 // builder:
                 //     (context, state) => ChangeNotifierProvider(
                 //       create: (_) => SocialFeedProvider(),
@@ -117,8 +127,8 @@ GoRouter createRouter(String initialLocation) {
                 path: RouteNames.talkToLight,
                 builder: (context, state) {
                   final chatId = state.uri.queryParameters['chatId'];
-                 // return ChatScreen(chatId: chatId); // pass it here  /// old one 
-                  return ChatScreen(chatId: chatId); // pass it here  /// new ui 
+                  // return ChatScreen(chatId: chatId); // pass it here  /// old one
+                  return ChatScreen(chatId: chatId); // pass it here  /// new ui
                 },
               ),
 

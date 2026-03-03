@@ -8,6 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/config/config-routes.dart';
+import 'package:rayoflite/core/providers/auth_provider.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
@@ -61,6 +62,7 @@ class MyApp extends StatelessWidget {
         /// ✅ NEW Profile Provider (FIXES YOUR ERROR)
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
         ChangeNotifierProvider(create: (_) => ScreenTimeProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()..loadUser()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {

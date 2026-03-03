@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
@@ -32,6 +34,10 @@ class HomeHeader extends StatelessWidget {
       ["", "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
        "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"][m];
 
+  void _goToProfile(BuildContext context) {
+    context.push('${RouteNames.mainApp}/${RouteNames.profile}');
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDarkMode;
@@ -49,29 +55,33 @@ class HomeHeader extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              /// GREETING
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "${_getGreeting()}, $userName",
-                    style: AppTextStyles.monoBold22(isDark),
+              /// GREETING (Clickable)
+              Expanded(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () => _goToProfile(context),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "${_getGreeting()}, $userName",
+                        style: AppTextStyles.monoBold22(isDark),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _getDate(),
+                        style: AppTextStyles.monoMuted12(isDark),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _getDate(),
-                    style: AppTextStyles.monoMuted12(isDark),
-                  ),
-                ],
+                ),
               ),
 
-              /// ACTIONS
-              Row(
-                children: [
-                  _circleIcon(Icons.notifications_none, isDark),
-                  const SizedBox(width: 10),
-                  _circleIcon(Icons.person_outline, isDark),
-                ],
+              /// PROFILE ICON (Clickable)
+              InkWell(
+                borderRadius: BorderRadius.circular(100),
+                onTap: () => _goToProfile(context),
+                child: _circleIcon(Icons.person_outline, isDark),
               ),
             ],
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/providers/auth_provider.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
@@ -34,6 +35,7 @@ class _ProfilePageState extends State<ProfilePage>
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDarkMode;
     final provider = context.watch<ProfileProvider>();
+    final auth = context.watch<AuthProvider>();
     return Scaffold(
       backgroundColor: AppColors.getAppBackgroundColor(isDark),
       body: SafeArea(
