@@ -6,7 +6,7 @@ publish_to: 'none'
 # version: 1.1.0+13
 
 # version ios : 1.0.0+9 before + is actual build ios version
-version: 2.2.1+13
+version: 2.3.0+1
 
 
 environment:
