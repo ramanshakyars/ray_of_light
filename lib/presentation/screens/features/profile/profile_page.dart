@@ -37,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage>
     final provider = context.watch<ProfileProvider>();
     final auth = context.watch<AuthProvider>();
     return Scaffold(
-      backgroundColor: AppColors.getAppBackgroundColor(isDark),
+      backgroundColor: AppColors.getMonoBackground(isDark),
       body: SafeArea(
         child: Stack(
           children: [
