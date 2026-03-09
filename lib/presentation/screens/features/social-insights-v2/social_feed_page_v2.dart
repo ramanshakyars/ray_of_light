@@ -75,7 +75,11 @@ class _SocialFeedPageV2State extends State<SocialFeedPageV2> {
                   }
 
                   // COMPOSER
+
                   if (index == 1) {
+                    if (!auth.isAdmin) {
+                      return const SizedBox();
+                    }
                     return Padding(
                       padding: const EdgeInsets.only(top: 16),
                       child: QuickComposer(
