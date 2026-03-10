@@ -6,6 +6,7 @@ import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
+import 'package:rayoflite/presentation/screens/features/social-insights-v2/provider/social_feed_provider.dart';
 import 'package:rayoflite/presentation/screens/social-insights/socialService.dart';
 
 class CreatePostSheet extends StatefulWidget {
@@ -30,37 +31,37 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
     }
   }
 
-  Future<void> submitPost() async {
-    if (controller.text.trim().isEmpty && images.isEmpty) {
-      MessageService.showError(context, "Write something or add a photo");
-      return;
-    }
-
-    try {
-      setState(() {
-        isPosting = true;
-      });
-
-      await SocialService.createPostV2(
-        caption: controller.text.trim(),
-        images: images,
-      );
-
-      if (!mounted) return;
-
-      Navigator.pop(context); // close sheet
-      MessageService.showSuccess(context, "Post created successfully");
-    } catch (e) {
-      MessageService.showError(context, "Failed to create post");
-    } finally {
-      if (mounted) {
-        setState(() {
-          isPosting = false;
-        });
-      }
-    }
+ Future<void> submitPost() async {
+  if (controller.text.trim().isEmpty && images.isEmpty) {
+    MessageService.showError(context, "Write something or add a photo");
+    return;
   }
 
+  try {
+    setState(() {
+      isPosting = true;
+    });
+
+    await SocialService.createPostV2(
+      caption: controller.text.trim(),
+      images: images,
+    );
+
+    if (!mounted) return;
+
+    /// return success to parent
+    Navigator.pop(context, true);
+
+  } catch (e) {
+    MessageService.showError(context, "Failed to create post");
+  } finally {
+    if (mounted) {
+      setState(() {
+        isPosting = false;
+      });
+    }
+  }
+}
   @override
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDarkMode;

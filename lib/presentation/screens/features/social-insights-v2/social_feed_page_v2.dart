@@ -30,13 +30,17 @@ class _SocialFeedPageV2State extends State<SocialFeedPageV2> {
     });
   }
 
-  void _openCreateSheet() {
-    showModalBottomSheet(
+  void _openCreateSheet() async {
+    final created = await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => const CreatePostSheet(),
     );
+
+    if (created == true) {
+      context.read<SocialFeedProvider>().loadPosts();
+    }
   }
 
   @override
