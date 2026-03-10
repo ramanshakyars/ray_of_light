@@ -2,12 +2,24 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:rayoflite/core/constants/pathConfig.dart';
 import 'package:rayoflite/core/services/httpService.dart';
+import 'package:rayoflite/presentation/screens/features/social-insights-v2/provider/social_feed_provider.dart';
 import 'package:rayoflite/presentation/screens/social-insights/Post.dart';
 import 'package:rayoflite/presentation/screens/social-insights/models/comment_model.dart';
 
 class SocialService {
   /// GET ALL POSTS
-  static Future<List<Post>> getPostInsights() async {
+  static Future<List<PostModelV2>> getPostInsightsV2() async {
+    try {
+      final res = await HttpService.get(PathConfig.getAllPosts);
+      if (res is List) {
+        return res.map((e) => PostModelV2.fromJson(e)).toList();
+      }
+      return [];
+    } catch (e) {
+      rethrow;
+    }
+  }
+    static Future<List<Post>> getPostInsights() async {
     try {
       final res = await HttpService.get(PathConfig.getAllPosts);
       if (res is List) {

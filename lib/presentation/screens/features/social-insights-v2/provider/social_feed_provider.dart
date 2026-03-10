@@ -6,6 +6,60 @@ import '../models/post_view_model.dart';
 
 enum FeedState { initial, loading, loaded, empty, error, noInternet }
 
+class PostModelV2 {
+  final String id;
+  final String caption;
+  final String? imageUrl;
+  final List<String>? mediaUrls; // new field for multiple media
+  final DateTime createdAt;
+  final Author author;
+  int likeCount;
+  final int commentCount;
+  final int shareCount;
+
+  bool liked; // UI only
+
+  PostModelV2({
+    required this.id,
+    required this.caption,
+    this.imageUrl,
+    this.mediaUrls,
+    required this.createdAt,
+    required this.author,
+    required this.likeCount,
+    required this.commentCount,
+    required this.shareCount,
+    this.liked = false,
+  });
+
+  factory PostModelV2.fromJson(Map<String, dynamic> json) {
+    final createdList = json['createdAt'] as List?;
+    DateTime parsedDate = DateTime.now();
+    if (createdList != null && createdList.length >= 6) {
+      parsedDate = DateTime(
+        createdList[0],
+        createdList[1],
+        createdList[2],
+        createdList[3],
+        createdList[4],
+        createdList[5],
+      );
+    }
+
+    return PostModelV2(
+      id: json['id'] ?? '',
+      caption: json['caption'] ?? '',
+      mediaUrls:
+          (json['mediaUrls'] as List?)?.map((e) => e.toString()).toList() ?? [],
+      createdAt: parsedDate,
+      author: Author.fromJson(json['author']),
+      likeCount: json['likeCount'] ?? 0,
+      commentCount: json['commentCount'] ?? 0,
+      shareCount: json['shareCount'] ?? 0,
+    );
+  }
+}
+
 class SocialFeedProvider extends ChangeNotifier {
   FeedState state = FeedState.initial;
 
@@ -19,10 +73,9 @@ class SocialFeedProvider extends ChangeNotifier {
       state = FeedState.loading;
       notifyListeners();
 
-      final res = await SocialService.getPostInsights();
+      final res = await SocialService.getPostInsightsV2();
 
       posts = res.map(_mapToVM).toList();
-     
 
       if (posts.isEmpty) {
         state = FeedState.empty;
@@ -71,11 +124,11 @@ class SocialFeedProvider extends ChangeNotifier {
 
   // ================= MAPPER =================
 
-  PostViewModel _mapToVM(Post p) {
+  PostViewModel _mapToVM(PostModelV2 p) {
     return PostViewModel(
       id: p.id,
       caption: p.caption,
-      mediaUrls: p.imageUrl != null ? [p.imageUrl!] : [],
+      mediaUrls: p.mediaUrls ?? [],
       createdAt: p.createdAt,
       username: p.author.username,
       likeCount: p.likeCount,

@@ -43,7 +43,7 @@ class BreathingDurationScreen extends StatelessWidget {
               _tile(context, isDark, "Deep", "10 min"),
               _tile(context, isDark, "Open", "∞"),
 
-              const SizedBox(height: 250),
+              const SizedBox(height: 180),
 
               Text(
                 "Choose what feels right today ? ",
