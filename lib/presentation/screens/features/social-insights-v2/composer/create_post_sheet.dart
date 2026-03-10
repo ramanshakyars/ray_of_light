@@ -2,9 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
+import 'package:rayoflite/presentation/screens/social-insights/socialService.dart';
 
 class CreatePostSheet extends StatefulWidget {
   const CreatePostSheet({super.key});
@@ -16,15 +18,46 @@ class CreatePostSheet extends StatefulWidget {
 class _CreatePostSheetState extends State<CreatePostSheet> {
   final ImagePicker _picker = ImagePicker();
   final TextEditingController controller = TextEditingController();
-
   final List<File> images = [];
+  bool isPosting = false;
 
   Future<void> pickImages() async {
-    final img = await _picker.pickImage(source: ImageSource.gallery);
+    final imgs = await _picker.pickMultiImage();
 
-    if (img != null) {
-      images.add(File(img.path));
+    if (imgs.isNotEmpty) {
+      images.addAll(imgs.map((e) => File(e.path)));
       setState(() {});
+    }
+  }
+
+  Future<void> submitPost() async {
+    if (controller.text.trim().isEmpty && images.isEmpty) {
+      MessageService.showError(context, "Write something or add a photo");
+      return;
+    }
+
+    try {
+      setState(() {
+        isPosting = true;
+      });
+
+      await SocialService.createPostV2(
+        caption: controller.text.trim(),
+        images: images,
+      );
+
+      if (!mounted) return;
+
+      Navigator.pop(context); // close sheet
+      MessageService.showSuccess(context, "Post created successfully");
+    } catch (e) {
+      MessageService.showError(context, "Failed to create post");
+    } finally {
+      if (mounted) {
+        setState(() {
+          isPosting = false;
+        });
+      }
     }
   }
 
@@ -37,18 +70,14 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       decoration: BoxDecoration(
         color: AppColors.getMonoCard(isDark),
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(32),
-        ),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           /// TOP BAR
           Row(
             children: [
-
               /// CANCEL
               GestureDetector(
                 onTap: () => Navigator.pop(context),
@@ -60,21 +89,18 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
 
               const Spacer(),
 
-              Text(
-                "Create post",
-                style: AppTextStyles.monoMedium18(isDark),
-              ),
+              Text("Create post", style: AppTextStyles.monoMedium18(isDark)),
 
               const Spacer(),
 
               /// POST BUTTON
               GestureDetector(
-                onTap: () {
-
-                },
+                onTap: isPosting ? null : submitPost,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.getMonoTextPrimary(isDark),
                     borderRadius: BorderRadius.circular(22),
@@ -127,9 +153,7 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
 
           const SizedBox(height: 10),
 
-          Divider(
-            color: AppColors.getMonoDivider(isDark),
-          ),
+          Divider(color: AppColors.getMonoDivider(isDark)),
 
           const SizedBox(height: 16),
 

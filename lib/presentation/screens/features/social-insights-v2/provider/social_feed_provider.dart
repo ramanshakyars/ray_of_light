@@ -22,6 +22,7 @@ class SocialFeedProvider extends ChangeNotifier {
       final res = await SocialService.getPostInsights();
 
       posts = res.map(_mapToVM).toList();
+     
 
       if (posts.isEmpty) {
         state = FeedState.empty;

@@ -21,7 +21,10 @@ class SocialService {
 
   /// CREATE POST
   /// Note: key is 'file' to match Spring Boot @RequestPart("file")
-  static Future<void> createPost({required String caption, File? imageFile}) async {
+  static Future<void> createPost({
+    required String caption,
+    File? imageFile,
+  }) async {
     final formData = FormData.fromMap({
       'caption': caption,
       if (imageFile != null)
@@ -33,22 +36,50 @@ class SocialService {
     await HttpService.postMultipart(PathConfig.postInsight, formData);
   }
 
-  /// LIKE POST
- static Future<void> likePost(String postId, String userId) async {
-  try {
-    await HttpService.post(PathConfig.doLikeOnPost, {
-      'postId': postId,
-      'userId': userId,
-    });
-  } catch (e, st) {
-    // Print full error & stack to console to see server response body / status
-    print('SocialService.likePost error: $e\n$st');
-    rethrow;
+  static Future<void> createPostV2({
+    required String caption,
+    required List<File> images,
+  }) async {
+    final formData = FormData();
+
+    /// caption
+    formData.fields.add(MapEntry('caption', caption));
+
+    /// multiple images
+    for (final img in images) {
+      formData.files.add(
+        MapEntry(
+          'files', // MUST match Spring @RequestPart("files")
+          await MultipartFile.fromFile(
+            img.path,
+            filename: img.path.split('/').last,
+          ),
+        ),
+      );
+    }
+
+    await HttpService.postMultipart(PathConfig.postInsight, formData);
   }
-}
+
+  /// LIKE POST
+  static Future<void> likePost(String postId, String userId) async {
+    try {
+      await HttpService.post(PathConfig.doLikeOnPost, {
+        'postId': postId,
+        'userId': userId,
+      });
+    } catch (e, st) {
+      // Print full error & stack to console to see server response body / status
+      print('SocialService.likePost error: $e\n$st');
+      rethrow;
+    }
+  }
 
   /// COMMENT ON POST
-  static Future<Comment> commentOnPost({required String postId, required String text}) async {
+  static Future<Comment> commentOnPost({
+    required String postId,
+    required String text,
+  }) async {
     final response = await HttpService.post(PathConfig.doCommentOnPost, {
       'postId': postId,
       'text': text,
@@ -58,7 +89,9 @@ class SocialService {
 
   /// GET COMMENTS
   static Future<List<Comment>> getComments(String postId) async {
-    final res = await HttpService.get('${PathConfig.getCommentsByPostId}/$postId');
+    final res = await HttpService.get(
+      '${PathConfig.getCommentsByPostId}/$postId',
+    );
     if (res is List) {
       return res.map((e) => Comment.fromJson(e)).toList();
     }
