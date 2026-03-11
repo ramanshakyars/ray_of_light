@@ -72,9 +72,9 @@ class SettingsPage extends StatelessWidget {
 
               SettingsSwitchTile(
                 icon: Icons.light_mode_outlined,
-                title: "Light Mode",
+                title: "Dark Mode",
                 subtitle: "Bright and clear",
-                value: !isDark,
+                value: isDark,
                 onChanged: (_) {
                   context.read<ThemeProvider>().toggleTheme();
                 },
