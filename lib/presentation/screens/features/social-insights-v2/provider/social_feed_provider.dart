@@ -85,8 +85,9 @@ class SocialFeedProvider extends ChangeNotifier {
     } on SocketException {
       state = FeedState.noInternet;
     } catch (e) {
+      posts = [];
+      state = FeedState.loaded;
       errorMessage = e.toString();
-      state = FeedState.error;
     }
 
     notifyListeners();
