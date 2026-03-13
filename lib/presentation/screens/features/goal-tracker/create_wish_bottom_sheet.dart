@@ -10,8 +10,7 @@ class CreateWishBottomSheet extends StatefulWidget {
   const CreateWishBottomSheet({super.key, required this.onSubmit});
 
   @override
-  State<CreateWishBottomSheet> createState() =>
-      _CreateWishBottomSheetState();
+  State<CreateWishBottomSheet> createState() => _CreateWishBottomSheetState();
 }
 
 class _CreateWishBottomSheetState extends State<CreateWishBottomSheet> {
@@ -26,6 +25,14 @@ class _CreateWishBottomSheetState extends State<CreateWishBottomSheet> {
     _WishType("GRATITUDE", Icons.favorite_border),
     _WishType("INTENTION", Icons.track_changes),
   ];
+  @override
+  void initState() {
+    super.initState();
+
+    _descController.addListener(() {
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,15 +70,11 @@ class _CreateWishBottomSheetState extends State<CreateWishBottomSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "Create a Wish",
-                style: AppTextStyles.monoBold22(isDark),
-              ),
+              Text("Create a Wish", style: AppTextStyles.monoBold22(isDark)),
               IconButton(
                 splashRadius: 20,
                 onPressed: () => Navigator.pop(context),
-                icon: Icon(Icons.close,
-                    color: AppColors.getMonoIcon(isDark)),
+                icon: Icon(Icons.close, color: AppColors.getMonoIcon(isDark)),
               ),
             ],
           ),
@@ -79,54 +82,54 @@ class _CreateWishBottomSheetState extends State<CreateWishBottomSheet> {
           const SizedBox(height: 14),
 
           /// choose type
-          Text(
-            "Choose a type",
-            style: AppTextStyles.monoSecondary14(isDark),
-          ),
+          Text("Choose a type", style: AppTextStyles.monoSecondary14(isDark)),
 
           const SizedBox(height: 14),
 
           /// TYPE GRID (⭐ matches image)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: types.map((t) {
-              final selected = selectedType == t.label;
+            children:
+                types.map((t) {
+                  final selected = selectedType == t.label;
 
-              return GestureDetector(
-                onTap: () => setState(() => selectedType = t.label),
-                child: Container(
-                  width: 78,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  decoration: BoxDecoration(
-                    color: selected
-                        ? AppColors.getMonoTextPrimary(isDark)
-                        : surface,
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(
-                        t.icon,
-                        size: 22,
-                        color: selected
-                            ? (isDark ? Colors.black : Colors.white)
-                            : textSecondary,
+                  return GestureDetector(
+                    onTap: () => setState(() => selectedType = t.label),
+                    child: Container(
+                      width: 78,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      decoration: BoxDecoration(
+                        color:
+                            selected
+                                ? AppColors.getMonoTextPrimary(isDark)
+                                : surface,
+                        borderRadius: BorderRadius.circular(18),
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        _formatLabel(t.label),
-                        style:
-                            AppTextStyles.monoMuted12(isDark).copyWith(
-                          color: selected
-                              ? (isDark ? Colors.black : Colors.white)
-                              : textSecondary,
-                        ),
+                      child: Column(
+                        children: [
+                          Icon(
+                            t.icon,
+                            size: 22,
+                            color:
+                                selected
+                                    ? (isDark ? Colors.black : Colors.white)
+                                    : textSecondary,
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            _formatLabel(t.label),
+                            style: AppTextStyles.monoMuted12(isDark).copyWith(
+                              color:
+                                  selected
+                                      ? (isDark ? Colors.black : Colors.white)
+                                      : textSecondary,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
+                    ),
+                  );
+                }).toList(),
           ),
 
           const SizedBox(height: 22),
@@ -165,8 +168,10 @@ class _CreateWishBottomSheetState extends State<CreateWishBottomSheet> {
                 hintText: "Title (optional)",
                 hintStyle: AppTextStyles.monoSecondary14(isDark),
                 border: InputBorder.none,
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 14,
+                ),
               ),
             ),
           ),
@@ -197,13 +202,21 @@ class _CreateWishBottomSheetState extends State<CreateWishBottomSheet> {
           /// CREATE BUTTON (disabled look like image)
           _PrimaryButton(
             label: "Create Wish",
-            enabled: _descController.text.trim().isNotEmpty,
+            enabled:
+                _descController.text.trim().isNotEmpty &&
+                selectedType.isNotEmpty,
             onTap: () {
+              final description = _descController.text.trim();
+              if (description.isEmpty) return;
               widget.onSubmit({
-                "title": _titleController.text,
-                "description": _descController.text,
+                "title":
+                    _titleController.text.trim().isEmpty
+                        ? description
+                        : _titleController.text.trim(),
+                "description": description,
                 "category": selectedType,
               });
+
               Navigator.pop(context);
             },
           ),
@@ -263,15 +276,12 @@ class _OptionTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(icon, size: 20,
-              color: AppColors.getMonoTextSecondary(isDark)),
+          Icon(icon, size: 20, color: AppColors.getMonoTextSecondary(isDark)),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(title,
-                style: AppTextStyles.monoRegular16(isDark)),
+            child: Text(title, style: AppTextStyles.monoRegular16(isDark)),
           ),
-          Text(trailing,
-              style: AppTextStyles.monoSecondary14(isDark)),
+          Text(trailing, style: AppTextStyles.monoSecondary14(isDark)),
         ],
       ),
     );
@@ -303,17 +313,19 @@ class _PrimaryButton extends StatelessWidget {
         height: 52,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: enabled
-              ? AppColors.getMonoTextPrimary(isDark)
-              : AppColors.getMonoSurface(isDark),
+          color:
+              enabled
+                  ? AppColors.getMonoTextPrimary(isDark)
+                  : AppColors.getMonoSurface(isDark),
           borderRadius: BorderRadius.circular(26),
         ),
         child: Text(
           label,
           style: AppTextStyles.monoMedium18(isDark).copyWith(
-            color: enabled
-                ? (isDark ? Colors.black : Colors.white)
-                : AppColors.getMonoTextMuted(isDark),
+            color:
+                enabled
+                    ? (isDark ? Colors.black : Colors.white)
+                    : AppColors.getMonoTextMuted(isDark),
           ),
         ),
       ),
@@ -329,10 +341,7 @@ class _SecondaryButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  const _SecondaryButton({
-    required this.label,
-    required this.onTap,
-  });
+  const _SecondaryButton({required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -347,10 +356,7 @@ class _SecondaryButton extends StatelessWidget {
           color: AppColors.getMonoSurface(isDark),
           borderRadius: BorderRadius.circular(26),
         ),
-        child: Text(
-          label,
-          style: AppTextStyles.monoMedium18(isDark),
-        ),
+        child: Text(label, style: AppTextStyles.monoMedium18(isDark)),
       ),
     );
   }
