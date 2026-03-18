@@ -32,10 +32,11 @@ Future<void> main() async {
   /// 🔹 Local storage init
   await LocalStorageService.getInstance();
   final bool isLoggedIn = await LocalStorageService.isLoggedIn();
+  final bool isTokenValid = await LocalStorageService.isTokenValid();
 
   /// 🔹 Decide initial route
   String initialRoute;
-  if (isLoggedIn) {
+  if (isLoggedIn && isTokenValid) {
     initialRoute = '${RouteNames.mainApp}/${RouteNames.home}';
   } else {
     initialRoute = kIsWeb ? RouteNames.weblandingPage : RouteNames.landingPage;
@@ -59,10 +60,14 @@ class MyApp extends StatelessWidget {
         /// ✅ Existing Theme Provider
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
 
-        /// ✅ NEW Profile Provider (FIXES YOUR ERROR)
+        /// ✅ Profile Provider
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
         ChangeNotifierProvider(create: (_) => ScreenTimeProvider()),
-        ChangeNotifierProvider(create: (_) => AuthProvider()..loadUser()),
+        
+        /// ✅ UPDATED Auth Provider with Session Management
+        ChangeNotifierProvider(
+          create: (_) => AuthProvider()..loadUser(),
+        ),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {

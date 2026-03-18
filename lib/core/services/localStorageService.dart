@@ -1,4 +1,4 @@
-import 'package:rayoflite/presentation/screens/features/%E1%B9%83ood-manager/UserMood.dart';
+import 'package:rayoflite/presentation/screens/features/ṃood-manager/UserMood.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -13,6 +13,8 @@ class LocalStorageService {
   static Future<void> setToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', token);
+    // 🆕 Track when token was set
+    await prefs.setString('token_set_time', DateTime.now().toIso8601String());
   }
 
   static Future<String?> getToken() async {
@@ -40,6 +42,30 @@ class LocalStorageService {
     final token = await getToken();
     return token != null && token.isNotEmpty;
   }
+
+  // 🆕 ===== NEW METHODS (ADD THESE) =====
+  
+  /// Check if token is still valid (5 year expiration)
+  static Future<bool> isTokenValid() async {
+    final token = await getToken();
+    final setTimeStr = await getTokenSetTime();
+    
+    if (token == null || setTimeStr == null) return false;
+    
+    // Token valid if set within last 5 years
+    final expirationDate = setTimeStr.add(const Duration(days: 1825));
+    return DateTime.now().isBefore(expirationDate);
+  }
+
+  /// Get when token was set
+  static Future<DateTime?> getTokenSetTime() async {
+    final prefs = await SharedPreferences.getInstance();
+    final timeStr = prefs.getString('token_set_time');
+    if (timeStr == null) return null;
+    return DateTime.parse(timeStr);
+  }
+
+  // ===== REST OF YOUR EXISTING CODE =====
 
   static Future<void> setCurrentMood(UserMood mood) async {
     final prefs = await SharedPreferences.getInstance();

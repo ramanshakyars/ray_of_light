@@ -8,7 +8,7 @@ This project is a starting point for a Flutter application.
 
 // for create web build 
 flutter clean
-flutter flutter build web --release
+flutter build web --release
 And after deploy on aws run this commad on console of aws
 "
 aws cloudfront create-invalidation \

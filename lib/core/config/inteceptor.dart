@@ -1,4 +1,4 @@
-// lib/services/http_interceptor.dart
+// lib/core/config/inteceptor.dart
 import 'package:dio/dio.dart';
 import 'package:rayoflite/core/constants/pathConfig.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
@@ -29,7 +29,15 @@ class AuthInterceptor {
           return handler.next(options);
         },
         onError: (DioException e, handler) {
-          print(e);
+          print('❌ Error: ${e.response?.statusCode} - ${e.message}');
+          
+          // 🔴 ONLY clear on 401 Unauthorized
+          if (e.response?.statusCode == 401) {
+            print('🔑 Token expired - logging out');
+            LocalStorageService.clearAll();
+          }
+          // ✅ Don't clear on other errors (network issues, server errors, etc.)
+          
           return handler.next(e);
         },
       ),
