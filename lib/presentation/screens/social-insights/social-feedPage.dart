@@ -525,7 +525,7 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
       });
     } catch (e) {
       setState(() => _isLoading = false);
-      if (mounted) MessageService.showError(context, "Error fetching posts");
+      // if (mounted) MessageService.showError(context, "Error fetching posts");
     }
   }
 
