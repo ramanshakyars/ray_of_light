@@ -116,7 +116,7 @@ class ChatProvider extends ChangeNotifier {
 
   Future<void> sendMessage(String text) async {
     if (text.trim().isEmpty) return;
-
+   text = text[0].toUpperCase() + text.substring(1);
     /// Optimistic UI
     messages.add(ChatMessageModel(text: text, isUser: true));
 

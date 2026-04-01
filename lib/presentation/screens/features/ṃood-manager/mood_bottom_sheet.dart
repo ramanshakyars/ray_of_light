@@ -107,8 +107,8 @@ class _MoodBottomSheetState extends State<MoodBottomSheet> {
     return SafeArea(
       top: false,
       child: Container(
-        height: MediaQuery.of(context).size.height * 0.86,
-        padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
+        height: MediaQuery.of(context).size.height * 0.65,
+        padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
         decoration: BoxDecoration(
           color: card,
           borderRadius: const BorderRadius.vertical(
@@ -162,7 +162,7 @@ class _MoodBottomSheetState extends State<MoodBottomSheet> {
                 itemCount: _moods.length,
                 gridDelegate:
                     const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
+                  crossAxisCount: 4,
                   mainAxisSpacing: 18,
                   crossAxisSpacing: 18,
                   childAspectRatio: 0.9,

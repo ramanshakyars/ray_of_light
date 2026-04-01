@@ -75,7 +75,7 @@ class _SocialFeedPageV2State extends State<SocialFeedPageV2> {
                 itemBuilder: (context, index) {
                   // HEADER
                   if (index == 0) {
-                    return HomeHeader(userName: auth.userName);
+                    return HomeHeader(userName: auth.name);
                   }
 
                   // COMPOSER

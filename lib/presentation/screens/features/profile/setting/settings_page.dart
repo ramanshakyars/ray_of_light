@@ -9,6 +9,8 @@ import 'package:rayoflite/presentation/screens/features/profile/setting/settings
 import 'package:rayoflite/presentation/screens/features/profile/setting/settings_switch_tile.dart';
 import 'package:rayoflite/presentation/screens/features/profile/setting/settings_tile.dart';
 
+import '../../ṃood-manager/mood_bottom_sheet.dart';
+
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
@@ -39,18 +41,18 @@ class SettingsPage extends StatelessWidget {
                   ),
                   IconButton(
                     onPressed: () => context.pop(),
-                    icon: Icon(Icons.close,
-                        color: AppColors.getMonoIcon(isDark)),
-                  )
+                    icon: Icon(
+                      Icons.close,
+                      color: AppColors.getMonoIcon(isDark),
+                    ),
+                  ),
                 ],
               ),
 
               const SizedBox(height: 8),
               Text(
                 "Manage your account and preferences",
-                style: TextStyle(
-                  color: AppColors.getMonoTextSecondary(isDark),
-                ),
+                style: TextStyle(color: AppColors.getMonoTextSecondary(isDark)),
               ),
 
               const SizedBox(height: 30),
@@ -58,10 +60,17 @@ class SettingsPage extends StatelessWidget {
               /// PROFILE
               const SettingsSection(title: "PROFILE"),
               SettingsTile(
-                icon: Icons.person_outline,
-                title: "Edit Profile",
-                subtitle: "Update your information",
-                onTap: () {},
+                icon: Icons.mood_outlined,
+                title: "Mood Manager",
+                subtitle: "Change your mood ",
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (_) => const MoodBottomSheet(),
+                  );
+                },
                 isDark: isDark,
               ),
 
@@ -116,7 +125,8 @@ class SettingsPage extends StatelessWidget {
                 subtitle: "Temporarily pause",
                 onTap: () {
                   context.push(
-                      '${RouteNames.mainApp}/${RouteNames.deactivateAccount}');
+                    '${RouteNames.mainApp}/${RouteNames.deactivateAccount}',
+                  );
                 },
                 isDark: isDark,
               ),

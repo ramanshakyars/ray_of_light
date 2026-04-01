@@ -5,6 +5,7 @@ class PostViewModel {
   final String? mood; // ✅ NEW
   final DateTime createdAt;
   final String username;
+  
 
   int likeCount;
   int commentCount;

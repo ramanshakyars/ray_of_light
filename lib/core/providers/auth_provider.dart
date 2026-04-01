@@ -9,9 +9,11 @@ class AuthProvider extends ChangeNotifier {
 
   Map<String, dynamic>? get user => _user;
   String? get token => _token;  // 🆕 NEW GETTER
+ 
 
   String get userName =>
       _user?['fullName'] ?? _user?['username'] ?? _user?['email'] ?? "User";
+  String get name =>  _user?['name'] ?? _user?['name'] ?? _user?['name'] ?? "name";   
 
   Future<void> loadUser() async {
     _user = await LocalStorageService.getUser();

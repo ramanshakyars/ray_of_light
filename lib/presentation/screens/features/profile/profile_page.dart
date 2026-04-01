@@ -91,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage>
                 icon: Icon(
                   Icons.settings_outlined,
                   size: 26,
-                  color: AppColors.monoDarkBackground,
+                  color: AppColors.getIconColor(isDark),
                 ),
               ),
             ),

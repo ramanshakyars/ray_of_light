@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rayoflite/core/providers/auth_provider.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
@@ -25,6 +26,7 @@ class PostCardV2 extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDarkMode;
     final provider = context.read<SocialFeedProvider>();
+    final auth = context.watch<AuthProvider>();
 
     final hasText = post.caption.trim().isNotEmpty;
     final hasMedia = post.mediaUrls.isNotEmpty;
@@ -44,7 +46,7 @@ class PostCardV2 extends StatelessWidget {
           /// ================= USER =================
           Row(
             children: [
-              Text(post.username, style: AppTextStyles.monoMedium18(isDark)),
+              Text(auth.name, style: AppTextStyles.monoMedium18(isDark)),
               const SizedBox(width: 8),
               Text(
                 _timeAgo(post.createdAt),
