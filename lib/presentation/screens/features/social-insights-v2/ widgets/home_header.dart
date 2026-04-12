@@ -6,13 +6,12 @@ import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 
+import '../../ṃood-manager/mood_bottom_sheet.dart';
+
 class HomeHeader extends StatelessWidget {
   final String userName;
 
-  const HomeHeader({
-    super.key,
-    required this.userName,
-  });
+  const HomeHeader({super.key, required this.userName});
 
   String _getGreeting() {
     final hour = DateTime.now().hour;
@@ -28,14 +27,45 @@ class HomeHeader extends StatelessWidget {
   }
 
   String _weekday(int d) =>
-      ["", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"][d];
+      [
+        "",
+        "MONDAY",
+        "TUESDAY",
+        "WEDNESDAY",
+        "THURSDAY",
+        "FRIDAY",
+        "SATURDAY",
+        "SUNDAY",
+      ][d];
 
   String _month(int m) =>
-      ["", "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
-       "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"][m];
+      [
+        "",
+        "JANUARY",
+        "FEBRUARY",
+        "MARCH",
+        "APRIL",
+        "MAY",
+        "JUNE",
+        "JULY",
+        "AUGUST",
+        "SEPTEMBER",
+        "OCTOBER",
+        "NOVEMBER",
+        "DECEMBER",
+      ][m];
 
   void _goToProfile(BuildContext context) {
     context.push('${RouteNames.mainApp}/${RouteNames.profile}');
+  }
+
+  void _openMoodSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const MoodBottomSheet(),
+    );
   }
 
   @override
@@ -80,8 +110,10 @@ class HomeHeader extends StatelessWidget {
               /// PROFILE ICON (Clickable)
               InkWell(
                 borderRadius: BorderRadius.circular(100),
-                onTap: () => _goToProfile(context),
-                child: _circleIcon(Icons.person_outline, isDark),
+                // onTap: () => _goToProfile(context),
+                onTap: () => _openMoodSheet(context),
+                child: _circleIcon(Icons.mood_outlined, isDark),
+                // child: _circleIcon(Icons.person_outline, isDark),
               ),
             ],
           ),
@@ -105,11 +137,7 @@ class HomeHeader extends StatelessWidget {
         color: AppColors.getMonoSurface(isDark),
         shape: BoxShape.circle,
       ),
-      child: Icon(
-        icon,
-        size: 18,
-        color: AppColors.getMonoIcon(isDark),
-      ),
+      child: Icon(icon, size: 18, color: AppColors.getMonoIcon(isDark)),
     );
   }
 }
