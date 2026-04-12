@@ -44,18 +44,19 @@ class LocalStorageService {
   }
 
   // 🆕 ===== NEW METHODS (ADD THESE) =====
-  
+
   /// Check if token is still valid (5 year expiration)
-  static Future<bool> isTokenValid() async {
-    final token = await getToken();
-    final setTimeStr = await getTokenSetTime();
-    
-    if (token == null || setTimeStr == null) return false;
-    
-    // Token valid if set within last 5 years
-    final expirationDate = setTimeStr.add(const Duration(days: 1825));
-    return DateTime.now().isBefore(expirationDate);
-  }
+  /// 
+  // static Future<bool> isTokenValid() async {
+  //   final token = await getToken();
+  //   final setTimeStr = await getTokenSetTime();
+
+  //   if (token == null || setTimeStr == null) return false;
+
+  //   // Token valid if set within last 5 years
+  //   final expirationDate = setTimeStr.add(const Duration(days: 1825));
+  //   return DateTime.now().isBefore(expirationDate);
+  // }
 
   /// Get when token was set
   static Future<DateTime?> getTokenSetTime() async {
@@ -113,5 +114,16 @@ class LocalStorageService {
   static Future<void> clearCurrentMood() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('current_mood');
+  }
+
+  static Future<bool> isTokenValid() async {
+    final token = await getToken();
+    final setTime = await getTokenSetTime();
+
+    if (token == null || setTime == null) return false;
+
+    final expiry = setTime.add(const Duration(days: 365 * 5));
+
+    return DateTime.now().isBefore(expiry);
   }
 }

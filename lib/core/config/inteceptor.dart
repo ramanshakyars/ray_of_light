@@ -1,6 +1,7 @@
 // lib/core/config/inteceptor.dart
 import 'package:dio/dio.dart';
 import 'package:rayoflite/core/constants/pathConfig.dart';
+import 'package:rayoflite/core/providers/TokenManager.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
 
 class AuthInterceptor {
@@ -18,26 +19,23 @@ class AuthInterceptor {
 
     _dio.interceptors.add(
       InterceptorsWrapper(
-        onRequest: (options, handler) async {
-          final token = await LocalStorageService.getToken();
-          // print('TOKEN USED: $token');
-          // print('REQUEST HEADERS: ${options.headers}');
-          // print('REQUEST URL: ${options.uri}');
-          if (token != null) {
+        onRequest: (options, handler) {
+          final token = TokenManager.token;
+
+          if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
           }
+
           return handler.next(options);
         },
-        onError: (DioException e, handler) {
-          print('❌ Error: ${e.response?.statusCode} - ${e.message}');
-          
-          // 🔴 ONLY clear on 401 Unauthorized
+        onError: (DioException e, handler) async {
           if (e.response?.statusCode == 401) {
-            print('🔑 Token expired - logging out');
-            LocalStorageService.clearAll();
+            print('🔑 Unauthorized → clearing session');
+
+            await LocalStorageService.clearAll();
+            TokenManager.clear();
           }
-          // ✅ Don't clear on other errors (network issues, server errors, etc.)
-          
+
           return handler.next(e);
         },
       ),

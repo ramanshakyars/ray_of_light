@@ -8,6 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/config/config-routes.dart';
+import 'package:rayoflite/core/providers/TokenManager.dart';
 import 'package:rayoflite/core/providers/auth_provider.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
@@ -31,6 +32,13 @@ Future<void> main() async {
 
   /// 🔹 Local storage init
   await LocalStorageService.getInstance();
+
+  /// 🔥 LOAD TOKEN INTO MEMORY (MOST IMPORTANT FIX)
+  final token = await LocalStorageService.getToken();
+  if (token != null && token.isNotEmpty) {
+    TokenManager.setToken(token);
+  }
+
   final bool isLoggedIn = await LocalStorageService.isLoggedIn();
   final bool isTokenValid = await LocalStorageService.isTokenValid();
 

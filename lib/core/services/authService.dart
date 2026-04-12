@@ -1,26 +1,56 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:rayoflite/core/constants/pathConfig.dart';
+import 'package:rayoflite/core/providers/TokenManager.dart';
 import 'package:rayoflite/core/services/httpService.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
 
 class AuthService {
+  // static Future<Map<String, dynamic>> login(Map<String, dynamic> body) async {
+  //   try {
+  //     final response = await HttpService.post(PathConfig.login, body);
+  //     if (response['jwtToken'] != null) {
+  //       final token = response['jwtToken'];
+  //       await LocalStorageService.setToken(token);
+  //       TokenManager.setToken(token);
+  //      // await LocalStorageService.setToken(response['jwtToken']);
+  //       await LocalStorageService.setUser({
+  //         'userId': response['userId'],
+  //         'name': response['name'],
+  //         'email': response['email'],
+  //         'roles': response['roles'],
+  //       });
+  //       return {
+  //         'success': true,
+  //         'message': response['message'] ?? 'Login successful',
+  //       };
+  //     }
+  //     return {
+  //       'success': false,
+  //       'message': response['message'] ?? 'Login failed',
+  //     };
+  //   } catch (e) {
+  //     return {'success': false, 'message': _getErrorMessage(e)};
+  //   }
+  // }
   static Future<Map<String, dynamic>> login(Map<String, dynamic> body) async {
     try {
       final response = await HttpService.post(PathConfig.login, body);
+
       if (response['jwtToken'] != null) {
-        await LocalStorageService.setToken(response['jwtToken']);
-        await LocalStorageService.setUser({
-          'userId': response['userId'],
-          'name': response['name'],
-          'email': response['email'],
-          'roles': response['roles'],
-        });
         return {
           'success': true,
+          'token': response['jwtToken'],
+          'user': {
+            'userId': response['userId'],
+            'name': response['name'],
+            'email': response['email'],
+            'roles': response['roles'],
+          },
           'message': response['message'] ?? 'Login successful',
         };
       }
+
       return {
         'success': false,
         'message': response['message'] ?? 'Login failed',
@@ -43,6 +73,7 @@ class AuthService {
       return {'success': false, 'message': _getErrorMessage(e)};
     }
   }
+
   static Future<Map<String, dynamic>> sendOtpForgetPassword(
     Map<String, dynamic> body,
   ) async {

@@ -1,38 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rayoflite/core/providers/TokenManager.dart';
 import 'dart:async';
 import '../services/localStorageService.dart';
 
 class AuthProvider extends ChangeNotifier {
   Map<String, dynamic>? _user;
-  String? _token;  // 🆕 NEW LINE
-  late Timer _sessionTimer;  // 🆕 NEW LINE
+  String? _token; // 🆕 NEW LINE
+  late Timer _sessionTimer; // 🆕 NEW LINE
 
   Map<String, dynamic>? get user => _user;
-  String? get token => _token;  // 🆕 NEW GETTER
- 
+  String? get token => _token; // 🆕 NEW GETTER
 
   String get userName =>
       _user?['fullName'] ?? _user?['username'] ?? _user?['email'] ?? "User";
-  String get name =>  _user?['name'] ?? _user?['name'] ?? _user?['name'] ?? "name";   
+  String get name =>
+      _user?['name'] ?? _user?['name'] ?? _user?['name'] ?? "name";
 
   Future<void> loadUser() async {
     _user = await LocalStorageService.getUser();
-    _token = await LocalStorageService.getToken();  // 🆕 LOAD TOKEN
-    
+    _token = await LocalStorageService.getToken(); // 🆕 LOAD TOKEN
+
     // 🆕 Start session keep-alive timer
     if (_token != null && _token!.isNotEmpty) {
       _startSessionKeepAliveTimer();
     }
-    
+
     notifyListeners();
   }
 
-  Future<void> logout() async {
-    _stopSessionKeepAliveTimer();  // 🆕 STOP TIMER
+  // Future<void> logout() async {
+  //   _stopSessionKeepAliveTimer(); // 🆕 STOP TIMER
+  //   await LocalStorageService.clearAll();
+  //   TokenManager.clear();
+  //   _user = null;
+  //   _token = null; // 🆕 CLEAR TOKEN
+  //   notifyListeners();
+  // }
+
+  Future<void> logout(BuildContext context) async {
+    _stopSessionKeepAliveTimer(); // optional remove later
+
     await LocalStorageService.clearAll();
+    TokenManager.clear();
+
     _user = null;
-    _token = null;  // 🆕 CLEAR TOKEN
+    _token = null;
+
     notifyListeners();
+
+    if (context.mounted) {
+      GoRouter.of(context).go('/login');
+    }
   }
 
   bool get isAdmin {
@@ -48,7 +67,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   // 🆕 ===== NEW METHODS (ADD THESE) =====
-  
+
   /// Start session keep-alive timer
   void _startSessionKeepAliveTimer() {
     _sessionTimer = Timer.periodic(
