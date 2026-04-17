@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/config/config-routes.dart';
@@ -16,12 +17,13 @@ import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/firebase_options.dart';
 import 'package:rayoflite/presentation/screens/features/profile/provider/profile_provider.dart';
 import 'package:rayoflite/presentation/screens/features/screen_time/data/ScreenTimeProvider.dart';
+import 'package:rayoflite/presentation/screens/notifications/notification_navigation_service.dart';
 
 Future<void> main() async {
   /// 🔹 Required for async before runApp
   WidgetsFlutterBinding.ensureInitialized();
 
-  /// 🔹 Firebase init (must be first for push)
+  /// 🔹 Firebase init (unchanged)
   if (!Platform.isIOS) {
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
@@ -30,10 +32,10 @@ Future<void> main() async {
     }
   }
 
-  /// 🔹 Local storage init
+  /// 🔹 Local storage init (unchanged)
   await LocalStorageService.getInstance();
 
-  /// 🔥 LOAD TOKEN INTO MEMORY (MOST IMPORTANT FIX)
+  /// 🔥 Token restore (unchanged)
   final token = await LocalStorageService.getToken();
   if (token != null && token.isNotEmpty) {
     TokenManager.setToken(token);
@@ -42,7 +44,7 @@ Future<void> main() async {
   final bool isLoggedIn = await LocalStorageService.isLoggedIn();
   final bool isTokenValid = await LocalStorageService.isTokenValid();
 
-  /// 🔹 Decide initial route
+  /// 🔹 Initial route logic (unchanged)
   String initialRoute;
   if (isLoggedIn && isTokenValid) {
     initialRoute = '${RouteNames.mainApp}/${RouteNames.home}';
@@ -50,10 +52,31 @@ Future<void> main() async {
     initialRoute = kIsWeb ? RouteNames.weblandingPage : RouteNames.landingPage;
   }
 
-  /// 🔹 Create router ONCE (very important)
+  /// 🔥 ✅ NEW: CHECK IF APP OPENED FROM NOTIFICATION
+  final FlutterLocalNotificationsPlugin plugin =
+      FlutterLocalNotificationsPlugin();
+
+  final details = await plugin.getNotificationAppLaunchDetails();
+
+  String? notificationRoute;
+
+  if (details?.didNotificationLaunchApp ?? false) {
+    notificationRoute = details!.notificationResponse?.payload;
+    print("🚀 Opened from notification → $notificationRoute");
+  }
+
+  /// 🔹 Create router (unchanged)
   final GoRouter router = createRouter(initialRoute);
 
+  /// 🔹 Run app (unchanged)
   runApp(MyApp(router: router));
+
+  /// 🔥 ✅ NEW: NAVIGATE AFTER APP LOAD
+  if (notificationRoute != null) {
+    Future.delayed(const Duration(seconds: 1), () {
+      NotificationNavigationService.navigate(notificationRoute!);
+    });
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -65,24 +88,24 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        /// ✅ Existing Theme Provider
+        /// ✅ Theme Provider
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
 
         /// ✅ Profile Provider
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
+
+        /// ✅ Screen Time Provider
         ChangeNotifierProvider(create: (_) => ScreenTimeProvider()),
-        
-        /// ✅ UPDATED Auth Provider with Session Management
-        ChangeNotifierProvider(
-          create: (_) => AuthProvider()..loadUser(),
-        ),
+
+        /// ✅ Auth Provider
+        ChangeNotifierProvider(create: (_) => AuthProvider()..loadUser()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
 
-            /// 🔹 Light Theme
+            /// 🔹 Light Theme (unchanged)
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(
                 seedColor: AppColors.getFormSubmitButtonColor(
@@ -105,7 +128,7 @@ class MyApp extends StatelessWidget {
               ),
             ),
 
-            /// 🔹 Dark Theme
+            /// 🔹 Dark Theme (unchanged)
             darkTheme: ThemeData(
               colorScheme: ColorScheme.fromSeed(
                 seedColor: AppColors.getFormSubmitButtonColor(
@@ -128,11 +151,11 @@ class MyApp extends StatelessWidget {
               ),
             ),
 
-            /// 🔹 Theme mode
+            /// 🔹 Theme mode (unchanged)
             themeMode:
                 themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
 
-            /// 🔹 Router (single instance)
+            /// 🔥 IMPORTANT: Router config (unchanged)
             routerConfig: router,
           );
         },

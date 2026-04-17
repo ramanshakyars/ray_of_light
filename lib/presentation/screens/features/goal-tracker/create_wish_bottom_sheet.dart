@@ -44,7 +44,7 @@ class _CreateWishBottomSheetState extends State<CreateWishBottomSheet> {
     final textSecondary = AppColors.getMonoTextSecondary(isDark);
 
     return Container(
-      height: MediaQuery.of(context).size.height * 0.86,
+      height: MediaQuery.of(context).size.height * 0.60,
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
       decoration: BoxDecoration(
         color: card,
@@ -176,28 +176,28 @@ class _CreateWishBottomSheetState extends State<CreateWishBottomSheet> {
             ),
           ),
 
-          const SizedBox(height: 18),
+          // const SizedBox(height: 18),
 
           /// OPTIONS
-          Text("Options", style: AppTextStyles.monoSecondary14(isDark)),
+          // Text("Options", style: AppTextStyles.monoSecondary14(isDark)),
+
+          // const SizedBox(height: 10),
+
+          // _OptionTile(
+          //   icon: Icons.notifications_none,
+          //   title: "Set reminder",
+          //   trailing: "None",
+          // ),
 
           const SizedBox(height: 10),
 
-          _OptionTile(
-            icon: Icons.notifications_none,
-            title: "Set reminder",
-            trailing: "None",
-          ),
+          // _OptionTile(
+          //   icon: Icons.calendar_today_outlined,
+          //   title: "Target date",
+          //   trailing: "Set date",
+          // ),
 
-          const SizedBox(height: 10),
-
-          _OptionTile(
-            icon: Icons.calendar_today_outlined,
-            title: "Target date",
-            trailing: "Set date",
-          ),
-
-          const Spacer(),
+          // const Spacer(),
 
           /// CREATE BUTTON (disabled look like image)
           _PrimaryButton(

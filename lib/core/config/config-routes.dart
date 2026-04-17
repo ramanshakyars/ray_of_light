@@ -16,6 +16,7 @@ import 'package:rayoflite/presentation/screens/features/profile/setting/settings
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/provider/social_feed_provider.dart';
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/social_feed_page_v2.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-lite-v2/chat_screen-v2.dart';
+import 'package:rayoflite/presentation/screens/notifications/notification_navigation_service.dart';
 import 'package:rayoflite/presentation/screens/notifications/notification_page.dart';
 import 'package:rayoflite/presentation/screens/social-insights/social-feedPage.dart';
 // import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat_screen.dart';
@@ -30,6 +31,7 @@ import 'package:rayoflite/core/config/main-layout.dart';
 
 GoRouter createRouter(String initialLocation) {
   return GoRouter(
+    navigatorKey: NotificationNavigationService.navigatorKey,
     initialLocation: initialLocation,
     routes: [
       // Mobile landing page

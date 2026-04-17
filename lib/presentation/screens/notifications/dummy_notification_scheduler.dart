@@ -5,19 +5,13 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+import 'notification_navigation_service.dart';
+
 class DummyNotificationScheduler {
   static final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
 
-  /// 🔹 Call only ONCE (after login)
-  static Future<void> initAndSchedule() async {
-    print("🔔 DummyNotificationScheduler CALLED");
-    await _init();
-    await _requestPermission();
-    await scheduleDummyNotifications();
-  }
-
-  /// 🔹 INIT
+  /// 🔹 INIT + CLICK HANDLER
   static Future<void> _init() async {
     tz.initializeTimeZones();
 
@@ -26,10 +20,20 @@ class DummyNotificationScheduler {
 
     const settings = InitializationSettings(android: android, iOS: ios);
 
-    await _plugin.initialize(settings);
+    await _plugin.initialize(
+      settings,
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        final payload = response.payload;
+
+        if (payload != null) {
+          print("📲 Notification Clicked → $payload");
+          NotificationNavigationService.navigate(payload);
+        }
+      },
+    );
   }
 
-  /// 🔹 ASK PERMISSION (iOS + Android 13+)
+  /// 🔹 PERMISSION
   static Future<void> _requestPermission() async {
     if (Platform.isIOS) {
       await _plugin
@@ -40,7 +44,6 @@ class DummyNotificationScheduler {
     }
 
     if (Platform.isAndroid) {
-      // Android 13+ requires notification permission
       if (await Permission.notification.isDenied ||
           await Permission.notification.isPermanentlyDenied) {
         await Permission.notification.request();
@@ -48,150 +51,241 @@ class DummyNotificationScheduler {
     }
   }
 
-  /// 🔹 MAIN LOGIC — 4 NOTIFICATIONS / DAY
-  // static Future<void> _scheduleEvery6Hours() async {
-  //   await _plugin.cancelAll(); // avoid duplicates
-  //   final now = tz.TZDateTime.now(tz.local);
-  //   for (int i = 1; i <= 4; i++) {
-  //     final scheduledTime = now.add(Duration(hours: i * 6));
-  //     await _plugin.zonedSchedule(
-  //       i,
-  //       "🌟 Ray of Light",
-  //       _dummyMessage(i),
-  //       scheduledTime,
-  //       _details(),
-  //       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-  //       uiLocalNotificationDateInterpretation:
-  //           UILocalNotificationDateInterpretation.absoluteTime,
-  //       matchDateTimeComponents: DateTimeComponents.time,
-  //     );
-  //   }
-  // }
+  /// 🔹 CALL AFTER LOGIN
+  static Future<void> initAndSchedule() async {
+    await _init();
+    await _requestPermission();
+    await scheduleNotifications();
+  }
 
-  static Future<void> scheduleDummyNotifications() async {
-    await _plugin.cancelAll(); // 🔒 avoid duplicates
+  /// 🔥 ALL YOUR NOTIFICATIONS (FULL LIST + ROUTES)
+  static final List<Map<String, String>> notifications = [
+    // 🏆 MOTIVATION
+    {
+      "title": "🏆 Winner Mindset",
+      "body": "Trust me, You will have everything.",
+      "route": "/main/home",
+    },
+    {"title": "🥇 Champion", "body": "You are winner.", "route": "/main/home"},
+    {
+      "title": "🔥 Stronger",
+      "body": "You will beat everyone.",
+      "route": "/main/talk-to-light",
+    },
+    {
+      "title": "🎯 Focus",
+      "body": "You are facing yourself, only competition is you.",
+      "route": "/main/talk-to-light",
+    },
+    {
+      "title": "💡 Meaning",
+      "body": "What you do is meaningful.",
+      "route": "/main/junerlism",
+    },
+    {"title": "😄 Enjoy", "body": "Hey! Enjoy.", "route": "/main/home"},
+    {
+      "title": "✅ Winning",
+      "body": "You are a winner, you are winning.",
+      "route": "/main/home",
+    },
+    {
+      "title": "⚡ Reality",
+      "body": "It's not that simple… and it's a lie.",
+      "route": "/main/talk-to-light",
+    },
+    {
+      "title": "💰 Money",
+      "body": "Money matters",
+      "route": "/main/goal-tracker",
+    },
+    {
+      "title": "🧠 Truth",
+      "body": "Everything you feared losing, you already lost.",
+      "route": "/main/junerlism",
+    },
+    {
+      "title": "📖 Lesson",
+      "body": "Life teaches you everything",
+      "route": "/main/junerlism",
+    },
 
-    final notifications = <Map<String, String>>[
-      // ✅ Your 11 messages (NEW)
-      {
-        "title": "🏆 Winner Mindset",
-        "body": "Trust me, You will have everything.",
-      },
-      {"title": "🥇 Champion", "body": "You are winner."},
-      {"title": "🔥 Stronger", "body": "You will beat everyone."},
-      {
-        "title": "🎯 Focus",
-        "body":
-            "You are facing yourself, there is only one competition its you.",
-      },
-      {"title": "💡 Meaning", "body": "What you do is meaningful."},
-      {"title": "😄 Enjoy", "body": "Hey!…………Enjoy."},
-      {
-        "title": "✅ Winning",
-        "body": "You know? You are a winner, you are winning.",
-      },
-      {"title": "⚡ Reality", "body": "Its not that simple……….., and its a lie"},
-      {"title": "💰 Money", "body": "Money matters"},
-      {
-        "title": "🧠 Truth",
-        "body": "Everything you were afraid of losing, you have already lost.",
-      },
-      {"title": "📖 Lesson", "body": "Life teaches you everything"},
+    // 🌱 CALM / HEALING
+    {
+      "title": "🌱 Keep Growing",
+      "body": "Every day is a chance to grow.",
+      "route": "/main/junerlism",
+    },
+    {
+      "title": "☀️ New Day",
+      "body": "A fresh start begins now.",
+      "route": "/main/home",
+    },
+    {
+      "title": "🫶 Self Care",
+      "body": "Taking care of yourself is productive.",
+      "route": "/main/breathing-exercise",
+    },
+    {
+      "title": "🌬️ Slow Down",
+      "body": "You don’t need to rush. Breathe.",
+      "route": "/main/breathing-exercise",
+    },
+    {
+      "title": "💭 Gentle Reminder",
+      "body": "Progress looks different for everyone.",
+      "route": "/main/home",
+    },
+    {
+      "title": "🌊 Flow",
+      "body": "Go at your own pace.",
+      "route": "/main/breathing-exercise",
+    },
+    {
+      "title": "✨ Inner Peace",
+      "body": "Peace begins with one breath.",
+      "route": "/main/breathing-exercise",
+    },
+    {
+      "title": "🧠 Clarity",
+      "body": "Clear thoughts come from calm mind.",
+      "route": "/main/breathing-exercise",
+    },
+    {
+      "title": "💙 Self Love",
+      "body": "Be gentle with yourself.",
+      "route": "/main/home",
+    },
+    {
+      "title": "🪴 Nurture",
+      "body": "Growth takes time.",
+      "route": "/main/junerlism",
+    },
+    {
+      "title": "🌸 Soft Strength",
+      "body": "You can be soft and strong.",
+      "route": "/main/home",
+    },
+    {
+      "title": "⏸️ Pause",
+      "body": "Rest is part of progress.",
+      "route": "/main/breathing-exercise",
+    },
+    {
+      "title": "🎯 One Thing",
+      "body": "Focus on one small thing.",
+      "route": "/main/talk-to-light",
+    },
+    {"title": "🌈 Hope", "body": "Tough days pass.", "route": "/main/home"},
+    {
+      "title": "🧩 Little Wins",
+      "body": "Small wins matter.",
+      "route": "/main/goal-tracker",
+    },
+    {
+      "title": "💫 Trust Yourself",
+      "body": "You know more than you think.",
+      "route": "/main/home",
+    },
+    {
+      "title": "🌤️ Gentle Day",
+      "body": "Let today be light.",
+      "route": "/main/home",
+    },
+    {
+      "title": "🫂 You’re Safe",
+      "body": "It’s okay to slow down.",
+      "route": "/main/breathing-exercise",
+    },
+    {
+      "title": "📖 Your Journey",
+      "body": "No one walks your path but you.",
+      "route": "/main/junerlism",
+    },
+    {
+      "title": "🌱 Still Trying",
+      "body": "Trying is a victory.",
+      "route": "/main/home",
+    },
+    {
+      "title": "🧘 Calm Moment",
+      "body": "Relax your shoulders.",
+      "route": "/main/breathing-exercise",
+    },
+    {
+      "title": "💭 Kind Thoughts",
+      "body": "Speak kindly to yourself.",
+      "route": "/main/talk-to-light",
+    },
+    {
+      "title": "🕊️ Let Go",
+      "body": "Release what you can’t control.",
+      "route": "/main/breathing-exercise",
+    },
+    {
+      "title": "⏳ Be Patient",
+      "body": "Good things take time.",
+      "route": "/main/home",
+    },
+    {
+      "title": "🌙 Gentle Night",
+      "body": "You did enough today.",
+      "route": "/main/home",
+    },
+    {
+      "title": "☁️ Light Mind",
+      "body": "Don’t carry everything.",
+      "route": "/main/breathing-exercise",
+    },
+    {
+      "title": "🌻 Still Blooming",
+      "body": "You’re growing quietly.",
+      "route": "/main/junerlism",
+    },
+    {
+      "title": "💛 Warm Reminder",
+      "body": "You’re allowed to rest.",
+      "route": "/main/home",
+    },
+    {
+      "title": "🔁 One More Try",
+      "body": "Tomorrow is another chance.",
+      "route": "/main/goal-tracker",
+    },
+    {
+      "title": "🧠 Clear Space",
+      "body": "A pause resets everything.",
+      "route": "/main/breathing-exercise",
+    },
+    {
+      "title": "🌿 Grounded",
+      "body": "Stay present.",
+      "route": "/main/breathing-exercise",
+    },
+  ];
 
-      // ✅ Old messages (keep like before)
-      {
-        "title": "🌱 Keep Growing",
-        "body": "Every day is a chance to grow a little more.",
-      },
-      {"title": "☀️ New Day", "body": "A fresh start begins right now."},
-      {
-        "title": "🫶 Self Care",
-        "body": "Taking care of yourself is productive.",
-      },
-      {"title": "🌬️ Slow Down", "body": "You don’t need to rush. Breathe."},
-      {
-        "title": "💭 Gentle Reminder",
-        "body": "Progress looks different for everyone.",
-      },
-      {"title": "🌊 Flow", "body": "Go at your own pace today."},
-      {"title": "✨ Inner Peace", "body": "Peace begins with one calm breath."},
-      {"title": "🧠 Clarity", "body": "Clear thoughts come from a calm mind."},
-      {"title": "💙 Self Love", "body": "Be gentle with yourself today."},
-      {"title": "🪴 Nurture", "body": "Growth takes time—just like roots."},
-      {
-        "title": "🌸 Soft Strength",
-        "body": "You can be soft and strong together.",
-      },
-      {"title": "⏸️ Pause", "body": "Rest is part of progress."},
-      {"title": "🎯 One Thing", "body": "Focus on one small thing right now."},
-      {"title": "🌈 Hope", "body": "Even tough days pass."},
-      {
-        "title": "🧩 Little Wins",
-        "body": "Small wins matter more than you think.",
-      },
-      {"title": "💫 Trust Yourself", "body": "You know more than you realize."},
-      {"title": "🌤️ Gentle Day", "body": "Let today be light on your heart."},
-      {"title": "🫂 You’re Safe", "body": "It’s okay to slow down here."},
-      {
-        "title": "📖 Your Journey",
-        "body": "No one else walks your path but you.",
-      },
-      {"title": "🌱 Still Trying", "body": "Trying itself is a victory."},
-      {
-        "title": "🧘 Calm Moment",
-        "body": "Unclench your jaw. Relax your shoulders.",
-      },
-      {"title": "💭 Kind Thoughts", "body": "Speak kindly to yourself today."},
-      {"title": "🕊️ Let Go", "body": "Release what you can’t control."},
-      {"title": "⏳ Be Patient", "body": "Good things take time."},
-      {"title": "🌙 Gentle Night", "body": "You did enough for today."},
-      {"title": "☁️ Light Mind", "body": "You don’t need to carry everything."},
-      {
-        "title": "🌻 Still Blooming",
-        "body": "You’re growing, even on quiet days.",
-      },
-      {"title": "💛 Warm Reminder", "body": "You’re allowed to rest."},
-      {"title": "🔁 One More Try", "body": "Tomorrow is another chance."},
-      {"title": "🧠 Clear Space", "body": "A calm pause can reset everything."},
-      {"title": "🌿 Grounded", "body": "Stay present. Stay grounded."},
-    ];
+  /// 🔹 SCHEDULER
+  static Future<void> scheduleNotifications() async {
+    await _plugin.cancelAll();
 
-    // 🔹 SCHEDULE NOTIFICATIONS EVERY 2 MIN
-    // // 🛑 EDGE CASE
-    // if (notifications.isEmpty) return;
-    // final now = tz.TZDateTime.now(tz.local);
-    // for (int i = 0; i < notifications.length; i++) {
-    //   final scheduledTime = now.add(
-    //     Duration(minutes: (i + 1) * 2),
-    //   ); // dummy test
-    //   if (scheduledTime.isBefore(now)) continue;
-    //   await _plugin.zonedSchedule(
-    //     i + 1,
-    //     notifications[i]["title"]!,
-    //     notifications[i]["body"]!,
-    //     scheduledTime,
-    //     _details(),
-    //     uiLocalNotificationDateInterpretation:
-    //         UILocalNotificationDateInterpretation.absoluteTime,
-    //     androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-    //   );
-
-    //   print("⏰ Scheduled ${i + 1} → ${notifications[i]["title"]}");
-    // }
-
-    /// 🔹 SCHEDULE NOTIFICATIONS DAILY AT FIXED TIME S
     final random = Random();
     final now = tz.TZDateTime.now(tz.local);
-    const int startHour = 8; // 8 AM
-    const int endHour = 22; // 10 PM
+
+    const int startHour = 8;
+    const int endHour = 22;
+
     final Set<int> usedHours = {};
+
     for (int i = 0; i < 6; i++) {
       int hour;
+
       do {
         hour = startHour + random.nextInt(endHour - startHour);
       } while (usedHours.contains(hour));
+
       usedHours.add(hour);
+
       final minute = random.nextInt(60);
+
       var scheduledTime = tz.TZDateTime(
         tz.local,
         now.year,
@@ -201,7 +295,6 @@ class DummyNotificationScheduler {
         minute,
       );
 
-      // ⏭️ agar time nikal gaya ho to next day
       if (scheduledTime.isBefore(now)) {
         scheduledTime = scheduledTime.add(const Duration(days: 1));
       }
@@ -214,6 +307,7 @@ class DummyNotificationScheduler {
         notification["body"]!,
         scheduledTime,
         _details(),
+        payload: notification["route"], // ✅ CLICK ROUTE
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
@@ -221,7 +315,7 @@ class DummyNotificationScheduler {
       );
 
       print(
-        "⏰ Scheduled ${i + 1} → ${notification["title"]} at ${scheduledTime.hour}:${scheduledTime.minute}",
+        "⏰ Scheduled → ${notification["title"]} → ${notification["route"]}",
       );
     }
   }
@@ -230,10 +324,9 @@ class DummyNotificationScheduler {
     return const NotificationDetails(
       android: AndroidNotificationDetails(
         'dummy_channel',
-        'Dummy Notifications',
+        'RayOfLight Notifications',
         importance: Importance.high,
         priority: Priority.high,
-        channelDescription: 'RayOfLight motivational alerts',
       ),
       iOS: DarwinNotificationDetails(),
     );
