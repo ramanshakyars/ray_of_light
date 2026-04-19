@@ -12,6 +12,7 @@ import ' widgets/feed_shimmer.dart';
 import ' widgets/home_header.dart';
 import ' widgets/no_internet_state.dart';
 import ' widgets/post_card_v2.dart';
+import '../../notifications/dummy_notification_scheduler.dart';
 import 'provider/social_feed_provider.dart';
 
 class SocialFeedPageV2 extends StatefulWidget {
@@ -28,6 +29,9 @@ class _SocialFeedPageV2State extends State<SocialFeedPageV2> {
     Future.microtask(() {
       context.read<SocialFeedProvider>().loadPosts();
     });
+     Future.delayed(const Duration(seconds: 2), () async {
+    await DummyNotificationScheduler.requestPermissionAndSchedule();
+  });
   }
 
   void _openCreateSheet() async {

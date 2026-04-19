@@ -44,17 +44,36 @@ class DummyNotificationScheduler {
     }
 
     if (Platform.isAndroid) {
-      if (await Permission.notification.isDenied ||
-          await Permission.notification.isPermanentlyDenied) {
+      // if (await Permission.notification.isDenied ||
+      //     await Permission.notification.isPermanentlyDenied) {
+      //   await Permission.notification.request();
+      // }
+      final status = await Permission.notification.status;
+      if (!status.isGranted) {
         await Permission.notification.request();
       }
     }
   }
 
   /// 🔹 CALL AFTER LOGIN
-  static Future<void> initAndSchedule() async {
+  // static Future<void> initAndSchedule() async {
+  //   await _init();
+  //   await _requestPermission();
+  //   await scheduleNotifications();
+  // }
+
+  static Future<void> initOnly() async {
     await _init();
-    await _requestPermission();
+  }
+
+  // ✅ ASK PERMISSION + SCHEDULE (call later)
+  static Future<void> requestPermissionAndSchedule() async {
+    final status = await Permission.notification.status;
+
+    if (!status.isGranted) {
+      await Permission.notification.request();
+    }
+
     await scheduleNotifications();
   }
 

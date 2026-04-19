@@ -49,7 +49,7 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
     super.initState();
     _loadInitialPosts();
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-    await DummyNotificationScheduler.initAndSchedule();
+    await DummyNotificationScheduler.initOnly();
   });
   }
 

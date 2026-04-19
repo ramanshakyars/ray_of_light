@@ -19,6 +19,8 @@ import 'package:rayoflite/presentation/screens/features/profile/provider/profile
 import 'package:rayoflite/presentation/screens/features/screen_time/data/ScreenTimeProvider.dart';
 import 'package:rayoflite/presentation/screens/notifications/notification_navigation_service.dart';
 
+import 'presentation/screens/notifications/dummy_notification_scheduler.dart';
+
 Future<void> main() async {
   /// 🔹 Required for async before runApp
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,6 +43,7 @@ Future<void> main() async {
     TokenManager.setToken(token);
   }
 
+  await DummyNotificationScheduler.initOnly();
   final bool isLoggedIn = await LocalStorageService.isLoggedIn();
   final bool isTokenValid = await LocalStorageService.isTokenValid();
 

@@ -96,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
       await Provider.of<AuthProvider>(context, listen: false).loadUser();
 
       // 🔔 4. START NOTIFICATIONS (PERFECT PLACE)
-      await DummyNotificationScheduler.initAndSchedule();
+     // await DummyNotificationScheduler.initAndSchedule();
 
       MessageService.showSuccess(
         context,
