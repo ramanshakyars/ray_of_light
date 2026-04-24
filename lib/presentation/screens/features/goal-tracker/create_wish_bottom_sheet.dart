@@ -16,6 +16,8 @@ class CreateWishBottomSheet extends StatefulWidget {
 class _CreateWishBottomSheetState extends State<CreateWishBottomSheet> {
   final _descController = TextEditingController();
   final _titleController = TextEditingController();
+  DateTime? reminderDate;
+  DateTime? targetDate;
 
   String selectedType = "HOPE";
 
@@ -25,6 +27,162 @@ class _CreateWishBottomSheetState extends State<CreateWishBottomSheet> {
     _WishType("GRATITUDE", Icons.favorite_border),
     _WishType("INTENTION", Icons.track_changes),
   ];
+
+  String formatDateTime(DateTime? date) {
+    if (date == null) return "";
+
+    final d = "${date.day}/${date.month}/${date.year}";
+    final t = "${date.hour}:${date.minute.toString().padLeft(2, '0')}";
+
+    return "$d  $t";
+  }
+
+  Future<void> pickReminder() async {
+    // STEP 1: Pick Date
+    final isDark = context.read<ThemeProvider>().isDarkMode;
+
+    final date = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColors.getMonoTextPrimary(isDark), // selected date
+              onPrimary: isDark ? Colors.black : Colors.white,
+              surface: AppColors.getMonoCard(isDark), // background
+              onSurface: AppColors.getMonoTextPrimary(isDark),
+            ),
+            dialogBackgroundColor: AppColors.getMonoCard(isDark),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (date == null) return;
+
+    // STEP 2: Pick Time
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+
+      builder: (context, child) {
+        final isDark = context.read<ThemeProvider>().isDarkMode;
+
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme:
+                isDark
+                    ? ColorScheme.dark(
+                      primary: AppColors.getMonoTextPrimary(isDark),
+                      onPrimary: Colors.black,
+                      surface: AppColors.getMonoCard(isDark),
+                      onSurface: AppColors.getMonoTextPrimary(isDark),
+                    )
+                    : ColorScheme.light(
+                      primary: AppColors.getMonoTextPrimary(isDark),
+                      onPrimary: Colors.white,
+                      surface: AppColors.getMonoCard(isDark),
+                      onSurface: AppColors.getMonoTextPrimary(isDark),
+                    ),
+
+            timePickerTheme: TimePickerThemeData(
+              backgroundColor: AppColors.getMonoCard(isDark),
+
+              /// 🔥 FIX THIS PART
+              hourMinuteColor: MaterialStateColor.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return AppColors.getMonoTextPrimary(
+                    isDark,
+                  ); // selected bg (black)
+                }
+                return AppColors.getMonoSurface(
+                  isDark,
+                ); // normal bg (light grey)
+              }),
+
+              hourMinuteTextColor: MaterialStateColor.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return isDark ? Colors.black : Colors.white; // selected text
+                }
+                return AppColors.getMonoTextPrimary(isDark); // normal text
+              }),
+
+              /// Clock
+              dialBackgroundColor: AppColors.getMonoSurface(isDark),
+              dialHandColor: AppColors.getMonoTextPrimary(isDark),
+
+              /// AM PM (already fixed)
+              dayPeriodColor: MaterialStateColor.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return AppColors.getMonoTextPrimary(isDark);
+                }
+                return AppColors.getMonoSurface(isDark);
+              }),
+
+              dayPeriodTextColor: MaterialStateColor.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return isDark ? Colors.black : Colors.white;
+                }
+                return AppColors.getMonoTextPrimary(isDark);
+              }),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (time == null) return;
+
+    // STEP 3: Combine Date + Time
+    final finalDateTime = DateTime(
+      date.year,
+      date.month,
+      date.day,
+      time.hour,
+      time.minute,
+    );
+
+    setState(() {
+      reminderDate = finalDateTime;
+    });
+  }
+
+  Future<void> pickTargetDate() async {
+    final isDark = context.read<ThemeProvider>().isDarkMode;
+
+    final date = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColors.getMonoTextPrimary(isDark), // selected date
+              onPrimary: isDark ? Colors.black : Colors.white,
+              surface: AppColors.getMonoCard(isDark), // background
+              onSurface: AppColors.getMonoTextPrimary(isDark),
+            ),
+            dialogBackgroundColor: AppColors.getMonoCard(isDark),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (date != null) {
+      setState(() => targetDate = date);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -44,7 +202,7 @@ class _CreateWishBottomSheetState extends State<CreateWishBottomSheet> {
     final textSecondary = AppColors.getMonoTextSecondary(isDark);
 
     return Container(
-      height: MediaQuery.of(context).size.height * 0.60,
+      height: MediaQuery.of(context).size.height * 0.85,
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
       decoration: BoxDecoration(
         color: card,
@@ -176,28 +334,36 @@ class _CreateWishBottomSheetState extends State<CreateWishBottomSheet> {
             ),
           ),
 
-          // const SizedBox(height: 18),
+          const SizedBox(height: 18),
 
-          /// OPTIONS
-          // Text("Options", style: AppTextStyles.monoSecondary14(isDark)),
-
-          // const SizedBox(height: 10),
-
-          // _OptionTile(
-          //   icon: Icons.notifications_none,
-          //   title: "Set reminder",
-          //   trailing: "None",
-          // ),
+          // / OPTIONS
+          Text("Options", style: AppTextStyles.monoSecondary14(isDark)),
 
           const SizedBox(height: 10),
 
-          // _OptionTile(
-          //   icon: Icons.calendar_today_outlined,
-          //   title: "Target date",
-          //   trailing: "Set date",
-          // ),
+          _OptionTile(
+            icon: Icons.notifications_none,
+            title: "Set reminder",
+            trailing:
+                reminderDate != null
+                    ? formatDateTime(reminderDate)
+                    : "Set time",
+            onTap: pickReminder,
+          ),
 
-          // const Spacer(),
+          const SizedBox(height: 10),
+
+          _OptionTile(
+            icon: Icons.calendar_today_outlined,
+            title: "Target date",
+            trailing:
+                targetDate != null
+                    ? targetDate.toString().split(" ")[0]
+                    : "Set date",
+            onTap: pickTargetDate,
+          ),
+
+          const Spacer(),
 
           /// CREATE BUTTON (disabled look like image)
           _PrimaryButton(
@@ -215,6 +381,8 @@ class _CreateWishBottomSheetState extends State<CreateWishBottomSheet> {
                         : _titleController.text.trim(),
                 "description": description,
                 "category": selectedType,
+                "reminderAt": reminderDate?.toIso8601String(),
+                "targetDate": targetDate?.toIso8601String(),
               });
 
               Navigator.pop(context);
@@ -257,32 +425,35 @@ class _OptionTile extends StatelessWidget {
   final IconData icon;
   final String title;
   final String trailing;
+  final VoidCallback? onTap;
 
   const _OptionTile({
     required this.icon,
     required this.title,
     required this.trailing,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDarkMode;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: AppColors.getMonoSurface(isDark),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, size: 20, color: AppColors.getMonoTextSecondary(isDark)),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(title, style: AppTextStyles.monoRegular16(isDark)),
-          ),
-          Text(trailing, style: AppTextStyles.monoSecondary14(isDark)),
-        ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: AppColors.getMonoSurface(isDark),
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: AppColors.getMonoTextSecondary(isDark)),
+            const SizedBox(width: 12),
+            Expanded(child: Text(title)),
+            Text(trailing),
+          ],
+        ),
       ),
     );
   }

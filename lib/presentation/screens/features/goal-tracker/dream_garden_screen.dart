@@ -85,7 +85,6 @@ class _Header extends StatelessWidget {
         children: [
           // Icon(Icons.menu, color: AppColors.getMonoIcon(isDark)),
           // const SizedBox(width: 12),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,41 +138,38 @@ class _CategoryRow extends StatelessWidget {
           final selected = i == 0;
           final item = items[i];
 
-          final bgColor = selected
-              ? AppColors.getMonoTextPrimary(isDark)
-              : AppColors.getMonoSurface(isDark);
+          final bgColor =
+              selected
+                  ? AppColors.getMonoTextPrimary(isDark)
+                  : AppColors.getMonoSurface(isDark);
 
-          final textColor = selected
-              ? (isDark ? Colors.black : Colors.white)
-              : AppColors.getMonoTextSecondary(isDark);
+          final textColor =
+              selected
+                  ? (isDark ? Colors.black : Colors.white)
+                  : AppColors.getMonoTextSecondary(isDark);
 
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
               color: bgColor,
               borderRadius: BorderRadius.circular(22),
-              border: Border.all(
-                color: AppColors.getMonoBorder(isDark),
-              ),
+              border: Border.all(color: AppColors.getMonoBorder(isDark)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 /// ✅ ICON (except All)
                 if (item["icon"] != null) ...[
-                  Icon(
-                    item["icon"] as IconData,
-                    size: 16,
-                    color: textColor,
-                  ),
+                  Icon(item["icon"] as IconData, size: 16, color: textColor),
                   const SizedBox(width: 6),
                 ],
 
                 /// TEXT
                 Text(
                   item["label"] as String,
-                  style: AppTextStyles.monoSecondary14(isDark)
-                      .copyWith(color: textColor),
+                  style: AppTextStyles.monoSecondary14(
+                    isDark,
+                  ).copyWith(color: textColor),
                 ),
               ],
             ),
@@ -224,6 +220,38 @@ class _WishCard extends StatelessWidget {
     final isDark = context.watch<ThemeProvider>().isDarkMode;
     final isCompleted = goal['status'] == 'COMPLETED';
 
+    String formatDateTime(dynamic dateValue) {
+      if (dateValue == null) return "";
+
+      DateTime? date;
+
+      // Case 1: String
+      if (dateValue is String) {
+        date = DateTime.tryParse(dateValue);
+      }
+      // Case 2: List (from backend)
+      else if (dateValue is List) {
+        try {
+          date = DateTime(
+            dateValue[0], // year
+            dateValue[1], // month
+            dateValue[2], // day
+            dateValue.length > 3 ? dateValue[3] : 0,
+            dateValue.length > 4 ? dateValue[4] : 0,
+          );
+        } catch (e) {
+          return "";
+        }
+      }
+
+      if (date == null) return "";
+
+      final d = "${date.day}/${date.month}";
+      final t = "${date.hour}:${date.minute.toString().padLeft(2, '0')}";
+
+      return "$d $t";
+    }
+
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(16),
@@ -260,10 +288,7 @@ class _WishCard extends StatelessWidget {
                 ),
               ),
 
-              Icon( 
-                Icons.more_horiz,
-                color: AppColors.getMonoIcon(isDark),
-              ),
+              Icon(Icons.more_horiz, color: AppColors.getMonoIcon(isDark)),
 
               // Checkbox(
               //   value: isCompleted,
@@ -286,14 +311,48 @@ class _WishCard extends StatelessWidget {
 
           const SizedBox(height: 15),
 
-          Divider(color: AppColors.getMonoBorder(isDark),thickness: 1,), 
+          Divider(color: AppColors.getMonoBorder(isDark), thickness: 1),
 
           const SizedBox(height: 15),
+
           /// FOOTER
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Today", style: AppTextStyles.monoMuted12(isDark)),
+              Row(
+                children: [
+                  if (goal['reminderAt'] != null) ...[
+                    Icon(
+                      Icons.notifications,
+                      size: 14,
+                      color: AppColors.getMonoTextSecondary(isDark),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      formatDateTime(goal['reminderAt']),
+                      style: AppTextStyles.monoMuted12(isDark),
+                    ),
+                    const SizedBox(width: 10),
+                  ],
+
+                  if (goal['targetDate'] != null) ...[
+                    Icon(
+                      Icons.flag,
+                      size: 14,
+                      color: AppColors.getMonoTextSecondary(isDark),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      formatDateTime(goal['targetDate']),
+                      style: AppTextStyles.monoMuted12(isDark),
+                    ),
+                  ],
+
+                  if (goal['reminderAt'] == null && goal['targetDate'] == null)
+                    Text("Today", style: AppTextStyles.monoMuted12(isDark)),
+                ],
+              ),
+
               Text(
                 "+ Add more to this wish",
                 style: AppTextStyles.monoSecondary14(isDark),
