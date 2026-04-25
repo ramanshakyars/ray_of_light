@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:rayoflite/presentation/screens/social-insights/Post.dart';
 import 'package:rayoflite/presentation/screens/social-insights/socialService.dart';
 import '../models/post_view_model.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 enum FeedState { initial, loading, loaded, empty, error, noInternet }
 
@@ -65,6 +67,14 @@ class SocialFeedProvider extends ChangeNotifier {
 
   List<PostViewModel> posts = [];
   String? errorMessage;
+  SocialFeedProvider() {
+    Connectivity().onConnectivityChanged.listen((result) {
+      if (result == ConnectivityResult.none) {
+        state = FeedState.noInternet;
+        notifyListeners();
+      }
+    });
+  }
 
   // ================= LOAD POSTS =================
 
@@ -73,6 +83,16 @@ class SocialFeedProvider extends ChangeNotifier {
       state = FeedState.loading;
       notifyListeners();
 
+      // ✅ STEP 1: CHECK INTERNET FIRST
+      final connectivityResult = await Connectivity().checkConnectivity();
+
+      if (connectivityResult == ConnectivityResult.none) {
+        state = FeedState.noInternet;
+        notifyListeners();
+        return;
+      }
+
+      // ✅ STEP 2: API CALL
       final res = await SocialService.getPostInsightsV2();
 
       posts = res.map(_mapToVM).toList();
@@ -82,12 +102,20 @@ class SocialFeedProvider extends ChangeNotifier {
       } else {
         state = FeedState.loaded;
       }
-    } on SocketException {
-      state = FeedState.noInternet;
+    } on DioException catch (e) {
+      print("DIO ERROR => ${e.type}");
+
+      // ✅ THIS IS THE REAL FIX
+      if (e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.unknown) {
+        state = FeedState.noInternet;
+      } else {
+        state = FeedState.error;
+      }
     } catch (e) {
-      posts = [];
-      state = FeedState.loaded;
-      errorMessage = e.toString();
+      print("GENERIC ERROR => $e");
+      state = FeedState.error;
     }
 
     notifyListeners();

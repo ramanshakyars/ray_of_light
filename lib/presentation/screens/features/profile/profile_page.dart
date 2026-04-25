@@ -25,8 +25,14 @@ class _ProfilePageState extends State<ProfilePage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _loadAllData();
+  }
+
+  void _loadAllData() {
     Future.microtask(() {
       context.read<ScreenTimeProvider>().fetchWeekly();
+      // context.read<ProfileProvider>().fetchThoughts();
+      // context.read<ProfileProvider>().fetchPosts();
     });
   }
 
@@ -34,60 +40,78 @@ class _ProfilePageState extends State<ProfilePage>
   @override
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDarkMode;
-    final provider = context.watch<ProfileProvider>();
+    final profileProvider = context.watch<ProfileProvider>();
     final auth = context.watch<AuthProvider>();
     return Scaffold(
       backgroundColor: AppColors.getMonoBackground(isDark),
       body: SafeArea(
         child: Stack(
           children: [
-            /// 🔹 Main Content
-            Column(
-              children: [
-                const SizedBox(height: 16),
-                const ProfileHeader(),
-                const SizedBox(height: 24),
-                WeeklyChart(),
-                const SizedBox(height: 24),
-                TabBar(
+            RefreshIndicator(
+              onRefresh: () async => _loadAllData(),
+              color: AppColors.getPrimary(isDark),
+              child: NestedScrollView(
+                headerSliverBuilder: (context, innerBoxIsScrolled) {
+                  return [
+                    SliverToBoxAdapter(
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 16),
+                          const ProfileHeader(),
+                          const SizedBox(height: 24),
+                          const WeeklyChart(),
+                          const SizedBox(height: 24),
+                        ],
+                      ),
+                    ),
+                    SliverPersistentHeader(
+                      pinned: true,
+                      delegate: _SliverAppBarDelegate(
+                        TabBar(
+                          controller: _tabController,
+                          indicatorColor: AppColors.getPrimary(isDark),
+                          labelColor: AppColors.getTextPrimaryColor(isDark),
+                          unselectedLabelColor: Colors.grey,
+                          labelStyle: AppTextStyles.medium18(isDark),
+                          tabs: const [
+                            Tab(text: "Thoughts"),
+                            Tab(text: "Posts"),
+                          ],
+                        ),
+                        isDark,
+                      ),
+                    ),
+                  ];
+                },
+                body: TabBarView(
                   controller: _tabController,
-                  labelStyle: AppTextStyles.medium18(isDark),
-                  tabs: const [Tab(text: "Thoughts"), Tab(text: "Posts")],
+                  children: [
+                    _buildTabList(
+                      isLoading: profileProvider.isLoadingThoughts,
+                      items: profileProvider.thoughts,
+                      isDark: isDark,
+                      emptyMessage: "No thoughts shared yet.",
+                    ),
+                    _buildTabList(
+                      isLoading: profileProvider.isLoadingPosts,
+                      items: profileProvider.posts,
+                      isDark: isDark,
+                      emptyMessage: "No posts yet.",
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      provider.isLoadingThoughts
-                          ? const Center(child: CircularProgressIndicator())
-                          : ListView.builder(
-                            itemCount: provider.thoughts.length,
-                            itemBuilder:
-                                (_, i) =>
-                                    const ListTile(title: Text("Demo Content")),
-                          ),
-                      provider.isLoadingPosts
-                          ? const Center(child: CircularProgressIndicator())
-                          : ListView.builder(
-                            itemCount: provider.posts.length,
-                            itemBuilder:
-                                (_, i) =>
-                                    const ListTile(title: Text("Demo Content")),
-                          ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
 
-            /// 🔹 Settings Icon (Top Right)
+            /// 🔹 Settings Icon (Fixed at top right)
             Positioned(
               top: 8,
               right: 16,
               child: IconButton(
-                onPressed: () {
-                  context.push('${RouteNames.mainApp}/${RouteNames.settings}');
-                },
+                onPressed:
+                    () => context.push(
+                      '${RouteNames.mainApp}/${RouteNames.settings}',
+                    ),
                 icon: Icon(
                   Icons.settings_outlined,
                   size: 26,
@@ -100,4 +124,62 @@ class _ProfilePageState extends State<ProfilePage>
       ),
     );
   }
+}
+
+Widget _buildTabList({
+  required bool isLoading,
+  required List items,
+  required bool isDark,
+  required String emptyMessage,
+}) {
+  if (isLoading) {
+    return const Center(child: CircularProgressIndicator());
+  }
+  if (items.isEmpty) {
+    return Center(
+      child: Text(emptyMessage, style: TextStyle(color: Colors.grey[500])),
+    );
+  }
+  return ListView.separated(
+    padding: const EdgeInsets.symmetric(vertical: 16),
+    itemCount: items.length,
+    separatorBuilder:
+        (_, __) => Divider(color: isDark ? Colors.white10 : Colors.black12),
+    itemBuilder: (context, index) {
+      final item = items[index];
+      return ListTile(
+        title: Text(
+          item.content ?? "Untitled",
+          style: TextStyle(color: AppColors.getTextPrimaryColor(isDark)),
+        ),
+        subtitle: Text(
+          "Posted on ${item.date}",
+          style: const TextStyle(fontSize: 12, color: Colors.grey),
+        ),
+      );
+    },
+  );
+}
+
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate(this._tabBar, this.isDark);
+  final TabBar _tabBar;
+  final bool isDark;
+
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: AppColors.getMonoBackground(isDark), // Keeps tabs opaque while scrolling
+      child: _tabBar,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) => false;
 }

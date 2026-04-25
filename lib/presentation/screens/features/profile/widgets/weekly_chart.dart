@@ -8,10 +8,34 @@ import 'package:rayoflite/presentation/screens/features/screen_time/data/ScreenT
 class WeeklyChart extends StatelessWidget {
   const WeeklyChart({super.key});
 
+  int _dayToIndex(String day) {
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    return days.indexOf(day);
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDarkMode;
     final provider = context.watch<ScreenTimeProvider>();
+
+    if (provider.isLoading) {
+      return const SizedBox(
+        height: 280,
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // 🔹 Prepare spots. If empty, create a flat line of 7 spots at 0 hours.
+    List<FlSpot> spots;
+    if (provider.weeklyData.isEmpty) {
+      spots = List.generate(7, (i) => FlSpot(i.toDouble(), 0));
+    } else {
+      spots =
+          provider.weeklyData.map((data) {
+            return FlSpot(_dayToIndex(data.day).toDouble(), data.hours);
+          }).toList();
+      spots.sort((a, b) => a.x.compareTo(b.x));
+    }
 
     return SizedBox(
       height: 280,
@@ -23,54 +47,39 @@ class WeeklyChart extends StatelessWidget {
             maxY: 24,
             minX: 0,
             maxX: 6,
-            borderData: FlBorderData(show: false),
-
-            // 🔹 Grid always visible
-            gridData: FlGridData(
+          
+            // 🔹 Visual Border logic
+            borderData: FlBorderData(
               show: true,
-              horizontalInterval: 4,
-              getDrawingHorizontalLine: (value) {
-                return FlLine(
-                  color:
-                      isDark
-                          ? Colors.white.withOpacity(0.08)
-                          : Colors.black.withOpacity(0.05),
-                  strokeWidth: 1,
-                );
-              },
-              getDrawingVerticalLine: (value) {
-                return FlLine(
-                  color:
-                      isDark
-                          ? Colors.white.withOpacity(0.05)
-                          : Colors.black.withOpacity(0.03),
-                  strokeWidth: 1,
-                );
-              },
-            ),
-
-            // 🔹 Axis always visible
-            titlesData: FlTitlesData(
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  interval: 4,
-                  reservedSize: 32,
-                  getTitlesWidget: (value, meta) {
-                    return Text(
-                      "${value.toInt()}h",
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: AppColors.getTextPrimaryColor(isDark),
-                      ),
-                    );
-                  },
+              border: Border(
+                bottom: BorderSide(
+                  color: isDark ? Colors.white10 : Colors.black12,
+                ),
+                left: BorderSide(
+                  color: isDark ? Colors.white10 : Colors.black12,
                 ),
               ),
+            ),
+            gridData: FlGridData(
+              show: false,
+              drawVerticalLine: true,
+              horizontalInterval: 6,
+              getDrawingHorizontalLine:
+                  (value) => FlLine(
+                    color: isDark ? Colors.white10 : Colors.black12,
+                    strokeWidth: 1,
+                  ),
+              getDrawingVerticalLine:
+                  (value) => FlLine(
+                    color: isDark ? Colors.white10 : Colors.black12,
+                    strokeWidth: 1,
+                  ),
+            ),
+            titlesData: FlTitlesData(
               bottomTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
-                  interval: 1, // 🔥 IMPORTANT
+                  interval: 1,
                   reservedSize: 30,
                   getTitlesWidget: (value, meta) {
                     const days = [
@@ -82,59 +91,66 @@ class WeeklyChart extends StatelessWidget {
                       'Fri',
                       'Sat',
                     ];
-
-                    if (value % 1 != 0) {
-                      return const SizedBox(); // avoid fractional labels
-                    }
-
-                    final index = value.toInt();
-                    if (index < 0 || index > 6) {
+                    // Guard against index out of bounds
+                    if (value < 0 ||
+                        value >= days.length ||
+                        value != value.toInt()) {
                       return const SizedBox();
                     }
 
                     return Padding(
-                      padding: const EdgeInsets.only(top: 8),
+                      padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
-                        days[index],
-                        style: const TextStyle(fontSize: 12),
+                        days[value.toInt()],
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: AppColors.getTextPrimaryColor(
+                            isDark,
+                          ).withOpacity(0.5),
+                        ),
                       ),
                     );
                   },
                 ),
               ),
-              rightTitles: const AxisTitles(
-                sideTitles: SideTitles(showTitles: false),
+              leftTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  reservedSize: 35,
+                  getTitlesWidget:
+                      (val, meta) => Text(
+                        "${val.toInt()}h",
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: AppColors.getTextPrimaryColor(
+                            isDark,
+                          ).withOpacity(0.5),
+                        ),
+                      ),
+                ),
               ),
               topTitles: const AxisTitles(
                 sideTitles: SideTitles(showTitles: false),
               ),
+              rightTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
             ),
-
-            // 🔥 KEY CHANGE HERE
             lineBarsData: [
               LineChartBarData(
+                spots: spots,
                 isCurved: true,
-                color: AppColors.getPrimary(isDark),
+                // 🔹 Make line subtle if it's just dummy/zero data
+                color:
+                    provider.weeklyData.isEmpty
+                        ? AppColors.getPrimary(isDark).withOpacity(0.2)
+                        : AppColors.getPrimary(isDark),
                 barWidth: 3,
-
-                // 🔹 If no data → hide dots
                 dotData: FlDotData(show: provider.weeklyData.isNotEmpty),
-
-                // 🔹 If no data → hide area
                 belowBarData: BarAreaData(
-                  show: provider.weeklyData.isNotEmpty,
-                  color: AppColors.getPrimary(isDark).withOpacity(0.15),
+                  show: true,
+                  color: AppColors.getPrimary(isDark).withOpacity(0.05),
                 ),
-
-                // 🔹 If empty → empty spots
-                spots:
-                    provider.weeklyData.isNotEmpty
-                        ? provider.weeklyData
-                            .asMap()
-                            .entries
-                            .map((e) => FlSpot(e.key.toDouble(), e.value.hours))
-                            .toList()
-                        : [],
               ),
             ],
           ),

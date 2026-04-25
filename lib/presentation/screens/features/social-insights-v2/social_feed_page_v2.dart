@@ -68,7 +68,7 @@ class _SocialFeedPageV2State extends State<SocialFeedPageV2> {
 
             // ================= ERROR =================
             if (vm.state == FeedState.error) {
-              vm.state = FeedState.loaded; // fallback
+              return ErrorState(onRetry: vm.loadPosts);// fallback
             }
 
             return RefreshIndicator(

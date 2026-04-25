@@ -7,26 +7,27 @@ import '../../../../../core/services/httpService.dart';
 class ScreenTimeProvider extends ChangeNotifier {
   List<ScreenTimeModel> weeklyData = [];
   bool isLoading = false;
-  bool hasError = false;
-  bool isOffline = false;
+  String? errorMessage;
 
   Future<void> fetchWeekly() async {
     isLoading = true;
+    errorMessage = null;
     notifyListeners();
 
     try {
+      // PathConfig.getWeeklyScreenTime should point to /api/screen-time/{userId}
       const url = PathConfig.getWeeklyScreenTime;
       final response = await HttpService.get(url);
 
-      weeklyData =
-          (response as List).map((e) => ScreenTimeModel.fromJson(e)).toList();
-
-      hasError = false;
+      if (response is List) {
+        weeklyData = response.map((e) => ScreenTimeModel.fromJson(e)).toList();
+      }
     } catch (e) {
-      hasError = true;
+      errorMessage = "Could not load screen time data.";
+      print("ScreenTimeProvider Error: $e");
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
-
-    isLoading = false;
-    notifyListeners();
   }
 }
