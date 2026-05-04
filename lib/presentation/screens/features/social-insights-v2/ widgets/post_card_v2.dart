@@ -120,14 +120,14 @@ class PostCardV2 extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(width: 24),
-              _action(
-                context,
-                icon: Icons.share_outlined,
-                label: "",
-                isDark: isDark,
-                onTap: () {},
-              ),
+              // const SizedBox(width: 24),
+              // _action(
+              //   context,
+              //   icon: Icons.share_outlined,
+              //   label: "",
+              //   isDark: isDark,
+              //   onTap: () {},
+              // ),
             ],
           ),
         ],

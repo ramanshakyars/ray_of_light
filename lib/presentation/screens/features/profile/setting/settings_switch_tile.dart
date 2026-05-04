@@ -64,7 +64,13 @@ class SettingsSwitchTile extends StatelessWidget {
           Switch(
             value: value,
             onChanged: onChanged,
-          )
+
+            activeColor: Colors.white, // thumb (ON)
+            inactiveThumbColor: Colors.black, // thumb (OFF)
+
+            activeTrackColor: Colors.black, // track (ON)
+            inactiveTrackColor: AppColors.getMonoBorder(isDark), // track (OFF)
+          ),
         ],
       ),
     );

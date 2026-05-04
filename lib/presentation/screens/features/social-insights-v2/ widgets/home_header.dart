@@ -94,7 +94,12 @@ class HomeHeader extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${_getGreeting()}, $userName",
+                        "${_getGreeting()}",
+                        style: AppTextStyles.monoBold22(isDark),
+                      ),
+                      const SizedBox(height: 4),
+                       Text(
+                        "$userName",
                         style: AppTextStyles.monoBold22(isDark),
                       ),
                       const SizedBox(height: 4),
@@ -118,12 +123,12 @@ class HomeHeader extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 16),
+          // const SizedBox(height: 16),
 
-          Text(
-            "Share your light today",
-            style: AppTextStyles.monoSecondary14(isDark),
-          ),
+          // Text(
+          //   "Share your light today",
+          //   style: AppTextStyles.monoSecondary14(isDark),
+          // ),
         ],
       ),
     );
