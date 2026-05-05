@@ -69,10 +69,25 @@ class _ProfilePageState extends State<ProfilePage>
                       delegate: _SliverAppBarDelegate(
                         TabBar(
                           controller: _tabController,
-                          indicatorColor: AppColors.getPrimary(isDark),
-                          labelColor: AppColors.getTextPrimaryColor(isDark),
-                          unselectedLabelColor: Colors.grey,
-                          labelStyle: AppTextStyles.medium18(isDark),
+                          indicatorColor: AppColors.getMonoTextPrimary(isDark),
+                          indicatorWeight: 2,
+                          dividerColor: AppColors.getMonoBorder(isDark),
+
+                          labelColor: AppColors.getMonoTextPrimary(isDark),
+                          unselectedLabelColor: AppColors.getMonoTextMuted(
+                            isDark,
+                          ),
+
+                          labelStyle: AppTextStyles.monoMedium18(isDark),
+                          unselectedLabelStyle: AppTextStyles.monoMedium18(
+                            isDark,
+                          ),
+
+                          splashFactory: NoSplash.splashFactory,
+                          overlayColor: MaterialStateProperty.all(
+                            Colors.transparent,
+                          ),
+
                           tabs: const [
                             Tab(text: "Thoughts"),
                             Tab(text: "Posts"),
@@ -84,6 +99,7 @@ class _ProfilePageState extends State<ProfilePage>
                   ];
                 },
                 body: TabBarView(
+                  
                   controller: _tabController,
                   children: [
                     _buildTabList(
@@ -161,7 +177,6 @@ Widget _buildTabList({
   );
 }
 
-
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate(this._tabBar, this.isDark);
   final TabBar _tabBar;
@@ -173,10 +188,19 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => _tabBar.preferredSize.height;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Container(
-      color: AppColors.getMonoBackground(isDark), // Keeps tabs opaque while scrolling
-      child: _tabBar,
+      color: AppColors.getMonoBackground(
+        isDark,
+      ), // Keeps tabs opaque while scrolling
+      child: Material(
+        color: AppColors.getMonoBackground(isDark), // 👈 actual background fix
+        child: _tabBar,
+      ),
     );
   }
 

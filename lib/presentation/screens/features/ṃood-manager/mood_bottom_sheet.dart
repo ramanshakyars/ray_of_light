@@ -68,10 +68,7 @@ class _MoodBottomSheetState extends State<MoodBottomSheet> {
     });
 
     try {
-      final req = MoodRequest(
-        type: _selectedMood,
-        intensity: _intensity,
-      );
+      final req = MoodRequest(type: _selectedMood, intensity: _intensity);
 
       final resp = await MoodService.setMood(req);
 
@@ -111,9 +108,7 @@ class _MoodBottomSheetState extends State<MoodBottomSheet> {
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
         decoration: BoxDecoration(
           color: card,
-          borderRadius: const BorderRadius.vertical(
-            top: Radius.circular(32),
-          ),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,8 +136,7 @@ class _MoodBottomSheetState extends State<MoodBottomSheet> {
                 ),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
-                  icon: Icon(Icons.close,
-                      color: AppColors.getMonoIcon(isDark)),
+                  icon: Icon(Icons.close, color: AppColors.getMonoIcon(isDark)),
                 ),
               ],
             ),
@@ -160,8 +154,7 @@ class _MoodBottomSheetState extends State<MoodBottomSheet> {
             Expanded(
               child: GridView.builder(
                 itemCount: _moods.length,
-                gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 4,
                   mainAxisSpacing: 18,
                   crossAxisSpacing: 18,
@@ -183,25 +176,24 @@ class _MoodBottomSheetState extends State<MoodBottomSheet> {
                           height: 54,
                           width: 54,
                           decoration: BoxDecoration(
-                            color: selected
-                                ? AppColors.getMonoTextPrimary(isDark)
-                                : surface,
+                            color:
+                                selected
+                                    ? AppColors.getMonoTextPrimary(isDark)
+                                    : surface,
                             borderRadius: BorderRadius.circular(18),
                           ),
                           child: Icon(
                             mood.icon,
-                            color: selected
-                                ? (isDark
-                                    ? Colors.black
-                                    : Colors.white)
-                                : textSecondary,
+                            color:
+                                selected
+                                    ? (isDark ? Colors.black : Colors.white)
+                                    : textSecondary,
                           ),
                         ),
                         const SizedBox(height: 6),
                         Text(
                           mood.label,
-                          style:
-                              AppTextStyles.monoMuted12(isDark),
+                          style: AppTextStyles.monoMuted12(isDark),
                         ),
                       ],
                     ),
@@ -211,29 +203,34 @@ class _MoodBottomSheetState extends State<MoodBottomSheet> {
             ),
 
             /// SLIDER
-            Row(
-              children: [
-                const Icon(Icons.favorite, color: Colors.purple),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Slider(
-                    value: _intensity.toDouble(),
-                    min: 1,
-                    max: 10,
-                    divisions: 9,
-                    onChanged: (v) =>
-                        setState(() => _intensity = v.round()),
-                  ),
-                ),
-              ],
+            SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                activeTrackColor: AppColors.getMonoTextPrimary(
+                  isDark,
+                ), // black/white
+                inactiveTrackColor: AppColors.getMonoBorder(isDark),
+
+                thumbColor: AppColors.getMonoTextPrimary(isDark),
+
+                overlayColor: AppColors.getMonoTextPrimary(
+                  isDark,
+                ).withOpacity(0.1),
+
+                trackHeight: 3,
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+              ),
+              child: Slider(
+                value: _intensity.toDouble(),
+                min: 1,
+                max: 10,
+                divisions: 9,
+                onChanged: (v) => setState(() => _intensity = v.round()),
+              ),
             ),
 
             if (_errorMessage != null) ...[
               const SizedBox(height: 8),
-              Text(
-                _errorMessage!,
-                style: const TextStyle(color: Colors.red),
-              ),
+              Text(_errorMessage!, style: const TextStyle(color: Colors.red)),
             ],
 
             const SizedBox(height: 8),
@@ -242,15 +239,38 @@ class _MoodBottomSheetState extends State<MoodBottomSheet> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.getMonoTextPrimary(
+                    isDark,
+                  ), // black (light mode) / white (dark mode)
+                  foregroundColor: AppColors.getMonoBackground(
+                    isDark,
+                  ), // opposite text
+                  disabledBackgroundColor: AppColors.getMonoBorder(isDark),
+                  disabledForegroundColor: AppColors.getMonoTextMuted(isDark),
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
                 onPressed: _isLoading ? null : _submitMood,
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 18,
-                        width: 18,
-                        child:
-                            CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text("Save"),
+                child:
+                    _isLoading
+                        ? SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.getMonoBackground(isDark),
+                          ),
+                        )
+                        : Text(
+                          "Save",
+                          style: AppTextStyles.monoMedium18(isDark).copyWith(
+                            color: AppColors.getMonoBackground(isDark),
+                          ),
+                        ),
               ),
             ),
           ],

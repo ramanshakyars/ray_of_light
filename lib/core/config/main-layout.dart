@@ -156,7 +156,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         duration: const Duration(milliseconds: 220),
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: selected ? selectedBg : Colors.transparent,
+                         // color: selected ? selectedBg : Colors.transparent,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: _buildNavIcon(
@@ -202,7 +202,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       case 0:
         return Icon(
           Icons.home,
-          color: selected ? selectedIconColor : iconColor,
+          color:  iconColor,
         );
 
       case 1:
@@ -240,7 +240,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               child: Icon(
                 Icons.auto_awesome,
                 size: 17,
-                color: selected ? selectedIconColor : iconColor,
+                color: iconColor,
               ),
             ),
           ],
@@ -249,16 +249,16 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       case 2:
         return Icon(
           Icons.cloud_outlined,
-          color: selected ? selectedIconColor : iconColor,
+          color:  iconColor,
         );
 
       case 3:
-        return Icon(Icons.air, color: selected ? selectedIconColor : iconColor);
+        return Icon(Icons.air, color:  iconColor);
 
       case 4:
         return Icon(
           Icons.favorite_border,
-          color: selected ? selectedIconColor : iconColor,
+          color:  iconColor,
         );
 
       default:
