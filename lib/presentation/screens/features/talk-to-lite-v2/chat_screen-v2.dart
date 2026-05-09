@@ -34,7 +34,7 @@ class ChatScreen extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: AppColors.getMonoBackground(isDark),
           elevation: 0,
-          title: Text("Light", style: AppTextStyles.monoBold22(isDark)),
+          title: Text("Light", style: AppTextStyles.bold28(isDark)),
         ),
         body: ChatBody(),
       ),

@@ -162,14 +162,15 @@ Widget build(BuildContext context) {
             Container(
               width: 92,
               height: 92,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.black, // intentional
-              ),
+              // decoration: BoxDecoration(
+              //   shape: BoxShape.circle,
+              //   color: Colors.black, // intentional
+              // ),
               child: Center(
                 child: Image.asset(
-                  'assets/logo.png',
-                  height: 36,
+                  'assets/nest-logo.png',
+                  height: 100,
+                  width: 100,
                 ),
               ),
             ),

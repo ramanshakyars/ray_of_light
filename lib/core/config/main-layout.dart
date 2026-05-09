@@ -156,7 +156,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         duration: const Duration(milliseconds: 220),
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                         // color: selected ? selectedBg : Colors.transparent,
+                          // color: selected ? selectedBg : Colors.transparent,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: _buildNavIcon(
@@ -170,15 +170,15 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                       const SizedBox(height: 2),
 
                       /// LABEL
-                      Text(
-                        _getLabel(index),
-                        style: AppTextStyles.monoMuted12(isDarkMode).copyWith(
-                          color:
-                              selected
-                                  ? AppColors.getMonoTextPrimary(isDarkMode)
-                                  : AppColors.getMonoTextSecondary(isDarkMode),
-                        ),
-                      ),
+                      // Text(
+                      //   _getLabel(index),
+                      //   style: AppTextStyles.monoMuted12(isDarkMode).copyWith(
+                      //     color:
+                      //         selected
+                      //             ? AppColors.getMonoTextPrimary(isDarkMode)
+                      //             : AppColors.getMonoTextSecondary(isDarkMode),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -196,69 +196,81 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     // final isDark =
     //     Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
-    final selectedIconColor = isDark ? Colors.black : Colors.white;
+    final selectedIconColor =
+        isDark ? Colors.white : AppColors.getMonoTextPrimary(isDark);
 
     switch (index) {
       case 0:
         return Icon(
-          Icons.home,
-          color:  iconColor,
+          selected ? Icons.home : Icons.home_outlined,
+          color: selected ? selectedIconColor : iconColor,
+          size: selected ? 30 : 24,
         );
 
+      // case 1:
+      //   return Stack(
+      //     alignment: Alignment.center,
+      //     children: [
+      //       AnimatedBuilder(
+      //         animation: _rotateController,
+      //         builder:
+      //             (_, child) => Transform.rotate(
+      //               angle: _rotateController.value * 2 * 3.1416,
+      //               child: child,
+      //             ),
+      //         child: Container(
+      //           width: 28,
+      //           height: 28,
+      //           decoration: const BoxDecoration(
+      //             shape: BoxShape.circle,
+      //             gradient: RadialGradient(
+      //               colors: [
+      //                 Color.fromARGB(25, 35, 74, 246),
+      //                 Color.fromARGB(25, 210, 47, 239),
+      //               ],
+      //             ),
+      //           ),
+      //         ),
+      //       ),
+      //       ScaleTransition(
+      //         scale: Tween(begin: 0.9, end: 1.1).animate(
+      //           CurvedAnimation(
+      //             parent: _pulseController,
+      //             curve: Curves.easeInOut,
+      //           ),
+      //         ),
+      //         child: Icon(Icons.auto_awesome, size: 17, color: iconColor),
+      //       ),
+      //     ],
+      //   );
+
       case 1:
-        return Stack(
-          alignment: Alignment.center,
-          children: [
-            AnimatedBuilder(
-              animation: _rotateController,
-              builder:
-                  (_, child) => Transform.rotate(
-                    angle: _rotateController.value * 2 * 3.1416,
-                    child: child,
-                  ),
-              child: Container(
-                width: 28,
-                height: 28,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      Color.fromARGB(25, 35, 74, 246),
-                      Color.fromARGB(25, 210, 47, 239),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            ScaleTransition(
-              scale: Tween(begin: 0.9, end: 1.1).animate(
-                CurvedAnimation(
-                  parent: _pulseController,
-                  curve: Curves.easeInOut,
-                ),
-              ),
-              child: Icon(
-                Icons.auto_awesome,
-                size: 17,
-                color: iconColor,
-              ),
-            ),
-          ],
+        return Icon(
+          selected ? Icons.auto_awesome : Icons.auto_awesome_outlined,
+          color: selected ? selectedIconColor : iconColor,
+          size: selected ? 30 : 24,
         );
 
       case 2:
-        return Icon(
-          Icons.cloud_outlined,
-          color:  iconColor,
+        return Image.asset(
+          'assets/nest-logo.png',
+          width: 45,
+          height: 30,
+          color: selected ? selectedIconColor : iconColor,
         );
 
       case 3:
-        return Icon(Icons.air, color:  iconColor);
+        return Icon(
+          selected ? Icons.air : Icons.air_outlined,
+          color: selected ? selectedIconColor : iconColor,
+          size: selected ? 30 : 24,
+        );
 
       case 4:
         return Icon(
-          Icons.favorite_border,
-          color:  iconColor,
+          selected ? Icons.favorite : Icons.favorite_border,
+          color: selected ? selectedIconColor : iconColor,
+            size: selected ? 30 : 26,
         );
 
       default:
