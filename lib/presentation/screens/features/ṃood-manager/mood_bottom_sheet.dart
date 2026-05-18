@@ -19,6 +19,7 @@ class MoodBottomSheet extends StatefulWidget {
 
 class _MoodBottomSheetState extends State<MoodBottomSheet> {
   late UserMoodsEnum _selectedMood;
+  late int _selectedMoodIndex;
   late int _intensity;
 
   bool _isLoading = false;
@@ -43,6 +44,9 @@ class _MoodBottomSheetState extends State<MoodBottomSheet> {
   void initState() {
     super.initState();
     _selectedMood = UserMoodsEnum.neutral;
+    _selectedMoodIndex = _moods.indexWhere(
+      (mood) => mood.type == _selectedMood,
+    );
     _intensity = 5;
     _loadInitialMood();
   }
@@ -53,6 +57,9 @@ class _MoodBottomSheetState extends State<MoodBottomSheet> {
       if (stored != null && mounted) {
         setState(() {
           _selectedMood = stored.type;
+          _selectedMoodIndex = _moods.indexWhere(
+            (mood) => mood.type == stored.type,
+          );
           _intensity = stored.intensity;
         });
       }
@@ -162,12 +169,13 @@ class _MoodBottomSheetState extends State<MoodBottomSheet> {
                 ),
                 itemBuilder: (_, i) {
                   final mood = _moods[i];
-                  final selected = mood.type == _selectedMood;
+                  final selected = i == _selectedMoodIndex;
 
                   return GestureDetector(
                     onTap: () {
                       setState(() {
                         _selectedMood = mood.type;
+                        _selectedMoodIndex = i;
                       });
                     },
                     child: Column(
@@ -214,7 +222,7 @@ class _MoodBottomSheetState extends State<MoodBottomSheet> {
 
                 overlayColor: AppColors.getMonoTextPrimary(
                   isDark,
-                ).withOpacity(0.1),
+                ).withValues(alpha: 0.1),
 
                 trackHeight: 3,
                 thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
