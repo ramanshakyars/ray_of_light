@@ -8,7 +8,7 @@ import 'package:rayoflite/presentation/screens/features/talk-to-lite-v2/widgets/
 import 'package:rayoflite/presentation/screens/features/talk-to-lite-v2/widgets/mono_typing_indicator.dart';
 
 class ChatBody extends StatefulWidget {
-    const ChatBody({super.key});
+  const ChatBody({super.key});
 
   @override
   State<ChatBody> createState() => _ChatBodyState();
@@ -26,28 +26,31 @@ class _ChatBodyState extends State<ChatBody> {
       children: [
         /// ===================== CHAT LIST =====================
         Expanded(
-          child: provider.messages.isEmpty
-              ? _buildEmptyState(isDark)
-              : ListView.builder(
-                  controller: provider.scrollController,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 12),
-                  itemCount: provider.messages.length +
-                      (provider.isTyping ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (provider.isTyping &&
-                        index == provider.messages.length) {
-                      return const MonoTypingIndicator();
-                    }
+          child:
+              provider.messages.isEmpty
+                  ? _buildEmptyState(isDark)
+                  : ListView.builder(
+                    controller: provider.scrollController,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    itemCount:
+                        provider.messages.length + (provider.isTyping ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (provider.isTyping &&
+                          index == provider.messages.length) {
+                        return const MonoTypingIndicator();
+                      }
 
-                    final message = provider.messages[index];
+                      final message = provider.messages[index];
 
-                    return MonoChatBubble(
-                      text: message.text,
-                      isUser: message.isUser,
-                    );
-                  },
-                ),
+                      return MonoChatBubble(
+                        text: message.text,
+                        isUser: message.isUser,
+                      );
+                    },
+                  ),
         ),
 
         /// ===================== INPUT =====================
