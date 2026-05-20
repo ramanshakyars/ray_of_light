@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
-import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 
@@ -10,6 +9,20 @@ class MainScreen extends StatefulWidget {
   final Widget child;
 
   const MainScreen({super.key, required this.child});
+
+  static void goToTab(BuildContext context, int index) {
+    final routes = [
+      RouteNames.home,
+      RouteNames.talkToLight,
+      RouteNames.junerlism,
+      RouteNames.breathingExercise,
+      RouteNames.goalTracker,
+    ];
+
+    if (index < 0 || index >= routes.length) return;
+
+    context.go('${RouteNames.mainApp}/${routes[index]}');
+  }
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -108,7 +121,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   void _navigateToTab(BuildContext context, int index) {
     setState(() => _currentIndex = index);
     // context.push('${RouteNames.mainApp}/${_routes[index]}');
-    context.go('${RouteNames.mainApp}/${_routes[index]}');
+    // context.go('${RouteNames.mainApp}/${_routes[index]}');
+    MainScreen.goToTab(context, index);
   }
 
   // ------------------ NEW PREMIUM BOTTOM NAV ------------------
@@ -270,30 +284,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         return Icon(
           selected ? Icons.favorite : Icons.favorite_border,
           color: selected ? selectedIconColor : iconColor,
-            size: selected ? 30 : 26,
+          size: selected ? 30 : 26,
         );
 
       default:
         return const SizedBox.shrink();
-    }
-  }
-
-  // ------------------ LABEL HELPER ------------------
-
-  String _getLabel(int index) {
-    switch (index) {
-      case 0:
-        return "Home";
-      case 1:
-        return "Talk";
-      case 2:
-        return "Nest";
-      case 3:
-        return "Breathe";
-      case 4:
-        return "Wishes";
-      default:
-        return "";
     }
   }
 }

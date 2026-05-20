@@ -6,22 +6,18 @@ import 'package:rayoflite/presentation/screens/auth/forget-password.dart';
 import 'package:rayoflite/presentation/screens/auth/login.dart';
 import 'package:rayoflite/presentation/screens/auth/register.dart';
 import 'package:rayoflite/presentation/screens/auth/reset-password.dart';
-import 'package:rayoflite/presentation/screens/auth/reset_success_screen.dart';
 import 'package:rayoflite/presentation/screens/features/breathing/breathing_duration_screen.dart';
 import 'package:rayoflite/presentation/screens/features/breathing/breathing_player_screen.dart';
-import 'package:rayoflite/presentation/screens/features/profile/profile.dart';
 import 'package:rayoflite/presentation/screens/features/profile/profile_page.dart';
 import 'package:rayoflite/presentation/screens/features/profile/setting/deactivate_account_page.dart';
 import 'package:rayoflite/presentation/screens/features/profile/setting/settings_page.dart';
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/provider/social_feed_provider.dart';
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/social_feed_page_v2.dart';
-import 'package:rayoflite/presentation/screens/features/talk-to-lite-v2/chat_screen-v2.dart';
+import 'package:rayoflite/presentation/screens/features/talk-to-lite-v3/screens/chat_screen_v3.dart';
 import 'package:rayoflite/presentation/screens/notifications/notification_navigation_service.dart';
 import 'package:rayoflite/presentation/screens/notifications/notification_page.dart';
-import 'package:rayoflite/presentation/screens/social-insights/social-feedPage.dart';
 // import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat_screen.dart';
 import 'package:rayoflite/presentation/screens/features/journalism/junerlism.dart';
-import 'package:rayoflite/presentation/screens/features/breathing/breathing.dart';
 import 'package:rayoflite/presentation/screens/features/goal-tracker/goal-tracker.dart';
 import 'package:rayoflite/presentation/screens/web/PrivacyPolicyPage.dart';
 import 'package:rayoflite/presentation/screens/web/web-LandingPage.dart';
@@ -130,7 +126,10 @@ GoRouter createRouter(String initialLocation) {
                 builder: (context, state) {
                   final chatId = state.uri.queryParameters['chatId'];
                   // return ChatScreen(chatId: chatId); // pass it here  /// old one
-                  return ChatScreen(chatId: chatId); // pass it here  /// new ui
+                  // return ChatScreen(chatId: chatId); // pass it here  /// new ui
+                  return ChatScreenV3(
+                    chatId: chatId,
+                  ); // pass it here  /// new ui
                 },
               ),
 
