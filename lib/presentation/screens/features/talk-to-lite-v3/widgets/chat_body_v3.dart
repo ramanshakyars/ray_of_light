@@ -58,11 +58,23 @@ class _ChatBodyV3State extends State<ChatBodyV3> {
                         provider.messages.length + (provider.isTyping ? 1 : 0),
 
                     itemBuilder: (context, index) {
+                      if (provider.isLoadingMoreMessages && index == 0) {
+                        return const Padding(
+                          padding: EdgeInsets.only(top: 8, bottom: 8),
+                          child: Center(
+                            child: SizedBox(
+                              height: 30,
+                              width: 30,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                        );
+                      }
+
                       if (provider.isTyping &&
                           index == provider.messages.length) {
                         return const Padding(
                           padding: EdgeInsets.only(top: 8, bottom: 8),
-
                           child: MonoTypingIndicator(),
                         );
                       }
@@ -71,7 +83,6 @@ class _ChatBodyV3State extends State<ChatBodyV3> {
 
                       return MonoChatBubbleV3(
                         text: message.content,
-
                         isUser: message.isUser,
                       );
                     },

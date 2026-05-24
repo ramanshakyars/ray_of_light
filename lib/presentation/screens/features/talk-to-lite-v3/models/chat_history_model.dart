@@ -19,15 +19,15 @@ class ChatHistoryModel {
 
   factory ChatHistoryModel.fromJson(Map<String, dynamic> json) {
     return ChatHistoryModel(
-      conversationId: json["conversationId"] ?? json["id"] ?? "",
+      conversationId: (json["conversationId"] ?? json["id"] ?? "").toString(),
 
-      title: json["title"] ?? "Conversation",
+      title: (json["title"] ?? "Conversation").toString(),
 
-      lastMessage: json["lastMessage"] ?? json["preview"],
+      lastMessage: json["lastMessage"] != null ? json["lastMessage"].toString() : (json["preview"] != null ? json["preview"].toString() : null),
 
       messageCount: json["messageCount"],
 
-      updatedAt: json["updatedAt"]?.toString(),
+      updatedAt: json["updatedAt"] != null ? json["updatedAt"].toString() : null,
     );
   }
 }

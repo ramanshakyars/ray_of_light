@@ -6,7 +6,7 @@ class Talktolightservice {
   static Future<Map<String, dynamic>> getChatHistory() async {
     try {
       final response = await HttpService.get(PathConfig.getChatHistory);
-      if (response != null && response is List) {
+      if (response is List) {
         return {'success': true, 'data': response};
       } else {
         return {'success': false, 'message': 'No chat history found'};
@@ -16,10 +16,12 @@ class Talktolightservice {
     }
   }
 
-  static Future<ChatResponse?> postChatHistory(Map<String, dynamic> payload) async {
-    try {     
+  static Future<ChatResponse?> postChatHistory(
+    Map<String, dynamic> payload,
+  ) async {
+    try {
       final response = await HttpService.post(PathConfig.sendChat, payload);
-      if (response != null) {
+      if (response.isNotEmpty) {
         return ChatResponse.fromJson(response);
       }
       return null;
@@ -36,8 +38,7 @@ class Talktolightservice {
     try {
       final url = "${PathConfig.renameChat}/$chatId";
       final response = await HttpService.put(url, {"title": newTitle});
-
-      if (response != null && response['id'] != null) {
+      if (response['id'] != null) {
         return {'success': true, 'data': response};
       } else {
         return {'success': false, 'message': 'Rename failed'};
@@ -51,8 +52,7 @@ class Talktolightservice {
     try {
       final url = "${PathConfig.deletechat}/$chatId";
       final response = await HttpService.delete(url);
-
-      if (response != null) {
+      if (response.isNotEmpty) {
         return {
           'success': true,
           'message': response['message'] ?? 'Chat deleted successfully',
@@ -73,7 +73,7 @@ class Talktolightservice {
     try {
       final url = "${PathConfig.getChatHistoryById}/$chatId";
       final response = await HttpService.get(url);
-      if (response != null) {
+      if (response is Map || response is List) {
         return {'success': true, 'data': response};
       } else {
         return {'success': false, 'message': 'Chat history Loaded'};
@@ -86,8 +86,8 @@ class Talktolightservice {
   static Future<Map<String, dynamic>> clearMemory(String chatId) async {
     try {
       final url = "${PathConfig.clearChatsMemory}/$chatId";
-      final response = await HttpService.post(url,{});
-      if (response != null && response['type'] != null) {
+      final response = await HttpService.post(url, {});
+      if (response['type'] != null) {
         return {'success': true, 'data': response};
       } else {
         return {'success': false, 'message': 'Chat history Loaded'};
@@ -97,21 +97,30 @@ class Talktolightservice {
     }
   }
 
- static Future<Map<String, dynamic>> getConversationsList() async {
-  try {
-    final response =
-        await HttpService.get(PathConfig.getConversationsList);
+  static Future<Map<String, dynamic>> getConversationsList() async {
+    try {
+      final response = await HttpService.get(PathConfig.getConversationsList);
 
-    if (response != null && response is List) {
-      return {'success': true, 'data': response};
-    } else {
-      return {'success': false, 'message': 'No conversations found'};
+      if (response is List) {
+        return {'success': true, 'data': response};
+      } else {
+        return {'success': false, 'message': 'No conversations found'};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Something went wrong: $e'};
     }
-  } catch (e) {
-    return {
-      'success': false,
-      'message': 'Something went wrong: $e'
-    };
   }
-}
+
+  static Future<Map<String, dynamic>> get(url) async {
+    try {
+      final response = await HttpService.get(url);
+      if (response is Map || response is List) {
+        return {'success': true, 'data': response};
+      } else {
+        return {'success': false, 'message': 'No data returned'};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Something went wrong'};
+    }
+  }
 }

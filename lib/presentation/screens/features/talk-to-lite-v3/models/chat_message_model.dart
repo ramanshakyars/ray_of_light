@@ -13,11 +13,11 @@ class ChatMessageModel {
 
   factory ChatMessageModel.fromJson(Map<String, dynamic> json) {
     return ChatMessageModel(
-      content: json["content"] ?? "",
+      content: (json["content"] ?? "").toString(),
 
       isUser: json["role"] == "USER",
 
-      timestamp: json["timestamp"],
+      timestamp: json["timestamp"] != null ? json["timestamp"].toString() : null,
     );
   }
 }
