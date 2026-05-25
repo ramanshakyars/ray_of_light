@@ -76,8 +76,8 @@ class ChatProviderV3 extends ChangeNotifier {
 
       notifyListeners();
 
-      // show latest messages
-      scrollToBottom();
+      // show latest messages instantly (avoid visible jump from top->bottom)
+      jumpToBottomInstant();
     } catch (e) {
       debugPrint("LOAD CONVERSATION ERROR: $e");
     }
@@ -186,10 +186,14 @@ class ChatProviderV3 extends ChangeNotifier {
 
       notifyListeners();
 
-      scrollToBottom();
+      // smooth scroll while AI types (throttle to every few chars)
+      if (i % 3 == 0) smoothScrollToBottom(duration: const Duration(milliseconds: 220));
 
       await Future.delayed(const Duration(milliseconds: 10));
     }
+
+    // ensure fully at bottom when done
+    jumpToBottomInstant();
   }
 
   Future<void> loadHistory({bool forceRefresh = false}) async {
@@ -232,6 +236,31 @@ class ChatProviderV3 extends ChangeNotifier {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
       );
+    });
+  }
+
+  /// Scroll helpers
+  void jumpToBottomInstant() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!scrollController.hasClients) return;
+
+      try {
+        scrollController.jumpTo(scrollController.position.maxScrollExtent);
+      } catch (_) {}
+    });
+  }
+
+  void smoothScrollToBottom({Duration duration = const Duration(milliseconds: 220)}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!scrollController.hasClients) return;
+
+      final target = scrollController.position.maxScrollExtent;
+      final current = scrollController.offset;
+
+      // Only animate if there's meaningful distance
+      if ((target - current).abs() > 2) {
+        scrollController.animateTo(target, duration: duration, curve: Curves.easeOut);
+      }
     });
   }
 
