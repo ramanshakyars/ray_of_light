@@ -1,15 +1,20 @@
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/constants/app_text_field.dart';
 import 'package:rayoflite/core/constants/common_button.dart';
+import 'package:rayoflite/core/providers/TokenManager.dart';
+import 'package:rayoflite/core/providers/auth_provider.dart';
 import 'package:rayoflite/core/services/authService.dart';
+import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
+import 'package:rayoflite/core/config/google_auth_config.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -33,6 +38,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isPasswordVisible = false;
   bool _isOtpSent = false;
   bool _isLoading = false;
+  bool _isGoogleLoading = false;
+
+  final GoogleSignIn _googleSignIn = GoogleAuthConfig.googleSignIn;
 
   @override
   void dispose() {
@@ -99,6 +107,70 @@ class _RegisterScreenState extends State<RegisterScreen> {
       context.go(RouteNames.login);
     } finally {
       if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  // ================= GOOGLE SIGN-IN =================
+
+  Future<void> _handleGoogleSignIn() async {
+    setState(() => _isGoogleLoading = true);
+
+    try {
+      await _googleSignIn.signOut();
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      if (googleUser == null) {
+        if (mounted) setState(() => _isGoogleLoading = false);
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final String? idToken = googleAuth.idToken;
+
+      if (idToken == null) {
+        if (mounted) {
+          MessageService.showError(
+              context, 'Google authentication failed: no ID token');
+          setState(() => _isGoogleLoading = false);
+        }
+        return;
+      }
+
+      final response = await AuthService.googleLogin(idToken);
+
+      if (!mounted) return;
+
+      if (response['success'] == true) {
+        final token = response['token'];
+        final user = response['user'];
+
+        await LocalStorageService.setToken(token);
+        TokenManager.setToken(token);
+        await LocalStorageService.setUser(user);
+        await Provider.of<AuthProvider>(context, listen: false).loadUser();
+
+        MessageService.showSuccess(
+          context,
+          response['message'] ?? 'Google Sign-In Successful',
+        );
+
+        GoRouter.of(context).go(
+          '${RouteNames.mainApp}/${RouteNames.home}',
+        );
+      } else {
+        MessageService.showError(
+          context,
+          response['message'] ?? 'Google Sign-In Failed',
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        MessageService.showError(
+            context, 'Google Sign-In Failed: ${e.toString()}');
+      }
+    } finally {
+      if (mounted) setState(() => _isGoogleLoading = false);
     }
   }
 
@@ -288,9 +360,59 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 CommonButton(
                                   text: "Create Account",
                                   isLoading: _isLoading,
-                                  onPressed: _isLoading
+                                  onPressed: (_isLoading || _isGoogleLoading)
                                       ? null
                                       : _register,
+                                ),
+
+                                const SizedBox(height: 16),
+
+                                // ─── OR Divider ──────────────────────
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Divider(
+                                        color: isDark
+                                            ? Colors.white12
+                                            : Colors.black12,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12),
+                                      child: Text(
+                                        'OR',
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 2,
+                                          color: isDark
+                                              ? Colors.white38
+                                              : Colors.black38,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Divider(
+                                        color: isDark
+                                            ? Colors.white12
+                                            : Colors.black12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                const SizedBox(height: 16),
+
+                                // ─── Google Sign-Up Button ───────────
+                                _GoogleSignInButton(
+                                  label: 'Sign up with Google',
+                                  isLoading: _isGoogleLoading,
+                                  isDarkMode: isDark,
+                                  onPressed:
+                                      (_isLoading || _isGoogleLoading)
+                                          ? null
+                                          : _handleGoogleSignIn,
                                 ),
 
                                 const SizedBox(height: 16),
@@ -321,4 +443,119 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
+}
+
+// ─── Reusable Google Sign-In Button ──────────────────────────────────────────
+
+class _GoogleSignInButton extends StatelessWidget {
+  const _GoogleSignInButton({
+    required this.label,
+    required this.isLoading,
+    required this.isDarkMode,
+    required this.onPressed,
+  });
+
+  final String label;
+  final bool isLoading;
+  final bool isDarkMode;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(
+            color: isDarkMode ? Colors.white24 : Colors.black12,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
+          backgroundColor: isDarkMode ? Colors.white10 : Colors.white,
+        ),
+        child: isLoading
+            ? SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: isDarkMode ? Colors.white : Colors.black,
+                ),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _GoogleLogo(size: 20),
+                  const SizedBox(width: 12),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: isDarkMode ? Colors.white : Colors.black87,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                ],
+              ),
+      ),
+    );
+  }
+}
+
+class _GoogleLogo extends StatelessWidget {
+  const _GoogleLogo({this.size = 24});
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      size: Size(size, size),
+      painter: _GoogleLogoPainter(),
+    );
+  }
+}
+
+class _GoogleLogoPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final double cx = size.width / 2;
+    final double cy = size.height / 2;
+    final double r = size.width / 2;
+
+    final bgPaint = Paint()..color = Colors.white;
+    canvas.drawCircle(Offset(cx, cy), r, bgPaint);
+
+    final rect = Rect.fromCircle(center: Offset(cx, cy), radius: r * 0.85);
+
+    void drawArc(double startDeg, double sweepDeg, Color color) {
+      final p = Paint()
+        ..color = color
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = size.width * 0.18
+        ..strokeCap = StrokeCap.butt;
+      const pi = 3.141592653589793;
+      canvas.drawArc(rect, startDeg * pi / 180, sweepDeg * pi / 180, false, p);
+    }
+
+    drawArc(-10, 110, const Color(0xFF4285F4));
+    drawArc(100, 110, const Color(0xFF34A853));
+    drawArc(210, 60, const Color(0xFFFBBC04));
+    drawArc(270, 80, const Color(0xFFEA4335));
+
+    final barPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+    canvas.drawRect(
+      Rect.fromLTWH(
+          cx, cy - size.height * 0.11, r * 0.85, size.height * 0.22),
+      barPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

@@ -6,6 +6,7 @@ class PathConfig {
 
   // Auth endpoints
   static const String login = '$baseUrl/public/login';
+  static const String googleLogin = '$baseUrl/public/login/google';
   static const String verifyOtp = '$baseUrl/public/register/initiate';
   static const String register = '$baseUrl/public/register/complete';
   static const String passwordReset = '$baseUrl/public/password/reset/initiate';

@@ -60,6 +60,39 @@ class AuthService {
     }
   }
 
+  /// Google OAuth Login — sends the ID token received from google_sign_in
+  /// to the backend endpoint POST /public/login/google and returns a
+  /// normalised map identical to [login]'s success shape.
+  static Future<Map<String, dynamic>> googleLogin(String idToken) async {
+    try {
+      final response = await HttpService.post(
+        PathConfig.googleLogin,
+        {'idToken': idToken},
+      );
+
+      if (response['jwtToken'] != null) {
+        return {
+          'success': true,
+          'token': response['jwtToken'],
+          'user': {
+            'userId': response['userId'],
+            'name': response['name'],
+            'email': response['email'],
+            'roles': response['roles'],
+          },
+          'message': response['message'] ?? 'Google Login Successful',
+        };
+      }
+
+      return {
+        'success': false,
+        'message': response['message'] ?? 'Google Login failed',
+      };
+    } catch (e) {
+      return {'success': false, 'message': _getErrorMessage(e)};
+    }
+  }
+
   static Future<Map<String, dynamic>> verifyOtp(
     Map<String, dynamic> body,
   ) async {
