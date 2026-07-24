@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -120,15 +121,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
-        if (mounted) setState(() => _isGoogleLoading = false);
+        dev.log(
+          '[GoogleSignIn] signIn() returned null — either the user dismissed '
+          'the picker, or the SHA-1 fingerprint is not registered in '
+          'Firebase Console / Google Cloud Console.',
+          name: 'GoogleOAuth',
+        );
+        if (mounted) {
+          MessageService.showError(
+            context,
+            'Google Sign-Up was cancelled or is not configured for this device.',
+          );
+          setState(() => _isGoogleLoading = false);
+        }
         return;
       }
+
+      dev.log('[GoogleSignIn] account: ${googleUser.email}', name: 'GoogleOAuth');
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
       final String? idToken = googleAuth.idToken;
 
       if (idToken == null) {
+        dev.log(
+          '[GoogleSignIn] idToken is null — check that client_type:3 '
+          '(web client) is present in google-services.json.',
+          name: 'GoogleOAuth',
+        );
         if (mounted) {
           MessageService.showError(
               context, 'Google authentication failed: no ID token');
@@ -136,6 +156,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         }
         return;
       }
+
+      dev.log('[GoogleSignIn] idToken obtained, posting to backend.', name: 'GoogleOAuth');
 
       final response = await AuthService.googleLogin(idToken);
 
@@ -164,7 +186,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           response['message'] ?? 'Google Sign-In Failed',
         );
       }
-    } catch (e) {
+    } catch (e, st) {
+      dev.log('[GoogleSignIn] exception: $e', name: 'GoogleOAuth', error: e, stackTrace: st);
       if (mounted) {
         MessageService.showError(
             context, 'Google Sign-In Failed: ${e.toString()}');

@@ -12,7 +12,12 @@
           "package_name": "com.wrappedweb.rayoflite"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "630134708747-jpe7erv2ev54voff0o72gvehcjqkffpq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDa5cyjp19Z4T0e06KNlowJyxc7ALy45uU"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "630134708747-eghjbf2f82lcl616dvb6augfueo7a0p5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

@@ -84,6 +84,7 @@ class _ChatBodyV3State extends State<ChatBodyV3> {
                       return MonoChatBubbleV3(
                         text: message.content,
                         isUser: message.isUser,
+                        timestamp: message.timestamp,
                       );
                     },
                   ),

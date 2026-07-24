@@ -133,7 +133,13 @@ class ChatProviderV3 extends ChangeNotifier {
       text = text[0].toUpperCase() + text.substring(1);
     }
 
-    messages.add(ChatMessageModel(content: text, isUser: true));
+    messages.add(
+      ChatMessageModel(
+        content: text,
+        isUser: true,
+        timestamp: DateTime.now().toUtc().toIso8601String(),
+      ),
+    );
 
     isTyping = true;
 
@@ -149,7 +155,13 @@ class ChatProviderV3 extends ChangeNotifier {
 
       activeConversationId = response.conversationId;
 
-      messages.add(ChatMessageModel(content: "", isUser: false));
+      messages.add(
+        ChatMessageModel(
+          content: "",
+          isUser: false,
+          timestamp: DateTime.now().toUtc().toIso8601String(),
+        ),
+      );
 
       notifyListeners();
 
@@ -182,7 +194,11 @@ class ChatProviderV3 extends ChangeNotifier {
     for (int i = 0; i < fullText.length; i++) {
       currentText += fullText[i];
 
-      messages[index] = ChatMessageModel(content: currentText, isUser: false);
+      messages[index] = ChatMessageModel(
+        content: currentText,
+        isUser: false,
+        timestamp: messages[index].timestamp,
+      );
 
       notifyListeners();
 

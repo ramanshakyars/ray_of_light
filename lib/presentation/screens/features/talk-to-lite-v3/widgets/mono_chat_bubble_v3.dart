@@ -6,8 +6,23 @@ import 'package:rayoflite/core/theme/themeProvider.dart';
 class MonoChatBubbleV3 extends StatelessWidget {
   final String text;
   final bool isUser;
+  final String? timestamp;
 
-  const MonoChatBubbleV3({super.key, required this.text, required this.isUser});
+  const MonoChatBubbleV3({super.key, required this.text, required this.isUser,
+   this.timestamp});
+
+  String _formatTime(String? timeStr) {
+    if (timeStr == null || timeStr.isEmpty) return "";
+    try {
+      final dt = DateTime.parse(timeStr).toLocal();
+      final hour = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
+      final min = dt.minute.toString().padLeft(2, '0');
+      final ampm = dt.hour >= 12 ? 'PM' : 'AM';
+      return "$hour:$min $ampm";
+    } catch (e) {
+      return "";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,14 +37,29 @@ class MonoChatBubbleV3 extends StatelessWidget {
           constraints: BoxConstraints(
             maxWidth: MediaQuery.of(context).size.width * 0.78,
           ),
-          child: Text(
-            text,
-            style: TextStyle(
-              color: AppColors.getMonoTextPrimary(isDark),
-              fontFamily: "Arial",
-              fontSize: 15,
-              height: 1.35,
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                text,
+                style: TextStyle(
+                  color: AppColors.getMonoTextPrimary(isDark),
+                  fontFamily: "Arial",
+                  fontSize: 15,
+                  height: 1.35,
+                ),
+              ),
+              if (timestamp != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  _formatTime(timestamp),
+                  style: TextStyle(
+                    color: AppColors.getMonoTextPrimary(isDark).withOpacity(0.5),
+                    fontSize: 10,
+                  ),
+                ),
+              ]
+            ],
           ),
         ),
       );
@@ -47,14 +77,29 @@ class MonoChatBubbleV3 extends StatelessWidget {
           color: AppColors.getMonoTextPrimary(isDark),
           borderRadius: BorderRadius.circular(18),
         ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: AppColors.getMonoBackground(isDark),
-            fontFamily: "Arial",
-            fontSize: 15,
-            height: 1.35,
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              text,
+              style: TextStyle(
+                color: AppColors.getMonoBackground(isDark),
+                fontFamily: "Arial",
+                fontSize: 15,
+                height: 1.35,
+              ),
+            ),
+            if (timestamp != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                _formatTime(timestamp),
+                style: TextStyle(
+                  color: AppColors.getMonoBackground(isDark).withOpacity(0.7),
+                  fontSize: 10,
+                ),
+              ),
+            ]
+          ],
         ),
       ),
     );

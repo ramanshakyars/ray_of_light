@@ -16,6 +16,7 @@ class ChatMessage extends StatefulWidget {
     required this.isUser,
     this.animate = false,
     this.extraWidget,
+    this.timestamp,
   });
 
   @override
@@ -25,6 +26,7 @@ class ChatMessage extends StatefulWidget {
 class _ChatMessageState extends State<ChatMessage> {
   String _displayedText = "";
   int _currentIndex = 0;
+  List<String> _textCharacters = [];
   Timer? _timer;
 
   @override
@@ -35,15 +37,16 @@ class _ChatMessageState extends State<ChatMessage> {
       _displayedText = widget.text;
     } else {
       // animate bot text
+      _textCharacters = widget.text.characters.toList();
       _startTypingEffect();
     }
   }
 
   void _startTypingEffect() {
     _timer = Timer.periodic(const Duration(milliseconds: 40), (timer) {
-      if (_currentIndex < widget.text.length) {
+      if (_currentIndex < _textCharacters.length) {
         setState(() {
-          _displayedText += widget.text[_currentIndex];
+          _displayedText += _textCharacters[_currentIndex];
           _currentIndex++;
         });
       } else {
@@ -74,20 +77,19 @@ class _ChatMessageState extends State<ChatMessage> {
           Flexible(
             child: Container(
               padding: const EdgeInsets.all(12),
-              decoration:
-                  widget.isUser
-                      ? BoxDecoration(
-                        color:
-                            isDarkMode
-                                ? const Color(
-                                  0xFF2A2A2A,
-                                ) // dark grey (visible in dark mode)
-                                : const Color(
-                                  0xFFF2F2F2,
-                                ), // light grey (visible in light mode)
-                        borderRadius: BorderRadius.circular(12),
-                      )
-                      : null,
+              decoration: BoxDecoration(
+                color: widget.isUser
+                    ? (isDarkMode ? const Color(0xFF005C4B) : const Color(0xFFDCF8C6)) // WhatsApp user bubble colors
+                    : (isDarkMode ? const Color(0xFF2A2A2A) : const Color(0xFFFFFFFF)), // WhatsApp bot bubble colors
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 1,
+                    spreadRadius: 0.5,
+                  )
+                ],
+              ),
               //   color: widget.isUser ? AppColors.getFormsCardColor(isDarkMode): AppColors.getTalkToLiteButtonBackgroundColor(isDarkMode),
               //   borderRadius: BorderRadius.circular(12),
               // ),
@@ -102,6 +104,17 @@ class _ChatMessageState extends State<ChatMessage> {
                     const SizedBox(height: 10),
                     widget.extraWidget!,
                   ],
+                  const SizedBox(height: 4),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Text(
+                      _formatTime(widget.timestamp ?? DateTime.now()),
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -110,6 +123,25 @@ class _ChatMessageState extends State<ChatMessage> {
         ],
       ),
     );
+  }
+
+  String _formatTime(DateTime time) {
+    final now = DateTime.now();
+    final isToday = time.year == now.year && time.month == now.month && time.day == now.day;
+    
+    int hour = time.hour;
+    int minute = time.minute;
+    String period = hour >= 12 ? 'PM' : 'AM';
+    hour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+    String minuteStr = minute.toString().padLeft(2, '0');
+    
+    String timeStr = "$hour:$minuteStr $period";
+    
+    if (isToday) {
+      return timeStr;
+    } else {
+      return "${time.day.toString().padLeft(2, '0')}/${time.month.toString().padLeft(2, '0')}/${time.year} $timeStr";
+    }
   }
 
   Widget _buildBotAvatar() {

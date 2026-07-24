@@ -43,7 +43,7 @@ class InputArea extends StatelessWidget {
                   ),
                   keyboardType: TextInputType.multiline,
                   minLines: 1,
-                  maxLines: null,
+                  maxLines: 5,
                   decoration: InputDecoration(
                     hintText: 'Ask anything',
                     hintStyle: TextStyle(

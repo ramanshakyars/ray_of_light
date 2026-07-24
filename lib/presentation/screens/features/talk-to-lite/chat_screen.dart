@@ -66,15 +66,34 @@ class _ChatScreenState extends State<ChatScreen>
         _messages.addAll(
           response.map(
             (msg) => ChatMessage(
-              text: msg['content'],
+              text: msg['content'] ?? '',
               isUser: msg['role'].toString().toUpperCase() == 'USER',
               animate: false,
+              timestamp: _parseTimestamp(msg['timestamp'] ?? msg['createdAt'] ?? msg['time']),
             ),
           ),
         );
         conversationId = chatData['id'];
       });
     }
+  }
+
+  DateTime? _parseTimestamp(dynamic ts) {
+    if (ts == null) return null;
+    if (ts is List) {
+      return DateTime(
+        ts[0],
+        ts[1],
+        ts[2],
+        ts.length > 3 ? ts[3] : 0,
+        ts.length > 4 ? ts[4] : 0,
+        ts.length > 5 ? ts[5] : 0,
+        ts.length > 6 ? (ts[6] ~/ 1000) : 0,
+      );
+    } else if (ts is String) {
+      return DateTime.tryParse(ts);
+    }
+    return null;
   }
 
   Future<void> _sendMessage() async {
@@ -84,7 +103,7 @@ class _ChatScreenState extends State<ChatScreen>
     _textController.clear();
 
     setState(() {
-      _messages.add(ChatMessage(text: message, isUser: true));
+      _messages.add(ChatMessage(text: message, isUser: true, timestamp: DateTime.now()));
       _isLoading = true;
       // if (_messages.length == 1) {
       _starController.repeat();
@@ -117,6 +136,7 @@ class _ChatScreenState extends State<ChatScreen>
                       ? "\n\nWould you like to write in your journal?"
                       : ""),
               isUser: false,
+              timestamp: chatResponse.timestamp,
               extraWidget: () {
                 switch (chatResponse.suggestion?.type) {
                   case "BREATHING":
@@ -191,14 +211,14 @@ class _ChatScreenState extends State<ChatScreen>
       } else {
         setState(() {
           _messages.add(
-            const ChatMessage(text: "No response from server", isUser: false),
+            ChatMessage(text: "No response from server", isUser: false, timestamp: DateTime.now()),
           );
         });
       }
     } catch (e) {
       setState(() {
         _messages.add(
-          ChatMessage(text: "Oops! Error: ${e.toString()}", isUser: false),
+          ChatMessage(text: "Oops! Error: ${e.toString()}", isUser: false, timestamp: DateTime.now()),
         );
       });
     } finally {

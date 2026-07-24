@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -122,10 +123,25 @@ class _LoginPageState extends State<LoginPage> {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
-        // User cancelled the sign-in dialog
-        if (mounted) setState(() => _isGoogleLoading = false);
+        // null means: user cancelled OR misconfiguration (missing SHA-1 / wrong client ID).
+        // Log so the exact cause can be seen in the terminal.
+        dev.log(
+          '[GoogleSignIn] signIn() returned null — either the user dismissed '
+          'the picker, or the SHA-1 fingerprint is not registered in '
+          'Firebase Console / Google Cloud Console.',
+          name: 'GoogleOAuth',
+        );
+        if (mounted) {
+          MessageService.showError(
+            context,
+            'Google Sign-In was cancelled or is not configured for this device. '
+            'Please contact support.',
+          );
+          setState(() => _isGoogleLoading = false);
+        }
         return;
       }
+      dev.log('[GoogleSignIn] account: ${googleUser.email}', name: 'GoogleOAuth');
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
@@ -133,6 +149,11 @@ class _LoginPageState extends State<LoginPage> {
       final String? idToken = googleAuth.idToken;
 
       if (idToken == null) {
+        dev.log(
+          '[GoogleSignIn] idToken is null — check that client_type:3 '
+          '(web client) is present in google-services.json.',
+          name: 'GoogleOAuth',
+        );
         if (mounted) {
           MessageService.showError(
               context, 'Google authentication failed: no ID token');
@@ -140,6 +161,7 @@ class _LoginPageState extends State<LoginPage> {
         }
         return;
       }
+      dev.log('[GoogleSignIn] idToken obtained, posting to backend.', name: 'GoogleOAuth');
 
       // POST idToken to your Spring Boot backend
       final response = await AuthService.googleLogin(idToken);
@@ -161,7 +183,8 @@ class _LoginPageState extends State<LoginPage> {
           response['message'] ?? 'Google Login Failed',
         );
       }
-    } catch (e) {
+    } catch (e, st) {
+      dev.log('[GoogleSignIn] exception: $e', name: 'GoogleOAuth', error: e, stackTrace: st);
       if (mounted) {
         MessageService.showError(
             context, 'Google Login Failed: ${e.toString()}');
@@ -184,7 +207,7 @@ class _LoginPageState extends State<LoginPage> {
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
-            child: Padding(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
@@ -201,16 +224,15 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
 
-                  const SizedBox(height: 200),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.1),
 
                   /// 🔹 Card
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: AppColors.getMonoCard(isDarkMode),
-                        borderRadius: BorderRadius.circular(32),
-                      ),
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: AppColors.getMonoCard(isDarkMode),
+                      borderRadius: BorderRadius.circular(32),
+                    ),
                       child: Form(
                         key: _formKey,
                         child: Column(
@@ -287,7 +309,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
 
-                            const Spacer(),
+                            const SizedBox(height: 32),
 
                             /// Login button
                             CommonButton(
@@ -364,7 +386,6 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
