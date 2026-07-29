@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-lite-v3/services/ChatServiceV3.dart';
+import 'package:rayoflite/presentation/widgets/app_screen_header.dart';
 
 import '../provider/chat_provider_v3.dart';
 import '../widgets/chat_body_v3.dart';
@@ -26,40 +26,26 @@ class ChatScreenV3 extends StatelessWidget {
 
       child: Scaffold(
         backgroundColor: AppColors.getMonoBackground(isDark),
-
-        appBar: AppBar(
-          backgroundColor: AppColors.getMonoBackground(isDark),
-
-          elevation: 0,
-
-          title: Text("Light", style: AppTextStyles.bold28(isDark)),
-
-          // actions: [
-          //   Builder(
-          //     builder: (context) {
-          //       return IconButton(
-          //         onPressed: () {
-          //           showModalBottomSheet(
-          //             context: context,
-          //             backgroundColor: Colors.transparent,
-          //             isScrollControlled: true,
-          //             builder:
-          //                 (sheetContext) => ChangeNotifierProvider.value(
-          //                   value: context.read<ChatProviderV3>(),
-          //                   child: const HistoryBottomSheet(),
-          //                 ),
-          //           );
-          //         },
-
-          //         icon: const Icon(Icons.history),
-          //       );
-          //     },
-          //   ),
-          // ],
+        body: SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
+              // ── Consistent Header ────────────────────────────
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                child: AppScreenHeader(
+                  title: "Light",
+                  subtitle: "Your AI companion",
+                  bottomPadding: 0,
+                ),
+              ),
+              // ── Chat Body ────────────────────────────────────
+              const Expanded(child: ChatBodyV3()),
+            ],
+          ),
         ),
-
-        body: const ChatBodyV3(),
       ),
     );
   }
 }
+

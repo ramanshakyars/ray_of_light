@@ -91,6 +91,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
     return Scaffold(
       backgroundColor: AppColors.getMonoBackground(isDarkMode),
+      extendBody: false,
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onHorizontalDragEnd: (details) {
@@ -128,77 +129,55 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   // ------------------ NEW PREMIUM BOTTOM NAV ------------------
 
   Widget _buildBottomNavigationBar(bool isDarkMode) {
-    // final isDarkMode =
-    //     Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
-
     final bg = AppColors.getMonoCard(isDarkMode);
     final border = AppColors.getMonoBorder(isDarkMode);
     final iconColor = AppColors.getMonoIcon(isDarkMode);
-    final selectedBg = AppColors.getMonoTextPrimary(isDarkMode);
-
-    final bottomInset = MediaQuery.of(context).padding.bottom;
 
     return Container(
       decoration: BoxDecoration(
         color: bg,
-        border: Border(top: BorderSide(color: border)),
-      ),
-      child: Padding(
-        // ✅ THIS is the magic fix
-        padding: EdgeInsets.fromLTRB(
-          12,
-          4,
-          12,
-          bottomInset > 0 ? bottomInset : 6,
+        border: Border(
+          top: BorderSide(
+            color: border.withOpacity(0.5),
+            width: 0.5,
+          ),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: List.generate(_routes.length, (index) {
-            final selected = _currentIndex == index;
+      ),
+      child: SafeArea(
+        bottom: true,
+        top: false,
+        child: SizedBox(
+          height: 42,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: List.generate(_routes.length, (index) {
+              final selected = _currentIndex == index;
 
-            return Expanded(
-              child: GestureDetector(
-                onTap: () => _navigateToTab(context, index),
-                behavior: HitTestBehavior.opaque,
-                child: SizedBox(
-                  height: 65,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      /// ICON PILL
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 220),
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          // color: selected ? selectedBg : Colors.transparent,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: _buildNavIcon(
-                          index,
-                          selected,
-                          iconColor,
-                          isDarkMode,
-                        ),
+              return Expanded(
+                child: GestureDetector(
+                  onTap: () => _navigateToTab(context, index),
+                  behavior: HitTestBehavior.opaque,
+                  child: Center(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 150),
+                      transitionBuilder: (Widget child, Animation<double> animation) {
+                        return ScaleTransition(
+                          scale: Tween<double>(begin: 0.85, end: 1.0).animate(animation),
+                          child: child,
+                        );
+                      },
+                      child: _buildNavIcon(
+                        index,
+                        selected,
+                        iconColor,
+                        isDarkMode,
                       ),
-
-                      const SizedBox(height: 2),
-
-                      /// LABEL
-                      // Text(
-                      //   _getLabel(index),
-                      //   style: AppTextStyles.monoMuted12(isDarkMode).copyWith(
-                      //     color:
-                      //         selected
-                      //             ? AppColors.getMonoTextPrimary(isDarkMode)
-                      //             : AppColors.getMonoTextSecondary(isDarkMode),
-                      //   ),
-                      // ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          }),
+              );
+            }),
+          ),
         ),
       ),
     );
@@ -207,84 +186,51 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   // ------------------ ICON BUILDER ------------------
 
   Widget _buildNavIcon(int index, bool selected, Color iconColor, bool isDark) {
-    // final isDark =
-    //     Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
-
     final selectedIconColor =
         isDark ? Colors.white : AppColors.getMonoTextPrimary(isDark);
+    final color = selected ? selectedIconColor : iconColor;
+    const double size = 24.0;
 
     switch (index) {
       case 0:
         return Icon(
           selected ? Icons.home : Icons.home_outlined,
-          color: selected ? selectedIconColor : iconColor,
-          size: selected ? 30 : 24,
+          key: ValueKey('icon_0_$selected'),
+          color: color,
+          size: size,
         );
-
-      // case 1:
-      //   return Stack(
-      //     alignment: Alignment.center,
-      //     children: [
-      //       AnimatedBuilder(
-      //         animation: _rotateController,
-      //         builder:
-      //             (_, child) => Transform.rotate(
-      //               angle: _rotateController.value * 2 * 3.1416,
-      //               child: child,
-      //             ),
-      //         child: Container(
-      //           width: 28,
-      //           height: 28,
-      //           decoration: const BoxDecoration(
-      //             shape: BoxShape.circle,
-      //             gradient: RadialGradient(
-      //               colors: [
-      //                 Color.fromARGB(25, 35, 74, 246),
-      //                 Color.fromARGB(25, 210, 47, 239),
-      //               ],
-      //             ),
-      //           ),
-      //         ),
-      //       ),
-      //       ScaleTransition(
-      //         scale: Tween(begin: 0.9, end: 1.1).animate(
-      //           CurvedAnimation(
-      //             parent: _pulseController,
-      //             curve: Curves.easeInOut,
-      //           ),
-      //         ),
-      //         child: Icon(Icons.auto_awesome, size: 17, color: iconColor),
-      //       ),
-      //     ],
-      //   );
 
       case 1:
         return Icon(
           selected ? Icons.auto_awesome : Icons.auto_awesome_outlined,
-          color: selected ? selectedIconColor : iconColor,
-          size: selected ? 30 : 24,
+          key: ValueKey('icon_1_$selected'),
+          color: color,
+          size: size,
         );
 
       case 2:
         return Image.asset(
           'assets/nest-logo.png',
-          width: 45,
-          height: 30,
-          color: selected ? selectedIconColor : iconColor,
+          key: ValueKey('icon_2_$selected'),
+          width: 26,
+          height: 26,
+          color: color,
         );
 
       case 3:
         return Icon(
           selected ? Icons.air : Icons.air_outlined,
-          color: selected ? selectedIconColor : iconColor,
-          size: selected ? 30 : 24,
+          key: ValueKey('icon_3_$selected'),
+          color: color,
+          size: size,
         );
 
       case 4:
         return Icon(
           selected ? Icons.favorite : Icons.favorite_border,
-          color: selected ? selectedIconColor : iconColor,
-          size: selected ? 30 : 26,
+          key: ValueKey('icon_4_$selected'),
+          color: color,
+          size: size,
         );
 
       default:

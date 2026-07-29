@@ -4,6 +4,7 @@ import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/screens/features/goal-tracker/create_wish_bottom_sheet.dart';
+import 'package:rayoflite/presentation/widgets/app_screen_header.dart';
 
 class DreamGardenScreen extends StatefulWidget {
   final List<Map<String, dynamic>> goals;
@@ -87,6 +88,7 @@ class _DreamGardenScreenState
           AppColors.getMonoBackground(isDark),
 
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             const SizedBox(height: 12),
@@ -146,50 +148,22 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark =
-        context.watch<ThemeProvider>().isDarkMode;
+    final isDark = context.watch<ThemeProvider>().isDarkMode;
 
     return Padding(
-      padding:
-          const EdgeInsets.symmetric(horizontal: 16),
-
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
-
-              children: [
-                Text(
-                  "Dream Garden",
-                  style:
-                      AppTextStyles.monoBold22(
-                        isDark,
-                      ),
-                ),
-
-                const SizedBox(height: 2),
-
-                Text(
-                  "Plant your dreams and watch them grow",
-
-                  style:
-                      AppTextStyles.monoSecondary14(
-                        isDark,
-                      ),
-                ),
-              ],
-            ),
-          ),
-
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: AppScreenHeader(
+        title: "Dream Garden",
+        subtitle: "Plant your dreams and watch them grow",
+        bottomPadding: 0,
+        actions: [
           IconButton(
             onPressed: onCreateWishTap,
-
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
             icon: Icon(
               Icons.auto_awesome_outlined,
-              color:
-                  AppColors.getMonoIcon(isDark),
+              color: AppColors.getMonoIcon(isDark),
             ),
           ),
         ],

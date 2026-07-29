@@ -54,6 +54,7 @@ class _SocialFeedPageV2State extends State<SocialFeedPageV2> {
     return Scaffold(
       backgroundColor: AppColors.getMonoBackground(isDark),
       body: SafeArea(
+        bottom: false,
         child: Consumer<SocialFeedProvider>(
           builder: (context, vm, _) {
             // ================= LOADING =================
@@ -74,7 +75,7 @@ class _SocialFeedPageV2State extends State<SocialFeedPageV2> {
             return RefreshIndicator(
               onRefresh: vm.loadPosts,
               child: ListView.builder(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
                 itemCount: 3 + vm.posts.length,
                 itemBuilder: (context, index) {
                   // HEADER

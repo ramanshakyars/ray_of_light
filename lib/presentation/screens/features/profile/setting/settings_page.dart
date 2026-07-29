@@ -8,6 +8,7 @@ import 'package:rayoflite/presentation/screens/features/profile/setting/logout_m
 import 'package:rayoflite/presentation/screens/features/profile/setting/settings_section.dart';
 import 'package:rayoflite/presentation/screens/features/profile/setting/settings_switch_tile.dart';
 import 'package:rayoflite/presentation/screens/features/profile/setting/settings_tile.dart';
+import 'package:rayoflite/presentation/widgets/app_screen_header.dart';
 
 import '../../ṃood-manager/mood_bottom_sheet.dart';
 
@@ -28,17 +29,11 @@ class SettingsPage extends StatelessWidget {
               const SizedBox(height: 12),
 
               /// HEADER
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Settings",
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.getMonoTextPrimary(isDark),
-                    ),
-                  ),
+              AppScreenHeader(
+                title: "Settings",
+                subtitle: "Manage your account and preferences",
+                bottomPadding: 0,
+                actions: [
                   IconButton(
                     onPressed: () => context.pop(),
                     icon: Icon(
@@ -47,12 +42,6 @@ class SettingsPage extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
-
-              const SizedBox(height: 8),
-              Text(
-                "Manage your account and preferences",
-                style: TextStyle(color: AppColors.getMonoTextSecondary(isDark)),
               ),
 
               const SizedBox(height: 30),

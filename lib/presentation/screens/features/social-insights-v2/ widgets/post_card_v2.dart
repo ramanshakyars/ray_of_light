@@ -32,103 +32,119 @@ class PostCardV2 extends StatelessWidget {
     final hasMedia = post.mediaUrls.isNotEmpty;
     final hasMood = post.mood != null && post.mood!.isNotEmpty;
 
+    final primaryColor = AppColors.getMonoTextPrimary(isDark);
+    final initials = auth.name.isNotEmpty ? auth.name[0].toUpperCase() : '?';
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 24),
-      padding: const EdgeInsets.symmetric(vertical: 18),
+      margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: AppColors.getMonoDivider(isDark)),
-        ),
+        color: AppColors.getMonoCard(isDark),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.getMonoBorder(isDark).withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// ================= USER =================
-          Row(
-            children: [
-              Text(auth.name, style: AppTextStyles.monoMedium18(isDark)),
-              const SizedBox(width: 8),
-              Text(
-                _timeAgo(post.createdAt),
-                style: AppTextStyles.monoMuted12(isDark),
-              ),
-            ],
+          /// ================= USER ROW =================
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 18, 18, 14),
+            child: Row(
+              children: [
+                /// Avatar
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: primaryColor.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.getMonoBorder(isDark).withOpacity(0.4)),
+                  ),
+                  child: Center(
+                    child: Text(
+                      initials,
+                      style: AppTextStyles.monoBold22(isDark).copyWith(fontSize: 16),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(auth.name, style: AppTextStyles.monoMedium18(isDark).copyWith(fontSize: 15, fontWeight: FontWeight.w700)),
+                      const SizedBox(height: 2),
+                      Text(
+                        _timeAgo(post.createdAt),
+                        style: AppTextStyles.monoMuted12(isDark),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.more_horiz_rounded, color: AppColors.getMonoIcon(isDark).withOpacity(0.5), size: 22),
+              ],
+            ),
           ),
-
-          const SizedBox(height: 14),
 
           /// ================= MOOD =================
           if (hasMood) ...[
-            Center(
-              child: Text(post.mood!, style: const TextStyle(fontSize: 40)),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Center(
+                child: Text(post.mood!, style: const TextStyle(fontSize: 48)),
+              ),
             ),
-            const SizedBox(height: 14),
           ],
 
           /// ================= MEDIA =================
           if (hasMedia) ...[
-            MediaCarousel(mediaUrls: post.mediaUrls),
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.zero, bottom: Radius.zero),
+              child: MediaCarousel(mediaUrls: post.mediaUrls),
+            ),
             const SizedBox(height: 14),
           ],
 
           /// ================= TEXT =================
           if (hasText)
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(18, 0, 18, 14),
+              child: Text(
+                post.caption,
+                style: AppTextStyles.monoRegular16(isDark).copyWith(height: 1.6, fontSize: 15),
+              ),
+            ),
+
+          /// ================= ACTION ROW =================
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 4, 18, 18),
+            child: Row(
               children: [
-                Container(
-                  width: 3,
-                  height: 50,
-                  color: AppColors.getMonoBorder(isDark),
+                _action(
+                  context,
+                  icon: post.liked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                  label: post.likeCount.toString(),
+                  isDark: isDark,
+                  onTap: () => provider.toggleLike(post),
+                  isActive: post.liked,
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    post.caption,
-                    style: AppTextStyles.monoRegular16(
-                      isDark,
-                    ).copyWith(height: 1.5),
-                  ),
+                const SizedBox(width: 28),
+                _action(
+                  context,
+                  icon: Icons.chat_bubble_outline_rounded,
+                  label: post.commentCount.toString(),
+                  isDark: isDark,
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => CommentSheet(post: post),
+                    );
+                  },
+                  isActive: false,
                 ),
               ],
             ),
-
-          const SizedBox(height: 16),
-
-          /// ================= ACTION ROW =================
-          Row(
-            children: [
-              _action(
-                context,
-                icon: post.liked ? Icons.favorite : Icons.favorite_border,
-                label: post.likeCount.toString(),
-                isDark: isDark,
-                onTap: () => provider.toggleLike(post),
-              ),
-              const SizedBox(width: 24),
-              _action(
-                context,
-                icon: Icons.chat_bubble_outline,
-                label: post.commentCount.toString(),
-                isDark: isDark,
-                onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    builder: (_) => CommentSheet(post: post),
-                  );
-                },
-              ),
-              // const SizedBox(width: 24),
-              // _action(
-              //   context,
-              //   icon: Icons.share_outlined,
-              //   label: "",
-              //   isDark: isDark,
-              //   onTap: () {},
-              // ),
-            ],
           ),
         ],
       ),
@@ -141,18 +157,28 @@ class PostCardV2 extends StatelessWidget {
     required String label,
     required bool isDark,
     required VoidCallback onTap,
+    required bool isActive,
   }) {
-    return InkWell(
+    final activeColor = AppColors.getMonoTextPrimary(isDark);
+    final inactiveColor = AppColors.getMonoIcon(isDark);
+    final color = isActive ? activeColor : inactiveColor;
+
+    return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque,
       child: Row(
         children: [
-          Icon(icon, size: 18, color: AppColors.getMonoIcon(isDark)),
+          Icon(icon, size: 20, color: color),
           if (label.isNotEmpty) ...[
             const SizedBox(width: 6),
-            Text(label, style: AppTextStyles.monoMuted12(isDark)),
+            Text(label, style: AppTextStyles.monoMuted12(isDark).copyWith(
+              color: color,
+              fontSize: 13,
+            )),
           ],
         ],
       ),
     );
   }
 }
+

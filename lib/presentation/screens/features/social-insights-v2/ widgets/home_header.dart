@@ -71,64 +71,53 @@ class HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final primaryColor = AppColors.getMonoTextPrimary(isDark);
 
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-      decoration: BoxDecoration(
-        color: AppColors.getMonoCard(isDark),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          /// TOP ROW
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              /// GREETING (Clickable)
-              Expanded(
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: () => _goToProfile(context),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "${_getGreeting()}",
-                        style: AppTextStyles.monoBold22(isDark),
-                      ),
-                      const SizedBox(height: 4),
-                       Text(
-                        "$userName",
-                        style: AppTextStyles.monoBold22(isDark),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _getDate(),
-                        style: AppTextStyles.monoMuted12(isDark),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+          /// LEFT — Logo
+          Image.asset('assets/logo.png', height: 26, color: primaryColor),
 
-              /// PROFILE ICON (Clickable)
-              InkWell(
-                borderRadius: BorderRadius.circular(100),
-                // onTap: () => _goToProfile(context),
-                onTap: () => _openMoodSheet(context),
-                child: _circleIcon(Icons.mood_outlined, isDark),
-                // child: _circleIcon(Icons.person_outline, isDark),
+          const SizedBox(width: 14),
+
+          /// CENTER — Greeting + Name → taps to Profile
+          Expanded(
+            child: GestureDetector(
+              onTap: () => _goToProfile(context),
+              behavior: HitTestBehavior.opaque,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "${_getGreeting()}, $userName",
+                    style: AppTextStyles.monoBold22(isDark).copyWith(
+                      fontSize: 22,
+                      height: 1.2,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    _getDate(),
+                    style: AppTextStyles.monoMuted12(isDark).copyWith(letterSpacing: 0.4),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
 
-          // const SizedBox(height: 16),
+          const SizedBox(width: 12),
 
-          // Text(
-          //   "Share your light today",
-          //   style: AppTextStyles.monoSecondary14(isDark),
-          // ),
+          /// RIGHT — Mood only (profile accessible via greeting tap)
+          InkWell(
+            borderRadius: BorderRadius.circular(100),
+            onTap: () => _openMoodSheet(context),
+            child: _circleIcon(Icons.mood_outlined, isDark),
+          ),
         ],
       ),
     );
@@ -141,8 +130,10 @@ class HomeHeader extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.getMonoSurface(isDark),
         shape: BoxShape.circle,
+        border: Border.all(color: AppColors.getMonoBorder(isDark).withOpacity(0.4)),
       ),
-      child: Icon(icon, size: 18, color: AppColors.getMonoIcon(isDark)),
+      child: Icon(icon, size: 19, color: AppColors.getMonoIcon(isDark)),
     );
   }
 }
+
