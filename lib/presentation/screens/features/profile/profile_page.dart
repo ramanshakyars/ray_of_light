@@ -7,7 +7,9 @@ import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/screens/features/profile/provider/profile_provider.dart';
+import 'package:rayoflite/presentation/screens/features/profile/widgets/post_card.dart';
 import 'package:rayoflite/presentation/screens/features/profile/widgets/profile_header.dart';
+import 'package:rayoflite/presentation/screens/features/profile/widgets/thought_card.dart';
 import 'package:rayoflite/presentation/screens/features/profile/widgets/weekly_chart.dart';
 import 'package:rayoflite/presentation/screens/features/screen_time/data/ScreenTimeProvider.dart';
 
@@ -21,6 +23,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage>
     with TickerProviderStateMixin {
   late TabController _tabController;
+
   @override
   void initState() {
     super.initState();
@@ -31,17 +34,22 @@ class _ProfilePageState extends State<ProfilePage>
   void _loadAllData() {
     Future.microtask(() {
       context.read<ScreenTimeProvider>().fetchWeekly();
-      // context.read<ProfileProvider>().fetchThoughts();
-      // context.read<ProfileProvider>().fetchPosts();
+      context.read<ProfileProvider>().fetchThoughts();
+      context.read<ProfileProvider>().fetchPosts();
     });
   }
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDarkMode;
     final profileProvider = context.watch<ProfileProvider>();
-    final auth = context.watch<AuthProvider>();
+
     return Scaffold(
       backgroundColor: AppColors.getMonoBackground(isDark),
       body: SafeArea(
@@ -58,7 +66,7 @@ class _ProfilePageState extends State<ProfilePage>
                         children: [
                           const SizedBox(height: 16),
                           const ProfileHeader(),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 28),
                           const WeeklyChart(),
                           const SizedBox(height: 24),
                         ],
@@ -66,31 +74,25 @@ class _ProfilePageState extends State<ProfilePage>
                     ),
                     SliverPersistentHeader(
                       pinned: true,
-                      delegate: _SliverAppBarDelegate(
+                      delegate: _SliverTabBarDelegate(
                         TabBar(
                           controller: _tabController,
                           indicatorColor: AppColors.getMonoTextPrimary(isDark),
                           indicatorWeight: 2,
                           dividerColor: AppColors.getMonoBorder(isDark),
-
                           labelColor: AppColors.getMonoTextPrimary(isDark),
-                          unselectedLabelColor: AppColors.getMonoTextMuted(
-                            isDark,
-                          ),
-
+                          unselectedLabelColor:
+                              AppColors.getMonoTextMuted(isDark),
                           labelStyle: AppTextStyles.monoMedium18(isDark),
-                          unselectedLabelStyle: AppTextStyles.monoMedium18(
-                            isDark,
-                          ),
-
+                          unselectedLabelStyle:
+                              AppTextStyles.monoMedium18(isDark),
                           splashFactory: NoSplash.splashFactory,
-                          overlayColor: MaterialStateProperty.all(
+                          overlayColor: WidgetStateProperty.all(
                             Colors.transparent,
                           ),
-
                           tabs: const [
-                            Tab(text: "Thoughts"),
-                            Tab(text: "Posts"),
+                            Tab(text: 'Thoughts'),
+                            Tab(text: 'Posts'),
                           ],
                         ),
                         isDark,
@@ -99,35 +101,25 @@ class _ProfilePageState extends State<ProfilePage>
                   ];
                 },
                 body: TabBarView(
-                  
                   controller: _tabController,
                   children: [
-                    _buildTabList(
-                      isLoading: profileProvider.isLoadingThoughts,
-                      items: profileProvider.thoughts,
-                      isDark: isDark,
-                      emptyMessage: "No thoughts shared yet.",
-                    ),
-                    _buildTabList(
-                      isLoading: profileProvider.isLoadingPosts,
-                      items: profileProvider.posts,
-                      isDark: isDark,
-                      emptyMessage: "No posts yet.",
-                    ),
+                    // ─── Thoughts Tab ───
+                    _buildThoughtsTab(profileProvider, isDark),
+
+                    // ─── Posts Tab ───
+                    _buildPostsTab(profileProvider, isDark),
                   ],
                 ),
               ),
             ),
 
-            /// 🔹 Settings Icon (Fixed at top right)
+            // ─── Settings icon (fixed top-right) ───
             Positioned(
               top: 8,
               right: 16,
               child: IconButton(
-                onPressed:
-                    () => context.push(
-                      '${RouteNames.mainApp}/${RouteNames.settings}',
-                    ),
+                onPressed: () => context.push(
+                    '${RouteNames.mainApp}/${RouteNames.settings}'),
                 icon: Icon(
                   Icons.settings_outlined,
                   size: 26,
@@ -140,45 +132,104 @@ class _ProfilePageState extends State<ProfilePage>
       ),
     );
   }
-}
 
-Widget _buildTabList({
-  required bool isLoading,
-  required List items,
-  required bool isDark,
-  required String emptyMessage,
-}) {
-  if (isLoading) {
-    return const Center(child: CircularProgressIndicator());
-  }
-  if (items.isEmpty) {
-    return Center(
-      child: Text(emptyMessage, style: TextStyle(color: Colors.grey[500])),
+  Widget _buildThoughtsTab(ProfileProvider provider, bool isDark) {
+    if (provider.isLoadingThoughts) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (provider.thoughtsError != null) {
+      return _errorState(provider.thoughtsError!, isDark,
+          onRetry: () => provider.fetchThoughts());
+    }
+    if (provider.thoughts.isEmpty) {
+      return _emptyState(
+        icon: Icons.edit_note_rounded,
+        message: 'No thoughts yet',
+        sub: 'Your journal entries will appear here.',
+        isDark: isDark,
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.only(top: 12, bottom: 32),
+      itemCount: provider.thoughts.length,
+      itemBuilder: (_, i) =>
+          ThoughtCard(thought: provider.thoughts[i], isDark: isDark),
     );
   }
-  return ListView.separated(
-    padding: const EdgeInsets.symmetric(vertical: 16),
-    itemCount: items.length,
-    separatorBuilder:
-        (_, __) => Divider(color: isDark ? Colors.white10 : Colors.black12),
-    itemBuilder: (context, index) {
-      final item = items[index];
-      return ListTile(
-        title: Text(
-          item.content ?? "Untitled",
-          style: TextStyle(color: AppColors.getTextPrimaryColor(isDark)),
-        ),
-        subtitle: Text(
-          "Posted on ${item.date}",
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
-        ),
+
+  Widget _buildPostsTab(ProfileProvider provider, bool isDark) {
+    if (provider.isLoadingPosts) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (provider.postsError != null) {
+      return _errorState(provider.postsError!, isDark,
+          onRetry: () => provider.fetchPosts());
+    }
+    if (provider.posts.isEmpty) {
+      return _emptyState(
+        icon: Icons.photo_library_outlined,
+        message: 'No posts yet',
+        sub: 'Your shared posts will appear here.',
+        isDark: isDark,
       );
-    },
-  );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.only(top: 12, bottom: 32),
+      itemCount: provider.posts.length,
+      itemBuilder: (_, i) =>
+          PostCard(post: provider.posts[i], isDark: isDark),
+    );
+  }
+
+  Widget _emptyState({
+    required IconData icon,
+    required String message,
+    required String sub,
+    required bool isDark,
+  }) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon,
+              size: 48, color: AppColors.getMonoTextMuted(isDark)),
+          const SizedBox(height: 12),
+          Text(message, style: AppTextStyles.monoMedium18(isDark)),
+          const SizedBox(height: 6),
+          Text(sub,
+              style: AppTextStyles.monoMuted12(isDark),
+              textAlign: TextAlign.center),
+        ],
+      ),
+    );
+  }
+
+  Widget _errorState(String message, bool isDark,
+      {required VoidCallback onRetry}) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.wifi_off_rounded,
+              size: 40, color: AppColors.getMonoTextMuted(isDark)),
+          const SizedBox(height: 12),
+          Text(message,
+              style: AppTextStyles.monoMuted12(isDark),
+              textAlign: TextAlign.center),
+          const SizedBox(height: 16),
+          TextButton(
+            onPressed: onRetry,
+            child: Text('Retry',
+                style: AppTextStyles.monoMedium18(isDark)),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate(this._tabBar, this.isDark);
+class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverTabBarDelegate(this._tabBar, this.isDark);
   final TabBar _tabBar;
   final bool isDark;
 
@@ -194,16 +245,14 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     return Container(
-      color: AppColors.getMonoBackground(
-        isDark,
-      ), // Keeps tabs opaque while scrolling
+      color: AppColors.getMonoBackground(isDark),
       child: Material(
-        color: AppColors.getMonoBackground(isDark), // 👈 actual background fix
+        color: AppColors.getMonoBackground(isDark),
         child: _tabBar,
       ),
     );
   }
 
   @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) => false;
+  bool shouldRebuild(_SliverTabBarDelegate oldDelegate) => false;
 }

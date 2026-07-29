@@ -20,142 +20,152 @@ class WeeklyChart extends StatelessWidget {
 
     if (provider.isLoading) {
       return const SizedBox(
-        height: 280,
+        height: 300,
         child: Center(child: CircularProgressIndicator()),
       );
     }
 
-    // 🔹 Prepare spots. If empty, create a flat line of 7 spots at 0 hours.
+    // Prepare spots — flat line if no data yet
     List<FlSpot> spots;
     if (provider.weeklyData.isEmpty) {
       spots = List.generate(7, (i) => FlSpot(i.toDouble(), 0));
     } else {
-      spots =
-          provider.weeklyData.map((data) {
-            return FlSpot(_dayToIndex(data.day).toDouble(), data.hours);
-          }).toList();
+      spots = provider.weeklyData.map((data) {
+        return FlSpot(_dayToIndex(data.day).toDouble(), data.hours);
+      }).toList();
       spots.sort((a, b) => a.x.compareTo(b.x));
     }
 
-    return SizedBox(
-      height: 280,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: LineChart(
-          LineChartData(
-            minY: 0,
-            maxY: 24,
-            minX: 0,
-            maxX: 6,
-          
-            // 🔹 Visual Border logic
-            borderData: FlBorderData(
-              show: true,
-              border: Border(
-                bottom: BorderSide(
-                  color: isDark ? Colors.white10 : Colors.black12,
-                ),
-                left: BorderSide(
-                  color: isDark ? Colors.white10 : Colors.black12,
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // ─── Section label ───
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              Icon(
+                Icons.access_time_rounded,
+                size: 15,
+                color: AppColors.getMonoTextMuted(isDark),
               ),
-            ),
-            gridData: FlGridData(
-              show: false,
-              drawVerticalLine: true,
-              horizontalInterval: 6,
-              getDrawingHorizontalLine:
-                  (value) => FlLine(
-                    color: isDark ? Colors.white10 : Colors.black12,
-                    strokeWidth: 1,
-                  ),
-              getDrawingVerticalLine:
-                  (value) => FlLine(
-                    color: isDark ? Colors.white10 : Colors.black12,
-                    strokeWidth: 1,
-                  ),
-            ),
-            titlesData: FlTitlesData(
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  interval: 1,
-                  reservedSize: 30,
-                  getTitlesWidget: (value, meta) {
-                    const days = [
-                      'Sun',
-                      'Mon',
-                      'Tue',
-                      'Wed',
-                      'Thu',
-                      'Fri',
-                      'Sat',
-                    ];
-                    // Guard against index out of bounds
-                    if (value < 0 ||
-                        value >= days.length ||
-                        value != value.toInt()) {
-                      return const SizedBox();
-                    }
-
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(
-                        days[value.toInt()],
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: AppColors.getTextPrimaryColor(
-                            isDark,
-                          ).withOpacity(0.5),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  reservedSize: 35,
-                  getTitlesWidget:
-                      (val, meta) => Text(
-                        "${val.toInt()}h",
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: AppColors.getTextPrimaryColor(
-                            isDark,
-                          ).withOpacity(0.5),
-                        ),
-                      ),
-                ),
-              ),
-              topTitles: const AxisTitles(
-                sideTitles: SideTitles(showTitles: false),
-              ),
-              rightTitles: const AxisTitles(
-                sideTitles: SideTitles(showTitles: false),
-              ),
-            ),
-            lineBarsData: [
-              LineChartBarData(
-                spots: spots,
-                isCurved: true,
-                // 🔹 Make line subtle if it's just dummy/zero data
-                color:
-                    provider.weeklyData.isEmpty
-                        ? AppColors.getPrimary(isDark).withOpacity(0.2)
-                        : AppColors.getPrimary(isDark),
-                barWidth: 3,
-                dotData: FlDotData(show: provider.weeklyData.isNotEmpty),
-                belowBarData: BarAreaData(
-                  show: true,
-                  color: AppColors.getPrimary(isDark).withOpacity(0.05),
+              const SizedBox(width: 6),
+              Text(
+                'Time Spent This Week',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.getMonoTextMuted(isDark),
+                  letterSpacing: 0.4,
                 ),
               ),
             ],
           ),
         ),
-      ),
+
+        const SizedBox(height: 14),
+
+        // ─── Chart ───
+        SizedBox(
+          height: 260,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: LineChart(
+              LineChartData(
+                minY: 0,
+                maxY: 24,
+                minX: 0,
+                maxX: 6,
+                borderData: FlBorderData(
+                  show: true,
+                  border: Border(
+                    bottom: BorderSide(
+                      color: isDark ? Colors.white10 : Colors.black12,
+                    ),
+                    left: BorderSide(
+                      color: isDark ? Colors.white10 : Colors.black12,
+                    ),
+                  ),
+                ),
+                gridData: FlGridData(
+                  show: false,
+                  drawVerticalLine: false,
+                  horizontalInterval: 6,
+                  getDrawingHorizontalLine: (value) => FlLine(
+                    color: isDark ? Colors.white10 : Colors.black12,
+                    strokeWidth: 1,
+                  ),
+                ),
+                titlesData: FlTitlesData(
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      interval: 1,
+                      reservedSize: 30,
+                      getTitlesWidget: (value, meta) {
+                        const days = [
+                          'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
+                        ];
+                        if (value < 0 ||
+                            value >= days.length ||
+                            value != value.toInt()) {
+                          return const SizedBox();
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            days[value.toInt()],
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: AppColors.getTextPrimaryColor(isDark)
+                                  .withOpacity(0.5),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 35,
+                      getTitlesWidget: (val, meta) => Text(
+                        '${val.toInt()}h',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: AppColors.getTextPrimaryColor(isDark)
+                              .withOpacity(0.5),
+                        ),
+                      ),
+                    ),
+                  ),
+                  topTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                ),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: spots,
+                    isCurved: true,
+                    color: provider.weeklyData.isEmpty
+                        ? AppColors.getPrimary(isDark).withOpacity(0.2)
+                        : AppColors.getPrimary(isDark),
+                    barWidth: 3,
+                    dotData: FlDotData(show: provider.weeklyData.isNotEmpty),
+                    belowBarData: BarAreaData(
+                      show: true,
+                      color: AppColors.getPrimary(isDark).withOpacity(0.05),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

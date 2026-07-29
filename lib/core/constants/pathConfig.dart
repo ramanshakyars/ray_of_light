@@ -1,8 +1,8 @@
 class PathConfig {
-  //  static const String baseUrl = 'http://localhost:9090/rayoflight/api';
+   static const String baseUrl = 'http://localhost:9090/rayoflight/api';
   //  static const String baseUrl = 'http://192.168.1.6:9090/rayoflight/api';
   // static const String baseUrl = 'http://ec2-3-111-209-210.ap-south-1.compute.amazonaws.com/rayoflight/api';
- static const String baseUrl = 'https://api.rayoflight.life/rayoflight/api';
+//  static const String baseUrl = 'https://api.rayoflight.life/rayoflight/api';
 
   // Auth endpoints
   static const String login = '$baseUrl/public/login';
@@ -19,6 +19,7 @@ class PathConfig {
   static const String userProfile = '$baseUrl/user/profile';
   static const String updateProfile = '$baseUrl/user/update';
   static const String forgotPassword = '$baseUrl/auth/forgot-password';
+  static const String uploadProfilePhoto = '$baseUrl/user/profile-photo';
 
   //Goal Tracker endpoints
   static const String getGoals = '$baseUrl/goal';
@@ -45,6 +46,7 @@ class PathConfig {
   // social -feed 
     static const String postInsight = '$baseUrl/insight/post';
     static const String getAllPosts = '$baseUrl/insight/get';
+    static const String getMyPosts = '$baseUrl/insight/my-posts';
     static const String doCommentOnPost = '$baseUrl/insight/comment';
     static const String doLikeOnPost = '$baseUrl/insight/like';
     static const String getCommentsByPostId = '$baseUrl/insight/comments';
