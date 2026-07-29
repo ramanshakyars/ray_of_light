@@ -13,6 +13,8 @@ class PostViewModel {
 
   bool liked;
   bool likeLoading;
+  bool active;
+  String? moderationReason;
 
   PostViewModel({
     required this.id,
@@ -26,6 +28,8 @@ class PostViewModel {
     required this.shareCount,
     this.liked = false,
     this.likeLoading = false,
+    this.active = true,
+    this.moderationReason,
   });
 
   bool get hasText => caption.trim().isNotEmpty;

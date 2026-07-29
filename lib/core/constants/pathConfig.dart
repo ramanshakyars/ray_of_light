@@ -50,6 +50,7 @@ class PathConfig {
     static const String doCommentOnPost = '$baseUrl/insight/comment';
     static const String doLikeOnPost = '$baseUrl/insight/like';
     static const String getCommentsByPostId = '$baseUrl/insight/comments';
+    static const String moderatePost = '$baseUrl/insight/moderate';
 
 // notifications
     static const String getNotifications = '$baseUrl/notifications';

@@ -18,6 +18,8 @@ class PostModelV2 {
   int likeCount;
   final int commentCount;
   final int shareCount;
+  final bool active;
+  final String? moderationReason;
 
   bool liked; // UI only
 
@@ -31,6 +33,8 @@ class PostModelV2 {
     required this.likeCount,
     required this.commentCount,
     required this.shareCount,
+    this.active = true,
+    this.moderationReason,
     this.liked = false,
   });
 
@@ -58,6 +62,8 @@ class PostModelV2 {
       likeCount: json['likeCount'] ?? 0,
       commentCount: json['commentCount'] ?? 0,
       shareCount: json['shareCount'] ?? 0,
+      active: json['active'] ?? true,
+      moderationReason: json['moderationReason'],
     );
   }
 }
@@ -163,6 +169,28 @@ class SocialFeedProvider extends ChangeNotifier {
       likeCount: p.likeCount,
       commentCount: p.commentCount,
       shareCount: p.shareCount,
+      active: p.active,
+      moderationReason: p.moderationReason,
     );
+  }
+
+  // ================= MODERATION =================
+
+  Future<void> moderatePost(PostViewModel post, bool active, String reason) async {
+    try {
+      final res = await SocialService.moderatePost(
+        postId: post.id,
+        active: active,
+        reason: reason,
+      );
+      if (res != null) {
+        post.active = res.active;
+        post.moderationReason = res.moderationReason;
+        notifyListeners();
+      }
+    } catch (e) {
+      print("MODERATION ERROR => $e");
+      rethrow;
+    }
   }
 }

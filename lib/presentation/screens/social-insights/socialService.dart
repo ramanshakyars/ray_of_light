@@ -109,4 +109,23 @@ class SocialService {
     }
     return [];
   }
+
+  /// MODERATE POST (ADMIN ONLY)
+  static Future<PostModelV2?> moderatePost({
+    required String postId,
+    required bool active,
+    required String reason,
+  }) async {
+    try {
+      final response = await HttpService.post(PathConfig.moderatePost, {
+        'postId': postId,
+        'active': active,
+        'reason': reason,
+      });
+      return PostModelV2.fromJson(response);
+    } catch (e) {
+      print('SocialService.moderatePost error: $e');
+      rethrow;
+    }
+  }
 }
