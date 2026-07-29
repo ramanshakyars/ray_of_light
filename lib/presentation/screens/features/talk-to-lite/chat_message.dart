@@ -9,6 +9,7 @@ class ChatMessage extends StatefulWidget {
   final bool isUser;
   final bool animate;
   final Widget? extraWidget;
+  final DateTime? timestamp;
 
   const ChatMessage({
     super.key,
