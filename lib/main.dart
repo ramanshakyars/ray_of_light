@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,6 +25,7 @@ import 'presentation/screens/notifications/dummy_notification_scheduler.dart';
 Future<void> main() async {
   /// 🔹 Required for async before runApp
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   /// 🔹 Firebase init (unchanged)
   if (!Platform.isIOS) {

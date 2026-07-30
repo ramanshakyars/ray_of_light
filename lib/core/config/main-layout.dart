@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
@@ -89,6 +90,19 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
     _currentIndex = _calculateIndex(location);
 
+    // Set transparent status bar and matching system navigation bar colors
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDarkMode ? Brightness.dark : Brightness.light,
+        systemNavigationBarColor: AppColors.getMonoBackground(isDarkMode),
+        systemNavigationBarIconBrightness:
+            isDarkMode ? Brightness.light : Brightness.dark,
+        systemNavigationBarDividerColor: Colors.transparent,
+      ),
+    );
+
     return Scaffold(
       backgroundColor: AppColors.getMonoBackground(isDarkMode),
       extendBody: false,
@@ -121,15 +135,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   void _navigateToTab(BuildContext context, int index) {
     setState(() => _currentIndex = index);
-    // context.push('${RouteNames.mainApp}/${_routes[index]}');
-    // context.go('${RouteNames.mainApp}/${_routes[index]}');
     MainScreen.goToTab(context, index);
   }
 
-  // ------------------ NEW PREMIUM BOTTOM NAV ------------------
+  // ------------------ PREMIUM BOTTOM NAV ------------------
 
   Widget _buildBottomNavigationBar(bool isDarkMode) {
-    final bg = AppColors.getMonoCard(isDarkMode);
+    final bg = AppColors.getMonoBackground(isDarkMode);
     final border = AppColors.getMonoBorder(isDarkMode);
     final iconColor = AppColors.getMonoIcon(isDarkMode);
 
@@ -138,8 +150,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         color: bg,
         border: Border(
           top: BorderSide(
-            color: border.withOpacity(0.5),
-            width: 0.5,
+            color: border.withValues(alpha: 0.5),
+            width: 0.8,
           ),
         ),
       ),
@@ -147,7 +159,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         bottom: true,
         top: false,
         child: SizedBox(
-          height: 42,
+          height: 52,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(_routes.length, (index) {
@@ -159,7 +171,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   behavior: HitTestBehavior.opaque,
                   child: Center(
                     child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 150),
+                      duration: const Duration(milliseconds: 180),
                       transitionBuilder: (Widget child, Animation<double> animation) {
                         return ScaleTransition(
                           scale: Tween<double>(begin: 0.85, end: 1.0).animate(animation),

@@ -8,6 +8,7 @@ import 'package:rayoflite/presentation/screens/auth/register.dart';
 import 'package:rayoflite/presentation/screens/auth/reset-password.dart';
 import 'package:rayoflite/presentation/screens/features/breathing/breathing_duration_screen.dart';
 import 'package:rayoflite/presentation/screens/features/breathing/breathing_player_screen.dart';
+import 'package:rayoflite/presentation/screens/features/breathing/breathing_model.dart';
 import 'package:rayoflite/presentation/screens/features/profile/profile_page.dart';
 import 'package:rayoflite/presentation/screens/features/profile/setting/deactivate_account_page.dart';
 import 'package:rayoflite/presentation/screens/features/profile/setting/settings_page.dart';
@@ -148,7 +149,10 @@ GoRouter createRouter(String initialLocation) {
                 routes: [
                   GoRoute(
                     path: RouteNames.breathingPlayer,
-                    builder: (context, state) => const BreathingPlayerScreen(),
+                    builder: (context, state) {
+                      final model = state.extra as BreathingModel?;
+                      return BreathingPlayerScreen(model: model);
+                    },
                   ),
                 ],
               ),

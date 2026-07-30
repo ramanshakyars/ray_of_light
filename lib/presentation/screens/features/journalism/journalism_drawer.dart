@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:rayoflite/core/services/journalService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
@@ -23,6 +24,8 @@ class JournalismDrawer extends StatefulWidget {
 class _JournalismDrawerState extends State<JournalismDrawer> {
   bool isLoading = false;
   List<Map<String, dynamic>> journalHistory = [];
+  String searchQuery = "";
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -30,183 +33,224 @@ class _JournalismDrawerState extends State<JournalismDrawer> {
     _loadJournalsHistory();
   }
 
-  /// Load journal history
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   Future<void> _loadJournalsHistory() async {
     setState(() => isLoading = true);
     final response = await JournalService.getJournalsHistory();
     setState(() => isLoading = false);
 
-    if (response['success']) {
+    if (response['success'] == true && response['data'] != null) {
       setState(() {
-        journalHistory =
-            (response['data'] as List)
-                .map((e) => Map<String, dynamic>.from(e as Map))
-                .toList();
-        setState(() {});
+        journalHistory = (response['data'] as List)
+            .map((e) => Map<String, dynamic>.from(e as Map))
+            .toList();
       });
     } else {
-      MessageService.showError(context, 'Failed to load journal history.');
-      print('Error fetching journal history: ${response['message']}');
+      if (mounted) {
+        MessageService.showError(context, 'Failed to load journal history.');
+      }
     }
   }
 
+  List<Map<String, dynamic>> get filteredHistory {
+    if (searchQuery.trim().isEmpty) return journalHistory;
+    final q = searchQuery.toLowerCase();
+    return journalHistory.where((item) {
+      final content = (item['content'] ?? '').toString().toLowerCase();
+      final mood = (item['associatedMood'] ?? '').toString().toLowerCase();
+      return content.contains(q) || mood.contains(q);
+    }).toList();
+  }
+
+  void _selectEntry(String content) {
+    HapticFeedback.selectionClick();
+    widget.onThoughtSelected(content);
+    Navigator.pop(context);
+  }
+
   @override
-@override
-Widget build(BuildContext context) {
-  final isDark =
-      widget.theme.brightness == Brightness.dark;
+  Widget build(BuildContext context) {
+    final isDark = widget.theme.brightness == Brightness.dark;
+    final primaryColor = AppColors.getMonoTextPrimary(isDark);
+    final secondaryColor = AppColors.getMonoTextSecondary(isDark);
+    final surfaceColor = AppColors.getMonoSurface(isDark);
+    final borderColor = AppColors.getMonoBorder(isDark);
 
-  return Drawer(
-    backgroundColor: AppColors.getMonoBackground(isDark),
-    width: MediaQuery.of(context).size.width * 0.88,
-    child: SafeArea(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ===== HEADER =====
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 16, 12),
-            child: Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Journal History",
-                  style: AppTextStyles.monoMedium18(isDark),
-                ),
-                IconButton(
-                  icon: Icon(Icons.close,
-                      color:
-                          AppColors.getMonoIcon(isDark)),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
-            ),
-          ),
-
-          // ===== LIST =====
-          Expanded(
-            child: isLoading
-                ? const Center(
-                    child: CircularProgressIndicator())
-                : journalHistory.isEmpty
-                    ? _buildEmptyState()
-                    : ListView.separated(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20),
-                        itemCount: journalHistory.length,
-                        separatorBuilder: (_, __) =>
-                            const SizedBox(height: 18),
-                        itemBuilder: (context, index) {
-                          final item =
-                              journalHistory[index];
-                          final content =
-                              item['content'] ?? '';
-
-                          return Column(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                content,
-                                maxLines: 1,
-                                overflow:
-                                    TextOverflow.ellipsis,
-                                style:
-                                    AppTextStyles.monoRegular16(
-                                        isDark),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                "Today",
-                                style:
-                                    AppTextStyles.monoMuted12(
-                                        isDark),
-                              ),
-                            ],
-                          );
-                        },
+    return Drawer(
+      backgroundColor: AppColors.getMonoBackground(isDark),
+      width: MediaQuery.of(context).size.width * 0.85,
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── HEADER ─────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 16, 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.history_rounded, size: 20, color: primaryColor),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Journal History",
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: primaryColor,
+                        ),
                       ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
+                    ],
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close_rounded, color: primaryColor, size: 20),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
 
-  
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.note_add_outlined,
-            size: 48,
-            color: widget.theme.colorScheme.onSurface,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'No entries yet',
-            style: widget.theme.textTheme.titleMedium?.copyWith(
-              color: widget.theme.colorScheme.onSurface,
+            // ── SEARCH BAR ─────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: surfaceColor,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: borderColor),
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (val) => setState(() => searchQuery = val),
+                  style: TextStyle(
+                    fontFamily: 'Arial',
+                    fontSize: 14,
+                    color: primaryColor,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: "Search thoughts...",
+                    hintStyle: AppTextStyles.monoMuted12(isDark),
+                    icon: Icon(Icons.search_rounded, size: 18, color: secondaryColor),
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                  ),
+                ),
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Your shared thoughts will appear here',
-            style: widget.theme.textTheme.bodyMedium?.copyWith(
-              color: widget.theme.colorScheme.onSurface,
+
+            const SizedBox(height: 12),
+
+            // ── ENTRIES LIST ───────────────────────────────
+            Expanded(
+              child: isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: primaryColor,
+                      ),
+                    )
+                  : filteredHistory.isEmpty
+                      ? _buildEmptyState(isDark, primaryColor, secondaryColor)
+                      : ListView.separated(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                          itemCount: filteredHistory.length,
+                          separatorBuilder: (_, __) => const SizedBox(height: 10),
+                          itemBuilder: (context, index) {
+                            final item = filteredHistory[index];
+                            final content = item['content']?.toString() ?? '';
+                            final mood = item['associatedMood']?.toString() ?? 'THOUGHT';
+
+                            return GestureDetector(
+                              onTap: () => _selectEntry(content),
+                              child: Container(
+                                padding: const EdgeInsets.all(14),
+                                decoration: BoxDecoration(
+                                  color: surfaceColor,
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(color: borderColor.withValues(alpha: 0.6)),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          mood.toUpperCase(),
+                                          style: TextStyle(
+                                            fontFamily: 'Arial',
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w700,
+                                            color: secondaryColor,
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                        Icon(
+                                          Icons.north_west_rounded,
+                                          size: 14,
+                                          color: secondaryColor,
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      content,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: 'Arial',
+                                        fontSize: 14,
+                                        height: 1.4,
+                                        color: primaryColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildThoughtsList() {
-    return ListView.separated(
-      padding: const EdgeInsets.only(bottom: 24),
-      itemCount: journalHistory.length,
-      separatorBuilder:
-          (context, index) =>
-              Divider(height: 1, color: widget.theme.colorScheme.outline),
-      itemBuilder: (context, index) {
-        final item = journalHistory[index];
-        final fullContent = item['content'] ?? '';
-        final words = fullContent.split(' ');
-        final content =
-            words.length <= 4 ? fullContent : '${words.take(4).join(' ')}...';
-
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Left colored indicator
-              Container(
-                width: 4,
-                height: 40,
-                margin: const EdgeInsets.only(right: 12),
-                decoration: BoxDecoration(
-                  color: widget.theme.colorScheme.primary,
-                  borderRadius: BorderRadius.circular(2),
-                ),
+  Widget _buildEmptyState(bool isDark, Color primaryColor, Color secondaryColor) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.format_list_bulleted_rounded,
+              size: 36,
+              color: secondaryColor,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              searchQuery.isNotEmpty ? "No matching entries" : "No entries yet",
+              style: TextStyle(
+                fontFamily: 'Arial',
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: primaryColor,
               ),
-              // Truncated journal content
-              Expanded(
-                child: Text(
-                  content,
-                  style: widget.theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -36,6 +36,7 @@ dependencies:
   permission_handler: ^11.3.1
   fl_chart: ^1.1.1
   google_sign_in: ^6.2.1
+  audioplayers: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +72,11 @@ flutter:
     - assets/talk-to-light.png
     - assets/nest-logo.png
     - assets/logo-background.png
+    - assets/freesound_community-meditation-bowls-23651.mp3
+    - assets/gigidelaromusic-pure-meditation-tone-450975.mp3
+    - assets/lucadialessandro-angelical-pad-143276.mp3
+    - assets/samuelfjohanns-uplifting-pad-texture-113842.mp3
+    - assets/soul_frequencies-ambient-meditation-music-498455.mp3
 
   fonts:
     - family: Specimen

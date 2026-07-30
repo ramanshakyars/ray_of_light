@@ -7,6 +7,8 @@ import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/widgets/app_screen_header.dart';
 
+import 'breathing_model.dart';
+
 class BreathingDurationScreen extends StatelessWidget {
   const BreathingDurationScreen({super.key});
 
@@ -45,10 +47,42 @@ class BreathingDurationScreen extends StatelessWidget {
                 child: ListView(
                   physics: const BouncingScrollPhysics(),
                   children: [
-                    _buildExerciseCard(context, isDark, "Awaken", "Box Breathing", "2 min", Icons.square_outlined),
-                    _buildExerciseCard(context, isDark, "Relax", "4-7-8 Breathing", "5 min", Icons.waves_rounded),
-                    _buildExerciseCard(context, isDark, "Focus", "Resonance Breathing", "10 min", Icons.lens_blur_rounded),
-                    _buildExerciseCard(context, isDark, "Free Flow", "Open Ended Practice", "∞", Icons.all_inclusive_rounded),
+                    _buildExerciseCard(
+                      context,
+                      isDark,
+                      "Awaken",
+                      "Box Breathing",
+                      "2 min",
+                      Icons.square_outlined,
+                      BreathingModel.defaultExercises[0], // Box Breathing
+                    ),
+                    _buildExerciseCard(
+                      context,
+                      isDark,
+                      "Relax",
+                      "4-7-8 Breathing",
+                      "5 min",
+                      Icons.waves_rounded,
+                      BreathingModel.defaultExercises[1], // 4-7-8
+                    ),
+                    _buildExerciseCard(
+                      context,
+                      isDark,
+                      "Focus",
+                      "Resonance Breathing",
+                      "10 min",
+                      Icons.lens_blur_rounded,
+                      BreathingModel.defaultExercises[2], // Resonance
+                    ),
+                    _buildExerciseCard(
+                      context,
+                      isDark,
+                      "Free Flow",
+                      "Open Ended Practice",
+                      "∞",
+                      Icons.all_inclusive_rounded,
+                      BreathingModel.defaultExercises[3], // Open Flow
+                    ),
                     const SizedBox(height: 24),
                   ],
                 ),
@@ -60,7 +94,15 @@ class BreathingDurationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildExerciseCard(BuildContext context, bool isDark, String title, String subtitle, String duration, IconData icon) {
+  Widget _buildExerciseCard(
+    BuildContext context,
+    bool isDark,
+    String title,
+    String subtitle,
+    String duration,
+    IconData icon,
+    BreathingModel model,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -68,7 +110,7 @@ class BreathingDurationScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.getMonoTextPrimary(isDark).withOpacity(0.05),
+            color: AppColors.getMonoTextPrimary(isDark).withValues(alpha: 0.05),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -77,7 +119,12 @@ class BreathingDurationScreen extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => GoRouter.of(context).push('${RouteNames.mainApp}/${RouteNames.breathingExercise}/${RouteNames.breathingPlayer}'),
+          onTap: () {
+            GoRouter.of(context).push(
+              '${RouteNames.mainApp}/${RouteNames.breathingExercise}/${RouteNames.breathingPlayer}',
+              extra: model,
+            );
+          },
           borderRadius: BorderRadius.circular(24),
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -86,7 +133,7 @@ class BreathingDurationScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: AppColors.getMonoTextPrimary(isDark).withOpacity(0.04),
+                    color: AppColors.getMonoTextPrimary(isDark).withValues(alpha: 0.04),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -120,7 +167,7 @@ class BreathingDurationScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   decoration: BoxDecoration(
-                    color: AppColors.getMonoTextPrimary(isDark).withOpacity(0.08),
+                    color: AppColors.getMonoTextPrimary(isDark).withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(

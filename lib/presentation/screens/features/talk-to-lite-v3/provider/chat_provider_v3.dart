@@ -17,7 +17,7 @@ class ChatProviderV3 extends ChangeNotifier {
   List<ChatHistoryModel> history = [];
 
   bool isTyping = false;
-  bool isLoading = false;
+  bool isLoading = true; // Start in loading state to prevent flash of welcome state
   bool isHistoryLoading = false;
   bool isLoadingMoreMessages = false;
 
@@ -26,20 +26,28 @@ class ChatProviderV3 extends ChangeNotifier {
   bool hasMoreMessages = false;
 
   Future<void> initializeChat() async {
-    if (initialChatId != null && initialChatId!.isNotEmpty) {
-      await loadConversation(initialChatId!);
-      await loadHistory();
-      return;
-    }
+    isLoading = true;
+    notifyListeners();
 
-    await loadHistory();
-
-    if (history.isNotEmpty) {
-      final latestChatId = history.first.conversationId;
-
-      if (latestChatId.isNotEmpty) {
-        await loadConversation(latestChatId);
+    try {
+      if (initialChatId != null && initialChatId!.isNotEmpty) {
+        await _fetchConversationData(initialChatId!);
+        await _fetchHistoryData();
+      } else {
+        await _fetchHistoryData();
+        if (history.isNotEmpty) {
+          final latestChatId = history.first.conversationId;
+          if (latestChatId.isNotEmpty) {
+            await _fetchConversationData(latestChatId);
+          }
+        }
       }
+    } catch (e) {
+      debugPrint("INITIALIZE CHAT ERROR: $e");
+    } finally {
+      isLoading = false;
+      notifyListeners();
+      jumpToBottomInstant();
     }
   }
 
@@ -53,13 +61,25 @@ class ChatProviderV3 extends ChangeNotifier {
     }
   }
 
-  Future<void> loadConversation(String conversationId) async {
-    isLoading = true;
-    notifyListeners();
-
+  Future<void> _fetchHistoryData() async {
     try {
-      // Load the most recent page of messages via paginated API so the
-      // last (most-recent) messages are displayed when opening the chat.
+      history = await service.getHistory();
+      history.sort((a, b) {
+        final aTime = a.updatedAt != null ? DateTime.tryParse(a.updatedAt!) : null;
+        final bTime = b.updatedAt != null ? DateTime.tryParse(b.updatedAt!) : null;
+
+        if (aTime == null && bTime == null) return 0;
+        if (aTime == null) return 1;
+        if (bTime == null) return -1;
+        return bTime.compareTo(aTime);
+      });
+    } catch (e) {
+      debugPrint("FETCH HISTORY ERROR: $e");
+    }
+  }
+
+  Future<void> _fetchConversationData(String conversationId) async {
+    try {
       final response = await service.getPaginatedMessages(
         conversationId: conversationId,
         cursor: null,
@@ -67,53 +87,62 @@ class ChatProviderV3 extends ChangeNotifier {
       );
 
       activeConversationId = response.conversationId;
-
-      // response.messages are returned in chronological order (oldest->newest)
       messages = response.messages;
-
       nextMessagesCursor = response.nextCursor;
       hasMoreMessages = response.hasMore;
-
-      notifyListeners();
-
-      // show latest messages instantly (avoid visible jump from top->bottom)
-      jumpToBottomInstant();
     } catch (e) {
-      debugPrint("LOAD CONVERSATION ERROR: $e");
+      debugPrint("FETCH CONVERSATION ERROR: $e");
     }
+  }
+
+  Future<void> loadConversation(String conversationId) async {
+    isLoading = true;
+    notifyListeners();
+
+    await _fetchConversationData(conversationId);
 
     isLoading = false;
     notifyListeners();
+
+    jumpToBottomInstant();
   }
 
   Future<void> loadMoreMessages() async {
     if (activeConversationId == null) return;
-
     if (isLoadingMoreMessages) return;
+    if (!hasMoreMessages) return;
 
     isLoadingMoreMessages = true;
     notifyListeners();
 
-    try {
-      final oldOffset = scrollController.offset;
+    // Capture scroll offset BEFORE we prepend messages so we can
+    // restore the visible position afterwards (WhatsApp-style).
+    final prevOffset =
+        scrollController.hasClients ? scrollController.offset : 0.0;
+    final prevMax = scrollController.hasClients
+        ? scrollController.position.maxScrollExtent
+        : 0.0;
 
+    try {
       final response = await service.getPaginatedMessages(
         conversationId: activeConversationId!,
         cursor: nextMessagesCursor,
-        pageSize: 10,
+        pageSize: 20,
       );
 
       messages.insertAll(0, response.messages);
-
       nextMessagesCursor = response.nextCursor;
       hasMoreMessages = response.hasMore;
 
       notifyListeners();
 
+      // After the list rebuilds, jump so the previously visible
+      // content stays in the same screen position.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!scrollController.hasClients) return;
-
-        scrollController.jumpTo(oldOffset + 300);
+        final newMax = scrollController.position.maxScrollExtent;
+        final addedHeight = newMax - prevMax;
+        scrollController.jumpTo(prevOffset + addedHeight);
       });
     } catch (e) {
       debugPrint("LOAD MORE ERROR: $e");
