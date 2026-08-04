@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:rayoflite/core/theme/AppFont.dart';
+import 'package:rayoflite/core/theme/app_theme_colors.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 
@@ -98,7 +99,9 @@ class _ChatBodyV3State extends State<ChatBodyV3> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<ChatProviderV3>();
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final themeProvider = context.watch<ThemeProvider>();
+    final isDark = themeProvider.isDarkMode;
+    final colors = themeProvider.colors;
 
     return Column(
       children: [
@@ -106,7 +109,7 @@ class _ChatBodyV3State extends State<ChatBodyV3> {
           child: provider.isLoading
               ? _buildLoadingState(isDark)
               : provider.messages.isEmpty
-                  ? _buildWelcomeState(isDark)
+                  ? _buildWelcomeState(colors)
                   : _buildMessageList(context, provider, isDark),
         ),
 
@@ -145,7 +148,7 @@ class _ChatBodyV3State extends State<ChatBodyV3> {
   }
 
   // ── Welcome / empty state ────────────────────────────────
-  Widget _buildWelcomeState(bool isDark) {
+  Widget _buildWelcomeState(ThemeColors colors) {
     final suggestions = [
       "How are you feeling today?",
       "I need help relaxing 🌿",
@@ -163,15 +166,14 @@ class _ChatBodyV3State extends State<ChatBodyV3> {
             height: 88,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.getMonoSurface(isDark),
+              color: colors.surface,
               border: Border.all(
-                color: AppColors.getMonoBorder(isDark),
+                color: colors.border,
                 width: 1.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.getMonoTextPrimary(isDark)
-                      .withValues(alpha: isDark ? 0.15 : 0.07),
+                  color: colors.primary.withValues(alpha: 0.12),
                   blurRadius: 28,
                   spreadRadius: 4,
                 ),
@@ -181,7 +183,7 @@ class _ChatBodyV3State extends State<ChatBodyV3> {
               padding: const EdgeInsets.all(20),
               child: Image.asset(
                 'assets/talk-to-light.png',
-                color: AppColors.getMonoIcon(isDark),
+                color: colors.icon,
               ),
             ),
           ),
@@ -190,11 +192,8 @@ class _ChatBodyV3State extends State<ChatBodyV3> {
 
           Text(
             'Hi, I\'m Light ✨',
-            style: TextStyle(
-              fontFamily: 'Arial',
+            style: AppTextStyles.screenTitle(colors).copyWith(
               fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: AppColors.getMonoTextPrimary(isDark),
               letterSpacing: -0.5,
             ),
           ),
@@ -204,11 +203,8 @@ class _ChatBodyV3State extends State<ChatBodyV3> {
           Text(
             'Your personal AI companion.\nI\'m here to listen, support & guide you.',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: 'Arial',
-              fontSize: 15,
+            style: AppTextStyles.bodySecondary(colors).copyWith(
               height: 1.55,
-              color: AppColors.getMonoTextSecondary(isDark),
             ),
           ),
 
@@ -217,15 +213,15 @@ class _ChatBodyV3State extends State<ChatBodyV3> {
           // ── "Try asking" divider ────────────────────────
           Row(
             children: [
-              Expanded(child: _Divider(isDark: isDark)),
+              Expanded(child: Container(height: 1, color: colors.border)),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Text(
                   'Try asking',
-                  style: AppTextStyles.monoMuted12(isDark),
+                  style: AppTextStyles.hintText(colors),
                 ),
               ),
-              Expanded(child: _Divider(isDark: isDark)),
+              Expanded(child: Container(height: 1, color: colors.border)),
             ],
           ),
 
@@ -240,7 +236,7 @@ class _ChatBodyV3State extends State<ChatBodyV3> {
                 .map(
                   (s) => _SuggestionChip(
                     label: s,
-                    isDark: isDark,
+                    colors: colors,
                     onTap: () {
                       context.read<ChatProviderV3>().sendMessage(s);
                     },
@@ -343,12 +339,12 @@ class _Divider extends StatelessWidget {
 
 class _SuggestionChip extends StatefulWidget {
   final String label;
-  final bool isDark;
+  final ThemeColors colors;
   final VoidCallback onTap;
 
   const _SuggestionChip({
     required this.label,
-    required this.isDark,
+    required this.colors,
     required this.onTap,
   });
 
@@ -374,18 +370,14 @@ class _SuggestionChipState extends State<_SuggestionChip> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
-            color: widget.isDark
-                ? AppColors.monoDarkSurface
-                : AppColors.monoLightSurface,
+            color: widget.colors.surface,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.getMonoBorder(widget.isDark)),
+            border: Border.all(color: widget.colors.border),
           ),
           child: Text(
             widget.label,
-            style: TextStyle(
-              fontFamily: 'Arial',
+            style: AppTextStyles.bodyText(widget.colors).copyWith(
               fontSize: 13,
-              color: AppColors.getMonoTextPrimary(widget.isDark),
             ),
           ),
         ),

@@ -12,6 +12,7 @@ import 'package:rayoflite/presentation/screens/features/breathing/breathing_mode
 import 'package:rayoflite/presentation/screens/features/profile/profile_page.dart';
 import 'package:rayoflite/presentation/screens/features/profile/setting/deactivate_account_page.dart';
 import 'package:rayoflite/presentation/screens/features/profile/setting/settings_page.dart';
+import 'package:rayoflite/presentation/screens/features/profile/setting/theme_settings_page.dart';
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/provider/social_feed_provider.dart';
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/social_feed_page_v2.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-lite-v3/screens/chat_screen_v3.dart';
@@ -165,6 +166,11 @@ GoRouter createRouter(String initialLocation) {
               GoRoute(
                 path: RouteNames.settings,
                 builder: (context, state) => const SettingsPage(),
+              ),
+
+              GoRoute(
+                path: RouteNames.themeSettings,
+                builder: (context, state) => const ThemeSettingsPage(),
               ),
 
               GoRoute(

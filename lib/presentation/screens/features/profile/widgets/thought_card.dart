@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
-import 'package:rayoflite/core/theme/appcolors.dart';
+import 'package:rayoflite/core/theme/app_theme_colors.dart';
+import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/screens/features/profile/thought_model.dart';
 
 class ThoughtCard extends StatelessWidget {
   final ThoughtModel thought;
-  final bool isDark;
+  final bool? isDark;
 
-  const ThoughtCard({super.key, required this.thought, required this.isDark});
+  const ThoughtCard({super.key, required this.thought, this.isDark});
 
   String _formatDate(String raw) {
     if (raw.isEmpty) return '';
@@ -25,31 +27,34 @@ class ThoughtCard extends StatelessWidget {
     }
   }
 
-  Color _typeColor(String? type) {
+  Color _typeColor(String? type, ThemeColors colors) {
     switch (type?.toUpperCase()) {
       case 'GRATITUDE':
-        return const Color(0xFF22C55E);
+        return colors.success;
       case 'REFLECTION':
-        return const Color(0xFF6366F1);
+        return colors.primary;
       case 'MOOD':
-        return const Color(0xFFF59E0B);
+        return colors.warning;
       case 'ANXIETY':
-        return const Color(0xFFEF4444);
+        return colors.error;
       default:
-        return const Color(0xFF9CA3AF);
+        return colors.textMuted;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.watch<ThemeProvider>().colors;
+    final badgeColor = _typeColor(thought.type, colors);
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.getMonoCard(isDark),
+        color: colors.card,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.getMonoBorder(isDark).withOpacity(0.5),
+          color: colors.border.withValues(alpha: 0.6),
         ),
       ),
       child: Column(
@@ -64,18 +69,19 @@ class ThoughtCard extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: _typeColor(thought.type).withOpacity(0.12),
+                    color: badgeColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: _typeColor(thought.type).withOpacity(0.3),
+                      color: badgeColor.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Text(
                     thought.type!.toUpperCase(),
                     style: TextStyle(
+                      fontFamily: 'Specimen',
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
-                      color: _typeColor(thought.type),
+                      color: badgeColor,
                       letterSpacing: 0.8,
                     ),
                   ),
@@ -87,7 +93,7 @@ class ThoughtCard extends StatelessWidget {
               // Date
               Text(
                 _formatDate(thought.createdAt),
-                style: AppTextStyles.monoMuted12(isDark),
+                style: AppTextStyles.hintText(colors),
               ),
             ],
           ),
@@ -97,7 +103,7 @@ class ThoughtCard extends StatelessWidget {
           // ─── Content ───
           Text(
             thought.content,
-            style: AppTextStyles.monoRegular16(isDark).copyWith(
+            style: AppTextStyles.bodyText(colors).copyWith(
               height: 1.55,
               fontSize: 15,
             ),

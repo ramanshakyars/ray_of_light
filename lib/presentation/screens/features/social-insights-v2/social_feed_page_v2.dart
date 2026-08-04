@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/providers/auth_provider.dart';
-import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/composer/create_post_sheet.dart';
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/composer/quick_composer.dart';
@@ -29,9 +28,9 @@ class _SocialFeedPageV2State extends State<SocialFeedPageV2> {
     Future.microtask(() {
       context.read<SocialFeedProvider>().loadPosts();
     });
-     Future.delayed(const Duration(seconds: 2), () async {
-    await DummyNotificationScheduler.requestPermissionAndSchedule();
-  });
+    Future.delayed(const Duration(seconds: 2), () async {
+      await DummyNotificationScheduler.requestPermissionAndSchedule();
+    });
   }
 
   void _openCreateSheet() async {
@@ -49,34 +48,21 @@ class _SocialFeedPageV2State extends State<SocialFeedPageV2> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final colors = context.watch<ThemeProvider>().colors;
     final auth = context.watch<AuthProvider>();
     return Scaffold(
-      backgroundColor: AppColors.getMonoBackground(isDark),
+      backgroundColor: colors.background,
       body: SafeArea(
         bottom: false,
         child: Consumer<SocialFeedProvider>(
           builder: (context, vm, _) {
-            // ================= LOADING =================
-            if (vm.state == FeedState.loading) {
-              return const FeedShimmer();
-            }
-
-            // ================= NO INTERNET =================
-            if (vm.state == FeedState.noInternet) {
-              return NoInternetState(onRetry: vm.loadPosts);
-            }
-
-            // ================= ERROR =================
-            if (vm.state == FeedState.error) {
-              return ErrorState(onRetry: vm.loadPosts);// fallback
-            }
-
             return RefreshIndicator(
               onRefresh: vm.loadPosts,
               child: ListView.builder(
-                padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
-                itemCount: 3 + vm.posts.length,
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                itemCount: (vm.state == FeedState.loaded && vm.posts.isNotEmpty)
+                    ? 2 + vm.posts.length
+                    : 3,
                 itemBuilder: (context, index) {
                   // HEADER
                   if (index == 0) {
@@ -84,10 +70,9 @@ class _SocialFeedPageV2State extends State<SocialFeedPageV2> {
                   }
 
                   // COMPOSER
-
                   if (index == 1) {
                     return Padding(
-                      padding: const EdgeInsets.only(top: 16),
+                      padding: const EdgeInsets.only(top: 16, bottom: 16),
                       child: QuickComposer(
                         onPhotoTap: _openCreateSheet,
                         onMoodTap: _openCreateSheet,
@@ -96,17 +81,25 @@ class _SocialFeedPageV2State extends State<SocialFeedPageV2> {
                     );
                   }
 
-                  // SPACING
-                  if (index == 2) {
-                    return const SizedBox(height: 16);
+                  // STATE HANDLING (index == 2)
+                  if (vm.state == FeedState.loading || vm.state == FeedState.initial) {
+                    return const FeedShimmer();
+                  }
+
+                  if (vm.state == FeedState.noInternet) {
+                    return NoInternetState(onRetry: vm.loadPosts);
+                  }
+
+                  if (vm.state == FeedState.error) {
+                    return ErrorState(onRetry: vm.loadPosts);
                   }
 
                   // EMPTY STATE
-                  if (vm.posts.isEmpty) {
+                  if (vm.state == FeedState.empty || vm.posts.isEmpty) {
                     return const EmptyState();
                   }
 
-                  final post = vm.posts[index - 3];
+                  final post = vm.posts[index - 2];
                   return PostCardV2(post: post);
                 },
               ),

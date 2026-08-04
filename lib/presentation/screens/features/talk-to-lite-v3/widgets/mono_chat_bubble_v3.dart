@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:rayoflite/core/theme/appcolors.dart';
+import 'package:rayoflite/core/theme/AppFont.dart';
+import 'package:rayoflite/core/theme/app_theme_colors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 
-/// WhatsApp-style chat bubble.
-/// - User (right): dark pill, inline time + single tick
-/// - AI (left):    surface pill, inline time, no tick
+/// Theme-aware chat bubble.
+/// - User (right): primary color pill, inline time + double tick
+/// - AI (left):    card/surface pill, inline time + double tick
 /// - Grouped bubbles share adjusted border radii
 /// - Long-press → copy to clipboard
 class MonoChatBubbleV3 extends StatefulWidget {
@@ -48,7 +49,6 @@ class _MonoChatBubbleV3State extends State<MonoChatBubbleV3>
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic));
 
-    // Animate only newest bubble in a group for performance
     if (widget.isLastInGroup) {
       _ctrl.forward();
     } else {
@@ -62,7 +62,6 @@ class _MonoChatBubbleV3State extends State<MonoChatBubbleV3>
     super.dispose();
   }
 
-  // ── Time string:  "3:45 PM"
   String _formatTime(String? ts) {
     if (ts == null || ts.isEmpty) return '';
     try {
@@ -101,7 +100,6 @@ class _MonoChatBubbleV3State extends State<MonoChatBubbleV3>
     const tail = Radius.circular(4);
 
     if (widget.isUser) {
-      // User: tail at bottom-right only on last bubble
       return BorderRadius.only(
         topLeft: full,
         topRight: full,
@@ -109,7 +107,6 @@ class _MonoChatBubbleV3State extends State<MonoChatBubbleV3>
         bottomRight: widget.isLastInGroup ? tail : full,
       );
     } else {
-      // AI: tail at bottom-left only on last bubble
       return BorderRadius.only(
         topLeft: full,
         topRight: full,
@@ -121,7 +118,7 @@ class _MonoChatBubbleV3State extends State<MonoChatBubbleV3>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final colors = context.watch<ThemeProvider>().colors;
     final timeStr = _formatTime(widget.timestamp);
 
     return SlideTransition(
@@ -145,13 +142,18 @@ class _MonoChatBubbleV3State extends State<MonoChatBubbleV3>
               child: Container(
                 decoration: BoxDecoration(
                   color: widget.isUser
-                      ? AppColors.getMonoTextPrimary(isDark)
-                      : AppColors.getMonoSurface(isDark),
+                      ? colors.primary
+                      : colors.surface,
                   borderRadius: _radius(),
+                  border: Border.all(
+                    color: widget.isUser
+                        ? colors.primary
+                        : colors.border.withValues(alpha: 0.5),
+                    width: 1,
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black
-                          .withValues(alpha: isDark ? 0.25 : 0.05),
+                      color: colors.shadow.withValues(alpha: 0.1),
                       blurRadius: 6,
                       offset: const Offset(0, 1),
                     ),
@@ -161,7 +163,7 @@ class _MonoChatBubbleV3State extends State<MonoChatBubbleV3>
                   text: widget.text,
                   time: timeStr,
                   isUser: widget.isUser,
-                  isDark: isDark,
+                  colors: colors,
                 ),
               ),
             ),
@@ -172,28 +174,27 @@ class _MonoChatBubbleV3State extends State<MonoChatBubbleV3>
   }
 }
 
-// ── Bubble content (text + inline time, WhatsApp style) ──────
 class _BubbleContent extends StatelessWidget {
   final String text;
   final String time;
   final bool isUser;
-  final bool isDark;
+  final ThemeColors colors;
 
   const _BubbleContent({
     required this.text,
     required this.time,
     required this.isUser,
-    required this.isDark,
+    required this.colors,
   });
 
   @override
   Widget build(BuildContext context) {
     final textColor = isUser
-        ? AppColors.getMonoBackground(isDark)
-        : AppColors.getMonoTextPrimary(isDark);
+        ? colors.primaryForeground
+        : colors.textPrimary;
     final timeColor = isUser
-        ? AppColors.getMonoBackground(isDark).withValues(alpha: 0.55)
-        : AppColors.getMonoTextMuted(isDark);
+        ? colors.primaryForeground.withValues(alpha: 0.75)
+        : colors.textMuted;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(13, 9, 13, 7),
@@ -202,18 +203,14 @@ class _BubbleContent extends StatelessWidget {
             isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // ── Message text ───────────────────────────────
           Text(
             text,
-            style: TextStyle(
+            style: AppTextStyles.bodyText(colors).copyWith(
               color: textColor,
-              fontFamily: 'Arial',
               fontSize: 15,
               height: 1.5,
             ),
           ),
-
-          // ── Time + tick row ────────────────────────────
           if (time.isNotEmpty) ...[
             const SizedBox(height: 4),
             Row(
@@ -221,14 +218,11 @@ class _BubbleContent extends StatelessWidget {
               children: [
                 Text(
                   time,
-                  style: TextStyle(
+                  style: AppTextStyles.hintText(colors).copyWith(
                     color: timeColor,
                     fontSize: 10,
-                    fontFamily: 'Arial',
-                    letterSpacing: 0.2,
                   ),
                 ),
-                // Double ticks (done_all) for both user and AI messages
                 const SizedBox(width: 3),
                 Icon(
                   Icons.done_all_rounded,

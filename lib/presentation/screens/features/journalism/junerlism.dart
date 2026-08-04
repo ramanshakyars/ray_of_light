@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/services/journalService.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
-import 'package:rayoflite/core/theme/appcolors.dart';
+import 'package:rayoflite/core/theme/app_theme_colors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/widgets/app_screen_header.dart';
 import 'journalism_drawer.dart';
@@ -27,12 +25,10 @@ class _JournalismScreenState extends State<JournalismScreen> {
   
   bool _isPosting = false;
   bool _isLoadingHistory = false;
-  int _selectedAffirmationIndex = 0;
   String? _selectedMoodTag;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  // Sample mood chips
   final List<Map<String, String>> _moodOptions = const [
     {"label": "Calm", "emoji": "🌿", "code": "CALM"},
     {"label": "Inspired", "emoji": "✨", "code": "INSPIRED"},
@@ -42,25 +38,9 @@ class _JournalismScreenState extends State<JournalismScreen> {
     {"label": "Overwhelmed", "emoji": "🌧️", "code": "OVERWHELMED"},
   ];
 
-  // Affirmation list
-  final List<String> _sampleAffirmations = const [
-    "Today, I choose to focus on what matters most.",
-    "I am capable of amazing things.",
-    "Every challenge is an opportunity to grow.",
-    "My thoughts create my reality.",
-    "I am grateful for this moment.",
-    "Progress, not perfection, is the goal.",
-    "I welcome positivity and peace into my life.",
-    "My potential is limitless.",
-  ];
-
   @override
   void initState() {
     super.initState();
-    // Pick affirmation for today using day-of-year
-    final dayOfYear =
-        DateTime.now().difference(DateTime(DateTime.now().year)).inDays;
-    _selectedAffirmationIndex = dayOfYear % _sampleAffirmations.length;
     _fetchJournalHistory();
   }
 
@@ -122,7 +102,6 @@ class _JournalismScreenState extends State<JournalismScreen> {
           );
         }
 
-        // Refresh history list
         await _fetchJournalHistory();
       } else {
         if (mounted) {
@@ -141,26 +120,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
     }
   }
 
-  void _nextAffirmation() {
-    HapticFeedback.selectionClick();
-    setState(() {
-      _selectedAffirmationIndex =
-          (_selectedAffirmationIndex + 1) % _sampleAffirmations.length;
-    });
-  }
-
-  void _copyAffirmationToInput() {
-    HapticFeedback.selectionClick();
-    final text = _sampleAffirmations[_selectedAffirmationIndex];
-    setState(() {
-      _thoughtController.text = '"$text"\n\nReflecting on this: ';
-      _thoughtController.selection = TextSelection.fromPosition(
-        TextPosition(offset: _thoughtController.text.length),
-      );
-    });
-  }
-
-  void _showEntryDetail(Map<String, dynamic> entry, bool isDark) {
+  void _showEntryDetail(Map<String, dynamic> entry, ThemeColors colors) {
     final content = entry['content']?.toString() ?? '';
     final mood = entry['associatedMood']?.toString() ?? 'REFLECTION';
     final dateStr = _formatTimestamp(entry['createdAt'] ?? entry['date']);
@@ -175,10 +135,10 @@ class _JournalismScreenState extends State<JournalismScreen> {
             maxHeight: MediaQuery.of(context).size.height * 0.75,
           ),
           decoration: BoxDecoration(
-            color: AppColors.getMonoCard(isDark),
+            color: colors.card,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
             border: Border.all(
-              color: AppColors.getMonoBorder(isDark).withValues(alpha: 0.6),
+              color: colors.border.withValues(alpha: 0.6),
             ),
           ),
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
@@ -186,20 +146,18 @@ class _JournalismScreenState extends State<JournalismScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Handle bar
               Center(
                 child: Container(
                   width: 36,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: AppColors.getMonoBorder(isDark),
+                    color: colors.border,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
 
-              // Header info
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -207,40 +165,34 @@ class _JournalismScreenState extends State<JournalismScreen> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppColors.getMonoSurface(isDark),
+                      color: colors.surface,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.getMonoBorder(isDark)),
+                      border: Border.all(color: colors.border),
                     ),
                     child: Text(
                       mood.toUpperCase(),
-                      style: TextStyle(
-                        fontFamily: 'Arial',
-                        fontSize: 11,
+                      style: AppTextStyles.labelSmall(colors).copyWith(
                         fontWeight: FontWeight.w700,
-                        color: AppColors.getMonoTextSecondary(isDark),
                         letterSpacing: 0.5,
                       ),
                     ),
                   ),
                   Text(
                     dateStr,
-                    style: AppTextStyles.monoMuted12(isDark),
+                    style: AppTextStyles.hintText(colors),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
 
-              // Full content
               Flexible(
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: Text(
                     content,
-                    style: TextStyle(
-                      fontFamily: 'Arial',
+                    style: AppTextStyles.bodyText(colors).copyWith(
                       fontSize: 16,
                       height: 1.6,
-                      color: AppColors.getMonoTextPrimary(isDark),
                     ),
                   ),
                 ),
@@ -248,7 +200,6 @@ class _JournalismScreenState extends State<JournalismScreen> {
 
               const SizedBox(height: 24),
 
-              // Copy button
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
@@ -260,9 +211,9 @@ class _JournalismScreenState extends State<JournalismScreen> {
                   icon: const Icon(Icons.copy_rounded, size: 18),
                   label: const Text("Copy Journal Entry"),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.getMonoTextPrimary(isDark),
+                    foregroundColor: colors.textPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    side: BorderSide(color: AppColors.getMonoBorder(isDark)),
+                    side: BorderSide(color: colors.border),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -302,18 +253,15 @@ class _JournalismScreenState extends State<JournalismScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
-    final primaryTextColor = AppColors.getMonoTextPrimary(isDarkMode);
-    final secondaryTextColor = AppColors.getMonoTextSecondary(isDarkMode);
-    final surfaceColor = AppColors.getMonoSurface(isDarkMode);
-    final borderColor = AppColors.getMonoBorder(isDarkMode);
+    final colors = context.watch<ThemeProvider>().colors;
+    final latestFiveHistory = _journalHistory.take(5).toList();
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: AppColors.getMonoBackground(isDarkMode),
+      backgroundColor: colors.background,
 
       drawer: Drawer(
-        backgroundColor: AppColors.getMonoBackground(isDarkMode),
+        backgroundColor: colors.background,
         child: JournalismDrawer(
           postedThoughts: _postedThoughts,
           onThoughtSelected: (thought) {
@@ -327,8 +275,8 @@ class _JournalismScreenState extends State<JournalismScreen> {
         bottom: false,
         child: RefreshIndicator(
           onRefresh: _fetchJournalHistory,
-          color: primaryTextColor,
-          backgroundColor: surfaceColor,
+          color: colors.primary,
+          backgroundColor: colors.surface,
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(
               parent: BouncingScrollPhysics(),
@@ -337,7 +285,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── HEADER ─────────────────────────────────────
+                // ── HEADER (No right side icon) ────────────────
                 AppScreenHeader(
                   title: "Your Nest",
                   subtitle: "A quiet space for thoughts & reflection",
@@ -348,50 +296,22 @@ class _JournalismScreenState extends State<JournalismScreen> {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: surfaceColor,
+                        color: colors.surface,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: borderColor.withValues(alpha: 0.5),
+                          color: colors.border.withValues(alpha: 0.5),
                         ),
                       ),
                       child: Icon(
                         Icons.menu_rounded,
-                        color: AppColors.getMonoIcon(isDarkMode),
+                        color: colors.icon,
                         size: 20,
                       ),
                     ),
                   ),
-                  actions: [
-                    GestureDetector(
-                      onTap: () => context.push('${RouteNames.mainApp}/${RouteNames.home}'),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: surfaceColor,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: borderColor.withValues(alpha: 0.5),
-                          ),
-                        ),
-                        child: Image.asset(
-                          'assets/nest-logo.png',
-                          height: 22,
-                          width: 22,
-                          color: primaryTextColor,
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
 
-                const SizedBox(height: 20),
-
-                // ── DAILY AFFIRMATION CARD ──────────────────────
-                _buildAffirmationCard(isDarkMode, surfaceColor, borderColor, primaryTextColor, secondaryTextColor),
-
-                const SizedBox(height: 28),
+                const SizedBox(height: 16),
 
                 // ── INPUT SECTION HEADER & MOOD CHIPS ───────────
                 Row(
@@ -399,24 +319,14 @@ class _JournalismScreenState extends State<JournalismScreen> {
                   children: [
                     Text(
                       "Express Yourself",
-                      style: TextStyle(
-                        fontFamily: 'Arial',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: primaryTextColor,
-                        letterSpacing: -0.3,
-                      ),
+                      style: AppTextStyles.sectionTitle(colors),
                     ),
                     if (_thoughtController.text.isNotEmpty)
                       GestureDetector(
                         onTap: () => setState(() => _thoughtController.clear()),
                         child: Text(
                           "Clear",
-                          style: TextStyle(
-                            fontFamily: 'Arial',
-                            fontSize: 13,
-                            color: secondaryTextColor,
-                          ),
+                          style: AppTextStyles.hintText(colors),
                         ),
                       ),
                   ],
@@ -444,12 +354,12 @@ class _JournalismScreenState extends State<JournalismScreen> {
                           duration: const Duration(milliseconds: 180),
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                           decoration: BoxDecoration(
-                            color: isSelected ? primaryTextColor : surfaceColor,
+                            color: isSelected ? colors.primary : colors.surface,
                             borderRadius: BorderRadius.circular(18),
                             border: Border.all(
                               color: isSelected
-                                  ? primaryTextColor
-                                  : borderColor.withValues(alpha: 0.6),
+                                  ? colors.primary
+                                  : colors.border.withValues(alpha: 0.6),
                             ),
                           ),
                           child: Row(
@@ -458,13 +368,11 @@ class _JournalismScreenState extends State<JournalismScreen> {
                               const SizedBox(width: 6),
                               Text(
                                 m['label']!,
-                                style: TextStyle(
-                                  fontFamily: 'Arial',
-                                  fontSize: 12.5,
+                                style: AppTextStyles.labelSmall(colors).copyWith(
                                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                                   color: isSelected
-                                      ? AppColors.getMonoBackground(isDarkMode)
-                                      : primaryTextColor,
+                                      ? colors.primaryForeground
+                                      : colors.textPrimary,
                                 ),
                               ),
                             ],
@@ -480,12 +388,12 @@ class _JournalismScreenState extends State<JournalismScreen> {
                 // ── TEXT INPUT CARD ─────────────────────────────
                 Container(
                   decoration: BoxDecoration(
-                    color: surfaceColor,
+                    color: colors.inputBackground,
                     borderRadius: BorderRadius.circular(22),
-                    border: Border.all(color: borderColor),
+                    border: Border.all(color: colors.inputBorder),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: isDarkMode ? 0.2 : 0.03),
+                        color: colors.shadow.withValues(alpha: 0.1),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -499,21 +407,13 @@ class _JournalismScreenState extends State<JournalismScreen> {
                         child: TextField(
                           controller: _thoughtController,
                           onChanged: (_) => setState(() {}),
-                          style: TextStyle(
-                            fontFamily: 'Arial',
-                            fontSize: 15,
-                            height: 1.5,
-                            color: primaryTextColor,
-                          ),
+                          textCapitalization: TextCapitalization.sentences,
+                          style: AppTextStyles.inputText(colors),
                           maxLines: 5,
                           minLines: 3,
                           decoration: InputDecoration(
                             hintText: "What's on your mind today? Write freely...",
-                            hintStyle: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 14,
-                              color: AppColors.getMonoTextMuted(isDarkMode),
-                            ),
+                            hintStyle: AppTextStyles.hintText(colors),
                             border: InputBorder.none,
                             isDense: true,
                             contentPadding: EdgeInsets.zero,
@@ -521,7 +421,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
                         ),
                       ),
                       
-                      const Divider(height: 1),
+                      Divider(height: 1, color: colors.border),
 
                       // Footer action bar
                       Padding(
@@ -534,15 +434,13 @@ class _JournalismScreenState extends State<JournalismScreen> {
                                 Icon(
                                   Icons.lock_outline_rounded,
                                   size: 14,
-                                  color: AppColors.getMonoTextMuted(isDarkMode),
+                                  color: colors.textMuted,
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
                                   "Private & encrypted",
-                                  style: TextStyle(
-                                    fontFamily: 'Arial',
+                                  style: AppTextStyles.hintText(colors).copyWith(
                                     fontSize: 11,
-                                    color: AppColors.getMonoTextMuted(isDarkMode),
                                   ),
                                 ),
                               ],
@@ -554,29 +452,27 @@ class _JournalismScreenState extends State<JournalismScreen> {
                                   ? null
                                   : _postThought,
                               icon: _isPosting
-                                  ? const SizedBox(
+                                  ? SizedBox(
                                       width: 14,
                                       height: 14,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
-                                        color: Colors.white,
+                                        color: colors.primaryForeground,
                                       ),
                                     )
                                   : const Icon(Icons.send_rounded, size: 14),
                               label: Text(
                                 _isPosting ? "Saving..." : "Save Entry",
-                                style: const TextStyle(
-                                  fontFamily: 'Arial',
-                                  fontWeight: FontWeight.w700,
+                                style: AppTextStyles.buttonLabel(colors).copyWith(
                                   fontSize: 13,
                                 ),
                               ),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryTextColor,
-                                foregroundColor: AppColors.getMonoBackground(isDarkMode),
+                                backgroundColor: colors.primary,
+                                foregroundColor: colors.primaryForeground,
                                 disabledBackgroundColor:
-                                    primaryTextColor.withValues(alpha: 0.3),
-                                disabledForegroundColor: AppColors.getMonoBackground(isDarkMode)
+                                    colors.primary.withValues(alpha: 0.3),
+                                disabledForegroundColor: colors.primaryForeground
                                     .withValues(alpha: 0.6),
                                 padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                                 elevation: 0,
@@ -594,7 +490,7 @@ class _JournalismScreenState extends State<JournalismScreen> {
 
                 const SizedBox(height: 32),
 
-                // ── RECENT ENTRIES TIMELINE SECTION ─────────────
+                // ── RECENT 5 ENTRIES TIMELINE SECTION ───────────
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -602,37 +498,29 @@ class _JournalismScreenState extends State<JournalismScreen> {
                       children: [
                         Text(
                           "Journal History",
-                          style: TextStyle(
-                            fontFamily: 'Arial',
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            color: primaryTextColor,
-                            letterSpacing: -0.3,
-                          ),
+                          style: AppTextStyles.sectionTitle(colors),
                         ),
                         const SizedBox(width: 8),
-                        if (_journalHistory.isNotEmpty)
+                        if (latestFiveHistory.isNotEmpty)
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
-                              color: surfaceColor,
+                              color: colors.surface,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: borderColor),
+                              border: Border.all(color: colors.border),
                             ),
                             child: Text(
-                              "${_journalHistory.length}",
-                              style: TextStyle(
-                                fontFamily: 'Arial',
+                              "${latestFiveHistory.length}",
+                              style: AppTextStyles.hintText(colors).copyWith(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
-                                color: secondaryTextColor,
                               ),
                             ),
                           ),
                       ],
                     ),
                     IconButton(
-                      icon: Icon(Icons.refresh_rounded, size: 18, color: secondaryTextColor),
+                      icon: Icon(Icons.refresh_rounded, size: 18, color: colors.textSecondary),
                       onPressed: _fetchJournalHistory,
                       tooltip: "Refresh history",
                     ),
@@ -641,28 +529,28 @@ class _JournalismScreenState extends State<JournalismScreen> {
 
                 const SizedBox(height: 12),
 
-                // List of past entries
+                // List of past 5 entries
                 if (_isLoadingHistory && _journalHistory.isEmpty)
-                  _buildHistoryLoadingState(isDarkMode, surfaceColor)
+                  _buildHistoryLoadingState(colors)
                 else if (_journalHistory.isEmpty)
-                  _buildEmptyState(isDarkMode, surfaceColor, borderColor, primaryTextColor, secondaryTextColor)
+                  _buildEmptyState(colors)
                 else
                   ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _journalHistory.length,
+                    itemCount: latestFiveHistory.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
-                      final item = _journalHistory[index];
+                      final item = latestFiveHistory[index];
                       return _JournalEntryCard(
                         entry: item,
-                        isDark: isDarkMode,
-                        onTap: () => _showEntryDetail(item, isDarkMode),
+                        colors: colors,
+                        onTap: () => _showEntryDetail(item, colors),
                       );
                     },
                   ),
 
-                const SizedBox(height: 48),
+                const SizedBox(height: 12),
               ],
             ),
           ),
@@ -671,128 +559,14 @@ class _JournalismScreenState extends State<JournalismScreen> {
     );
   }
 
-  // ── AFFIRMATION CARD WIDGET ──────────────────────────────────
-  Widget _buildAffirmationCard(
-    bool isDark,
-    Color surfaceColor,
-    Color borderColor,
-    Color primaryColor,
-    Color secondaryColor,
-  ) {
-    final affirmation = _sampleAffirmations[_selectedAffirmationIndex];
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: surfaceColor,
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: borderColor),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.auto_awesome,
-                    size: 16,
-                    color: primaryColor,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    "DAILY AFFIRMATION",
-                    style: TextStyle(
-                      fontFamily: 'Arial',
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: secondaryColor,
-                      letterSpacing: 0.8,
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.refresh_rounded, size: 18, color: secondaryColor),
-                    onPressed: _nextAffirmation,
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    tooltip: "New affirmation",
-                  ),
-                  const SizedBox(width: 12),
-                  GestureDetector(
-                    onTap: _copyAffirmationToInput,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: primaryColor.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.edit_note_rounded, size: 14, color: primaryColor),
-                          const SizedBox(width: 4),
-                          Text(
-                            "Reflect",
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: primaryColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Text(
-            '"$affirmation"',
-            style: TextStyle(
-              fontFamily: 'Arial',
-              fontSize: 16,
-              height: 1.5,
-              fontWeight: FontWeight.w600,
-              color: primaryColor,
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ── EMPTY STATE WIDGET ───────────────────────────────────────
-  Widget _buildEmptyState(
-    bool isDark,
-    Color surfaceColor,
-    Color borderColor,
-    Color primaryColor,
-    Color secondaryColor,
-  ) {
+  Widget _buildEmptyState(ThemeColors colors) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 24),
       decoration: BoxDecoration(
-        color: surfaceColor,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: borderColor),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         children: [
@@ -800,55 +574,43 @@ class _JournalismScreenState extends State<JournalismScreen> {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: primaryColor.withValues(alpha: 0.06),
+              color: colors.primary.withValues(alpha: 0.08),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.book_outlined,
               size: 26,
-              color: primaryColor,
+              color: colors.primary,
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
           Text(
-            "No journal entries yet",
-            style: TextStyle(
-              fontFamily: 'Arial',
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-              color: primaryColor,
-            ),
+            "Your Nest is Empty",
+            style: AppTextStyles.sectionTitle(colors),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 6),
           Text(
-            "Write your first thought above to start building your personal Nest history.",
+            "Write your first entry above to start building your personal journal timeline.",
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: 'Arial',
-              fontSize: 13,
-              height: 1.4,
-              color: secondaryColor,
-            ),
+            style: AppTextStyles.bodySecondary(colors),
           ),
         ],
       ),
     );
   }
 
-  // ── HISTORY LOADING SHIMMER ─────────────────────────────────
-  Widget _buildHistoryLoadingState(bool isDark, Color surfaceColor) {
+  Widget _buildHistoryLoadingState(ThemeColors colors) {
     return Column(
       children: List.generate(
         3,
-        (_) => Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: Container(
-            height: 70,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: surfaceColor,
-              borderRadius: BorderRadius.circular(18),
-            ),
+        (_) => Container(
+          width: double.infinity,
+          height: 72,
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: colors.border.withValues(alpha: 0.4)),
           ),
         ),
       ),
@@ -856,17 +618,14 @@ class _JournalismScreenState extends State<JournalismScreen> {
   }
 }
 
-// ─────────────────────────────────────────────────────────────
-// JOURNAL ENTRY CARD
-// ─────────────────────────────────────────────────────────────
 class _JournalEntryCard extends StatelessWidget {
   final Map<String, dynamic> entry;
-  final bool isDark;
+  final ThemeColors colors;
   final VoidCallback onTap;
 
   const _JournalEntryCard({
     required this.entry,
-    required this.isDark,
+    required this.colors,
     required this.onTap,
   });
 
@@ -886,6 +645,7 @@ class _JournalEntryCard extends StatelessWidget {
         return "$hour:$min $ampm";
       }
       if (diff.inDays < 2) return "Yesterday";
+      
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       return "${dt.day} ${months[dt.month - 1]}";
     } catch (_) {
@@ -896,22 +656,24 @@ class _JournalEntryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final content = entry['content']?.toString() ?? '';
-    final mood = entry['associatedMood']?.toString() ?? 'THOUGHT';
-    final dateStr = _formatDate(entry['createdAt'] ?? entry['date']);
-
-    final primaryColor = AppColors.getMonoTextPrimary(isDark);
-    final secondaryColor = AppColors.getMonoTextSecondary(isDark);
-    final surfaceColor = AppColors.getMonoSurface(isDark);
-    final borderColor = AppColors.getMonoBorder(isDark);
+    final mood = entry['associatedMood']?.toString() ?? 'REFLECTION';
+    final timeStr = _formatDate(entry['createdAt'] ?? entry['date']);
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: surfaceColor,
+          color: colors.card,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: borderColor.withValues(alpha: 0.6)),
+          border: Border.all(color: colors.border),
+          boxShadow: [
+            BoxShadow(
+              color: colors.shadow.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -922,41 +684,33 @@ class _JournalEntryCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: primaryColor.withValues(alpha: 0.07),
-                    borderRadius: BorderRadius.circular(10),
+                    color: colors.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     mood.toUpperCase(),
-                    style: TextStyle(
-                      fontFamily: 'Arial',
+                    style: AppTextStyles.labelSmall(colors).copyWith(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
-                      color: primaryColor,
-                      letterSpacing: 0.5,
+                      color: colors.primary,
+                      letterSpacing: 0.6,
                     ),
                   ),
                 ),
                 Text(
-                  dateStr,
-                  style: TextStyle(
-                    fontFamily: 'Arial',
-                    fontSize: 11,
-                    color: secondaryColor,
-                  ),
+                  timeStr,
+                  style: AppTextStyles.hintText(colors),
                 ),
               ],
             ),
             const SizedBox(height: 10),
             Text(
               content,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontFamily: 'Arial',
-                fontSize: 14.5,
+              style: AppTextStyles.bodyText(colors).copyWith(
                 height: 1.45,
-                color: primaryColor,
               ),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

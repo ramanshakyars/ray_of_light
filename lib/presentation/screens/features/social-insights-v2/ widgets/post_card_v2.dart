@@ -185,7 +185,7 @@ class _PostCardV2State extends State<PostCardV2> with SingleTickerProviderStateM
     final hasMood = widget.post.mood != null && widget.post.mood!.isNotEmpty;
 
     final primaryColor = AppColors.getMonoTextPrimary(isDark);
-    final initials = auth.name.isNotEmpty ? auth.name[0].toUpperCase() : '?';
+    final initials = widget.post.username.isNotEmpty ? widget.post.username[0].toUpperCase() : '?';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
@@ -232,7 +232,13 @@ class _PostCardV2State extends State<PostCardV2> with SingleTickerProviderStateM
                     children: [
                       Row(
                         children: [
-                          Text(auth.name, style: AppTextStyles.monoMedium18(isDark).copyWith(fontSize: 15, fontWeight: FontWeight.bold)),
+                          Flexible(
+                            child: Text(
+                              widget.post.username,
+                              style: AppTextStyles.monoMedium18(isDark).copyWith(fontSize: 15, fontWeight: FontWeight.bold),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
                           if (auth.isAdmin) ...[
                             const SizedBox(width: 6),
                             Container(
@@ -265,8 +271,6 @@ class _PostCardV2State extends State<PostCardV2> with SingleTickerProviderStateM
                     onPressed: () => _showModerationSheet(context, provider, isDark),
                     tooltip: "Moderate Post",
                   ),
-                ] else ...[
-                  Icon(Icons.more_horiz_rounded, color: AppColors.getMonoIcon(isDark).withOpacity(0.4), size: 22),
                 ]
               ],
             ),

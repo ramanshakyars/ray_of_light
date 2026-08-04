@@ -1,14 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
-import 'package:rayoflite/core/theme/appcolors.dart';
+import 'package:rayoflite/core/theme/app_theme_colors.dart';
+import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/screens/features/profile/post_model.dart';
 
 class PostCard extends StatelessWidget {
   final PostModel post;
-  final bool isDark;
+  final bool? isDark;
 
-  const PostCard({super.key, required this.post, required this.isDark});
+  const PostCard({super.key, required this.post, this.isDark});
 
   String _timeAgo(DateTime? dt) {
     if (dt == null) return '';
@@ -22,6 +24,7 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.watch<ThemeProvider>().colors;
     final hasCaption = post.caption.trim().isNotEmpty;
     final hasMedia = post.mediaUrls.isNotEmpty;
     final authorName = post.authorName ?? 'You';
@@ -29,10 +32,10 @@ class PostCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.getMonoCard(isDark),
+        color: colors.card,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: AppColors.getMonoBorder(isDark).withOpacity(0.4),
+          color: colors.border.withValues(alpha: 0.5),
         ),
       ),
       child: Column(
@@ -48,17 +51,16 @@ class PostCard extends StatelessWidget {
                   width: 38,
                   height: 38,
                   decoration: BoxDecoration(
-                    color: AppColors.getMonoTextPrimary(isDark).withOpacity(0.08),
+                    color: colors.primary.withValues(alpha: 0.08),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: AppColors.getMonoBorder(isDark),
+                      color: colors.border,
                     ),
                   ),
                   child: Center(
                     child: Text(
                       authorName.isNotEmpty ? authorName[0].toUpperCase() : 'Y',
-                      style: AppTextStyles.monoBold22(isDark)
-                          .copyWith(fontSize: 16),
+                      style: AppTextStyles.cardTitle(colors).copyWith(fontSize: 16),
                     ),
                   ),
                 ),
@@ -69,12 +71,11 @@ class PostCard extends StatelessWidget {
                     children: [
                       Text(
                         authorName,
-                        style: AppTextStyles.monoMedium18(isDark)
-                            .copyWith(fontSize: 14, fontWeight: FontWeight.w700),
+                        style: AppTextStyles.cardTitle(colors).copyWith(fontSize: 14),
                       ),
                       Text(
                         _timeAgo(post.createdAt),
-                        style: AppTextStyles.monoMuted12(isDark),
+                        style: AppTextStyles.hintText(colors),
                       ),
                     ],
                   ),
@@ -82,7 +83,7 @@ class PostCard extends StatelessWidget {
                 Icon(
                   Icons.public_rounded,
                   size: 16,
-                  color: AppColors.getMonoTextMuted(isDark),
+                  color: colors.textMuted,
                 ),
               ],
             ),
@@ -90,7 +91,7 @@ class PostCard extends StatelessWidget {
 
           // ─── Media ───
           if (hasMedia) ...[
-            _MediaGrid(mediaUrls: post.mediaUrls, isDark: isDark),
+            _MediaGrid(mediaUrls: post.mediaUrls, colors: colors),
             const SizedBox(height: 12),
           ],
 
@@ -100,7 +101,7 @@ class PostCard extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
               child: Text(
                 post.caption,
-                style: AppTextStyles.monoRegular16(isDark).copyWith(
+                style: AppTextStyles.bodyText(colors).copyWith(
                   height: 1.55,
                   fontSize: 15,
                 ),
@@ -117,13 +118,13 @@ class PostCard extends StatelessWidget {
                 _engagementChip(
                   icon: Icons.favorite_border_rounded,
                   count: post.likeCount,
-                  isDark: isDark,
+                  colors: colors,
                 ),
                 const SizedBox(width: 20),
                 _engagementChip(
                   icon: Icons.chat_bubble_outline_rounded,
                   count: post.commentCount,
-                  isDark: isDark,
+                  colors: colors,
                 ),
               ],
             ),
@@ -136,15 +137,15 @@ class PostCard extends StatelessWidget {
   Widget _engagementChip({
     required IconData icon,
     required int count,
-    required bool isDark,
+    required ThemeColors colors,
   }) {
     return Row(
       children: [
-        Icon(icon, size: 18, color: AppColors.getMonoIcon(isDark).withOpacity(0.6)),
+        Icon(icon, size: 18, color: colors.icon),
         const SizedBox(width: 5),
         Text(
           count.toString(),
-          style: AppTextStyles.monoMuted12(isDark).copyWith(fontSize: 13),
+          style: AppTextStyles.hintText(colors),
         ),
       ],
     );
@@ -154,9 +155,9 @@ class PostCard extends StatelessWidget {
 // ─── Media grid: shows 1 or 2 images neatly ───
 class _MediaGrid extends StatelessWidget {
   final List<String> mediaUrls;
-  final bool isDark;
+  final ThemeColors colors;
 
-  const _MediaGrid({required this.mediaUrls, required this.isDark});
+  const _MediaGrid({required this.mediaUrls, required this.colors});
 
   @override
   Widget build(BuildContext context) {
@@ -179,13 +180,13 @@ class _MediaGrid extends StatelessWidget {
         imageUrl: url,
         fit: BoxFit.cover,
         placeholder: (_, __) => Container(
-          color: AppColors.getMonoSurface(isDark),
-          child: const Center(child: CircularProgressIndicator(strokeWidth: 1.5)),
+          color: colors.surface,
+          child: Center(child: CircularProgressIndicator(strokeWidth: 1.5, color: colors.primary)),
         ),
         errorWidget: (_, __, ___) => Container(
-          color: AppColors.getMonoSurface(isDark),
+          color: colors.surface,
           child: Icon(Icons.broken_image_outlined,
-              color: AppColors.getMonoTextMuted(isDark)),
+              color: colors.textMuted),
         ),
       ),
     );

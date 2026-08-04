@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
-import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/comment_sheet.dart';
 import '../models/post_view_model.dart';
 import '../post/media_carousel.dart';
 import '../provider/social_feed_provider.dart';
 
-
-  class PostCardV2 extends StatelessWidget {
+class PostCardV2 extends StatelessWidget {
   final PostViewModel post;
 
   const PostCardV2({super.key, required this.post});
@@ -24,7 +22,7 @@ import '../provider/social_feed_provider.dart';
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final colors = context.watch<ThemeProvider>().colors;
     final provider = context.read<SocialFeedProvider>();
 
     final hasText = post.caption.trim().isNotEmpty;
@@ -37,7 +35,7 @@ import '../provider/social_feed_provider.dart';
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: AppColors.getMonoDivider(isDark),
+            color: colors.divider,
           ),
         ),
       ),
@@ -50,12 +48,12 @@ import '../provider/social_feed_provider.dart';
             children: [
               Text(
                 post.username,
-                style: AppTextStyles.monoMedium18(isDark),
+                style: AppTextStyles.cardTitle(colors),
               ),
               const SizedBox(width: 8),
               Text(
                 _timeAgo(post.createdAt),
-                style: AppTextStyles.monoMuted12(isDark),
+                style: AppTextStyles.hintText(colors),
               ),
             ],
           ),
@@ -87,14 +85,13 @@ import '../provider/social_feed_provider.dart';
                 Container(
                   width: 3,
                   height: 50,
-                  color: AppColors.getMonoBorder(isDark),
+                  color: colors.border,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     post.caption,
-                    style: AppTextStyles.monoRegular16(isDark)
-                        .copyWith(height: 1.5),
+                    style: AppTextStyles.bodyText(colors),
                   ),
                 ),
               ],
@@ -108,18 +105,18 @@ import '../provider/social_feed_provider.dart';
               _action(
                 context,
                 icon: post.liked
-                    ? Icons.favorite
-                    : Icons.favorite_border,
+                    ? Icons.favorite_rounded
+                    : Icons.favorite_border_rounded,
                 label: post.likeCount.toString(),
-                isDark: isDark,
+                colors: colors,
                 onTap: () => provider.toggleLike(post),
               ),
               const SizedBox(width: 24),
               _action(
                 context,
-                icon: Icons.chat_bubble_outline,
+                icon: Icons.chat_bubble_outline_rounded,
                 label: post.commentCount.toString(),
-                isDark: isDark,
+                colors: colors,
                 onTap: () {
                   showModalBottomSheet(
                     context: context,
@@ -132,9 +129,9 @@ import '../provider/social_feed_provider.dart';
               const SizedBox(width: 24),
               _action(
                 context,
-                icon: Icons.share_outlined,
+                icon: Icons.ios_share_rounded,
                 label: "",
-                isDark: isDark,
+                colors: colors,
                 onTap: () {},
               ),
             ],
@@ -148,26 +145,30 @@ import '../provider/social_feed_provider.dart';
     BuildContext context, {
     required IconData icon,
     required String label,
-    required bool isDark,
+    required dynamic colors,
     required VoidCallback onTap,
   }) {
     return InkWell(
       onTap: onTap,
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            size: 18,
-            color: AppColors.getMonoIcon(isDark),
-          ),
-          if (label.isNotEmpty) ...[
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: AppTextStyles.monoMuted12(isDark),
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 18,
+              color: colors.icon,
             ),
+            if (label.isNotEmpty) ...[
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: AppTextStyles.hintText(colors),
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
+import 'package:rayoflite/core/theme/app_theme_colors.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 
@@ -8,6 +9,8 @@ import 'package:rayoflite/core/theme/themeProvider.dart';
 ///
 /// Layout:
 ///   [leading?]  [title + subtitle]  [actions?]
+///
+/// Colors and typography are driven from the global ThemeProvider.
 class AppScreenHeader extends StatelessWidget {
   final String title;
   final String? subtitle;
@@ -26,7 +29,8 @@ class AppScreenHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final themeProvider = context.watch<ThemeProvider>();
+    final colors = themeProvider.colors;
 
     return Padding(
       padding: EdgeInsets.only(bottom: bottomPadding),
@@ -44,10 +48,7 @@ class AppScreenHeader extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: AppTextStyles.monoBold22(isDark).copyWith(
-                    fontSize: 22,
-                    height: 1.2,
-                  ),
+                  style: AppTextStyles.screenTitle(colors),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -55,9 +56,7 @@ class AppScreenHeader extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     subtitle!,
-                    style: AppTextStyles.monoSecondary14(isDark).copyWith(
-                      letterSpacing: 0.2,
-                    ),
+                    style: AppTextStyles.hintText(colors),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -90,7 +89,7 @@ class AppScreenHeader extends StatelessWidget {
           color: AppColors.getMonoSurface(isDark),
           shape: BoxShape.circle,
           border: Border.all(
-            color: AppColors.getMonoBorder(isDark).withOpacity(0.4),
+            color: AppColors.getMonoBorder(isDark).withValues(alpha: 0.4),
           ),
         ),
         child: Icon(icon, size: 19, color: AppColors.getMonoIcon(isDark)),

@@ -200,6 +200,7 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
           Expanded(
             child: TextField(
               controller: controller,
+              textCapitalization: TextCapitalization.sentences,
               style: AppTextStyles.monoRegular16(isDark).copyWith(fontSize: 16, height: 1.6),
               maxLines: null,
               expands: true,

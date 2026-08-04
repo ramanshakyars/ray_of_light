@@ -13,6 +13,7 @@ class RouteNames {
 
   static const settings = 'settings';
   static const deactivateAccount = 'deactivate-account';
+  static const themeSettings = 'theme-settings';
 
   // Main app structure
   static const mainApp = '/main';

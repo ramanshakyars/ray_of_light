@@ -1,31 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:rayoflite/core/theme/appcolors.dart';
-import 'package:rayoflite/core/theme/themeProvider.dart';
+import 'package:rayoflite/core/theme/app_theme_colors.dart';
+import 'package:rayoflite/core/theme/AppFont.dart';
 
 class SettingsSection extends StatelessWidget {
   final String title;
+  final ThemeColors? colors;
 
   const SettingsSection({
     super.key,
     required this.title,
+    this.colors,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    // Use provided colors or fallback from theme
+    final c = colors;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 12,
-          letterSpacing: 1.2,
-          fontWeight: FontWeight.w600,
-          color: AppColors.getMonoTextMuted(isDark),
-        ),
-      ),
+      child: c != null
+          ? Text(
+              title,
+              style: AppTextStyles.sectionLabel(c),
+            )
+          : Text(
+              title,
+              style: const TextStyle(
+                fontFamily: 'Specimen',
+                fontSize: 11,
+                letterSpacing: 1.4,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF9CA3AF),
+              ),
+            ),
     );
   }
 }

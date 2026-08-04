@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
-import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
+import 'package:rayoflite/core/theme/app_theme_colors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
+import 'package:rayoflite/presentation/widgets/app_screen_header.dart';
 
 class BreathingScreen extends StatefulWidget {
   const BreathingScreen({super.key});
@@ -24,10 +25,8 @@ class _BreathingScreenState extends State<BreathingScreen>
   int _count = 4;
   bool _isRunning = false;
 
-  // selected exercise
   String selectedExercise = "Box Breathing";
 
-  // breathing pattern configurations
   final Map<String, Map<String, int>> breathingPatterns = {
     "Box Breathing": {"inhale": 4, "hold1": 4, "exhale": 4, "hold2": 4},
     "4-7-8 Breathing": {"inhale": 4, "hold1": 7, "exhale": 8, "hold2": 0},
@@ -152,147 +151,147 @@ class _BreathingScreenState extends State<BreathingScreen>
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDarkMode = themeProvider.isDarkMode;
+    final colors = context.watch<ThemeProvider>().colors;
 
     return Scaffold(
-      backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
-      appBar: AppBar(
-        title: Text(
-          'Breathing Exercise',
-          style: AppTextStyles.medium18(isDarkMode),
-        ),
-        backgroundColor: AppColors.getAppBackgroundColor(isDarkMode),
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            icon: Image.asset('assets/logo.png', height: 30),
-            onPressed:
-                () => GoRouter.of(
-                  context,
-                ).push('${RouteNames.mainApp}/${RouteNames.home}'),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Column(
-          children: [
-            const SizedBox(height: 10),
-            _buildBreathingCard(isDarkMode),
-            const SizedBox(height: 30),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Practice Sessions",
-                style: AppTextStyles.medium18(isDarkMode),
+      backgroundColor: colors.background,
+      body: SafeArea(
+        bottom: false,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ── Header ───────────────────────────────────────
+              AppScreenHeader(
+                title: "Breathing Exercise",
+                subtitle: "Relax, focus and find your center",
+                actions: [
+                  GestureDetector(
+                    onTap: () => context.push('${RouteNames.mainApp}/${RouteNames.home}'),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: colors.surface,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: colors.border.withValues(alpha: 0.5),
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.air_rounded,
+                        color: colors.icon,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 15),
-            _buildSessionCard(
-              isDarkMode,
-              title: 'Box Breathing',
-              subtitle: 'Equal breathing for balance and calm',
-              duration: '5 min',
-              onTap: () => _selectExercise("Box Breathing"),
-            ),
-            const SizedBox(height: 10),
-            _buildSessionCard(
-              isDarkMode,
-              icon: Icons.air_rounded,
-              bgColor: AppColors.hexToColor('#E9D5FF'),
-              title: '4-7-8 Breathing',
-              subtitle: 'Relaxation technique for better sleep',
-              duration: '10 min',
-              onTap: () => _selectExercise("4-7-8 Breathing"),
-            ),
-            const SizedBox(height: 10),
-            _buildSessionCard(
-              isDarkMode,
-              icon: Icons.self_improvement_rounded,
-              bgColor: AppColors.hexToColor('#E0E7FF'),
-              title: 'Morning Energizer',
-              subtitle: 'Start your day with vitality',
-              duration: '3 min',
-              onTap: () => _selectExercise("Morning Energizer"),
-            ),
-          ],
+
+              const SizedBox(height: 16),
+              _buildBreathingCard(colors),
+              const SizedBox(height: 28),
+              Text(
+                "Practice Sessions",
+                style: AppTextStyles.sectionTitle(colors),
+              ),
+              const SizedBox(height: 14),
+              _buildSessionCard(
+                colors,
+                title: 'Box Breathing',
+                subtitle: 'Equal breathing for balance and calm',
+                duration: '5 min',
+                icon: Icons.square_outlined,
+                onTap: () => _selectExercise("Box Breathing"),
+              ),
+              const SizedBox(height: 10),
+              _buildSessionCard(
+                colors,
+                icon: Icons.air_rounded,
+                title: '4-7-8 Breathing',
+                subtitle: 'Relaxation technique for better sleep',
+                duration: '10 min',
+                onTap: () => _selectExercise("4-7-8 Breathing"),
+              ),
+              const SizedBox(height: 10),
+              _buildSessionCard(
+                colors,
+                icon: Icons.self_improvement_rounded,
+                title: 'Morning Energizer',
+                subtitle: 'Start your day with vitality',
+                duration: '3 min',
+                onTap: () => _selectExercise("Morning Energizer"),
+              ),
+              const SizedBox(height: 12),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildBreathingCard(bool isDarkMode) {
+  Widget _buildBreathingCard(ThemeColors colors) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppColors.hexToColor('#8E2DE2'),
-            AppColors.hexToColor('#4A00E0'),
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-        borderRadius: BorderRadius.circular(25),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(26),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
+            color: colors.shadow.withValues(alpha: 0.1),
+            blurRadius: 16,
             offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         children: [
-          Text(selectedExercise, style: AppTextStyles.medium22(isDarkMode)),
+          Text(selectedExercise, style: AppTextStyles.sectionTitle(colors)),
           const SizedBox(height: 4),
-          Text("Find your center", style: AppTextStyles.regular14(isDarkMode)),
-          const SizedBox(height: 25),
+          Text("Find your center", style: AppTextStyles.hintText(colors)),
+          const SizedBox(height: 28),
           AnimatedBuilder(
             animation: _scaleAnimation,
             builder: (context, child) {
               return Transform.scale(
                 scale: _scaleAnimation.value,
                 child: Container(
-                  width: 180,
-                  height: 180,
+                  width: 170,
+                  height: 170,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [
-                        AppColors.hexToColor('#6A11CB'),
-                        AppColors.hexToColor('#2575FC'),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                    color: colors.primary.withValues(alpha: 0.15),
+                    border: Border.all(
+                      color: colors.primary.withValues(alpha: 0.4),
+                      width: 2,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.15),
-                        blurRadius: 15,
-                        spreadRadius: 3,
+                        color: colors.primary.withValues(alpha: 0.15),
+                        blurRadius: 20,
+                        spreadRadius: 4,
                       ),
                     ],
                   ),
                   child: Center(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: ColorScheme != null
+                          ? MainAxisAlignment.center
+                          : MainAxisAlignment.center,
                       children: [
                         Text(
                           _instruction,
-                          style: AppTextStyles.medium18(
-                            isDarkMode,
-                          ).copyWith(color: Colors.white),
+                          style: AppTextStyles.cardTitle(colors),
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 8),
                         Text(
                           _count.toString(),
-                          style: AppTextStyles.bold28(
-                            isDarkMode,
-                          ).copyWith(color: Colors.white, fontSize: 48),
+                          style: AppTextStyles.screenTitle(colors).copyWith(
+                            fontSize: 44,
+                          ),
                         ),
                       ],
                     ),
@@ -301,17 +300,17 @@ class _BreathingScreenState extends State<BreathingScreen>
               );
             },
           ),
-          const SizedBox(height: 25),
+          const SizedBox(height: 28),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               FloatingActionButton(
                 heroTag: "startBtn",
                 onPressed: _isRunning ? _pauseCycle : _startCycle,
-                backgroundColor: Colors.white,
+                backgroundColor: colors.primary,
+                foregroundColor: colors.primaryForeground,
                 child: Icon(
-                  _isRunning ? Icons.pause : Icons.play_arrow,
-                  color: AppColors.hexToColor('#6A11CB'),
+                  _isRunning ? Icons.pause_rounded : Icons.play_arrow_rounded,
                   size: 30,
                 ),
               ),
@@ -319,11 +318,11 @@ class _BreathingScreenState extends State<BreathingScreen>
               FloatingActionButton(
                 heroTag: "resetBtn",
                 onPressed: _resetCycle,
-                backgroundColor: Colors.white,
-                child: Icon(
-                  Icons.replay,
-                  color: AppColors.hexToColor('#6A11CB'),
-                  size: 28,
+                backgroundColor: colors.surface,
+                foregroundColor: colors.icon,
+                child: const Icon(
+                  Icons.replay_rounded,
+                  size: 26,
                 ),
               ),
             ],
@@ -334,73 +333,71 @@ class _BreathingScreenState extends State<BreathingScreen>
   }
 
   Widget _buildSessionCard(
-    bool isDarkMode, {
-    String? image,
+    ThemeColors colors, {
     IconData? icon,
-    Color? bgColor,
     required String title,
     required String subtitle,
     required String duration,
     required VoidCallback onTap,
   }) {
+    final isSelected = selectedExercise == title;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: AppColors.getCard(isDarkMode),
-          borderRadius: BorderRadius.circular(16),
+          color: colors.card,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: isSelected ? colors.primary : colors.border,
+            width: isSelected ? 1.8 : 1.0,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: colors.shadow.withValues(alpha: 0.05),
               blurRadius: 8,
-              offset: const Offset(0, 4),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Row(
           children: [
-            if (image != null)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  image,
-                  height: 50,
-                  width: 50,
-                  fit: BoxFit.cover,
-                ),
-              )
-            else
-              Container(
-                height: 50,
-                width: 50,
-                decoration: BoxDecoration(
-                  color: bgColor ?? AppColors.getAccent(isDarkMode),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(icon, color: AppColors.getPrimary(isDarkMode)),
+            Container(
+              height: 44,
+              width: 44,
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? colors.primary.withValues(alpha: 0.15)
+                    : colors.surface,
+                borderRadius: BorderRadius.circular(12),
               ),
-            const SizedBox(width: 15),
+              child: Icon(
+                icon ?? Icons.air_rounded,
+                color: isSelected ? colors.primary : colors.icon,
+                size: 22,
+              ),
+            ),
+            const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: AppTextStyles.medium18(isDarkMode)),
-                  const SizedBox(height: 4),
+                  Text(
+                    title,
+                    style: AppTextStyles.cardTitle(colors).copyWith(fontSize: 15),
+                  ),
+                  const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: AppTextStyles.regular14(
-                      isDarkMode,
-                    ).copyWith(color: AppColors.getMutedForeground(isDarkMode)),
+                    style: AppTextStyles.hintText(colors),
                   ),
                 ],
               ),
             ),
             Text(
               duration,
-              style: AppTextStyles.regular14(
-                isDarkMode,
-              ).copyWith(color: AppColors.getMutedForeground(isDarkMode)),
+              style: AppTextStyles.labelSmall(colors),
             ),
           ],
         ),

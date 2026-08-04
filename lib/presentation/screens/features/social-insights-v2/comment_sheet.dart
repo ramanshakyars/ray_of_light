@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/services/httpService.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
-import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/models/post_view_model.dart';
 
@@ -18,7 +17,7 @@ class CommentSheet extends StatefulWidget {
 class _CommentSheetState extends State<CommentSheet> {
   final controller = TextEditingController();
   bool loading = true;
- List<Map<String, dynamic>> comments = [];
+  List<Map<String, dynamic>> comments = [];
 
   @override
   void initState() {
@@ -49,56 +48,103 @@ class _CommentSheetState extends State<CommentSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final colors = context.watch<ThemeProvider>().colors;
 
     return Container(
       height: MediaQuery.of(context).size.height * .75,
       decoration: BoxDecoration(
-        color: AppColors.getMonoCard(isDark),
+        color: colors.card,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          Text("Comments", style: AppTextStyles.monoMedium18(isDark)),
+          // Drag handle
+          Container(
+            width: 36,
+            height: 4,
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              color: colors.border,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+
+          Text(
+            "Comments",
+            style: AppTextStyles.sectionTitle(colors),
+          ),
 
           const SizedBox(height: 12),
 
           Expanded(
-            child:
-                loading
-                    ? const Center(child: CircularProgressIndicator())
-                    : comments.isEmpty
-                    ? const Center(child: Text("No comments yet"))
-                    : ListView.builder(
-                      itemCount: comments.length,
-                      itemBuilder: (_, i) {
-                        final c = comments[i];
-
-                        final author = c["author"];
-                        final username = author?["username"] ?? "Anonymous";
-                        final text = c["text"] ?? "";
-
-                        return ListTile(
-                          title: Text(username),
-                          subtitle: Text(text),
-                        );
-                      },
+            child: loading
+                ? Center(
+                    child: CircularProgressIndicator(
+                      color: colors.primary,
                     ),
+                  )
+                : comments.isEmpty
+                    ? Center(
+                        child: Text(
+                          "No comments yet",
+                          style: AppTextStyles.bodySecondary(colors),
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: comments.length,
+                        itemBuilder: (_, i) {
+                          final c = comments[i];
+                          final author = c["author"];
+                          final username = author?["username"] ?? "Anonymous";
+                          final text = c["text"] ?? "";
+
+                          return ListTile(
+                            title: Text(
+                              username,
+                              style: AppTextStyles.cardTitle(colors),
+                            ),
+                            subtitle: Text(
+                              text,
+                              style: AppTextStyles.bodySecondary(colors),
+                            ),
+                          );
+                        },
+                      ),
           ),
 
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: controller,
-                  decoration: const InputDecoration(
-                    hintText: "Write something kind...",
+          // Input row
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: colors.inputBackground,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: colors.inputBorder),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: controller,
+                    style: AppTextStyles.inputText(colors),
+                    decoration: InputDecoration(
+                      hintText: "Write something kind...",
+                      hintStyle: AppTextStyles.hintText(colors),
+                      border: InputBorder.none,
+                      isDense: true,
+                    ),
                   ),
                 ),
-              ),
-              IconButton(onPressed: addComment, icon: const Icon(Icons.send)),
-            ],
+                GestureDetector(
+                  onTap: addComment,
+                  child: Icon(
+                    Icons.send_rounded,
+                    color: colors.primary,
+                    size: 22,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

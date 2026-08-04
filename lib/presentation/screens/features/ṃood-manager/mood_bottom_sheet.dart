@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/services/moodService.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
-import 'package:rayoflite/core/theme/appcolors.dart';
+import 'package:rayoflite/core/theme/app_theme_colors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 
 import 'MoodRequest.dart';
@@ -58,231 +58,219 @@ class _MoodBottomSheetState extends State<MoodBottomSheet> {
         setState(() {
           _selectedMood = stored.type;
           _selectedMoodIndex = _moods.indexWhere(
-            (mood) => mood.type == stored.type,
+            (mood) => mood.type == _selectedMood,
           );
+          if (_selectedMoodIndex == -1) _selectedMoodIndex = 0;
           _intensity = stored.intensity;
         });
       }
     } catch (_) {}
   }
 
-  Future<void> _submitMood() async {
-    if (!mounted) return;
-
+  Future<void> _saveMood() async {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
 
-    try {
-      final req = MoodRequest(type: _selectedMood, intensity: _intensity);
+    final currentMoodUI =
+        (_selectedMoodIndex >= 0 && _selectedMoodIndex < _moods.length)
+            ? _moods[_selectedMoodIndex]
+            : _moods.first;
 
-      final resp = await MoodService.setMood(req);
+    final moodToSave = UserMood(
+      type: currentMoodUI.type,
+      intensity: _intensity,
+      setAt: DateTime.now(),
+    );
 
-      if (resp['success'] == true) {
-        final userMood = UserMood.fromJson(resp['data']);
-        await LocalStorageService.setCurrentMood(userMood);
+    final req = MoodRequest(
+      type: currentMoodUI.type,
+      intensity: _intensity,
+    );
 
-        if (mounted) {
-          Navigator.of(context).pop(userMood);
-        }
-      } else {
+    final result = await MoodService.setMood(req);
+
+    if (result['success'] == true) {
+      await LocalStorageService.setCurrentMood(moodToSave);
+      if (mounted) Navigator.pop(context, true);
+    } else {
+      if (mounted) {
         setState(() {
-          _errorMessage = resp['message'] ?? 'Failed to update mood';
           _isLoading = false;
+          _errorMessage = result['message'] ?? "Failed to save mood";
         });
       }
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Error updating mood';
-        _isLoading = false;
-      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final colors = context.watch<ThemeProvider>().colors;
 
-    final card = AppColors.getMonoCard(isDark);
-    final surface = AppColors.getMonoSurface(isDark);
-    final textSecondary = AppColors.getMonoTextSecondary(isDark);
-
-    return SafeArea(
-      top: false,
-      child: Container(
-        height: MediaQuery.of(context).size.height * 0.65,
-        padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
-        decoration: BoxDecoration(
-          color: card,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            /// HANDLE
-            Center(
-              child: Container(
-                width: 44,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: 12),
-                decoration: BoxDecoration(
-                  color: AppColors.getMonoBorder(isDark),
-                  borderRadius: BorderRadius.circular(10),
-                ),
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.78,
+      padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
+      decoration: BoxDecoration(
+        color: colors.card,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// HANDLE
+          Center(
+            child: Container(
+              width: 44,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: colors.border,
+                borderRadius: BorderRadius.circular(10),
               ),
             ),
+          ),
 
-            /// HEADER
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "How are you feeling?",
-                  style: AppTextStyles.monoBold22(isDark),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(Icons.close, color: AppColors.getMonoIcon(isDark)),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 4),
-
-            Text(
-              "Choose a mood to express your moment",
-              style: AppTextStyles.monoSecondary14(isDark),
-            ),
-
-            const SizedBox(height: 18),
-
-            /// GRID
-            Expanded(
-              child: GridView.builder(
-                itemCount: _moods.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                  mainAxisSpacing: 18,
-                  crossAxisSpacing: 18,
-                  childAspectRatio: 0.9,
-                ),
-                itemBuilder: (_, i) {
-                  final mood = _moods[i];
-                  final selected = i == _selectedMoodIndex;
-
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedMood = mood.type;
-                        _selectedMoodIndex = i;
-                      });
-                    },
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 54,
-                          width: 54,
-                          decoration: BoxDecoration(
-                            color:
-                                selected
-                                    ? AppColors.getMonoTextPrimary(isDark)
-                                    : surface,
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          child: Icon(
-                            mood.icon,
-                            color:
-                                selected
-                                    ? (isDark ? Colors.black : Colors.white)
-                                    : textSecondary,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          mood.label,
-                          style: AppTextStyles.monoMuted12(isDark),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+          /// HEADER
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "How are you feeling?",
+                style: AppTextStyles.sectionTitle(colors),
               ),
-            ),
-
-            /// SLIDER
-            SliderTheme(
-              data: SliderTheme.of(context).copyWith(
-                activeTrackColor: AppColors.getMonoTextPrimary(
-                  isDark,
-                ), // black/white
-                inactiveTrackColor: AppColors.getMonoBorder(isDark),
-
-                thumbColor: AppColors.getMonoTextPrimary(isDark),
-
-                overlayColor: AppColors.getMonoTextPrimary(
-                  isDark,
-                ).withValues(alpha: 0.1),
-
-                trackHeight: 3,
-                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.close, color: colors.icon),
               ),
-              child: Slider(
-                value: _intensity.toDouble(),
-                min: 1,
-                max: 10,
-                divisions: 9,
-                onChanged: (v) => setState(() => _intensity = v.round()),
-              ),
-            ),
-
-            if (_errorMessage != null) ...[
-              const SizedBox(height: 8),
-              Text(_errorMessage!, style: const TextStyle(color: Colors.red)),
             ],
+          ),
 
-            const SizedBox(height: 8),
+          const SizedBox(height: 4),
 
-            /// SAVE BUTTON
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.getMonoTextPrimary(
-                    isDark,
-                  ), // black (light mode) / white (dark mode)
-                  foregroundColor: AppColors.getMonoBackground(
-                    isDark,
-                  ), // opposite text
-                  disabledBackgroundColor: AppColors.getMonoBorder(isDark),
-                  disabledForegroundColor: AppColors.getMonoTextMuted(isDark),
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                onPressed: _isLoading ? null : _submitMood,
-                child:
-                    _isLoading
-                        ? SizedBox(
-                          height: 18,
-                          width: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: AppColors.getMonoBackground(isDark),
-                          ),
-                        )
-                        : Text(
-                          "Save",
-                          style: AppTextStyles.monoMedium18(isDark).copyWith(
-                            color: AppColors.getMonoBackground(isDark),
-                          ),
+          Text(
+            "Choose a mood to express your moment",
+            style: AppTextStyles.bodySecondary(colors),
+          ),
+
+          const SizedBox(height: 18),
+
+          /// GRID
+          Expanded(
+            child: GridView.builder(
+              itemCount: _moods.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                mainAxisSpacing: 14,
+                crossAxisSpacing: 14,
+                childAspectRatio: 0.75,
+              ),
+              itemBuilder: (_, i) {
+                final mood = _moods[i];
+                final selected = i == _selectedMoodIndex;
+
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedMood = mood.type;
+                      _selectedMoodIndex = i;
+                    });
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        height: 48,
+                        width: 48,
+                        decoration: BoxDecoration(
+                          color: selected ? colors.primary : colors.surface,
+                          borderRadius: BorderRadius.circular(16),
                         ),
+                        child: Icon(
+                          mood.icon,
+                          size: 24,
+                          color: selected ? colors.primaryForeground : colors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        mood.label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.labelSmall(colors).copyWith(
+                          fontSize: 11,
+                          color: selected ? colors.primary : colors.textMuted,
+                          fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+
+          /// INTENSITY SLIDER
+          Text(
+            "Intensity: $_intensity / 10",
+            style: AppTextStyles.hintText(colors),
+          ),
+          SliderTheme(
+            data: SliderThemeData(
+              activeTrackColor: colors.primary,
+              inactiveTrackColor: colors.surface,
+              thumbColor: colors.primary,
+            ),
+            child: Slider(
+              value: _intensity.toDouble(),
+              min: 1,
+              max: 10,
+              divisions: 9,
+              onChanged: (val) {
+                setState(() {
+                  _intensity = val.round();
+                });
+              },
+            ),
+          ),
+
+          if (_errorMessage != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Text(
+                _errorMessage!,
+                style: TextStyle(color: colors.error, fontSize: 13),
               ),
             ),
-          ],
-        ),
+
+          const SizedBox(height: 8),
+
+          /// SAVE BUTTON
+          GestureDetector(
+            onTap: _isLoading ? null : _saveMood,
+            child: Container(
+              height: 52,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: colors.primary,
+                borderRadius: BorderRadius.circular(26),
+              ),
+              child: _isLoading
+                  ? SizedBox(
+                      height: 22,
+                      width: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: colors.primaryForeground,
+                      ),
+                    )
+                  : Text(
+                      "Save Mood",
+                      style: AppTextStyles.buttonLabel(colors),
+                    ),
+            ),
+          ),
+        ],
       ),
     );
   }

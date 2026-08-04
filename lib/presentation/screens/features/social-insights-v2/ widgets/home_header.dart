@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
-import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 
@@ -15,7 +14,6 @@ class HomeHeader extends StatelessWidget {
 
   String _getGreeting() {
     final hour = DateTime.now().hour;
-
     if (hour < 12) return "Good Morning";
     if (hour < 17) return "Good Afternoon";
     return "Good Evening";
@@ -26,8 +24,7 @@ class HomeHeader extends StatelessWidget {
     return "${_weekday(now.weekday)}, ${_month(now.month)} ${now.day}";
   }
 
-  String _weekday(int d) =>
-      [
+  String _weekday(int d) => [
         "",
         "MONDAY",
         "TUESDAY",
@@ -38,8 +35,7 @@ class HomeHeader extends StatelessWidget {
         "SUNDAY",
       ][d];
 
-  String _month(int m) =>
-      [
+  String _month(int m) => [
         "",
         "JANUARY",
         "FEBRUARY",
@@ -70,19 +66,13 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
-    final primaryColor = AppColors.getMonoTextPrimary(isDark);
+    final colors = context.watch<ThemeProvider>().colors;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          /// LEFT — Logo
-          Image.asset('assets/logo.png', height: 26, color: primaryColor),
-
-          const SizedBox(width: 14),
-
           /// CENTER — Greeting + Name → taps to Profile
           Expanded(
             child: GestureDetector(
@@ -93,8 +83,7 @@ class HomeHeader extends StatelessWidget {
                 children: [
                   Text(
                     "${_getGreeting()}, $userName",
-                    style: AppTextStyles.monoBold22(isDark).copyWith(
-                      fontSize: 22,
+                    style: AppTextStyles.screenTitle(colors).copyWith(
                       height: 1.2,
                     ),
                     maxLines: 1,
@@ -103,7 +92,9 @@ class HomeHeader extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     _getDate(),
-                    style: AppTextStyles.monoMuted12(isDark).copyWith(letterSpacing: 0.4),
+                    style: AppTextStyles.labelSmall(colors).copyWith(
+                      letterSpacing: 0.4,
+                    ),
                   ),
                 ],
               ),
@@ -112,28 +103,29 @@ class HomeHeader extends StatelessWidget {
 
           const SizedBox(width: 12),
 
-          /// RIGHT — Mood only (profile accessible via greeting tap)
+          /// RIGHT — Mood
           InkWell(
             borderRadius: BorderRadius.circular(100),
             onTap: () => _openMoodSheet(context),
-            child: _circleIcon(Icons.mood_outlined, isDark),
+            child: _circleIcon(Icons.mood_outlined, colors),
           ),
         ],
       ),
     );
   }
 
-  Widget _circleIcon(IconData icon, bool isDark) {
+  Widget _circleIcon(IconData icon, dynamic colors) {
     return Container(
       width: 36,
       height: 36,
       decoration: BoxDecoration(
-        color: AppColors.getMonoSurface(isDark),
+        color: colors.surface,
         shape: BoxShape.circle,
-        border: Border.all(color: AppColors.getMonoBorder(isDark).withOpacity(0.4)),
+        border: Border.all(
+          color: colors.border.withValues(alpha: 0.4),
+        ),
       ),
-      child: Icon(icon, size: 19, color: AppColors.getMonoIcon(isDark)),
+      child: Icon(icon, size: 19, color: colors.icon),
     );
   }
 }
-

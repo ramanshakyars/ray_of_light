@@ -1,109 +1,242 @@
 import 'package:flutter/material.dart';
+import 'app_theme_colors.dart';
 import 'appcolors.dart';
 
+// ─────────────────────────────────────────────────────────────
+// AppTextStyles — centralized typography system
+//
+// Font families registered in pubspec.yaml:
+//   "Specimen"  → OpenSans Condensed (primary app font)
+//
+// All screen headers use identical sizing, weight, family, and height
+// for consistent, modern typography throughout the app.
+// ─────────────────────────────────────────────────────────────
+
 class AppTextStyles {
+  AppTextStyles._();
+
+  static const String _primaryFont = 'Arial';
+
+  // ─────────────────────────────────────────────────────────
+  // THEME-AWARE STANDARDIZED TYPOGRAPHY (using ThemeColors)
+  // ─────────────────────────────────────────────────────────
+
+  /// Screen / page header title — standardized 17px bold, -0.3 letter spacing
+  static TextStyle screenTitle(ThemeColors c) => TextStyle(
+        fontFamily: _primaryFont,
+        fontSize: 17,
+        fontWeight: FontWeight.w700,
+        color: c.textPrimary,
+        height: 1.2,
+        letterSpacing: -0.3,
+      );
+
+  /// Section heading — 18px semibold
+  static TextStyle sectionTitle(ThemeColors c) => TextStyle(
+        fontFamily: _primaryFont,
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: c.textPrimary,
+        height: 1.3,
+      );
+
+  /// Card / list item title — 16px semibold
+  static TextStyle cardTitle(ThemeColors c) => TextStyle(
+        fontFamily: _primaryFont,
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        color: c.textPrimary,
+      );
+
+  /// Body text — 15px regular
+  static TextStyle bodyText(ThemeColors c) => TextStyle(
+        fontFamily: _primaryFont,
+        fontSize: 15,
+        fontWeight: FontWeight.w400,
+        color: c.textPrimary,
+        height: 1.5,
+      );
+
+  /// Secondary body — 14px regular, secondary color
+  static TextStyle bodySecondary(ThemeColors c) => TextStyle(
+        fontFamily: _primaryFont,
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        color: c.textSecondary,
+        height: 1.4,
+      );
+
+  /// Button text — 16px semibold
+  static TextStyle buttonLabel(ThemeColors c) => TextStyle(
+        fontFamily: _primaryFont,
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        color: c.primaryForeground,
+        letterSpacing: 0.2,
+      );
+
+  /// Small label / form label — 12px medium
+  static TextStyle labelSmall(ThemeColors c) => TextStyle(
+        fontFamily: _primaryFont,
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+        color: c.textMuted,
+        letterSpacing: 1.1,
+      );
+
+  /// Section label (ALL CAPS) — 11px semibold, muted
+  static TextStyle sectionLabel(ThemeColors c) => TextStyle(
+        fontFamily: _primaryFont,
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+        color: c.textMuted,
+        letterSpacing: 1.4,
+      );
+
+  /// Dialog / modal title — 20px bold
+  static TextStyle dialogTitle(ThemeColors c) => TextStyle(
+        fontFamily: _primaryFont,
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+        color: c.textPrimary,
+        height: 1.2,
+      );
+
+  /// Muted helper / hint — 13px regular
+  static TextStyle hintText(ThemeColors c) => TextStyle(
+        fontFamily: _primaryFont,
+        fontSize: 13,
+        fontWeight: FontWeight.w400,
+        color: c.textMuted,
+      );
+
+  /// Navigation label — 11px medium
+  static TextStyle navLabel(ThemeColors c) => TextStyle(
+        fontFamily: _primaryFont,
+        fontSize: 11,
+        fontWeight: FontWeight.w500,
+        color: c.navActive,
+      );
+
+  /// Chat / AI response text
+  static TextStyle chatText(ThemeColors c) => TextStyle(
+        fontFamily: _primaryFont,
+        fontSize: 15,
+        fontWeight: FontWeight.w400,
+        color: c.textPrimary,
+        height: 1.5,
+      );
+
+  /// Input field text
+  static TextStyle inputText(ThemeColors c) => TextStyle(
+        fontFamily: _primaryFont,
+        fontSize: 15,
+        fontWeight: FontWeight.w400,
+        color: c.textPrimary,
+      );
+
+  // ─────────────────────────────────────────────────────────
+  // LEGACY STYLES — kept for backward compatibility
+  // ─────────────────────────────────────────────────────────
+
   static TextStyle regular16(bool isDarkMode) => TextStyle(
-    fontFamily: "Specimen",
-    fontSize: 16,
-    color: AppColors.getTextPrimaryColor(isDarkMode),
-  );
+        fontFamily: _primaryFont,
+        fontSize: 16,
+        color: AppColors.getTextPrimaryColor(isDarkMode),
+      );
 
   static TextStyle medium18(bool isDarkMode) => TextStyle(
-    fontFamily: "Specimen",
-    fontSize: 18,
-    fontWeight: FontWeight.w500,
-    color: AppColors.getTextPrimaryColor(isDarkMode),
-  );
+        fontFamily: _primaryFont,
+        fontSize: 18,
+        fontWeight: FontWeight.w500,
+        color: AppColors.getTextPrimaryColor(isDarkMode),
+      );
 
   static TextStyle medium22(bool isDarkMode) => TextStyle(
-    fontFamily: "Specimen",
-    fontSize: 22,
-    fontWeight: FontWeight.w500,
-    color: AppColors.getTextPrimaryColor(isDarkMode),
-  );
+        fontFamily: _primaryFont,
+        fontSize: 22,
+        fontWeight: FontWeight.w500,
+        color: AppColors.getTextPrimaryColor(isDarkMode),
+      );
 
   static TextStyle buttonText(bool isDarkMode) => TextStyle(
-    fontFamily: "Specimen",
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    color: AppColors.getTextSecondaryColor(isDarkMode),
-  );
+        fontFamily: _primaryFont,
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        color: AppColors.getTextSecondaryColor(isDarkMode),
+      );
 
   static TextStyle bold28(bool isDarkMode) => TextStyle(
-    fontFamily: "Specimen",
-    fontSize: 28,
-    fontWeight: FontWeight.bold,
-    color: AppColors.getTextPrimaryColor(isDarkMode),
-  );
+        fontFamily: _primaryFont,
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+        color: AppColors.getTextPrimaryColor(isDarkMode),
+      );
 
   static TextStyle bold22(bool isDarkMode) => TextStyle(
-    fontFamily: "Specimen",
-    fontSize: 22,
-    fontWeight: FontWeight.bold,
-    color: AppColors.getTextPrimaryColor(isDarkMode),
-  );
+        fontFamily: _primaryFont,
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+        color: AppColors.getTextPrimaryColor(isDarkMode),
+      );
 
   static TextStyle regular14(bool isDarkMode) => TextStyle(
-    fontFamily: "Specimen",
-    fontSize: 14,
-    color: AppColors.getTextPrimaryColor(isDarkMode),
-  );
+        fontFamily: _primaryFont,
+        fontSize: 14,
+        color: AppColors.getTextPrimaryColor(isDarkMode),
+      );
 
   static TextStyle link14(bool isDarkMode) => TextStyle(
-    fontFamily: "Specimen",
-    fontSize: 14,
-    color: AppColors.getTextPrimaryColor(isDarkMode),
-    decoration: TextDecoration.underline,
-  );
+        fontFamily: _primaryFont,
+        fontSize: 14,
+        color: AppColors.getTextPrimaryColor(isDarkMode),
+        decoration: TextDecoration.underline,
+      );
 
   static TextStyle button16(bool isDarkMode) => TextStyle(
-    fontFamily: "Specimen",
-    fontSize: 16,
-    fontWeight: FontWeight.w600,
-    color: AppColors.getTextSecondaryColor(isDarkMode),
-  );
+        fontFamily: _primaryFont,
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        color: AppColors.getTextSecondaryColor(isDarkMode),
+      );
 
   static TextStyle chatBotText(bool isDarkMode) => TextStyle(
-    fontFamily: 'Roboto',
-    fontSize: 14,
-    fontWeight: FontWeight.w500,
-    color: AppColors.getTextPrimaryColor(isDarkMode),
-    height: 1.3,
-  );
-
-  // =====================================================
-  // 🆕 MONO TEXT STYLES (NEW SYSTEM)
-  // =====================================================
+        fontFamily: _primaryFont,
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: AppColors.getTextPrimaryColor(isDarkMode),
+        height: 1.3,
+      );
 
   static TextStyle monoRegular16(bool isDark) => TextStyle(
-    fontFamily: "Arial",
-    fontSize: 16,
-    color: AppColors.getMonoTextPrimary(isDark),
-  );
+        fontFamily: _primaryFont,
+        fontSize: 16,
+        color: AppColors.getMonoTextPrimary(isDark),
+      );
 
   static TextStyle monoMedium18(bool isDark) => TextStyle(
-    fontFamily: "Arial",
-    fontSize: 18,
-    fontWeight: FontWeight.w500,
-    color: AppColors.getMonoTextPrimary(isDark),
-  );
+        fontFamily: _primaryFont,
+        fontSize: 18,
+        fontWeight: FontWeight.w500,
+        color: AppColors.getMonoTextPrimary(isDark),
+      );
 
   static TextStyle monoBold22(bool isDark) => TextStyle(
-    fontFamily: "Arial",
-    fontSize: 22,
-    fontWeight: FontWeight.bold,
-    color: AppColors.getMonoTextPrimary(isDark),
-  );
+        fontFamily: _primaryFont,
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+        color: AppColors.getMonoTextPrimary(isDark),
+      );
 
   static TextStyle monoSecondary14(bool isDark) => TextStyle(
-    fontFamily: "Arial",
-    fontSize: 14,
-    color: AppColors.getMonoTextSecondary(isDark),
-  );
+        fontFamily: _primaryFont,
+        fontSize: 14,
+        color: AppColors.getMonoTextSecondary(isDark),
+      );
 
   static TextStyle monoMuted12(bool isDark) => TextStyle(
-    fontFamily: "Arial",
-    fontSize: 12,
-    color: AppColors.getMonoTextMuted(isDark),
-  );
+        fontFamily: _primaryFont,
+        fontSize: 12,
+        color: AppColors.getMonoTextMuted(isDark),
+      );
 }

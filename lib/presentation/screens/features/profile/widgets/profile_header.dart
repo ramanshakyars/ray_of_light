@@ -6,7 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:rayoflite/core/providers/auth_provider.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
-import 'package:rayoflite/core/theme/appcolors.dart';
+import 'package:rayoflite/core/theme/app_theme_colors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/screens/features/profile/provider/profile_provider.dart';
 
@@ -18,20 +18,19 @@ class ProfileHeader extends StatefulWidget {
 }
 
 class _ProfileHeaderState extends State<ProfileHeader> {
-  String? _localPhotoUrl; // tracks optimistically after upload
+  String? _localPhotoUrl;
 
   Future<void> _pickAndUpload(BuildContext context) async {
     final profileProvider = context.read<ProfileProvider>();
-    final isDark = context.read<ThemeProvider>().isDarkMode;
+    final colors = context.read<ThemeProvider>().colors;
 
-    // Show bottom sheet to pick source
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
-      backgroundColor: AppColors.getMonoCard(isDark),
+      backgroundColor: colors.card,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => _PickerSheet(isDark: isDark),
+      builder: (_) => _PickerSheet(colors: colors),
     );
 
     if (source == null) return;
@@ -50,10 +49,12 @@ class _ProfileHeaderState extends State<ProfileHeader> {
 
     if (newUrl != null && mounted) {
       setState(() => _localPhotoUrl = newUrl);
-      // Also persist in local storage so it survives restarts
       final user = await LocalStorageService.getUser() ?? {};
       user['profilePhotoUrl'] = newUrl;
       await LocalStorageService.setUser(user);
+      if (context.mounted) {
+        context.read<AuthProvider>().loadUser();
+      }
     } else if (profileProvider.photoUploadError != null && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -66,11 +67,10 @@ class _ProfileHeaderState extends State<ProfileHeader> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final colors = context.watch<ThemeProvider>().colors;
     final auth = context.watch<AuthProvider>();
     final profileProvider = context.watch<ProfileProvider>();
 
-    // Derive photo URL: local optimistic → from auth user data → null
     final photoUrl = _localPhotoUrl ??
         (auth.user?['profilePhotoUrl'] as String?);
 
@@ -79,7 +79,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
 
     return Column(
       children: [
-        // ─── Avatar with camera overlay ───
+        // ─── Avatar ───
         Stack(
           alignment: Alignment.bottomRight,
           children: [
@@ -91,31 +91,31 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                 height: 90,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.getMuted(isDark),
+                  color: colors.surface,
                   border: Border.all(
-                    color: AppColors.getMonoBorder(isDark),
+                    color: colors.border,
                     width: 2,
                   ),
                 ),
                 child: ClipOval(
                   child: profileProvider.isUploadingPhoto
-                      ? const Center(child: CircularProgressIndicator(strokeWidth: 2))
+                      ? Center(child: CircularProgressIndicator(strokeWidth: 2, color: colors.primary))
                       : photoUrl != null && photoUrl.isNotEmpty
                           ? CachedNetworkImage(
                               imageUrl: photoUrl,
                               fit: BoxFit.cover,
                               placeholder: (_, __) => Center(
                                 child: Text(initials,
-                                    style: AppTextStyles.bold22(isDark)),
+                                    style: AppTextStyles.screenTitle(colors)),
                               ),
                               errorWidget: (_, __, ___) => Center(
                                 child: Text(initials,
-                                    style: AppTextStyles.bold22(isDark)),
+                                    style: AppTextStyles.screenTitle(colors)),
                               ),
                             )
                           : Center(
                               child: Text(initials,
-                                  style: AppTextStyles.bold22(isDark)),
+                                  style: AppTextStyles.screenTitle(colors)),
                             ),
                 ),
               ),
@@ -129,17 +129,17 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                   width: 28,
                   height: 28,
                   decoration: BoxDecoration(
-                    color: AppColors.getMonoTextPrimary(isDark),
+                    color: colors.primary,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: AppColors.getMonoBackground(isDark),
+                      color: colors.background,
                       width: 2,
                     ),
                   ),
                   child: Icon(
                     Icons.camera_alt_rounded,
                     size: 14,
-                    color: AppColors.getMonoBackground(isDark),
+                    color: colors.primaryForeground,
                   ),
                 ),
               ),
@@ -149,26 +149,23 @@ class _ProfileHeaderState extends State<ProfileHeader> {
         const SizedBox(height: 14),
 
         // ─── Name ───
-        Text(name, style: AppTextStyles.bold28(isDark)),
+        Text(name, style: AppTextStyles.screenTitle(colors)),
 
         const SizedBox(height: 4),
 
-        // ─── Email / subtitle ───
+        // ─── Subtitle / Email ───
         Text(
           auth.user?['email'] as String? ?? 'Spreading light ✨',
-          style: AppTextStyles.regular14(isDark).copyWith(
-            color: AppColors.getMonoTextMuted(isDark),
-          ),
+          style: AppTextStyles.bodySecondary(colors),
         ),
       ],
     );
   }
 }
 
-// ─── Bottom sheet picker ───
 class _PickerSheet extends StatelessWidget {
-  final bool isDark;
-  const _PickerSheet({required this.isDark});
+  final ThemeColors colors;
+  const _PickerSheet({required this.colors});
 
   @override
   Widget build(BuildContext context) {
@@ -183,32 +180,32 @@ class _PickerSheet extends StatelessWidget {
               height: 4,
               margin: const EdgeInsets.only(bottom: 20),
               decoration: BoxDecoration(
-                color: AppColors.getMonoBorder(isDark),
+                color: colors.border,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
             Text('Change Profile Photo',
-                style: AppTextStyles.monoMedium18(isDark)),
+                style: AppTextStyles.sectionTitle(colors)),
             const SizedBox(height: 16),
             _tile(
               context,
               icon: Icons.camera_alt_outlined,
               label: 'Take Photo',
-              isDark: isDark,
+              colors: colors,
               onTap: () => Navigator.pop(context, ImageSource.camera),
             ),
             _tile(
               context,
               icon: Icons.photo_library_outlined,
               label: 'Choose from Gallery',
-              isDark: isDark,
+              colors: colors,
               onTap: () => Navigator.pop(context, ImageSource.gallery),
             ),
             _tile(
               context,
               icon: Icons.close,
               label: 'Cancel',
-              isDark: isDark,
+              colors: colors,
               onTap: () => Navigator.pop(context),
             ),
           ],
@@ -220,11 +217,11 @@ class _PickerSheet extends StatelessWidget {
   Widget _tile(BuildContext context,
       {required IconData icon,
       required String label,
-      required bool isDark,
+      required ThemeColors colors,
       required VoidCallback onTap}) {
     return ListTile(
-      leading: Icon(icon, color: AppColors.getMonoTextPrimary(isDark)),
-      title: Text(label, style: AppTextStyles.monoRegular16(isDark)),
+      leading: Icon(icon, color: colors.icon),
+      title: Text(label, style: AppTextStyles.bodyText(colors)),
       onTap: onTap,
     );
   }

@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
-import 'package:rayoflite/core/providers/auth_provider.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
-import 'package:rayoflite/core/theme/appcolors.dart';
+import 'package:rayoflite/core/theme/app_theme_colors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/screens/features/profile/provider/profile_provider.dart';
 import 'package:rayoflite/presentation/screens/features/profile/widgets/post_card.dart';
@@ -47,28 +46,28 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final colors = context.watch<ThemeProvider>().colors;
     final profileProvider = context.watch<ProfileProvider>();
 
     return Scaffold(
-      backgroundColor: AppColors.getMonoBackground(isDark),
+      backgroundColor: colors.background,
       body: SafeArea(
         child: Stack(
           children: [
             RefreshIndicator(
               onRefresh: () async => _loadAllData(),
-              color: AppColors.getPrimary(isDark),
+              color: colors.primary,
               child: NestedScrollView(
                 headerSliverBuilder: (context, innerBoxIsScrolled) {
                   return [
-                    SliverToBoxAdapter(
+                    const SliverToBoxAdapter(
                       child: Column(
                         children: [
-                          const SizedBox(height: 16),
-                          const ProfileHeader(),
-                          const SizedBox(height: 28),
-                          const WeeklyChart(),
-                          const SizedBox(height: 24),
+                          SizedBox(height: 16),
+                          ProfileHeader(),
+                          SizedBox(height: 28),
+                          WeeklyChart(),
+                          SizedBox(height: 24),
                         ],
                       ),
                     ),
@@ -77,15 +76,13 @@ class _ProfilePageState extends State<ProfilePage>
                       delegate: _SliverTabBarDelegate(
                         TabBar(
                           controller: _tabController,
-                          indicatorColor: AppColors.getMonoTextPrimary(isDark),
-                          indicatorWeight: 2,
-                          dividerColor: AppColors.getMonoBorder(isDark),
-                          labelColor: AppColors.getMonoTextPrimary(isDark),
-                          unselectedLabelColor:
-                              AppColors.getMonoTextMuted(isDark),
-                          labelStyle: AppTextStyles.monoMedium18(isDark),
-                          unselectedLabelStyle:
-                              AppTextStyles.monoMedium18(isDark),
+                          indicatorColor: colors.primary,
+                          indicatorWeight: 2.5,
+                          dividerColor: colors.divider,
+                          labelColor: colors.textPrimary,
+                          unselectedLabelColor: colors.textMuted,
+                          labelStyle: AppTextStyles.cardTitle(colors),
+                          unselectedLabelStyle: AppTextStyles.cardTitle(colors),
                           splashFactory: NoSplash.splashFactory,
                           overlayColor: WidgetStateProperty.all(
                             Colors.transparent,
@@ -95,7 +92,7 @@ class _ProfilePageState extends State<ProfilePage>
                             Tab(text: 'Posts'),
                           ],
                         ),
-                        isDark,
+                        colors,
                       ),
                     ),
                   ];
@@ -104,10 +101,10 @@ class _ProfilePageState extends State<ProfilePage>
                   controller: _tabController,
                   children: [
                     // ─── Thoughts Tab ───
-                    _buildThoughtsTab(profileProvider, isDark),
+                    _buildThoughtsTab(profileProvider, colors),
 
                     // ─── Posts Tab ───
-                    _buildPostsTab(profileProvider, isDark),
+                    _buildPostsTab(profileProvider, colors),
                   ],
                 ),
               ),
@@ -123,7 +120,7 @@ class _ProfilePageState extends State<ProfilePage>
                 icon: Icon(
                   Icons.settings_outlined,
                   size: 26,
-                  color: AppColors.getIconColor(isDark),
+                  color: colors.icon,
                 ),
               ),
             ),
@@ -133,12 +130,12 @@ class _ProfilePageState extends State<ProfilePage>
     );
   }
 
-  Widget _buildThoughtsTab(ProfileProvider provider, bool isDark) {
+  Widget _buildThoughtsTab(ProfileProvider provider, ThemeColors colors) {
     if (provider.isLoadingThoughts) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(child: CircularProgressIndicator(color: colors.primary));
     }
     if (provider.thoughtsError != null) {
-      return _errorState(provider.thoughtsError!, isDark,
+      return _errorState(provider.thoughtsError!, colors,
           onRetry: () => provider.fetchThoughts());
     }
     if (provider.thoughts.isEmpty) {
@@ -146,23 +143,22 @@ class _ProfilePageState extends State<ProfilePage>
         icon: Icons.edit_note_rounded,
         message: 'No thoughts yet',
         sub: 'Your journal entries will appear here.',
-        isDark: isDark,
+        colors: colors,
       );
     }
     return ListView.builder(
-      padding: const EdgeInsets.only(top: 12, bottom: 32),
+      padding: const EdgeInsets.only(top: 12, bottom: 16),
       itemCount: provider.thoughts.length,
-      itemBuilder: (_, i) =>
-          ThoughtCard(thought: provider.thoughts[i], isDark: isDark),
+      itemBuilder: (_, i) => ThoughtCard(thought: provider.thoughts[i]),
     );
   }
 
-  Widget _buildPostsTab(ProfileProvider provider, bool isDark) {
+  Widget _buildPostsTab(ProfileProvider provider, ThemeColors colors) {
     if (provider.isLoadingPosts) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(child: CircularProgressIndicator(color: colors.primary));
     }
     if (provider.postsError != null) {
-      return _errorState(provider.postsError!, isDark,
+      return _errorState(provider.postsError!, colors,
           onRetry: () => provider.fetchPosts());
     }
     if (provider.posts.isEmpty) {
@@ -170,14 +166,13 @@ class _ProfilePageState extends State<ProfilePage>
         icon: Icons.photo_library_outlined,
         message: 'No posts yet',
         sub: 'Your shared posts will appear here.',
-        isDark: isDark,
+        colors: colors,
       );
     }
     return ListView.builder(
-      padding: const EdgeInsets.only(top: 12, bottom: 32),
+      padding: const EdgeInsets.only(top: 12, bottom: 16),
       itemCount: provider.posts.length,
-      itemBuilder: (_, i) =>
-          PostCard(post: provider.posts[i], isDark: isDark),
+      itemBuilder: (_, i) => PostCard(post: provider.posts[i]),
     );
   }
 
@@ -185,74 +180,95 @@ class _ProfilePageState extends State<ProfilePage>
     required IconData icon,
     required String message,
     required String sub,
-    required bool isDark,
+    required ThemeColors colors,
   }) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon,
-              size: 48, color: AppColors.getMonoTextMuted(isDark)),
-          const SizedBox(height: 12),
-          Text(message, style: AppTextStyles.monoMedium18(isDark)),
-          const SizedBox(height: 6),
-          Text(sub,
-              style: AppTextStyles.monoMuted12(isDark),
-              textAlign: TextAlign.center),
-        ],
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Container(
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: colors.primary.withValues(alpha: 0.08),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 40, color: colors.textMuted),
+            ),
+            const SizedBox(height: 14),
+            Text(message, style: AppTextStyles.sectionTitle(colors)),
+            const SizedBox(height: 6),
+            Text(
+              sub,
+              style: AppTextStyles.bodySecondary(colors),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _errorState(String message, bool isDark,
-      {required VoidCallback onRetry}) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.wifi_off_rounded,
-              size: 40, color: AppColors.getMonoTextMuted(isDark)),
-          const SizedBox(height: 12),
-          Text(message,
-              style: AppTextStyles.monoMuted12(isDark),
-              textAlign: TextAlign.center),
-          const SizedBox(height: 16),
-          TextButton(
-            onPressed: onRetry,
-            child: Text('Retry',
-                style: AppTextStyles.monoMedium18(isDark)),
-          ),
-        ],
+  Widget _errorState(
+    String message,
+    ThemeColors colors, {
+    required VoidCallback onRetry,
+  }) {
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Container(
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.wifi_off_rounded, size: 40, color: colors.textMuted),
+            const SizedBox(height: 12),
+            Text(
+              message,
+              style: AppTextStyles.bodySecondary(colors),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: onRetry,
+              child: Text('Retry', style: AppTextStyles.cardTitle(colors)),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
 class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverTabBarDelegate(this._tabBar, this.isDark);
   final TabBar _tabBar;
-  final bool isDark;
+  final ThemeColors _colors;
+
+  _SliverTabBarDelegate(this._tabBar, this._colors);
 
   @override
   double get minExtent => _tabBar.preferredSize.height;
+
   @override
   double get maxExtent => _tabBar.preferredSize.height;
 
   @override
   Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      color: AppColors.getMonoBackground(isDark),
-      child: Material(
-        color: AppColors.getMonoBackground(isDark),
-        child: _tabBar,
-      ),
+      color: _colors.background,
+      child: _tabBar,
     );
   }
 
   @override
-  bool shouldRebuild(_SliverTabBarDelegate oldDelegate) => false;
+  bool shouldRebuild(_SliverTabBarDelegate oldDelegate) {
+    return false;
+  }
 }

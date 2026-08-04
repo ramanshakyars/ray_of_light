@@ -13,7 +13,6 @@ import 'package:rayoflite/core/config/config-routes.dart';
 import 'package:rayoflite/core/providers/TokenManager.dart';
 import 'package:rayoflite/core/providers/auth_provider.dart';
 import 'package:rayoflite/core/services/localStorageService.dart';
-import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/firebase_options.dart';
 import 'package:rayoflite/presentation/screens/features/profile/provider/profile_provider.dart';
@@ -107,56 +106,64 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
+          final colors = themeProvider.colors;
+
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
 
-            /// 🔹 Light Theme (unchanged)
+            /// 🔹 Light Theme — driven by centralized ThemeColors
             theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: AppColors.getFormSubmitButtonColor(
-                  themeProvider.isDarkMode,
-                ),
+              colorScheme: ColorScheme(
                 brightness: Brightness.light,
+                primary: colors.primary,
+                onPrimary: colors.primaryForeground,
+                secondary: colors.secondary,
+                onSecondary: colors.textPrimary,
+                error: colors.error,
+                onError: colors.primaryForeground,
+                surface: colors.surface,
+                onSurface: colors.textPrimary,
               ),
               fontFamily: 'Specimen',
               useMaterial3: true,
-              scaffoldBackgroundColor: AppColors.getAppBackgroundColor(
-                themeProvider.isDarkMode,
-              ),
+              scaffoldBackgroundColor: colors.background,
               appBarTheme: AppBarTheme(
-                backgroundColor: AppColors.getAppBackgroundColor(
-                  themeProvider.isDarkMode,
-                ),
-                foregroundColor: AppColors.getTextPrimaryColor(
-                  themeProvider.isDarkMode,
-                ),
+                backgroundColor: colors.background,
+                foregroundColor: colors.textPrimary,
+                elevation: 0,
               ),
+              dividerColor: colors.divider,
+              splashColor: colors.primary.withValues(alpha: 0.08),
+              highlightColor: colors.primary.withValues(alpha: 0.05),
             ),
 
-            /// 🔹 Dark Theme (unchanged)
+            /// 🔹 Dark Theme — driven by centralized ThemeColors
             darkTheme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: AppColors.getFormSubmitButtonColor(
-                  themeProvider.isDarkMode,
-                ),
+              colorScheme: ColorScheme(
                 brightness: Brightness.dark,
+                primary: colors.primary,
+                onPrimary: colors.primaryForeground,
+                secondary: colors.secondary,
+                onSecondary: colors.textPrimary,
+                error: colors.error,
+                onError: colors.primaryForeground,
+                surface: colors.surface,
+                onSurface: colors.textPrimary,
               ),
               fontFamily: 'Specimen',
               useMaterial3: true,
-              scaffoldBackgroundColor: AppColors.getAppBackgroundColor(
-                themeProvider.isDarkMode,
-              ),
+              scaffoldBackgroundColor: colors.background,
               appBarTheme: AppBarTheme(
-                backgroundColor: AppColors.getAppBackgroundColor(
-                  themeProvider.isDarkMode,
-                ),
-                foregroundColor: AppColors.getTextPrimaryColor(
-                  themeProvider.isDarkMode,
-                ),
+                backgroundColor: colors.background,
+                foregroundColor: colors.textPrimary,
+                elevation: 0,
               ),
+              dividerColor: colors.divider,
+              splashColor: colors.primary.withOpacity(0.08),
+              highlightColor: colors.primary.withOpacity(0.05),
             ),
 
-            /// 🔹 Theme mode (unchanged)
+            /// 🔹 Theme mode — controlled by ThemeProvider
             themeMode:
                 themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
 

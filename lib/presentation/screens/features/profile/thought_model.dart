@@ -12,11 +12,20 @@ class ThoughtModel {
   });
 
   factory ThoughtModel.fromJson(Map<String, dynamic> json) {
+    String formattedDate = '';
+    final rawDate = json['createdAt'];
+    if (rawDate is List && rawDate.length >= 3) {
+      formattedDate =
+          '${rawDate[0]}-${rawDate[1].toString().padLeft(2, '0')}-${rawDate[2].toString().padLeft(2, '0')}';
+    } else if (rawDate != null) {
+      formattedDate = rawDate.toString();
+    }
+
     return ThoughtModel(
-      id: json['id'] ?? '',
-      content: json['content'] ?? '',
-      createdAt: json['createdAt'] ?? '',
-      type: json['type'],
+      id: (json['id'] ?? '').toString(),
+      content: (json['content'] ?? '').toString(),
+      createdAt: formattedDate,
+      type: json['type']?.toString(),
     );
   }
 }

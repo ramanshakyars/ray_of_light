@@ -150,7 +150,7 @@ class BreathingDurationScreen extends StatelessWidget {
                       Text(
                         title,
                         style: AppTextStyles.monoMedium18(isDark).copyWith(
-                          fontSize: 20,
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

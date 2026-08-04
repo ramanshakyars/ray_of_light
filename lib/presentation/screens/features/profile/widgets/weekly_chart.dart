@@ -1,7 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rayoflite/core/theme/appcolors.dart';
+import 'package:rayoflite/core/theme/AppFont.dart';
+import 'package:rayoflite/core/theme/app_theme_colors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/presentation/screens/features/screen_time/data/ScreenTimeProvider.dart';
 
@@ -15,13 +16,13 @@ class WeeklyChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final colors = context.watch<ThemeProvider>().colors;
     final provider = context.watch<ScreenTimeProvider>();
 
     if (provider.isLoading) {
-      return const SizedBox(
+      return SizedBox(
         height: 300,
-        child: Center(child: CircularProgressIndicator()),
+        child: Center(child: CircularProgressIndicator(color: colors.primary)),
       );
     }
 
@@ -47,17 +48,12 @@ class WeeklyChart extends StatelessWidget {
               Icon(
                 Icons.access_time_rounded,
                 size: 15,
-                color: AppColors.getMonoTextMuted(isDark),
+                color: colors.textMuted,
               ),
               const SizedBox(width: 6),
               Text(
                 'Time Spent This Week',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.getMonoTextMuted(isDark),
-                  letterSpacing: 0.4,
-                ),
+                style: AppTextStyles.labelSmall(colors),
               ),
             ],
           ),
@@ -80,10 +76,10 @@ class WeeklyChart extends StatelessWidget {
                   show: true,
                   border: Border(
                     bottom: BorderSide(
-                      color: isDark ? Colors.white10 : Colors.black12,
+                      color: colors.border,
                     ),
                     left: BorderSide(
-                      color: isDark ? Colors.white10 : Colors.black12,
+                      color: colors.border,
                     ),
                   ),
                 ),
@@ -92,7 +88,7 @@ class WeeklyChart extends StatelessWidget {
                   drawVerticalLine: false,
                   horizontalInterval: 6,
                   getDrawingHorizontalLine: (value) => FlLine(
-                    color: isDark ? Colors.white10 : Colors.black12,
+                    color: colors.border,
                     strokeWidth: 1,
                   ),
                 ),
@@ -115,10 +111,8 @@ class WeeklyChart extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
                             days[value.toInt()],
-                            style: TextStyle(
+                            style: AppTextStyles.hintText(colors).copyWith(
                               fontSize: 10,
-                              color: AppColors.getTextPrimaryColor(isDark)
-                                  .withOpacity(0.5),
                             ),
                           ),
                         );
@@ -131,10 +125,8 @@ class WeeklyChart extends StatelessWidget {
                       reservedSize: 35,
                       getTitlesWidget: (val, meta) => Text(
                         '${val.toInt()}h',
-                        style: TextStyle(
+                        style: AppTextStyles.hintText(colors).copyWith(
                           fontSize: 10,
-                          color: AppColors.getTextPrimaryColor(isDark)
-                              .withOpacity(0.5),
                         ),
                       ),
                     ),
@@ -151,13 +143,13 @@ class WeeklyChart extends StatelessWidget {
                     spots: spots,
                     isCurved: true,
                     color: provider.weeklyData.isEmpty
-                        ? AppColors.getPrimary(isDark).withOpacity(0.2)
-                        : AppColors.getPrimary(isDark),
+                        ? colors.primary.withValues(alpha: 0.3)
+                        : colors.primary,
                     barWidth: 3,
                     dotData: FlDotData(show: provider.weeklyData.isNotEmpty),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: AppColors.getPrimary(isDark).withOpacity(0.05),
+                      color: colors.primary.withValues(alpha: 0.08),
                     ),
                   ),
                 ],

@@ -8,8 +8,9 @@ class AuthInterceptor {
   static final Dio _dio = Dio(
     BaseOptions(
       baseUrl: PathConfig.baseUrl,
-      connectTimeout: const Duration(seconds: 15),
-      receiveTimeout: const Duration(seconds: 15),
+      connectTimeout: const Duration(seconds: 120),
+      receiveTimeout: const Duration(seconds: 120),
+      sendTimeout: const Duration(seconds: 120),
       contentType: 'application/json',
     ),
   );
