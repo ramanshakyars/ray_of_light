@@ -1,7 +1,5 @@
-import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/constants/app_text_field.dart';
@@ -14,7 +12,7 @@ import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
-import 'package:rayoflite/core/config/google_auth_config.dart';
+import 'package:rayoflite/core/services/google_auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -30,8 +28,6 @@ class _LoginPageState extends State<LoginPage> {
   bool _isPasswordVisible = false;
   bool _isLoading = false;
   bool _isGoogleLoading = false;
-
-  final GoogleSignIn _googleSignIn = GoogleAuthConfig.googleSignIn;
 
   @override
   void dispose() {
@@ -117,56 +113,14 @@ class _LoginPageState extends State<LoginPage> {
     setState(() => _isGoogleLoading = true);
 
     try {
-      // Sign out first so the account picker always shows
-      await _googleSignIn.signOut();
-
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-
-      if (googleUser == null) {
-        // null means: user cancelled OR misconfiguration (missing SHA-1 / wrong client ID).
-        // Log so the exact cause can be seen in the terminal.
-        dev.log(
-          '[GoogleSignIn] signIn() returned null — either the user dismissed '
-          'the picker, or the SHA-1 fingerprint is not registered in '
-          'Firebase Console / Google Cloud Console.',
-          name: 'GoogleOAuth',
-        );
-        if (mounted) {
-          MessageService.showError(
-            context,
-            'Google Sign-In was cancelled or is not configured for this device. '
-            'Please contact support.',
-          );
-          setState(() => _isGoogleLoading = false);
-        }
-        return;
-      }
-      dev.log('[GoogleSignIn] account: ${googleUser.email}', name: 'GoogleOAuth');
-
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-
-      final String? idToken = googleAuth.idToken;
-
-      if (idToken == null) {
-        dev.log(
-          '[GoogleSignIn] idToken is null — check that client_type:3 '
-          '(web client) is present in google-services.json.',
-          name: 'GoogleOAuth',
-        );
-        if (mounted) {
-          MessageService.showError(
-              context, 'Google authentication failed: no ID token');
-          setState(() => _isGoogleLoading = false);
-        }
-        return;
-      }
-      dev.log('[GoogleSignIn] idToken obtained, posting to backend.', name: 'GoogleOAuth');
-
-      // POST idToken to your Spring Boot backend
-      final response = await AuthService.googleLogin(idToken);
+      final response = await GoogleAuthService.signIn();
 
       if (!mounted) return;
+
+      if (response['cancelled'] == true) {
+        // Quietly reset state without showing scary error popups
+        return;
+      }
 
       if (response['success'] == true) {
         await _persistSession(response);
@@ -183,11 +137,12 @@ class _LoginPageState extends State<LoginPage> {
           response['message'] ?? 'Google Login Failed',
         );
       }
-    } catch (e, st) {
-      dev.log('[GoogleSignIn] exception: $e', name: 'GoogleOAuth', error: e, stackTrace: st);
+    } catch (e) {
       if (mounted) {
         MessageService.showError(
-            context, 'Google Login Failed: ${e.toString()}');
+          context,
+          'Google Login Failed: ${e.toString()}',
+        );
       }
     } finally {
       if (mounted) setState(() => _isGoogleLoading = false);

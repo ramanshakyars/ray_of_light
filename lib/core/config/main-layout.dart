@@ -154,6 +154,7 @@ class _MainScreenState extends State<MainScreen>
 
     return Scaffold(
       backgroundColor: colors.background,
+      resizeToAvoidBottomInset: false,
       // extendBody allows content to flow behind the floating nav
       extendBody: true,
       body: NotificationListener<ScrollNotification>(
@@ -201,6 +202,11 @@ class _MainScreenState extends State<MainScreen>
   // ─────────────────────────────────────────────────────────
 
   Widget _buildFloatingNav(dynamic colors, bool isDark) {
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    if (bottomInset > 0) {
+      return const SizedBox.shrink();
+    }
+
     return Padding(
       padding: const EdgeInsets.only(left: 24, right: 24, bottom: 16),
       child: SlideTransition(

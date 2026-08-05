@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
-import 'package:rayoflite/core/config/google_auth_config.dart';
+import 'package:rayoflite/core/services/google_auth_service.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/constants/app_text_field.dart';
 import 'package:rayoflite/core/constants/common_button.dart';
@@ -35,8 +34,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   bool _isOtpSent = false;
   bool _isLoading = false;
   bool _isGoogleLoading = false;
-
-  final GoogleSignIn _googleSignIn = GoogleAuthConfig.googleSignIn;
 
   @override
   void dispose() {
@@ -126,30 +123,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     setState(() => _isGoogleLoading = true);
 
     try {
-      await _googleSignIn.signOut();
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-
-      if (googleUser == null) {
-        if (mounted) setState(() => _isGoogleLoading = false);
-        return;
-      }
-
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      final String? idToken = googleAuth.idToken;
-
-      if (idToken == null) {
-        if (mounted) {
-          MessageService.showError(
-              context, 'Google authentication failed: no ID token');
-          setState(() => _isGoogleLoading = false);
-        }
-        return;
-      }
-
-      final response = await AuthService.googleLogin(idToken);
+      final response = await GoogleAuthService.signIn();
 
       if (!mounted) return;
+
+      if (response['cancelled'] == true) {
+        return;
+      }
 
       if (response['success'] == true) {
         final token = response['token'];
@@ -177,7 +157,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     } catch (e) {
       if (mounted) {
         MessageService.showError(
-            context, 'Google Sign-In Failed: ${e.toString()}');
+          context,
+          'Google Sign-In Failed: ${e.toString()}',
+        );
       }
     } finally {
       if (mounted) setState(() => _isGoogleLoading = false);

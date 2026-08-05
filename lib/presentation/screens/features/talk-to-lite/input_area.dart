@@ -20,9 +20,16 @@ class InputArea extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final hasKeyboard = bottomInset > 0;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 8,
+        bottom: hasKeyboard ? 8 : 76,
+      ),
       color: AppColors.getAppBackgroundColor(isDarkMode),
       child: Container(
         // decoration: BoxDecoration(
