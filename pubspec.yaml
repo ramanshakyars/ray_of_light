@@ -3,10 +3,10 @@ description: "A new Flutter project."
 publish_to: 'none' 
 
 # version android: 1.0.0+9
-version: 1.1.0+24
+# version: 1.1.1+25
 
 # version ios : 1.0.0+9 before + is actual build ios version
-# version: 3.3.10+24
+version: 3.3.13+26
 
 
 environment:
@@ -53,10 +53,10 @@ flutter_native_splash:
   android: true
   ios: true
   color: "#ffffff"       
-  image: "assets/logo-background.png"
+  image: "assets/logo.png"
   android_gravity: center
   android_12:
-    image: "assets/logo-background.png"
+    image: "assets/logo.png"
     color: "#ffffff"  
 
 flutter:
@@ -70,6 +70,7 @@ flutter:
     - assets/final.png
     - assets/red-background.png
     - assets/talk-to-light.png
+    - assets/talktolight image.png
     - assets/nest-logo.png
     - assets/logo-background.png
     - assets/freesound_community-meditation-bowls-23651.mp3

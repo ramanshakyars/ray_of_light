@@ -74,6 +74,7 @@ class _PostCardV2State extends State<PostCardV2> with SingleTickerProviderStateM
 
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => StatefulBuilder(
@@ -188,25 +189,16 @@ class _PostCardV2State extends State<PostCardV2> with SingleTickerProviderStateM
     final initials = widget.post.username.isNotEmpty ? widget.post.username[0].toUpperCase() : '?';
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: AppColors.getMonoCard(isDark),
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: AppColors.getMonoBorder(isDark).withOpacity(0.2)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.05 : 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          )
-        ],
+        color: Colors.transparent,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           /// ================= USER ROW =================
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 14),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
             child: Row(
               children: [
                 /// Avatar
@@ -349,16 +341,16 @@ class _PostCardV2State extends State<PostCardV2> with SingleTickerProviderStateM
           /// ================= TEXT =================
           if (hasText)
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
               child: Text(
                 widget.post.caption,
-                style: AppTextStyles.monoRegular16(isDark).copyWith(height: 1.6, fontSize: 15),
+                style: AppTextStyles.monoRegular16(isDark).copyWith(height: 1.5, fontSize: 15),
               ),
             ),
 
           /// ================= ACTION ROW =================
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
             child: Row(
               children: [
                 _action(
@@ -378,6 +370,7 @@ class _PostCardV2State extends State<PostCardV2> with SingleTickerProviderStateM
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
+                      useRootNavigator: true,
                       isScrollControlled: true,
                       backgroundColor: Colors.transparent,
                       builder: (_) => CommentSheet(post: widget.post),
@@ -387,6 +380,13 @@ class _PostCardV2State extends State<PostCardV2> with SingleTickerProviderStateM
                 ),
               ],
             ),
+          ),
+
+          /// ================= CLEAN FEED DIVIDER (X-Style) =================
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: AppColors.getMonoDivider(isDark),
           ),
         ],
       ),

@@ -240,10 +240,10 @@ class _ChatScreenState extends State<ChatScreen>
           //   color: AppColors.getIconColor(isDarkMode),
           // ),
           Image.asset(
-            "assets/talk-to-light.png",
+            "assets/orginal_logo.png",
             height: 120,
             width: 120,
-            color: AppColors.getIconColor(isDarkMode),
+            fit: BoxFit.contain,
           ),
           const SizedBox(height: 20),
           Column(
@@ -352,10 +352,10 @@ class _ChatScreenState extends State<ChatScreen>
                               RotationTransition(
                                 turns: _starController,
                                 child: Image.asset(
-                                  "assets/talk-to-light.png",
+                                  "assets/orginal_logo.png",
                                   height: 50,
                                   width: 50,
-                                  color: AppColors.getIconColor(isDarkMode),
+                                  fit: BoxFit.contain,
                                 ),
                               ),
                               const SizedBox(width: 10),

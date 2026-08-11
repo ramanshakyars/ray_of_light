@@ -20,7 +20,6 @@ class IntroductionScreen extends StatelessWidget {
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
-            // 👉 change route if needed
             context.go(RouteNames.landingPage);
           },
           child: Center(
@@ -29,6 +28,29 @@ class IntroductionScreen extends StatelessWidget {
               child: Column(
                 children: [
                   const Spacer(),
+
+                  /// 🔹 Logo Display
+                  Container(
+                    width: 90,
+                    height: 90,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isDark
+                          ? const Color(0xFF171717)
+                          : const Color(0xFFF5F5F5),
+                      border: Border.all(
+                        color: AppColors.getMonoBorder(isDark),
+                        width: 1,
+                      ),
+                    ),
+                    child: Image.asset(
+                      'assets/logo.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+
+                  const SizedBox(height: 32),
 
                   /// 🔹 small divider with dot
                   Row(
@@ -64,7 +86,7 @@ class IntroductionScreen extends StatelessWidget {
                     "I am better than yesterday",
                     textAlign: TextAlign.center,
                     style: AppTextStyles.monoMedium18(isDark).copyWith(
-                      fontSize: 22, // 👈 tuned for design
+                      fontSize: 22,
                       height: 1.4,
                     ),
                   ),

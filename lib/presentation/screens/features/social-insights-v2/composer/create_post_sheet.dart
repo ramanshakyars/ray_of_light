@@ -73,6 +73,7 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
   void _showPickerOptions(BuildContext context, bool isDark) {
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       builder: (_) => Container(
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
@@ -259,16 +260,6 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
                 isDark,
               ),
 
-              const Spacer(),
-
-              // Character counter
-              Text(
-                "$charCount / $_maxChars",
-                style: AppTextStyles.monoMuted12(isDark).copyWith(
-                  color: isOverLimit ? Colors.red : AppColors.getMonoTextMuted(isDark),
-                  fontSize: 12,
-                ),
-              ),
             ],
           ),
         ],

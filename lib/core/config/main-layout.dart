@@ -203,7 +203,8 @@ class _MainScreenState extends State<MainScreen>
 
   Widget _buildFloatingNav(dynamic colors, bool isDark) {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-    if (bottomInset > 0) {
+    final location = GoRouterState.of(context).uri.toString();
+    if (bottomInset > 0 || location.contains(RouteNames.talkToLight)) {
       return const SizedBox.shrink();
     }
 

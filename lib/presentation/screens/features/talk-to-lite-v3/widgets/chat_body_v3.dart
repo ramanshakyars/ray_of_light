@@ -179,11 +179,13 @@ class _ChatBodyV3State extends State<ChatBodyV3> {
                 ),
               ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Image.asset(
-                'assets/talk-to-light.png',
-                color: colors.icon,
+            child: ClipOval(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Image.asset(
+                  'assets/logo.png',
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
           ),
@@ -325,17 +327,7 @@ class _ChatBodyV3State extends State<ChatBodyV3> {
   }
 }
 
-// ── Helper widgets ────────────────────────────────────────────
 
-class _Divider extends StatelessWidget {
-  final bool isDark;
-  const _Divider({required this.isDark});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(height: 1, color: AppColors.getMonoBorder(isDark));
-  }
-}
 
 class _SuggestionChip extends StatefulWidget {
   final String label;

@@ -24,7 +24,7 @@ class SocialFeedConfig {
   static const double postImageAspectRatio = 4 / 5;
 
   static const double maxPostImageHeight = 520;
-  static const double postImageRadius = 12;
+  static const double postImageRadius = 0;
 }
 
 class SocialFeedPage extends StatefulWidget {

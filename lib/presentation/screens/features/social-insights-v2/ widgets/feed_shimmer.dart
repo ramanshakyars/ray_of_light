@@ -64,7 +64,7 @@ class SkeletonPostCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
         color: AppColors.getMonoCard(isDark),
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.zero,
         border: Border.all(color: AppColors.getMonoBorder(isDark).withOpacity(0.2)),
         boxShadow: [
           BoxShadow(

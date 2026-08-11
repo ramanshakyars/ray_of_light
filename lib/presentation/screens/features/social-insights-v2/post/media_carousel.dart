@@ -24,7 +24,7 @@ class _MediaCarouselState extends State<MediaCarousel> {
     return Column(
       children: [
         ClipRRect(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.zero,
           child: AspectRatio(
             aspectRatio: 4 / 3,
             child: PageView.builder(

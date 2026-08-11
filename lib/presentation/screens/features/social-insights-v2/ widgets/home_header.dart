@@ -58,6 +58,7 @@ class HomeHeader extends StatelessWidget {
   void _openMoodSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => const MoodBottomSheet(),

@@ -9,6 +9,7 @@ import 'package:rayoflite/presentation/screens/features/talk-to-lite-v3/services
 import '../provider/chat_provider_v3.dart';
 import '../widgets/chat_body_v3.dart';
 
+
 class ChatScreenV3 extends StatelessWidget {
   final String? chatId;
 
@@ -33,10 +34,20 @@ class ChatScreenV3 extends StatelessWidget {
               // ── Divider ───────────────────────────────────────
               Container(
                 height: 1,
-                color: colors.divider,
+                color: colors.divider.withValues(alpha: 0.2),
               ),
-              // ── Chat Body ────────────────────────────────────
-              const Expanded(child: ChatBodyV3()),
+              // ── Chat Body with background starting below header ──
+              Expanded(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/talktolight image.png'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: const ChatBodyV3(),
+                ),
+              ),
             ],
           ),
         ),
@@ -55,30 +66,53 @@ class _ChatHeader extends StatelessWidget {
     return Consumer<ChatProviderV3>(
       builder: (context, provider, _) {
         return Container(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+          padding: const EdgeInsets.fromLTRB(12, 10, 16, 10),
           color: colors.background,
           child: Row(
             children: [
-              // AI Avatar with online indicator
+              // Back Button <
+              IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: 20,
+                  color: colors.textPrimary,
+                ),
+                onPressed: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
+                },
+              ),
+
+              const SizedBox(width: 4),
+
+              // AI Avatar with online indicator (using logo.png)
               Stack(
                 children: [
                   Container(
-                    width: 42,
-                    height: 42,
+                    width: 44,
+                    height: 44,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: colors.surface,
                       border: Border.all(
-                        color: colors.border,
+                        color: colors.border.withValues(alpha: 0.6),
                         width: 1.5,
                       ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: ClipOval(
                       child: Padding(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(6),
                         child: Image.asset(
-                          'assets/talk-to-light.png',
-                          color: colors.icon,
+                          'assets/logo.png',
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),
@@ -88,8 +122,8 @@ class _ChatHeader extends StatelessWidget {
                     right: 1,
                     bottom: 1,
                     child: Container(
-                      width: 11,
-                      height: 11,
+                      width: 12,
+                      height: 12,
                       decoration: BoxDecoration(
                         color: const Color(0xFF22C55E),
                         shape: BoxShape.circle,
@@ -113,11 +147,12 @@ class _ChatHeader extends StatelessWidget {
                     Text(
                       'Light',
                       style: AppTextStyles.cardTitle(colors).copyWith(
-                        fontSize: 17,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: -0.3,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 1),
                     Text(
                       provider.isTyping ? 'typing...' : 'online',
                       style: TextStyle(
@@ -125,7 +160,7 @@ class _ChatHeader extends StatelessWidget {
                         fontSize: 12,
                         color: provider.isTyping
                             ? colors.success
-                            : colors.textSecondary,
+                            : colors.textSecondary.withValues(alpha: 0.8),
                         fontWeight: provider.isTyping
                             ? FontWeight.w600
                             : FontWeight.normal,
@@ -141,3 +176,4 @@ class _ChatHeader extends StatelessWidget {
     );
   }
 }
+

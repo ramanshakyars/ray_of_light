@@ -20,12 +20,14 @@ class QuickComposer extends StatelessWidget {
     final colors = context.watch<ThemeProvider>().colors;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: colors.card,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: colors.border.withValues(alpha: 0.35),
+        color: Colors.transparent,
+        border: Border(
+          bottom: BorderSide(
+            color: colors.border.withValues(alpha: 0.35),
+            width: 1,
+          ),
         ),
       ),
       child: Row(
@@ -51,10 +53,11 @@ class QuickComposer extends StatelessWidget {
             ),
           ),
           _item(Icons.image_outlined, onPhotoTap, colors),
-          const SizedBox(width: 16),
-          _item(Icons.emoji_emotions_outlined, onMoodTap, colors),
-          const SizedBox(width: 16),
-          _item(Icons.text_fields_rounded, onTextTap, colors),
+          // Commented out for now
+          // const SizedBox(width: 16),
+          // _item(Icons.emoji_emotions_outlined, onMoodTap, colors),
+          // const SizedBox(width: 16),
+          // _item(Icons.text_fields_rounded, onTextTap, colors),
         ],
       ),
     );

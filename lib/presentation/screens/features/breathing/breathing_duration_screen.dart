@@ -136,7 +136,7 @@ class BreathingDurationScreen extends StatelessWidget {
                     color: AppColors.getMonoTextPrimary(isDark).withValues(alpha: 0.04),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
+                    child: Icon(
                     icon,
                     color: AppColors.getMonoIcon(isDark),
                     size: 28,

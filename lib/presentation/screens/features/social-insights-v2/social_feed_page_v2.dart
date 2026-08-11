@@ -36,6 +36,7 @@ class _SocialFeedPageV2State extends State<SocialFeedPageV2> {
   void _openCreateSheet() async {
     final created = await showModalBottomSheet(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => const CreatePostSheet(),
@@ -59,25 +60,25 @@ class _SocialFeedPageV2State extends State<SocialFeedPageV2> {
             return RefreshIndicator(
               onRefresh: vm.loadPosts,
               child: ListView.builder(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                padding: const EdgeInsets.only(bottom: 24),
                 itemCount: (vm.state == FeedState.loaded && vm.posts.isNotEmpty)
                     ? 2 + vm.posts.length
                     : 3,
                 itemBuilder: (context, index) {
                   // HEADER
                   if (index == 0) {
-                    return HomeHeader(userName: auth.name);
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                      child: HomeHeader(userName: auth.name),
+                    );
                   }
 
                   // COMPOSER
                   if (index == 1) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 16, bottom: 16),
-                      child: QuickComposer(
-                        onPhotoTap: _openCreateSheet,
-                        onMoodTap: _openCreateSheet,
-                        onTextTap: _openCreateSheet,
-                      ),
+                    return QuickComposer(
+                      onPhotoTap: _openCreateSheet,
+                      onMoodTap: _openCreateSheet,
+                      onTextTap: _openCreateSheet,
                     );
                   }
 

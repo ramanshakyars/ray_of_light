@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/app_theme_colors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 
@@ -95,26 +94,6 @@ class _MonoChatBubbleV3State extends State<MonoChatBubbleV3>
     );
   }
 
-  BorderRadius _radius() {
-    const full = Radius.circular(18);
-    const tail = Radius.circular(4);
-
-    if (widget.isUser) {
-      return BorderRadius.only(
-        topLeft: full,
-        topRight: full,
-        bottomLeft: full,
-        bottomRight: widget.isLastInGroup ? tail : full,
-      );
-    } else {
-      return BorderRadius.only(
-        topLeft: full,
-        topRight: full,
-        bottomLeft: widget.isLastInGroup ? tail : full,
-        bottomRight: full,
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -129,111 +108,179 @@ class _MonoChatBubbleV3State extends State<MonoChatBubbleV3>
             widget.isUser ? Alignment.centerRight : Alignment.centerLeft,
         child: Padding(
           padding: EdgeInsets.only(
-            top: widget.isFirstInGroup ? 8 : 2,
-            bottom: widget.isLastInGroup ? 2 : 1,
-            left: widget.isUser ? 60 : 0,
-            right: widget.isUser ? 0 : 60,
+            top: widget.isFirstInGroup ? 8 : 3,
+            bottom: widget.isLastInGroup ? 4 : 1,
+            left: widget.isUser ? 50 : 0,
+            right: widget.isUser ? 0 : 40,
           ),
           child: Align(
             alignment:
                 widget.isUser ? Alignment.centerRight : Alignment.centerLeft,
-            child: GestureDetector(
-              onLongPress: () => _copyText(context),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: widget.isUser
-                      ? colors.primary
-                      : colors.surface,
-                  borderRadius: _radius(),
-                  border: Border.all(
-                    color: widget.isUser
-                        ? colors.primary
-                        : colors.border.withValues(alpha: 0.5),
-                    width: 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: colors.shadow.withValues(alpha: 0.1),
-                      blurRadius: 6,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
-                ),
-                child: _BubbleContent(
-                  text: widget.text,
-                  time: timeStr,
-                  isUser: widget.isUser,
-                  colors: colors,
-                ),
+            child: widget.isUser
+                ? _buildUserBubble(context, colors, timeStr)
+                : _buildBotBubble(context, colors, timeStr),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUserBubble(BuildContext context, ThemeColors colors, String timeStr) {
+    return GestureDetector(
+      onLongPress: () => _copyText(context),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+        decoration: BoxDecoration(
+          color: const Color(0xFF666666), // Gray bubble for user question
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              widget.text,
+              style: const TextStyle(
+                fontFamily: 'Specimen',
+                color: Colors.white,
+                fontSize: 15,
+                height: 1.45,
               ),
             ),
+            if (timeStr.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    timeStr,
+                    style: TextStyle(
+                      fontFamily: 'Specimen',
+                      color: Colors.white.withValues(alpha: 0.6),
+                      fontSize: 10,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.done_all_rounded,
+                    size: 13,
+                    color: Colors.white.withValues(alpha: 0.7),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBotBubble(BuildContext context, ThemeColors colors, String timeStr) {
+    return GestureDetector(
+      onLongPress: () => _copyText(context),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFDFBF7), // Warm light card bubble matching Image 2
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(
+            color: const Color(0xFFEBE5DF),
+            width: 1,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _FormattedText(
+              text: widget.text,
+              style: const TextStyle(
+                fontFamily: 'Specimen',
+                color: Color(0xFF2C2C2C),
+                fontSize: 15,
+                height: 1.55,
+              ),
+            ),
+            if (timeStr.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    timeStr,
+                    style: TextStyle(
+                      fontFamily: 'Specimen',
+                      color: Colors.black.withValues(alpha: 0.4),
+                      fontSize: 10,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.done_rounded,
+                    size: 12,
+                    color: const Color(0xFFD9A76A), // Subtle warm gold check mark
+                  ),
+                ],
+              ),
+            ],
+          ],
         ),
       ),
     );
   }
 }
 
-class _BubbleContent extends StatelessWidget {
+class _FormattedText extends StatelessWidget {
   final String text;
-  final String time;
-  final bool isUser;
-  final ThemeColors colors;
+  final TextStyle style;
 
-  const _BubbleContent({
-    required this.text,
-    required this.time,
-    required this.isUser,
-    required this.colors,
-  });
+  const _FormattedText({required this.text, required this.style});
 
   @override
   Widget build(BuildContext context) {
-    final textColor = isUser
-        ? colors.primaryForeground
-        : colors.textPrimary;
-    final timeColor = isUser
-        ? colors.primaryForeground.withValues(alpha: 0.75)
-        : colors.textMuted;
+    final spans = <InlineSpan>[];
+    final regExp = RegExp(r'\*\*(.*?)\*\*');
+    int start = 0;
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(13, 9, 13, 7),
-      child: Column(
-        crossAxisAlignment:
-            isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            text,
-            style: AppTextStyles.bodyText(colors).copyWith(
-              color: textColor,
-              fontSize: 15,
-              height: 1.5,
-            ),
+    for (final match in regExp.allMatches(text)) {
+      if (match.start > start) {
+        spans.add(TextSpan(text: text.substring(start, match.start)));
+      }
+      spans.add(
+        TextSpan(
+          text: match.group(1),
+          style: style.copyWith(
+            fontWeight: FontWeight.bold,
           ),
-          if (time.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  time,
-                  style: AppTextStyles.hintText(colors).copyWith(
-                    color: timeColor,
-                    fontSize: 10,
-                  ),
-                ),
-                const SizedBox(width: 3),
-                Icon(
-                  Icons.done_all_rounded,
-                  size: 13,
-                  color: timeColor,
-                ),
-              ],
-            ),
-          ],
-        ],
+        ),
+      );
+      start = match.end;
+    }
+
+    if (start < text.length) {
+      spans.add(TextSpan(text: text.substring(start)));
+    }
+
+    return RichText(
+      text: TextSpan(
+        style: style,
+        children: spans,
       ),
     );
   }
 }
+

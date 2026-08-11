@@ -25,10 +25,10 @@ class InputArea extends StatelessWidget {
 
     return Container(
       padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 8,
-        bottom: hasKeyboard ? 8 : 76,
+        left: 14,
+        right: 14,
+        top: 6,
+        bottom: hasKeyboard ? 8 : 16,
       ),
       color: AppColors.getAppBackgroundColor(isDarkMode),
       child: Container(
