@@ -81,7 +81,7 @@ class _HistoryBottomSheetState extends State<HistoryBottomSheet> {
                       Text(
                         'Chat History',
                         style: TextStyle(
-                          fontFamily: 'Arial',
+                          fontFamily: 'Poppins',
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: AppColors.getMonoTextPrimary(isDark),

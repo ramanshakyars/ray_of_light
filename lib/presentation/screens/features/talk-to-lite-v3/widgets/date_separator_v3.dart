@@ -49,7 +49,7 @@ class DateSeparatorV3 extends StatelessWidget {
           child: Text(
             _label(),
             style: TextStyle(
-              fontFamily: 'Arial',
+              fontFamily: 'Poppins',
               fontSize: 12,
               fontWeight: FontWeight.w500,
               color: isDark

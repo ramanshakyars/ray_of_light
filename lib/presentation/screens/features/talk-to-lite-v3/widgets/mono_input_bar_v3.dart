@@ -93,7 +93,7 @@ class _MonoInputBarV3State extends State<MonoInputBarV3> {
                       maxLines: 4,
                       textCapitalization: TextCapitalization.sentences,
                       style: const TextStyle(
-                        fontFamily: 'Specimen',
+                        fontFamily: 'Poppins',
                         color: Color(0xFF2C2C2C),
                         fontSize: 15,
                       ),
@@ -104,7 +104,7 @@ class _MonoInputBarV3State extends State<MonoInputBarV3> {
                             ? "Light is typing..."
                             : "Message Light...",
                         hintStyle: const TextStyle(
-                          fontFamily: 'Specimen',
+                          fontFamily: 'Poppins',
                           color: Color(0xFFA5A09A),
                           fontSize: 15,
                         ),

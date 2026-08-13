@@ -226,7 +226,9 @@ class _PostCardV2State extends State<PostCardV2> with SingleTickerProviderStateM
                         children: [
                           Flexible(
                             child: Text(
-                              widget.post.username,
+                              widget.post.username.isNotEmpty 
+        ? '${widget.post.username[0].toUpperCase()}${widget.post.username.substring(1)}' 
+        : '',
                               style: AppTextStyles.monoMedium18(isDark).copyWith(fontSize: 15, fontWeight: FontWeight.bold),
                               overflow: TextOverflow.ellipsis,
                             ),

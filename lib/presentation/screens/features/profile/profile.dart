@@ -110,26 +110,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 20),
           if (userData?['name'] != null)
             Text(
-               userData?['name'] != null
-      ? '${userData!['name'][0].toUpperCase()}${userData!['name'].substring(1).toLowerCase()}'
-      : '',
+              (userData!['name'] as String)
+                  .trim()
+                  .split(' ')
+                  .map((w) => w.isNotEmpty ? w[0].toUpperCase() + w.substring(1) : '')
+                  .join(' '),
               style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
+                fontSize: 26,
+                fontWeight: FontWeight.w700,
                 color: AppColors.getTextPrimaryColor(isDarkMode),
-                fontFamily: 'Specimen',
               ),
             ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           if (userData?['email'] != null)
             Text(
-              userData?['email'],
+              (userData!['email'] as String),
               style: TextStyle(
-                fontSize: 16,
-                color: AppColors.getTextPrimaryColor(
-                  isDarkMode,
-                ).withOpacity(0.8),
-                fontFamily: 'Specimen',
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                color: AppColors.getTextSecondaryColor(isDarkMode),
               ),
             ),
         ],
@@ -211,7 +210,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     color: AppColors.getTextPrimaryColor(
                       isDarkMode,
                     ).withOpacity(0.6),
-                    fontFamily: 'Specimen',
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -221,7 +219,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: AppColors.getTextPrimaryColor(isDarkMode),
-                    fontFamily: 'Specimen',
                   ),
                 ),
               ],
@@ -261,7 +258,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: AppColors.getTextPrimaryColor(isDarkMode),
-                      fontFamily: 'Specimen',
                     ),
                   ),
                   Text(
@@ -271,7 +267,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: AppColors.getTextPrimaryColor(
                         isDarkMode,
                       ).withOpacity(0.6),
-                      fontFamily: 'Specimen',
                     ),
                   ),
                 ],
@@ -334,7 +329,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
-                      fontFamily: 'Specimen',
                     ),
                   ),
                 ],
@@ -378,7 +372,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
-                      fontFamily: 'Specimen',
                     ),
                   ),
                 ],
@@ -729,7 +722,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           'My Profile',
           style: TextStyle(
             color: AppColors.getTextPrimaryColor(isDarkMode),
-            fontFamily: 'Specimen',
             fontWeight: FontWeight.bold,
           ),
         ),

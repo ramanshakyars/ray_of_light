@@ -15,61 +15,62 @@ import 'appcolors.dart';
 class AppTextStyles {
   AppTextStyles._();
 
-  static const String _primaryFont = 'Arial';
+  static const String _primaryFont = 'Poppins';
 
   // ─────────────────────────────────────────────────────────
-  // THEME-AWARE STANDARDIZED TYPOGRAPHY (using ThemeColors)
+  // THEME-AWARE STANDARDIZED TYPOGRAPHY (using ThemeColors & Poppins)
   // ─────────────────────────────────────────────────────────
 
-  /// Screen / page header title — standardized 17px bold, -0.3 letter spacing
+  /// Screen / page header title — 19px semibold (600), -0.4 letter spacing, 1.2 line height
   static TextStyle screenTitle(ThemeColors c) => TextStyle(
         fontFamily: _primaryFont,
-        fontSize: 17,
-        fontWeight: FontWeight.w700,
+        fontSize: 19,
+        fontWeight: FontWeight.w600,
         color: c.textPrimary,
         height: 1.2,
-        letterSpacing: -0.3,
+        letterSpacing: -0.4,
       );
 
-  /// Section heading — 18px semibold
+  /// Section heading — 19px semibold
   static TextStyle sectionTitle(ThemeColors c) => TextStyle(
         fontFamily: _primaryFont,
-        fontSize: 18,
+        fontSize: 19,
         fontWeight: FontWeight.w600,
         color: c.textPrimary,
-        height: 1.3,
+        height: 1.2,
+        letterSpacing: -0.4,
       );
 
-  /// Card / list item title — 16px semibold
+  /// Card / list item title — 15px semibold (600)
   static TextStyle cardTitle(ThemeColors c) => TextStyle(
         fontFamily: _primaryFont,
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: FontWeight.w600,
         color: c.textPrimary,
       );
 
-  /// Body text — 15px regular
+  /// Body text — 14px regular (400), 1.5 line height
   static TextStyle bodyText(ThemeColors c) => TextStyle(
         fontFamily: _primaryFont,
-        fontSize: 15,
+        fontSize: 14,
         fontWeight: FontWeight.w400,
         color: c.textPrimary,
         height: 1.5,
       );
 
-  /// Secondary body — 14px regular, secondary color
+  /// Secondary body — 13px regular (400), 1.4 line height
   static TextStyle bodySecondary(ThemeColors c) => TextStyle(
         fontFamily: _primaryFont,
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: FontWeight.w400,
         color: c.textSecondary,
         height: 1.4,
       );
 
-  /// Button text — 16px semibold
+  /// Button text — 15px semibold
   static TextStyle buttonLabel(ThemeColors c) => TextStyle(
         fontFamily: _primaryFont,
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: FontWeight.w600,
         color: c.primaryForeground,
         letterSpacing: 0.2,
@@ -84,28 +85,28 @@ class AppTextStyles {
         letterSpacing: 1.1,
       );
 
-  /// Section label (ALL CAPS) — 11px semibold, muted
+  /// Section label (ALL CAPS) — 11px medium (500), 1.2 letter spacing
   static TextStyle sectionLabel(ThemeColors c) => TextStyle(
         fontFamily: _primaryFont,
         fontSize: 11,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w500,
         color: c.textMuted,
-        letterSpacing: 1.4,
+        letterSpacing: 1.2,
       );
 
-  /// Dialog / modal title — 20px bold
+  /// Dialog / modal title — 20px semibold
   static TextStyle dialogTitle(ThemeColors c) => TextStyle(
         fontFamily: _primaryFont,
         fontSize: 20,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         color: c.textPrimary,
         height: 1.2,
       );
 
-  /// Muted helper / hint — 13px regular
+  /// Muted helper / hint — 12px regular (400)
   static TextStyle hintText(ThemeColors c) => TextStyle(
         fontFamily: _primaryFont,
-        fontSize: 13,
+        fontSize: 12,
         fontWeight: FontWeight.w400,
         color: c.textMuted,
       );
@@ -121,7 +122,7 @@ class AppTextStyles {
   /// Chat / AI response text
   static TextStyle chatText(ThemeColors c) => TextStyle(
         fontFamily: _primaryFont,
-        fontSize: 15,
+        fontSize: 14,
         fontWeight: FontWeight.w400,
         color: c.textPrimary,
         height: 1.5,
@@ -130,7 +131,7 @@ class AppTextStyles {
   /// Input field text
   static TextStyle inputText(ThemeColors c) => TextStyle(
         fontFamily: _primaryFont,
-        fontSize: 15,
+        fontSize: 14,
         fontWeight: FontWeight.w400,
         color: c.textPrimary,
       );

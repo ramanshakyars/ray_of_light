@@ -24,7 +24,7 @@ class MonoChatBubble extends StatelessWidget {
             text,
             style: TextStyle(
               color: AppColors.getMonoTextPrimary(isDark),
-              fontFamily: "Arial",
+              fontFamily: "Poppins",
               fontSize: 15,
             ),
           ),
@@ -46,7 +46,7 @@ class MonoChatBubble extends StatelessWidget {
           text,
           style: TextStyle(
             color: AppColors.getMonoBackground(isDark),
-            fontFamily: "Arial",
+            fontFamily: "Poppins",
             fontSize: 15,
           ),
         ),

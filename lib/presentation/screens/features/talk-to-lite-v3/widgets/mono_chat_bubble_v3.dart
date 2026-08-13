@@ -148,7 +148,7 @@ class _MonoChatBubbleV3State extends State<MonoChatBubbleV3>
             Text(
               widget.text,
               style: const TextStyle(
-                fontFamily: 'Specimen',
+                fontFamily: 'Poppins',
                 color: Colors.white,
                 fontSize: 15,
                 height: 1.45,
@@ -162,7 +162,7 @@ class _MonoChatBubbleV3State extends State<MonoChatBubbleV3>
                   Text(
                     timeStr,
                     style: TextStyle(
-                      fontFamily: 'Specimen',
+                      fontFamily: 'Poppins',
                       color: Colors.white.withValues(alpha: 0.6),
                       fontSize: 10,
                     ),
@@ -209,7 +209,7 @@ class _MonoChatBubbleV3State extends State<MonoChatBubbleV3>
             _FormattedText(
               text: widget.text,
               style: const TextStyle(
-                fontFamily: 'Specimen',
+                fontFamily: 'Poppins',
                 color: Color(0xFF2C2C2C),
                 fontSize: 15,
                 height: 1.55,
@@ -223,7 +223,7 @@ class _MonoChatBubbleV3State extends State<MonoChatBubbleV3>
                   Text(
                     timeStr,
                     style: TextStyle(
-                      fontFamily: 'Specimen',
+                      fontFamily: 'Poppins',
                       color: Colors.black.withValues(alpha: 0.4),
                       fontSize: 10,
                     ),

@@ -156,7 +156,7 @@ class _ChatHeader extends StatelessWidget {
                     Text(
                       provider.isTyping ? 'typing...' : 'online',
                       style: TextStyle(
-                        fontFamily: 'Specimen',
+                        fontFamily: 'Poppins',
                         fontSize: 12,
                         color: provider.isTyping
                             ? colors.success

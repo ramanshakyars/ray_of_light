@@ -65,6 +65,14 @@ class HomeHeader extends StatelessWidget {
     );
   }
 
+  String _capitalize(String text) {
+    if (text.trim().isEmpty) return text;
+    return text.trim().split(' ').map((word) {
+      if (word.isEmpty) return word;
+      return word[0].toUpperCase() + word.substring(1);
+    }).join(' ');
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = context.watch<ThemeProvider>().colors;
@@ -83,7 +91,7 @@ class HomeHeader extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "${_getGreeting()}, $userName",
+                    "${_getGreeting()}, ${_capitalize(userName)}",
                     style: AppTextStyles.screenTitle(colors).copyWith(
                       height: 1.2,
                     ),

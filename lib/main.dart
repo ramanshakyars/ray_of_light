@@ -124,7 +124,7 @@ class MyApp extends StatelessWidget {
                 surface: colors.surface,
                 onSurface: colors.textPrimary,
               ),
-              fontFamily: 'Specimen',
+              fontFamily: 'Poppins',
               useMaterial3: true,
               scaffoldBackgroundColor: colors.background,
               appBarTheme: AppBarTheme(
@@ -150,7 +150,7 @@ class MyApp extends StatelessWidget {
                 surface: colors.surface,
                 onSurface: colors.textPrimary,
               ),
-              fontFamily: 'Specimen',
+              fontFamily: 'Poppins',
               useMaterial3: true,
               scaffoldBackgroundColor: colors.background,
               appBarTheme: AppBarTheme(

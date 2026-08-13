@@ -94,7 +94,7 @@ class _HistoryTileState extends State<HistoryTile> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontFamily: 'Arial',
+                      fontFamily: 'Poppins',
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: AppColors.getMonoTextPrimary(isDark),
@@ -142,7 +142,7 @@ class _HistoryTileState extends State<HistoryTile> {
                     child: Text(
                       '${widget.history.messageCount}',
                       style: TextStyle(
-                        fontFamily: 'Arial',
+                        fontFamily: 'Poppins',
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: AppColors.getMonoTextSecondary(isDark),

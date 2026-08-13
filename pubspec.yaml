@@ -80,6 +80,38 @@ flutter:
     - assets/soul_frequencies-ambient-meditation-music-498455.mp3
 
   fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Poppins-Italic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+    - family: Merriweather
+      fonts:
+        - asset: assets/fonts/Merriweather-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Merriweather-LightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: assets/fonts/Merriweather-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Merriweather-Italic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/Merriweather-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Merriweather-BoldItalic.ttf
+          weight: 700
+          style: italic
     - family: Specimen
       fonts:
         - asset: assets/fonts/OpenSans_Condensed-Regular.ttf

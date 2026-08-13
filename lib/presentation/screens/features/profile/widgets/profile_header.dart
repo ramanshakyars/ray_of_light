@@ -65,6 +65,11 @@ class _ProfileHeaderState extends State<ProfileHeader> {
     }
   }
 
+  String _formatName(String text) {
+    if (text.trim().isEmpty) return text;
+    return text.trim().split(' ').map((w) => w.isNotEmpty ? w[0].toUpperCase() + w.substring(1) : '').join(' ');
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = context.watch<ThemeProvider>().colors;
@@ -149,7 +154,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
         const SizedBox(height: 14),
 
         // ─── Name ───
-        Text(name, style: AppTextStyles.screenTitle(colors)),
+        Text(_formatName(name), style: AppTextStyles.screenTitle(colors)),
 
         const SizedBox(height: 4),
 
