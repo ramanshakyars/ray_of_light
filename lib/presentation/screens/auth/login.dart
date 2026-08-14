@@ -275,53 +275,57 @@ class _LoginPageState extends State<LoginPage> {
                                   : _login,
                             ),
 
-                            const SizedBox(height: 14),
+                            /// ─── Google Sign-In (Hidden on iOS for now) ───
+                            if (Theme.of(context).platform !=
+                                TargetPlatform.iOS) ...[
+                              const SizedBox(height: 14),
 
-                            /// ─── OR Divider ──────────────────────────────
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Divider(
-                                    color: isDarkMode
-                                        ? Colors.white12
-                                        : Colors.black12,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12),
-                                  child: Text(
-                                    'OR',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 2,
+                              /// ─── OR Divider ──────────────────────────────
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Divider(
                                       color: isDarkMode
-                                          ? Colors.white38
-                                          : Colors.black38,
+                                          ? Colors.white12
+                                          : Colors.black12,
                                     ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Divider(
-                                    color: isDarkMode
-                                        ? Colors.white12
-                                        : Colors.black12,
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12),
+                                    child: Text(
+                                      'OR',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 2,
+                                        color: isDarkMode
+                                            ? Colors.white38
+                                            : Colors.black38,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
+                                  Expanded(
+                                    child: Divider(
+                                      color: isDarkMode
+                                          ? Colors.white12
+                                          : Colors.black12,
+                                    ),
+                                  ),
+                                ],
+                              ),
 
-                            const SizedBox(height: 14),
+                              const SizedBox(height: 14),
 
-                            /// ─── Google Sign-In Button ───────────────────
-                            _GoogleSignInButton(
-                              isLoading: _isGoogleLoading,
-                              isDarkMode: isDarkMode,
-                              onPressed: (_isLoading || _isGoogleLoading)
-                                  ? null
-                                  : _handleGoogleSignIn,
-                            ),
+                              /// ─── Google Sign-In Button ───────────────────
+                              _GoogleSignInButton(
+                                isLoading: _isGoogleLoading,
+                                isDarkMode: isDarkMode,
+                                onPressed: (_isLoading || _isGoogleLoading)
+                                    ? null
+                                    : _handleGoogleSignIn,
+                              ),
+                            ],
 
                             const SizedBox(height: 14),
 

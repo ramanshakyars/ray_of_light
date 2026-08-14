@@ -348,55 +348,59 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       : _register,
                                 ),
 
-                                const SizedBox(height: 16),
+                                // ─── Google Sign-Up (Hidden on iOS for now) ───
+                                if (Theme.of(context).platform !=
+                                    TargetPlatform.iOS) ...[
+                                  const SizedBox(height: 16),
 
-                                // ─── OR Divider ──────────────────────
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Divider(
-                                        color: isDark
-                                            ? Colors.white12
-                                            : Colors.black12,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12),
-                                      child: Text(
-                                        'OR',
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 2,
+                                  // ─── OR Divider ──────────────────────
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Divider(
                                           color: isDark
-                                              ? Colors.white38
-                                              : Colors.black38,
+                                              ? Colors.white12
+                                              : Colors.black12,
                                         ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      child: Divider(
-                                        color: isDark
-                                            ? Colors.white12
-                                            : Colors.black12,
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12),
+                                        child: Text(
+                                          'OR',
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 2,
+                                            color: isDark
+                                                ? Colors.white38
+                                                : Colors.black38,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
+                                      Expanded(
+                                        child: Divider(
+                                          color: isDark
+                                              ? Colors.white12
+                                              : Colors.black12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
 
-                                const SizedBox(height: 16),
+                                  const SizedBox(height: 16),
 
-                                // ─── Google Sign-Up Button ───────────
-                                _GoogleSignInButton(
-                                  label: 'Sign up with Google',
-                                  isLoading: _isGoogleLoading,
-                                  isDarkMode: isDark,
-                                  onPressed:
-                                      (_isLoading || _isGoogleLoading)
-                                          ? null
-                                          : _handleGoogleSignIn,
-                                ),
+                                  // ─── Google Sign-Up Button ───────────
+                                  _GoogleSignInButton(
+                                    label: 'Sign up with Google',
+                                    isLoading: _isGoogleLoading,
+                                    isDarkMode: isDark,
+                                    onPressed:
+                                        (_isLoading || _isGoogleLoading)
+                                            ? null
+                                            : _handleGoogleSignIn,
+                                  ),
+                                ],
 
                                 const SizedBox(height: 16),
 

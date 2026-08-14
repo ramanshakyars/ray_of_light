@@ -302,28 +302,31 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               ),
                             ],
 
-                            const SizedBox(height: 24),
+                            if (Theme.of(context).platform !=
+                                TargetPlatform.iOS) ...[
+                              const SizedBox(height: 24),
 
-                            Row(
-                              children: [
-                                Expanded(child: Divider(color: isDark ? Colors.white24 : Colors.black12)),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                                  child: Text('OR', style: AppTextStyles.monoSecondary14(isDark)),
-                                ),
-                                Expanded(child: Divider(color: isDark ? Colors.white24 : Colors.black12)),
-                              ],
-                            ),
+                              Row(
+                                children: [
+                                  Expanded(child: Divider(color: isDark ? Colors.white24 : Colors.black12)),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    child: Text('OR', style: AppTextStyles.monoSecondary14(isDark)),
+                                  ),
+                                  Expanded(child: Divider(color: isDark ? Colors.white24 : Colors.black12)),
+                                ],
+                              ),
 
-                            const SizedBox(height: 16),
+                              const SizedBox(height: 16),
 
-                            _GoogleSignInButton(
-                              isLoading: _isGoogleLoading,
-                              isDarkMode: isDark,
-                              onPressed: (_isLoading || _isGoogleLoading)
-                                  ? null
-                                  : _handleGoogleSignIn,
-                            ),
+                              _GoogleSignInButton(
+                                isLoading: _isGoogleLoading,
+                                isDarkMode: isDark,
+                                onPressed: (_isLoading || _isGoogleLoading)
+                                    ? null
+                                    : _handleGoogleSignIn,
+                              ),
+                            ],
 
                             const SizedBox(height: 16),
 
