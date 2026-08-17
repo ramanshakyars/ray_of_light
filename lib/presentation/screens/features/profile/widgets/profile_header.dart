@@ -35,33 +35,44 @@ class _ProfileHeaderState extends State<ProfileHeader> {
 
     if (source == null) return;
 
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(
-      source: source,
-      maxWidth: 800,
-      maxHeight: 800,
-      imageQuality: 85,
-    );
-    if (picked == null) return;
-
-    final file = File(picked.path);
-    final newUrl = await profileProvider.uploadProfilePhoto(file);
-
-    if (newUrl != null && mounted) {
-      setState(() => _localPhotoUrl = newUrl);
-      final user = await LocalStorageService.getUser() ?? {};
-      user['profilePhotoUrl'] = newUrl;
-      await LocalStorageService.setUser(user);
-      if (context.mounted) {
-        context.read<AuthProvider>().loadUser();
-      }
-    } else if (profileProvider.photoUploadError != null && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(profileProvider.photoUploadError!),
-          backgroundColor: Colors.redAccent,
-        ),
+    try {
+      final picker = ImagePicker();
+      final picked = await picker.pickImage(
+        source: source,
+        maxWidth: 800,
+        maxHeight: 800,
+        imageQuality: 85,
       );
+      if (picked == null) return;
+
+      final file = File(picked.path);
+      final newUrl = await profileProvider.uploadProfilePhoto(file);
+
+      if (newUrl != null && mounted) {
+        setState(() => _localPhotoUrl = newUrl);
+        final user = await LocalStorageService.getUser() ?? {};
+        user['profilePhotoUrl'] = newUrl;
+        await LocalStorageService.setUser(user);
+        if (context.mounted) {
+          context.read<AuthProvider>().loadUser();
+        }
+      } else if (profileProvider.photoUploadError != null && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(profileProvider.photoUploadError!),
+            backgroundColor: colors.error,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text("Could not access camera or photos"),
+            backgroundColor: colors.error,
+          ),
+        );
+      }
     }
   }
 

@@ -37,8 +37,7 @@ class AccountDeactivatedScreen extends StatelessWidget {
 
                 // Description
                 Text(
-                  "Your account has been deleted successfully.\n"
-                  "You will no longer be able to use it unless reactivated.",
+                  "Your account and all associated personal data have been permanently deleted.",
                   style: AppTextStyles.regular16(isDarkMode),
                   textAlign: TextAlign.center,
                 ),

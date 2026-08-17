@@ -43,7 +43,7 @@ void showDeactivateConfirmModal(BuildContext context) {
             ),
             const SizedBox(height: 10),
             Text(
-              "Your account will be deactivated. You can always come back.",
+              "Your account and data will be permanently deleted. This action cannot be undone.",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: AppColors.getMonoTextSecondary(isDark),
@@ -56,10 +56,8 @@ void showDeactivateConfirmModal(BuildContext context) {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      AppColors.getMonoTextPrimary(isDark),
-                  foregroundColor:
-                      AppColors.getMonoBackground(isDark),
+                  backgroundColor: Colors.redAccent,
+                  foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(40)),
@@ -71,7 +69,7 @@ void showDeactivateConfirmModal(BuildContext context) {
                     context.go(RouteNames.accountDeactivate);
                   }
                 },
-                child: const Text("Deactivate Account"),
+                child: const Text("Delete Account"),
               ),
             ),
 

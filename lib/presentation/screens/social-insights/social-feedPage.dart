@@ -67,15 +67,21 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
     ImageSource source,
     void Function(void Function()) setModalState,
   ) async {
-    final XFile? image = await _picker.pickImage(
-      source: source,
-      imageQuality: 80,
-    );
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: source,
+        imageQuality: 80,
+      );
 
-    if (image != null) {
-      setModalState(() {
-        _selectedImage = File(image.path);
-      });
+      if (image != null) {
+        setModalState(() {
+          _selectedImage = File(image.path);
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        MessageService.showError(context, "Could not access camera or photos");
+      }
     }
   }
 

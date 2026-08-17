@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -348,9 +350,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       : _register,
                                 ),
 
-                                // ─── Google Sign-Up (Hidden on iOS for now) ───
-                                if (Theme.of(context).platform !=
-                                    TargetPlatform.iOS) ...[
+                                 // ─── Google Sign-Up (Hidden on iOS for now) ───
+                                 if (!(!kIsWeb && Platform.isIOS) &&
+                                     Theme.of(context).platform !=
+                                         TargetPlatform.iOS) ...[
                                   const SizedBox(height: 16),
 
                                   // ─── OR Divider ──────────────────────

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
@@ -26,20 +27,32 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
 
   // ─── PICK FROM GALLERY ──────────────────────────────────────────
   Future<void> pickImages() async {
-    final imgs = await _picker.pickMultiImage(imageQuality: 85);
-    if (imgs.isNotEmpty) {
-      setState(() => images.addAll(imgs.map((e) => File(e.path))));
+    try {
+      final imgs = await _picker.pickMultiImage(imageQuality: 85);
+      if (imgs.isNotEmpty) {
+        setState(() => images.addAll(imgs.map((e) => File(e.path))));
+      }
+    } catch (e) {
+      if (mounted) {
+        MessageService.showError(context, "Could not open photo gallery");
+      }
     }
   }
 
   // ─── PICK FROM CAMERA ───────────────────────────────────────────
   Future<void> pickFromCamera() async {
-    final img = await _picker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 85,
-    );
-    if (img != null) {
-      setState(() => images.add(File(img.path)));
+    try {
+      final img = await _picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 85,
+      );
+      if (img != null) {
+        setState(() => images.add(File(img.path)));
+      }
+    } catch (e) {
+      if (mounted) {
+        MessageService.showError(context, "Could not access camera");
+      }
     }
   }
 

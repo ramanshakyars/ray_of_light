@@ -51,6 +51,12 @@
 		<false/>
 		<key>NSUserNotificationUsageDescription</key>
 		<string>We use notifications to remind you and keep you updated.</string>
+		<key>NSCameraUsageDescription</key>
+		<string>Ray of Light requires access to your camera to take photos for your posts and profile.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Ray of Light requires access to your photo library to select photos for your posts and profile.</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Ray of Light requires access to your microphone when recording audio or video.</string>
 		<key>UISupportedInterfaceOrientations</key>
 		<array>
 			<string>UIInterfaceOrientationPortrait</string>

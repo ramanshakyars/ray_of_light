@@ -135,9 +135,9 @@ class SettingsPage extends StatelessWidget {
               ),
 
               SettingsTile(
-                icon: Icons.warning_amber_rounded,
-                title: 'Deactivate Account',
-                subtitle: 'Temporarily pause',
+                icon: Icons.delete_forever_outlined,
+                title: 'Delete Account',
+                subtitle: 'Permanently delete your account',
                 onTap: () {
                   context.push(
                     '${RouteNames.mainApp}/${RouteNames.deactivateAccount}',

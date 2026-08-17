@@ -70,7 +70,7 @@ class _DeactivateAccountPageState extends State<DeactivateAccountPage> {
               const SizedBox(height: 12),
 
               Text(
-                "Your account will be deactivated.\nRemember, your light is always welcome back here whenever you're ready.",
+                "Your account and data will be permanently deleted.\nThis action cannot be undone.",
                 textAlign: TextAlign.center,
                 style: AppTextStyles.bodySecondary(colors),
               ),
@@ -89,7 +89,7 @@ class _DeactivateAccountPageState extends State<DeactivateAccountPage> {
                     ),
                   ),
                   onPressed: _deactivate,
-                  child: const Text("Deactivate Account"),
+                  child: const Text("Delete Account"),
                 ),
               ),
 
@@ -130,7 +130,7 @@ class _DeactivateAccountPageState extends State<DeactivateAccountPage> {
               const SizedBox(height: 12),
 
               AppScreenHeader(
-                title: "Deactivate Account",
+                title: "Delete Account",
                 subtitle: "We're sad to see you go",
                 leading: IconButton(
                   onPressed: () => context.pop(),
@@ -147,7 +147,7 @@ class _DeactivateAccountPageState extends State<DeactivateAccountPage> {
                   child: Icon(
                     Icons.error_outline,
                     size: 38,
-                    color: colors.primary,
+                    color: colors.error,
                   ),
                 ),
               ),
@@ -155,7 +155,7 @@ class _DeactivateAccountPageState extends State<DeactivateAccountPage> {
               const SizedBox(height: 25),
 
               Text(
-                "What happens when you deactivate?",
+                "What happens when you delete your account?",
                 style: AppTextStyles.sectionTitle(colors),
               ),
 
@@ -163,23 +163,23 @@ class _DeactivateAccountPageState extends State<DeactivateAccountPage> {
 
               _infoCard(
                 colors,
-                Colors.blue,
-                "Your profile will be hidden",
-                "Others won't be able to see your profile or posts",
+                Colors.redAccent,
+                "Your profile will be removed",
+                "Your profile, posts, and data will be permanently removed",
               ),
 
               _infoCard(
                 colors,
-                Colors.purple,
-                "Your data stays safe",
-                "All your posts and information will be preserved",
+                Colors.orangeAccent,
+                "Action cannot be undone",
+                "Once deleted, your data cannot be recovered",
               ),
 
               _infoCard(
                 colors,
-                Colors.orange,
-                "You can come back anytime",
-                "Simply log in to reactivate your account",
+                Colors.blueAccent,
+                "Immediate deletion",
+                "Your account will be deleted instantly without delay",
               ),
 
               const SizedBox(height: 30),
@@ -232,8 +232,8 @@ class _DeactivateAccountPageState extends State<DeactivateAccountPage> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: colors.primary,
-                    foregroundColor: colors.primaryForeground,
+                    backgroundColor: colors.error,
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 18),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(40),
@@ -241,7 +241,7 @@ class _DeactivateAccountPageState extends State<DeactivateAccountPage> {
                   ),
                   onPressed: () => _showFinalConfirmation(colors),
                   child: Text(
-                    "Continue to Deactivate",
+                    "Continue to Delete Account",
                     style: AppTextStyles.buttonLabel(colors),
                   ),
                 ),
