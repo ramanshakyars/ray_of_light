@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/constants/app_text_field.dart';
 import 'package:rayoflite/core/constants/common_button.dart';
+import 'package:rayoflite/core/constants/terms_constants.dart';
 import 'package:rayoflite/core/providers/TokenManager.dart';
 import 'package:rayoflite/core/providers/auth_provider.dart';
 import 'package:rayoflite/core/services/authService.dart';
@@ -40,6 +42,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isOtpSent = false;
   bool _isLoading = false;
   bool _isGoogleLoading = false;
+  bool _termsAccepted = false;
+  bool _hasOpenedTermsOfUse = false;
+  bool _hasOpenedCommunityGuidelines = false;
 
   @override
   void dispose() {
@@ -76,10 +81,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
+  // ================= CHECKBOX TOGGLE =================
+
+  void _handleCheckboxToggle(bool? val) {
+    if (_isLoading || _isGoogleLoading) return;
+
+    if (!_hasOpenedTermsOfUse || !_hasOpenedCommunityGuidelines) {
+      MessageService.showError(
+        context,
+        'Please open and read both the Terms of Use and Community Guidelines before accepting.',
+      );
+      return;
+    }
+
+    setState(() {
+      _termsAccepted = val ?? false;
+    });
+  }
+
   // ================= REGISTER =================
 
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
+
+    if (!_hasOpenedTermsOfUse || !_hasOpenedCommunityGuidelines) {
+      MessageService.showError(
+        context,
+        'Please open and read both the Terms of Use and Community Guidelines before accepting.',
+      );
+      return;
+    }
+
+    if (!_termsAccepted) {
+      MessageService.showError(
+        context,
+        'Please check the box to agree to the Terms of Use and Community Guidelines.',
+      );
+      return;
+    }
 
     setState(() => _isLoading = true);
 
@@ -91,6 +130,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'dob': _dateOfBirthController.text.trim(),
         'password': _passwordController.text.trim(),
         'otp': _otpController.text.trim(),
+        'termsAccepted': _termsAccepted,
+        'termsVersion': TermsConstants.currentTermsVersion,
       };
 
       final response = await AuthService.register(body);
@@ -340,7 +381,98 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                 ),
 
-                                const SizedBox(height: 28),
+                                const SizedBox(height: 20),
+
+                                // 📜 Terms & Guidelines Acceptance Checkbox
+                                InkWell(
+                                  onTap: () =>
+                                      _handleCheckboxToggle(!_termsAccepted),
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Checkbox(
+                                        value: _termsAccepted,
+                                        onChanged: _handleCheckboxToggle,
+                                        activeColor: isDark
+                                            ? Colors.white
+                                            : Colors.black,
+                                        checkColor: isDark
+                                            ? Colors.black
+                                            : Colors.white,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Expanded(
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 12),
+                                          child: RichText(
+                                            text: TextSpan(
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                height: 1.4,
+                                                color: isDark
+                                                    ? Colors.white70
+                                                    : Colors.black87,
+                                              ),
+                                              children: [
+                                                const TextSpan(
+                                                  text:
+                                                      'I have read and agree to the ',
+                                                ),
+                                                TextSpan(
+                                                  text: 'Terms of Use',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    decoration:
+                                                        TextDecoration.underline,
+                                                  ),
+                                                  recognizer:
+                                                      TapGestureRecognizer()
+                                                        ..onTap = () {
+                                                          setState(() {
+                                                            _hasOpenedTermsOfUse =
+                                                                true;
+                                                          });
+                                                          context.push(
+                                                              RouteNames
+                                                                  .termsOfUse);
+                                                        },
+                                                ),
+                                                const TextSpan(
+                                                  text: ' and ',
+                                                ),
+                                                TextSpan(
+                                                  text: 'Community Guidelines',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    decoration:
+                                                        TextDecoration.underline,
+                                                  ),
+                                                  recognizer:
+                                                      TapGestureRecognizer()
+                                                        ..onTap = () {
+                                                          setState(() {
+                                                            _hasOpenedCommunityGuidelines =
+                                                                true;
+                                                          });
+                                                          context.push(
+                                                              RouteNames
+                                                                  .communityGuidelines);
+                                                        },
+                                                ),
+                                                const TextSpan(text: '.'),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                const SizedBox(height: 20),
 
                                 CommonButton(
                                   text: "Create Account",
@@ -350,10 +482,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       : _register,
                                 ),
 
-                                 // ─── Google Sign-Up (Hidden on iOS for now) ───
-                                 if (!(!kIsWeb && Platform.isIOS) &&
-                                     Theme.of(context).platform !=
-                                         TargetPlatform.iOS) ...[
+                                // ─── Google Sign-Up (Hidden on iOS for now) ───
+                                if (!(!kIsWeb && Platform.isIOS) &&
+                                    Theme.of(context).platform !=
+                                        TargetPlatform.iOS) ...[
                                   const SizedBox(height: 16),
 
                                   // ─── OR Divider ──────────────────────

@@ -20,6 +20,7 @@ class PathConfig {
   static const String updateProfile = '$baseUrl/user/update';
   static const String forgotPassword = '$baseUrl/auth/forgot-password';
   static const String uploadProfilePhoto = '$baseUrl/user/profile-photo';
+  static const String acceptTerms = '$baseUrl/user/terms/accept';
 
   //Goal Tracker endpoints
   static const String getGoals = '$baseUrl/goal';

@@ -9,6 +9,9 @@ class RouteNames {
   static const weblandingPage = '/ray-of-light';
   static const accountDeactivate = '/delete-account';
   static const privacyPolicy = '/privacy-policy';
+  static const termsOfUse = '/terms-of-use';
+  static const communityGuidelines = '/community-guidelines';
+  static const termsAcceptance = '/terms-acceptance';
   static const IntroductionPage = '/introduction-page';
 
   static const settings = 'settings';

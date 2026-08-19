@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/constants/app_text_field.dart';
 import 'package:rayoflite/core/constants/common_button.dart';
+import 'package:rayoflite/core/constants/terms_constants.dart';
 import 'package:rayoflite/core/providers/TokenManager.dart';
 import 'package:rayoflite/core/providers/auth_provider.dart';
 import 'package:rayoflite/core/services/authService.dart';
@@ -41,13 +42,22 @@ class _LoginPageState extends State<LoginPage> {
   // ─── Helper: post-login routing ──────────────────────────────────────────
 
   void _handleAuthRedirect(Map<String, dynamic> user) {
+    final termsAcceptance = user['termsAcceptance'];
+    final bool isAccepted = termsAcceptance != null &&
+        termsAcceptance['accepted'] == true &&
+        termsAcceptance['version'] == TermsConstants.currentTermsVersion;
+
+    if (!isAccepted) {
+      GoRouter.of(context).go(RouteNames.termsAcceptance);
+      return;
+    }
+
     final roles = user['roles'];
     final isAdmin = roles == 'ROLE_ADMIN' ||
         (roles is List &&
             (roles.contains('ROLE_ADMIN') || roles.contains('ADMIN')));
 
     if (isAdmin) {
-      // Admin → could navigate to admin dashboard; adjust route if needed
       GoRouter.of(context).go('${RouteNames.mainApp}/${RouteNames.home}');
     } else {
       GoRouter.of(context).go('${RouteNames.mainApp}/${RouteNames.home}');
@@ -107,10 +117,6 @@ class _LoginPageState extends State<LoginPage> {
 
   // ─── Google OAuth Sign-In ─────────────────────────────────────────────────
 
-  /// Mirrors the React handleGoogleSuccess:
-  ///   1. Trigger Google Sign-In to get the ID token.
-  ///   2. POST {idToken} to /public/login/google.
-  ///   3. Store the backend JWT, load user, navigate.
   Future<void> _handleGoogleSignIn() async {
     setState(() => _isGoogleLoading = true);
 
@@ -190,164 +196,163 @@ class _LoginPageState extends State<LoginPage> {
                       color: AppColors.getMonoCard(isDarkMode),
                       borderRadius: BorderRadius.circular(32),
                     ),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            /// Title
-                            Text(
-                              'Welcome back',
-                              style: AppTextStyles.monoBold22(isDarkMode),
-                            ),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          /// Title
+                          Text(
+                            'Welcome back',
+                            style: AppTextStyles.monoBold22(isDarkMode),
+                          ),
 
-                            const SizedBox(height: 6),
+                          const SizedBox(height: 6),
 
-                            /// Subtitle
-                            Text(
-                              'Continue your journey towards peace',
-                              style:
-                                  AppTextStyles.monoSecondary14(isDarkMode),
-                            ),
+                          /// Subtitle
+                          Text(
+                            'Continue your journey towards peace',
+                            style: AppTextStyles.monoSecondary14(isDarkMode),
+                          ),
 
-                            const SizedBox(height: 20),
+                          const SizedBox(height: 20),
 
-                            /// Email
-                            AppTextField(
-                              controller: _emailController,
-                              label: 'Email',
-                              prefixIcon: Icons.email,
-                              validator: (v) {
-                                if (v == null || v.isEmpty) {
-                                  return 'Please enter your email';
-                                }
-                                if (!v.contains('@')) {
-                                  return 'Enter a valid email';
-                                }
-                                return null;
+                          /// Email
+                          AppTextField(
+                            controller: _emailController,
+                            label: 'Email',
+                            prefixIcon: Icons.email,
+                            validator: (v) {
+                              if (v == null || v.isEmpty) {
+                                return 'Please enter your email';
+                              }
+                              if (!v.contains('@')) {
+                                return 'Enter a valid email';
+                              }
+                              return null;
+                            },
+                          ),
+
+                          const SizedBox(height: 14),
+
+                          /// Password
+                          AppTextField(
+                            controller: _passwordController,
+                            label: 'Password',
+                            prefixIcon: Icons.lock,
+                            obscureText: !_isPasswordVisible,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _isPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _isPasswordVisible = !_isPasswordVisible;
+                                });
                               },
                             ),
+                          ),
+
+                          const SizedBox(height: 8),
+
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: TextButton(
+                              onPressed: () => context.push(
+                                  RouteNames.forgotPassword),
+                              child: Text(
+                                'Forgot password?',
+                                style: AppTextStyles.monoSecondary14(
+                                  isDarkMode,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 32),
+
+                          /// Login button
+                          CommonButton(
+                            text: 'Log In',
+                            isLoading: _isLoading,
+                            onPressed: (_isLoading || _isGoogleLoading)
+                                ? null
+                                : _login,
+                          ),
+
+                          /// ─── Google Sign-In (Hidden on iOS for now) ───
+                          if (!(!kIsWeb && Platform.isIOS) &&
+                              Theme.of(context).platform !=
+                                  TargetPlatform.iOS) ...[
+                            const SizedBox(height: 14),
+
+                            /// ─── OR Divider ──────────────────────────────
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Divider(
+                                    color: isDarkMode
+                                        ? Colors.white12
+                                        : Colors.black12,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12),
+                                  child: Text(
+                                    'OR',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 2,
+                                      color: isDarkMode
+                                          ? Colors.white38
+                                          : Colors.black38,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Divider(
+                                    color: isDarkMode
+                                        ? Colors.white12
+                                        : Colors.black12,
+                                  ),
+                                ),
+                              ],
+                            ),
 
                             const SizedBox(height: 14),
 
-                            /// Password
-                            AppTextField(
-                              controller: _passwordController,
-                              label: 'Password',
-                              prefixIcon: Icons.lock,
-                              obscureText: !_isPasswordVisible,
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _isPasswordVisible
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _isPasswordVisible = !_isPasswordVisible;
-                                  });
-                                },
-                              ),
-                            ),
-
-                            const SizedBox(height: 8),
-
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: TextButton(
-                                onPressed: () => context.push(
-                                    RouteNames.forgotPassword),
-                                child: Text(
-                                  'Forgot password?',
-                                  style: AppTextStyles.monoSecondary14(
-                                    isDarkMode,
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            const SizedBox(height: 32),
-
-                            /// Login button
-                            CommonButton(
-                              text: 'Log In',
-                              isLoading: _isLoading,
+                            /// ─── Google Sign-In Button ───────────────────
+                            _GoogleSignInButton(
+                              isLoading: _isGoogleLoading,
+                              isDarkMode: isDarkMode,
                               onPressed: (_isLoading || _isGoogleLoading)
                                   ? null
-                                  : _login,
+                                  : _handleGoogleSignIn,
                             ),
+                          ],
 
-                            /// ─── Google Sign-In (Hidden on iOS for now) ───
-                            if (!(!kIsWeb && Platform.isIOS) &&
-                                Theme.of(context).platform !=
-                                    TargetPlatform.iOS) ...[
-                              const SizedBox(height: 14),
+                          const SizedBox(height: 14),
 
-                              /// ─── OR Divider ──────────────────────────────
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Divider(
-                                      color: isDarkMode
-                                          ? Colors.white12
-                                          : Colors.black12,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12),
-                                    child: Text(
-                                      'OR',
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 2,
-                                        color: isDarkMode
-                                            ? Colors.white38
-                                            : Colors.black38,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Divider(
-                                      color: isDarkMode
-                                          ? Colors.white12
-                                          : Colors.black12,
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              const SizedBox(height: 14),
-
-                              /// ─── Google Sign-In Button ───────────────────
-                              _GoogleSignInButton(
-                                isLoading: _isGoogleLoading,
-                                isDarkMode: isDarkMode,
-                                onPressed: (_isLoading || _isGoogleLoading)
-                                    ? null
-                                    : _handleGoogleSignIn,
-                              ),
-                            ],
-
-                            const SizedBox(height: 14),
-
-                            Center(
-                              child: TextButton(
-                                onPressed: () =>
-                                    context.push(RouteNames.register),
-                                child: Text(
-                                  "Don't have an account? Sign up",
-                                  style: AppTextStyles.monoSecondary14(
-                                    isDarkMode,
-                                  ),
+                          Center(
+                            child: TextButton(
+                              onPressed: () =>
+                                  context.push(RouteNames.register),
+                              child: Text(
+                                "Don't have an account? Sign up",
+                                style: AppTextStyles.monoSecondary14(
+                                  isDarkMode,
                                 ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
+                  ),
                 ],
               ),
             ),
@@ -399,7 +404,6 @@ class _GoogleSignInButton extends StatelessWidget {
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Google "G" logo painted manually — no extra package needed
                   _GoogleLogo(size: 20),
                   const SizedBox(width: 12),
                   Text(
@@ -418,8 +422,6 @@ class _GoogleSignInButton extends StatelessWidget {
   }
 }
 
-/// Draws the Google "G" logo using a CustomPainter — no SVG or image asset
-/// needed.
 class _GoogleLogo extends StatelessWidget {
   const _GoogleLogo({this.size = 24});
   final double size;
@@ -440,11 +442,9 @@ class _GoogleLogoPainter extends CustomPainter {
     final double cy = size.height / 2;
     final double r = size.width / 2;
 
-    // Circle background
     final bgPaint = Paint()..color = Colors.white;
     canvas.drawCircle(Offset(cx, cy), r, bgPaint);
 
-    // Draw four colour arcs: blue, red, yellow, green
     final rect = Rect.fromCircle(center: Offset(cx, cy), radius: r * 0.85);
 
     void drawArc(double startDeg, double sweepDeg, Color color) {
@@ -457,12 +457,11 @@ class _GoogleLogoPainter extends CustomPainter {
       canvas.drawArc(rect, startDeg * pi / 180, sweepDeg * pi / 180, false, p);
     }
 
-    drawArc(-10, 110, const Color(0xFF4285F4)); // blue
-    drawArc(100, 110, const Color(0xFF34A853)); // green
-    drawArc(210, 60, const Color(0xFFFBBC04)); // yellow
-    drawArc(270, 80, const Color(0xFFEA4335)); // red
+    drawArc(-10, 110, const Color(0xFF4285F4));
+    drawArc(100, 110, const Color(0xFF34A853));
+    drawArc(210, 60, const Color(0xFFFBBC04));
+    drawArc(270, 80, const Color(0xFFEA4335));
 
-    // White "arm" pointing right (gap + horizontal bar of the G)
     final barPaint = Paint()
       ..color = Colors.white
       ..style = PaintingStyle.fill;

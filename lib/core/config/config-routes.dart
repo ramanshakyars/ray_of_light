@@ -23,6 +23,9 @@ import 'package:rayoflite/presentation/screens/notifications/notification_page.d
 import 'package:rayoflite/presentation/screens/features/journalism/junerlism.dart';
 import 'package:rayoflite/presentation/screens/features/goal-tracker/goal-tracker.dart';
 import 'package:rayoflite/presentation/screens/web/PrivacyPolicyPage.dart';
+import 'package:rayoflite/presentation/screens/legal/terms_of_use_page.dart';
+import 'package:rayoflite/presentation/screens/legal/community_guidelines_page.dart';
+import 'package:rayoflite/presentation/screens/auth/terms_acceptance_screen.dart';
 import 'package:rayoflite/presentation/screens/web/web-LandingPage.dart';
 import 'package:rayoflite/presentation/screens/welcome/introduction_screen.dart';
 import 'package:rayoflite/presentation/welcome-page.dart';
@@ -79,6 +82,21 @@ GoRouter createRouter(String initialLocation) {
       GoRoute(
         path: RouteNames.privacyPolicy,
         builder: (context, state) => const PrivacyPolicyPage(),
+      ),
+
+      GoRoute(
+        path: RouteNames.termsOfUse,
+        builder: (context, state) => const TermsOfUsePage(),
+      ),
+
+      GoRoute(
+        path: RouteNames.communityGuidelines,
+        builder: (context, state) => const CommunityGuidelinesPage(),
+      ),
+
+      GoRoute(
+        path: RouteNames.termsAcceptance,
+        builder: (context, state) => const TermsAcceptanceScreen(),
       ),
 
       // ------------------------------------------------------------------

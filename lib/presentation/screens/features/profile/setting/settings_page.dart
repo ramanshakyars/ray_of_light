@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rayoflite/core/theme/app_theme_colors.dart';
-import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/presentation/screens/features/profile/setting/logout_modal.dart';
@@ -10,7 +8,6 @@ import 'package:rayoflite/presentation/screens/features/profile/setting/settings
 import 'package:rayoflite/presentation/screens/features/profile/setting/settings_switch_tile.dart';
 import 'package:rayoflite/presentation/screens/features/profile/setting/settings_tile.dart';
 import 'package:rayoflite/presentation/widgets/app_screen_header.dart';
-import 'package:rayoflite/presentation/screens/features/profile/setting/terms_and_conditions_page.dart';
 
 import '../../ṃood-manager/mood_bottom_sheet.dart';
 
@@ -120,6 +117,35 @@ class SettingsPage extends StatelessWidget {
               //   },
               //   colors: colors,
               // ),
+
+              const SizedBox(height: 30),
+
+              /// LEGAL & SAFETY
+              SettingsSection(title: 'LEGAL & SAFETY', colors: colors),
+
+              SettingsTile(
+                icon: Icons.gavel_outlined,
+                title: 'Terms of Use',
+                subtitle: 'Read our platform rules & policies',
+                onTap: () => context.push(RouteNames.termsOfUse),
+                colors: colors,
+              ),
+
+              SettingsTile(
+                icon: Icons.verified_user_outlined,
+                title: 'Community Guidelines',
+                subtitle: 'Read user safety & conduct guidelines',
+                onTap: () => context.push(RouteNames.communityGuidelines),
+                colors: colors,
+              ),
+
+              SettingsTile(
+                icon: Icons.policy_outlined,
+                title: 'Privacy Policy',
+                subtitle: 'Read our privacy policy',
+                onTap: () => context.push(RouteNames.privacyPolicy),
+                colors: colors,
+              ),
 
               const SizedBox(height: 30),
 

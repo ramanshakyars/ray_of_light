@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:rayoflite/core/constants/pathConfig.dart';
-import 'package:rayoflite/core/providers/TokenManager.dart';
 import 'package:rayoflite/core/services/httpService.dart';
-import 'package:rayoflite/core/services/localStorageService.dart';
 
 class AuthService {
   // static Future<Map<String, dynamic>> login(Map<String, dynamic> body) async {
@@ -46,6 +44,7 @@ class AuthService {
             'name': response['name'],
             'email': response['email'],
             'roles': response['roles'],
+            'termsAcceptance': response['termsAcceptance'],
           },
           'message': response['message'] ?? 'Login successful',
         };
@@ -79,6 +78,7 @@ class AuthService {
             'name': response['name'],
             'email': response['email'],
             'roles': response['roles'],
+            'termsAcceptance': response['termsAcceptance'],
           },
           'message': response['message'] ?? 'Google Login Successful',
         };
@@ -87,6 +87,21 @@ class AuthService {
       return {
         'success': false,
         'message': response['message'] ?? 'Google Login failed',
+      };
+    } catch (e) {
+      return {'success': false, 'message': _getErrorMessage(e)};
+    }
+  }
+
+  static Future<Map<String, dynamic>> acceptTerms(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      final response = await HttpService.post(PathConfig.acceptTerms, body);
+      return {
+        'success': true,
+        'user': response,
+        'message': 'Terms accepted successfully',
       };
     } catch (e) {
       return {'success': false, 'message': _getErrorMessage(e)};
