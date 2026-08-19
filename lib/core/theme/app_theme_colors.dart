@@ -56,6 +56,9 @@ class ThemeColors {
   final Color surface;
   final Color card;
 
+  // Backward-compat alias
+  Color get cardBackground => card;
+
   // Brand
   final Color primary;
   final Color primaryForeground;

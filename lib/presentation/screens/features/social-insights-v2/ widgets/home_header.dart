@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/config/routenames.dart';
+import 'package:rayoflite/core/providers/auth_provider.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
+import '../provider/social_feed_provider.dart';
 
 import '../../ṃood-manager/mood_bottom_sheet.dart';
 
@@ -112,7 +114,36 @@ class HomeHeader extends StatelessWidget {
 
           const SizedBox(width: 12),
 
-          /// RIGHT — Mood
+          /// RIGHT — Admin Reports (If Admin) & Mood
+          if (context.watch<AuthProvider>().isAdmin) ...[
+            InkWell(
+              borderRadius: BorderRadius.circular(100),
+              onTap: () async {
+                await context.push('${RouteNames.mainApp}/${RouteNames.adminReports}');
+                if (context.mounted) {
+                  context.read<SocialFeedProvider>().loadPosts();
+                }
+              },
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: Colors.redAccent.withOpacity(0.12),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.redAccent.withOpacity(0.3),
+                  ),
+                ),
+                child: const Icon(
+                  Icons.admin_panel_settings_rounded,
+                  size: 19,
+                  color: Colors.redAccent,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
+
           InkWell(
             borderRadius: BorderRadius.circular(100),
             onTap: () => _openMoodSheet(context),

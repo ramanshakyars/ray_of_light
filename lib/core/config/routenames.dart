@@ -32,4 +32,7 @@ class RouteNames {
 
   // Notifications
   static const notification = 'notification';
+
+  // Admin Moderation
+  static const adminReports = 'admin-reports';
 }

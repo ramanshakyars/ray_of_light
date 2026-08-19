@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:rayoflite/core/providers/auth_provider.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
@@ -7,7 +8,11 @@ import 'package:rayoflite/presentation/screens/features/social-insights-v2/comme
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/post/media_carousel.dart';
 import '../models/post_view_model.dart';
 import 'package:provider/provider.dart';
+import '../sheets/report_post_sheet.dart';
 import '../provider/social_feed_provider.dart';
+import 'package:rayoflite/presentation/screens/features/social-insights-v2/models/post_report_model.dart';
+import 'package:rayoflite/presentation/screens/social-insights/socialService.dart';
+import 'package:rayoflite/core/services/messageService.dart';
 
 class PostCardV2 extends StatefulWidget {
   final PostViewModel post;
@@ -66,6 +71,116 @@ class _PostCardV2State extends State<PostCardV2> with SingleTickerProviderStateM
     if (diff.inHours < 1) return "${diff.inMinutes}m ago";
     if (diff.inDays < 1) return "${diff.inHours}h ago";
     return "${diff.inDays}d ago";
+  }
+
+  void _showPostOptionsMenu(BuildContext context, SocialFeedProvider provider, bool isDark, bool isAdmin) {
+    showModalBottomSheet(
+      context: context,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+        decoration: BoxDecoration(
+          color: AppColors.getMonoCard(isDark),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          border: Border.all(color: AppColors.getMonoBorder(isDark)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 44,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: AppColors.getMonoBorder(isDark),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Post Options",
+                  style: AppTextStyles.monoMedium18(isDark).copyWith(fontWeight: FontWeight.bold),
+                ),
+                IconButton(
+                  icon: Icon(Icons.close_rounded, color: AppColors.getMonoIcon(isDark)),
+                  onPressed: () => Navigator.pop(ctx),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.redAccent.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.outlined_flag_rounded, color: Colors.redAccent, size: 20),
+              ),
+              title: Text(
+                "Report Post",
+                style: AppTextStyles.monoMedium18(isDark).copyWith(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
+              subtitle: Text(
+                "Report inappropriate or harmful content",
+                style: AppTextStyles.monoMuted12(isDark),
+              ),
+              onTap: () {
+                Navigator.pop(ctx);
+                _openReportSheet(context);
+              },
+            ),
+            if (isAdmin) ...[
+              Divider(color: AppColors.getMonoBorder(isDark).withOpacity(0.4)),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.getMonoTextPrimary(isDark).withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.shield_outlined, color: AppColors.getMonoTextPrimary(isDark), size: 20),
+                ),
+                title: Text(
+                  "Moderate Post",
+                  style: AppTextStyles.monoMedium18(isDark).copyWith(fontSize: 15, fontWeight: FontWeight.w600),
+                ),
+                subtitle: Text(
+                  "Change visibility or add moderation notes",
+                  style: AppTextStyles.monoMuted12(isDark),
+                ),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _showModerationSheet(context, provider, isDark);
+                },
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _openReportSheet(BuildContext context) async {
+    final reported = await showModalBottomSheet<bool>(
+      context: context,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => ReportPostSheet(postId: widget.post.id),
+    );
+    if (reported == true && context.mounted) {
+      context.read<SocialFeedProvider>().removePost(widget.post.id);
+    }
   }
 
   void _showModerationSheet(BuildContext context, SocialFeedProvider provider, bool isDark) {
@@ -175,6 +290,34 @@ class _PostCardV2State extends State<PostCardV2> with SingleTickerProviderStateM
     );
   }
 
+  Future<void> _submitReportReason(BuildContext context, PostReportReason reason) async {
+    try {
+      await SocialService.reportPost(
+        postId: widget.post.id,
+        reason: reason,
+      );
+      if (mounted) {
+        context.read<SocialFeedProvider>().removePost(widget.post.id);
+        MessageService.showSuccess(context, 'Report submitted successfully.');
+      }
+    } catch (e) {
+      if (mounted) {
+        String errorMsg = 'Failed to submit report';
+        if (e is DioException && e.response?.data != null && e.response?.data is Map) {
+          errorMsg = e.response?.data['message'] ?? e.response?.data['error'] ?? errorMsg;
+        } else {
+          errorMsg = e.toString().replaceAll('Exception:', '').trim();
+        }
+        if (errorMsg.toLowerCase().contains('own post') ||
+            errorMsg.toLowerCase().contains('cannot report your own')) {
+          errorMsg = 'You cannot report your own post';
+        }
+
+        MessageService.showError(context, errorMsg);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDarkMode;
@@ -190,7 +333,7 @@ class _PostCardV2State extends State<PostCardV2> with SingleTickerProviderStateM
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.transparent,
       ),
       child: Column(
@@ -238,12 +381,12 @@ class _PostCardV2State extends State<PostCardV2> with SingleTickerProviderStateM
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
-                                color: Colors.blue.withOpacity(0.15),
+                                color: primaryColor.withOpacity(0.12),
                                 borderRadius: BorderRadius.circular(6),
                               ),
-                              child: const Text(
+                              child: Text(
                                 "ADMIN",
-                                style: TextStyle(color: Colors.blue, fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+                                style: TextStyle(color: primaryColor, fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 0.5),
                               ),
                             )
                           ]
@@ -258,14 +401,15 @@ class _PostCardV2State extends State<PostCardV2> with SingleTickerProviderStateM
                   ),
                 ),
                 
-                // Admin Actions Button
-                if (auth.isAdmin) ...[
-                  IconButton(
-                    icon: Icon(Icons.shield_outlined, color: Colors.amber.shade700, size: 22),
-                    onPressed: () => _showModerationSheet(context, provider, isDark),
-                    tooltip: "Moderate Post",
+                // Three-Dots Menu Icon for Extensible Options
+                IconButton(
+                  icon: Icon(
+                    Icons.more_vert_rounded,
+                    color: AppColors.getMonoIcon(isDark).withOpacity(0.7),
+                    size: 22,
                   ),
-                ]
+                  onPressed: () => _showPostOptionsMenu(context, provider, isDark, auth.isAdmin),
+                ),
               ],
             ),
           ),
@@ -276,18 +420,18 @@ class _PostCardV2State extends State<PostCardV2> with SingleTickerProviderStateM
               margin: const EdgeInsets.fromLTRB(20, 0, 20, 12),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.08),
+                color: AppColors.getMonoBorder(isDark).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.red.withOpacity(0.2)),
+                border: Border.all(color: AppColors.getMonoBorder(isDark).withOpacity(0.3)),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.remove_moderator_outlined, color: Colors.red, size: 18),
+                  Icon(Icons.visibility_off_outlined, color: AppColors.getMonoIcon(isDark), size: 18),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      "Deactivated: ${widget.post.moderationReason ?? 'No reason provided'}",
-                      style: const TextStyle(color: Colors.red, fontSize: 13, fontWeight: FontWeight.w500),
+                      "Deactivated: ${widget.post.moderationReason != null && widget.post.moderationReason!.trim().isNotEmpty ? widget.post.moderationReason : 'No reason provided'}",
+                      style: AppTextStyles.monoRegular16(isDark).copyWith(fontSize: 13),
                     ),
                   ),
                 ],

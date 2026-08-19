@@ -16,6 +16,7 @@ import 'package:rayoflite/presentation/screens/features/profile/setting/theme_se
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/provider/social_feed_provider.dart';
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/social_feed_page_v2.dart';
 import 'package:rayoflite/presentation/screens/features/talk-to-lite-v3/screens/chat_screen_v3.dart';
+import 'package:rayoflite/presentation/screens/features/social-insights-v2/admin/admin_reports_page.dart';
 import 'package:rayoflite/presentation/screens/notifications/notification_navigation_service.dart';
 import 'package:rayoflite/presentation/screens/notifications/notification_page.dart';
 // import 'package:rayoflite/presentation/screens/features/talk-to-lite/chat_screen.dart';
@@ -189,6 +190,10 @@ GoRouter createRouter(String initialLocation) {
                   final userId = state.extra as String;
                   return NotificationPage(userId: userId);
                 },
+              ),
+              GoRoute(
+                path: RouteNames.adminReports,
+                builder: (context, state) => const AdminReportsPage(),
               ),
             ],
           ),

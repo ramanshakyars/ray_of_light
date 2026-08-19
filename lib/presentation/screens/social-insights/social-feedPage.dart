@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +17,8 @@ import 'package:rayoflite/presentation/screens/notifications/dummy_notification_
 import 'package:rayoflite/presentation/screens/social-insights/Post.dart';
 import 'package:rayoflite/presentation/screens/social-insights/comment_bottom_sheet.dart';
 import 'package:rayoflite/presentation/screens/social-insights/socialService.dart';
+import 'package:rayoflite/presentation/screens/features/social-insights-v2/models/post_report_model.dart';
+import 'package:rayoflite/presentation/screens/features/social-insights-v2/sheets/report_post_sheet.dart';
 
 import '../features/ṃood-manager/mood_bottom_sheet.dart';
 
@@ -994,10 +997,89 @@ class PostCard extends StatelessWidget {
                 ),
                 IconButton(
                   icon: Icon(
-                    Icons.more_horiz,
+                    Icons.more_vert_rounded,
                     color: AppColors.getMutedForeground(isDarkMode),
+                    size: 22,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      useRootNavigator: true,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (ctx) => Container(
+                        padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+                        decoration: BoxDecoration(
+                          color: AppColors.getCard(isDarkMode),
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+                          border: Border.all(color: AppColors.getBorder(isDarkMode)),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Container(
+                                width: 44,
+                                height: 4,
+                                margin: const EdgeInsets.only(bottom: 16),
+                                decoration: BoxDecoration(
+                                  color: AppColors.getBorder(isDarkMode),
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Post Options",
+                                  style: AppTextStyles.regular14(isDarkMode).copyWith(fontWeight: FontWeight.bold, fontSize: 18),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.close_rounded, color: AppColors.getForeground(isDarkMode)),
+                                  onPressed: () => Navigator.pop(ctx),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              leading: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.redAccent.withOpacity(0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.outlined_flag_rounded, color: Colors.redAccent, size: 20),
+                              ),
+                              title: Text(
+                                "Report Post",
+                                style: AppTextStyles.regular14(isDarkMode).copyWith(fontWeight: FontWeight.w600, fontSize: 15),
+                              ),
+                              subtitle: Text(
+                                "Report inappropriate or harmful content",
+                                style: AppTextStyles.regular14(isDarkMode).copyWith(
+                                  color: AppColors.getMutedForeground(isDarkMode),
+                                  fontSize: 12,
+                                ),
+                              ),
+                              onTap: () async {
+                                Navigator.pop(ctx);
+                                await showModalBottomSheet(
+                                  context: context,
+                                  useRootNavigator: true,
+                                  isScrollControlled: true,
+                                  backgroundColor: Colors.transparent,
+                                  builder: (_) => ReportPostSheet(postId: post.id),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

@@ -5,6 +5,7 @@ import 'package:rayoflite/core/services/httpService.dart';
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/provider/social_feed_provider.dart';
 import 'package:rayoflite/presentation/screens/social-insights/Post.dart';
 import 'package:rayoflite/presentation/screens/social-insights/models/comment_model.dart';
+import 'package:rayoflite/presentation/screens/features/social-insights-v2/models/post_report_model.dart';
 
 class SocialService {
   /// GET ALL POSTS
@@ -125,6 +126,68 @@ class SocialService {
       return PostModelV2.fromJson(response);
     } catch (e) {
       print('SocialService.moderatePost error: $e');
+      rethrow;
+    }
+  }
+
+  /// REPORT POST (USER / ADMIN)
+  static Future<PostReportResDto> reportPost({
+    required String postId,
+    required PostReportReason reason,
+    String? description,
+  }) async {
+    try {
+      final dto = PostReportReqDto(
+        postId: postId,
+        reason: reason,
+        description: description,
+      );
+      final response = await HttpService.post(
+        PathConfig.reportPost,
+        dto.toJson(),
+      );
+      return PostReportResDto.fromJson(response);
+    } catch (e) {
+      print('SocialService.reportPost error: $e');
+      rethrow;
+    }
+  }
+
+  /// GET PENDING REPORTS (ADMIN ONLY)
+  static Future<PostReportPageResDto> getPendingReports({
+    int page = 0,
+    int size = 20,
+  }) async {
+    try {
+      final response = await HttpService.get(
+        '${PathConfig.getPendingReports}?page=$page&size=$size',
+      );
+      return PostReportPageResDto.fromJson(response);
+    } catch (e) {
+      print('SocialService.getPendingReports error: $e');
+      rethrow;
+    }
+  }
+
+  /// REVIEW REPORT (ADMIN ONLY)
+  static Future<PostReportResDto> reviewReport({
+    required String reportId,
+    required PostReportReviewAction action,
+    required String adminRemark,
+  }) async {
+    try {
+      final dto = ReviewPostReportReqDto(
+        reportId: reportId,
+        action: action,
+        adminRemark: adminRemark,
+      );
+      final response = await HttpService.post(
+        PathConfig.reviewReport,
+        dto.toJson(),
+      );
+      return PostReportResDto.fromJson(response);
+    } catch (e) {
+      print('SocialService.reviewReport error: $e');
       rethrow;
     }
   }

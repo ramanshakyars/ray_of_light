@@ -193,4 +193,12 @@ class SocialFeedProvider extends ChangeNotifier {
       rethrow;
     }
   }
+
+  void removePost(String postId) {
+    posts.removeWhere((p) => p.id == postId);
+    if (posts.isEmpty) {
+      state = FeedState.empty;
+    }
+    notifyListeners();
+  }
 }

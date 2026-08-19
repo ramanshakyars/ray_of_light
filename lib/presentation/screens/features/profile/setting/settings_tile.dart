@@ -87,6 +87,8 @@ class _FallbackColors implements ThemeColors {
   @override
   Color get card => const Color(0xFFFFFFFF);
   @override
+  Color get cardBackground => card;
+  @override
   Color get primary => const Color(0xFF000000);
   @override
   Color get primaryForeground => const Color(0xFFFFFFFF);

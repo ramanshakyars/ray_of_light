@@ -1,8 +1,8 @@
 class PathConfig {
-  //  static const String baseUrl = 'http://localhost:9090/rayoflight/api';
+   static const String baseUrl = 'http://localhost:9090/rayoflight/api';
   //  static const String baseUrl = 'http://192.168.1.6:9090/rayoflight/api';
   // static const String baseUrl = 'http://ec2-3-111-209-210.ap-south-1.compute.amazonaws.com/rayoflight/api';
- static const String baseUrl = 'https://api.rayoflight.life/rayoflight/api';
+//  static const String baseUrl = 'https://api.rayoflight.life/rayoflight/api';
 
   // Auth endpoints
   static const String login = '$baseUrl/public/login';
@@ -51,6 +51,11 @@ class PathConfig {
     static const String doLikeOnPost = '$baseUrl/insight/like';
     static const String getCommentsByPostId = '$baseUrl/insight/comments';
     static const String moderatePost = '$baseUrl/insight/moderate';
+
+    // Post Report endpoints
+    static const String reportPost = '$baseUrl/insight/reports';
+    static const String getPendingReports = '$baseUrl/insight/reports';
+    static const String reviewReport = '$baseUrl/insight/reports/review';
 
 // notifications
     static const String getNotifications = '$baseUrl/notifications';
