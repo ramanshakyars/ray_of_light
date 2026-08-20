@@ -482,6 +482,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       : _register,
                                 ),
 
+                                /*
                                 // ─── Google Sign-Up (Hidden on iOS for now) ───
                                 if (!(!kIsWeb && Platform.isIOS) &&
                                     Theme.of(context).platform !=
@@ -536,6 +537,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             : _handleGoogleSignIn,
                                   ),
                                 ],
+                                */
 
                                 const SizedBox(height: 16),
 

@@ -1,7 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class MessageService {
-  static const Duration _displayDuration = Duration(seconds: 3);
+  static const Duration _displayDuration = Duration(seconds: 4);
   static const Duration _animDuration = Duration(milliseconds: 320);
 
   static void showSuccess(BuildContext context, String message) {
@@ -12,8 +13,63 @@ class MessageService {
     _show(context, message, const Color(0xFF007AFF), Icons.info_rounded);
   }
 
-  static void showError(BuildContext context, String message) {
+  static void showError(
+    BuildContext context,
+    dynamic error, {
+    String? fallbackMessage,
+  }) {
+    final message = extractErrorMessage(
+      error,
+      fallback: fallbackMessage ?? "Something went wrong",
+    );
     _show(context, message, const Color(0xFFFF3B30), Icons.cancel_rounded);
+  }
+
+  /// Extracts meaningful error message from backend responses, DioException, or raw errors.
+  static String extractErrorMessage(
+    dynamic error, {
+    String fallback = "Something went wrong",
+  }) {
+    if (error == null) return fallback;
+
+    if (error is DioException) {
+      if (error.response?.statusCode == 413) {
+        return "File size too large. Maximum allowed size is 100MB.";
+      }
+      if (error.response?.data != null) {
+        final data = error.response?.data;
+        if (data is Map) {
+          if (data['message'] != null &&
+              data['message'].toString().trim().isNotEmpty) {
+            return data['message'].toString();
+          }
+          if (data['error'] != null &&
+              data['error'].toString().trim().isNotEmpty) {
+            return data['error'].toString();
+          }
+          if (data['detail'] != null &&
+              data['detail'].toString().trim().isNotEmpty) {
+            return data['detail'].toString();
+          }
+        } else if (data is String && data.trim().isNotEmpty) {
+          return data;
+        }
+      }
+      if (error.type == DioExceptionType.connectionTimeout ||
+          error.type == DioExceptionType.receiveTimeout ||
+          error.type == DioExceptionType.sendTimeout) {
+        return "Connection timed out. Please check your network.";
+      }
+      if (error.response?.statusMessage != null &&
+          error.response!.statusMessage!.isNotEmpty) {
+        return error.response!.statusMessage!;
+      }
+    }
+
+    if (error is String && error.trim().isNotEmpty) return error;
+
+    final str = error.toString().replaceAll('Exception:', '').trim();
+    return str.isNotEmpty ? str : fallback;
   }
 
   static void _show(

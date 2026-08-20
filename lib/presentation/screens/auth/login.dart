@@ -282,6 +282,7 @@ class _LoginPageState extends State<LoginPage> {
                                 : _login,
                           ),
 
+                          /*
                           /// ─── Google Sign-In (Hidden on iOS for now) ───
                           if (!(!kIsWeb && Platform.isIOS) &&
                               Theme.of(context).platform !=
@@ -334,6 +335,7 @@ class _LoginPageState extends State<LoginPage> {
                                   : _handleGoogleSignIn,
                             ),
                           ],
+                          */
 
                           const SizedBox(height: 14),
 

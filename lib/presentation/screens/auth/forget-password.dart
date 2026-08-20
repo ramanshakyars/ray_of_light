@@ -302,6 +302,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               ),
                             ],
 
+                            /*
                             if (Theme.of(context).platform !=
                                 TargetPlatform.iOS) ...[
                               const SizedBox(height: 24),
@@ -327,6 +328,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                     : _handleGoogleSignIn,
                               ),
                             ],
+                            */
 
                             const SizedBox(height: 16),
 

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +16,6 @@ import 'package:rayoflite/presentation/screens/notifications/dummy_notification_
 import 'package:rayoflite/presentation/screens/social-insights/Post.dart';
 import 'package:rayoflite/presentation/screens/social-insights/comment_bottom_sheet.dart';
 import 'package:rayoflite/presentation/screens/social-insights/socialService.dart';
-import 'package:rayoflite/presentation/screens/features/social-insights-v2/models/post_report_model.dart';
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/sheets/report_post_sheet.dart';
 
 import '../features/ṃood-manager/mood_bottom_sheet.dart';
@@ -592,8 +590,14 @@ class _SocialFeedPageState extends State<SocialFeedPage> {
       _loadInitialPosts();
       MessageService.showSuccess(context, 'Post created successfully');
     } catch (e) {
-      setState(() => _isPosting = false);
-      MessageService.showError(context, 'Post creation failed');
+      if (mounted) {
+        setState(() => _isPosting = false);
+        MessageService.showError(
+          context,
+          e,
+          fallbackMessage: 'Post creation failed',
+        );
+      }
     }
   }
 

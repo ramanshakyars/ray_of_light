@@ -1,13 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
-import 'package:rayoflite/presentation/screens/features/social-insights-v2/provider/social_feed_provider.dart';
 import 'package:rayoflite/presentation/screens/social-insights/socialService.dart';
 
 class CreatePostSheet extends StatefulWidget {
@@ -76,7 +74,13 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
       if (!mounted) return;
       Navigator.pop(context, true);
     } catch (e) {
-      MessageService.showError(context, "Failed to create post");
+      if (mounted) {
+        MessageService.showError(
+          context,
+          e,
+          fallbackMessage: "Failed to create post",
+        );
+      }
     } finally {
       if (mounted) setState(() => isPosting = false);
     }
