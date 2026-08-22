@@ -122,6 +122,8 @@ class PostReportPostInfo {
   final DateTime? createdAt;
   final String? authorName;
   final String? authorUsername;
+  final String? authorId;
+  final bool authorActive;
 
   PostReportPostInfo({
     required this.id,
@@ -133,6 +135,8 @@ class PostReportPostInfo {
     this.createdAt,
     this.authorName,
     this.authorUsername,
+    this.authorId,
+    this.authorActive = true,
   });
 
   factory PostReportPostInfo.fromJson(Map<String, dynamic> json) {
@@ -145,9 +149,13 @@ class PostReportPostInfo {
 
     String? authorN;
     String? authorU;
+    String? authorI;
+    bool authorA = true;
     if (json['author'] is Map) {
       authorN = json['author']['name'];
       authorU = json['author']['username'];
+      authorI = json['author']['id'];
+      authorA = json['author']['active'] ?? true;
     }
 
     DateTime? parsedDate;
@@ -177,6 +185,8 @@ class PostReportPostInfo {
       createdAt: parsedDate,
       authorName: authorN,
       authorUsername: authorU,
+      authorId: authorI,
+      authorActive: authorA,
     );
   }
 }

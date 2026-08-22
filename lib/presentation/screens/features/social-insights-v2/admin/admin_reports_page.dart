@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
+import 'package:rayoflite/core/services/messageService.dart';
 import 'package:rayoflite/presentation/screens/features/social-insights-v2/models/post_report_model.dart';
 import 'package:rayoflite/presentation/screens/social-insights/socialService.dart';
 
@@ -144,27 +145,37 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
         );
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: isTakeAction ? Colors.redAccent : Colors.green,
-              content: Text(
-                isTakeAction
-                    ? 'Action taken successfully. Post deactivated.'
-                    : 'Report dismissed successfully.',
-              ),
-            ),
+          MessageService.showSuccess(
+            context,
+            isTakeAction
+                ? 'Action taken successfully. Post deactivated.'
+                : 'Report dismissed successfully.',
           );
           _fetchReports(page: _currentPage);
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.red,
-              content: Text('Failed to submit review: $e'),
-            ),
+          MessageService.showError(
+            context,
+            'Failed to submit review: $e',
           );
         }
+      }
+    }
+  }
+
+  Future<void> _toggleUserStatus(String userId, bool currentStatus) async {
+    try {
+      await SocialService.toggleUserStatus(userId);
+      final message = currentStatus ? "User deactivated successfully" : "User activated successfully";
+      
+      if (mounted) {
+        MessageService.showSuccess(context, message);
+        _fetchReports(page: _currentPage);
+      }
+    } catch (e) {
+      if (mounted) {
+        MessageService.showError(context, 'Failed to update user status');
       }
     }
   }
@@ -429,6 +440,75 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
               ),
             ),
           ],
+
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: Divider(height: 1),
+          ),
+
+          // Author Details
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(Icons.account_circle_outlined, size: 24, color: Colors.blueAccent),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      text: TextSpan(
+                        text: 'Post By: ',
+                        style: AppTextStyles.cardTitle(colors).copyWith(
+                          fontSize: 13,
+                          color: Colors.blueAccent,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: post.authorName ?? 'Anonymous',
+                            style: AppTextStyles.bodyText(colors).copyWith(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (post.authorUsername != null && post.authorUsername!.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        post.authorUsername!,
+                        style: AppTextStyles.hintText(colors).copyWith(
+                          fontSize: 11,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              if (post.authorId != null)
+                ElevatedButton(
+                  onPressed: () => _toggleUserStatus(post.authorId!, post.authorActive),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: post.authorActive ? Colors.redAccent : Colors.green,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    minimumSize: const Size(0, 32),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text(
+                    post.authorActive ? 'Deactivate User' : 'Activate User',
+                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                  ),
+                ),
+            ],
+          ),
 
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 10),

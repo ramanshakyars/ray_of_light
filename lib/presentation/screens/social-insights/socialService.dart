@@ -191,4 +191,18 @@ class SocialService {
       rethrow;
     }
   }
+
+  /// TOGGLE USER STATUS (ADMIN ONLY)
+  static Future<dynamic> toggleUserStatus(String userId) async {
+    try {
+      final response = await HttpService.patch(
+        '${PathConfig.toggleUserStatus}/$userId/status',
+        {},
+      );
+      return response;
+    } catch (e) {
+      print('SocialService.toggleUserStatus error: $e');
+      rethrow;
+    }
+  }
 }
