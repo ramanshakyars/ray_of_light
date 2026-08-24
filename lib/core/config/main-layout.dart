@@ -217,28 +217,39 @@ class _MainScreenState extends State<MainScreen>
           child: SafeArea(
             top: false,
             child: Container(
-              height: 64,
+              height: 72,
               decoration: BoxDecoration(
-                color: colors.card, // Solid, brighter background
-                borderRadius: BorderRadius.circular(32),
-                border: Border.all(
-                  color: colors.border.withValues(alpha: 0.5),
-                  width: 1.0,
-                ),
+                borderRadius: BorderRadius.circular(36),
                 boxShadow: [
                   BoxShadow(
-                    color: colors.shadow.withValues(alpha: 0.08),
-                    blurRadius: 24,
+                    color: colors.shadow.withValues(alpha: 0.15),
+                    blurRadius: 30,
                     spreadRadius: 0,
-                    offset: const Offset(0, 8),
+                    offset: const Offset(0, 10),
                   ),
                 ],
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: List.generate(_routes.length, (index) {
-                  return _buildNavItem(index, colors, isDark);
-                }),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(36),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 16.0, sigmaY: 16.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: colors.card.withValues(alpha: 0.6), // Translucent for glassmorphism
+                      borderRadius: BorderRadius.circular(36),
+                      border: Border.all(
+                        color: colors.border.withValues(alpha: 0.4),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: List.generate(_routes.length, (index) {
+                        return _buildNavItem(index, colors, isDark);
+                      }),
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
@@ -263,7 +274,7 @@ class _MainScreenState extends State<MainScreen>
             scale: selected ? 1.2 : 1.0,
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeOutBack,
-            child: _buildNavIcon(index, selected, colors),
+            child: _buildNavIcon(index, selected, colors, isDark),
           ),
         ),
       ),
@@ -274,11 +285,11 @@ class _MainScreenState extends State<MainScreen>
   // ICON BUILDER — theme-aware colors, updated Nest icon
   // ─────────────────────────────────────────────────────────
 
-  Widget _buildNavIcon(int index, bool selected, dynamic colors) {
+  Widget _buildNavIcon(int index, bool selected, dynamic colors, bool isDark) {
     final activeColor = colors.navActive as Color;
-    final inactiveColor = colors.navInactive as Color;
+    final inactiveColor = isDark ? Colors.white : Colors.black;
     final color = selected ? activeColor : inactiveColor;
-    const double size = 24.0;
+    const double size = 32.0;
     final key = ValueKey('nav_icon_${index}_$selected');
 
     switch (index) {
