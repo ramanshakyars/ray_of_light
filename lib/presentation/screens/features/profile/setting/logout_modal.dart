@@ -5,6 +5,7 @@ import 'package:rayoflite/core/services/localStorageService.dart';
 import 'package:rayoflite/core/config/routenames.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
+import 'package:rayoflite/presentation/screens/notifications/push-service.dart';
 import 'mono_primary_button.dart';
 
 void showLogoutModal(BuildContext context) {
@@ -52,6 +53,9 @@ void showLogoutModal(BuildContext context) {
             MonoPrimaryButton(
               text: "Log Out",
               onPressed: () async {
+                // 🔔 Deregister push device BEFORE clearing local storage
+                // so we still have userId/deviceId available.
+                await PushService.deregisterDevice();
                 await LocalStorageService.clearAll();
                 if (context.mounted) {
                   context.go(RouteNames.login);

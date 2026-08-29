@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Notification accent color used by FCM for notification LED and icon tinting.
+        This is referenced from AndroidManifest.xml:
+          android:name="com.google.firebase.messaging.default_notification_color"
+        
+        Update this color to match your app's primary brand color.
+        Current: a warm amber (#F5A623) — replace with your actual brand color.
+    -->
+    <color name="notification_color">#F5A623</color>
+</resources>

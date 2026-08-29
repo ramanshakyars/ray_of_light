@@ -19,20 +19,19 @@ import 'package:rayoflite/presentation/screens/features/profile/provider/profile
 import 'package:rayoflite/presentation/screens/features/screen_time/data/ScreenTimeProvider.dart';
 import 'package:rayoflite/presentation/screens/notifications/notification_navigation_service.dart';
 
-import 'presentation/screens/notifications/dummy_notification_scheduler.dart';
+import 'package:rayoflite/presentation/screens/notifications/dummy_notification_scheduler.dart';
+import 'package:rayoflite/presentation/screens/notifications/push-service.dart';
 
 Future<void> main() async {
   /// 🔹 Required for async before runApp
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-  /// 🔹 Firebase init (unchanged)
-  if (!Platform.isIOS) {
-    if (Firebase.apps.isEmpty) {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-    }
+  /// 🔹 Firebase init — required on BOTH Android AND iOS for FCM/APNs to work
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   }
 
   /// 🔹 Local storage init (unchanged)
@@ -47,6 +46,14 @@ Future<void> main() async {
   await DummyNotificationScheduler.initOnly();
   final bool isLoggedIn = await LocalStorageService.isLoggedIn();
   final bool isTokenValid = await LocalStorageService.isTokenValid();
+
+  /// 🔥 Init Firebase push notifications if user is already logged in.
+  /// If not logged in yet, PushService.init() must be called after login.
+  if (isLoggedIn && isTokenValid) {
+    PushService.init().catchError((e) {
+      debugPrint('[main] PushService.init() failed: $e');
+    });
+  }
 
   /// 🔹 Initial route logic (unchanged)
   String initialRoute;

@@ -16,6 +16,7 @@ import 'package:rayoflite/core/theme/AppFont.dart';
 import 'package:rayoflite/core/theme/appcolors.dart';
 import 'package:rayoflite/core/theme/themeProvider.dart';
 import 'package:rayoflite/core/services/google_auth_service.dart';
+import 'package:rayoflite/presentation/screens/notifications/push-service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -74,6 +75,12 @@ class _LoginPageState extends State<LoginPage> {
     TokenManager.setToken(token);
     await LocalStorageService.setUser(user);
     await Provider.of<AuthProvider>(context, listen: false).loadUser();
+
+    // 🔔 Init push notifications now that the user is logged in.
+    // This registers the FCM/APNs token with the backend.
+    PushService.init().catchError((e) {
+      debugPrint('[Login] PushService.init() error (non-critical): $e');
+    });
   }
 
   // ─── Standard credentials login ──────────────────────────────────────────

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Notification icon for Android push notifications.
+
+  Android notification icons MUST be:
+  - White/transparent only (no color, no alpha-blended colors)
+  - Placed in res/drawable/ (24dp standard size)
+  - Referenced as @drawable/notification_icon in AndroidManifest.xml
+
+  To use your actual logo:
+  1. Run: flutter pub run flutter_launcher_icons
+  2. Create a white silhouette version of your logo as a PNG
+  3. Copy it to android/app/src/main/res/drawable/notification_icon.png
+
+  This XML placeholder creates a simple circle until you provide the real icon.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#FFFFFF" />
+    <size android:width="24dp" android:height="24dp" />
+</shape>

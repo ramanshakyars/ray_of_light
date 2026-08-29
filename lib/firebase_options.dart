@@ -57,7 +57,6 @@ class DefaultFirebaseOptions {
     projectId: 'ray-of-light-70f71',
     storageBucket: 'ray-of-light-70f71.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBHd6VKG7N9nsQvuCP8EUMnXpQxYHEa0iE',
     appId: '1:579133991964:ios:7e0da92275a86ebd4603d9',
@@ -66,7 +65,6 @@ class DefaultFirebaseOptions {
     storageBucket: 'ray-of-light-70f71.firebasestorage.app',
     iosBundleId: 'life.rayoflight.app',
   );
-
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyBHd6VKG7N9nsQvuCP8EUMnXpQxYHEa0iE',
     appId: '1:579133991964:ios:17910006389b778e4603d9',
